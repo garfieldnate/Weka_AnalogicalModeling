@@ -1,0 +1,86 @@
+/*
+ * 	Analogical Modeling Java module
+ *  Copyright (C) 2011  Nathan Glenn
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+Item:
+   	array of features; input as string, convert to ints
+   	converted to ints for quicker comparison
+   	getLabel(): return binary label given a test item.
+	outcome: also store as int
+
+Label:
+	will be an n-bit number, where n is the length of the feature vectors;
+	use java.util.BitSet
+	determines the context of the subcontext, where the label of the compared context (the data
+	item) is an n-bit BitSet of all 1's. A one means it matches the data item, a zero means it
+	does not.
+ 	 iterator:
+     given 1001011, need to return
+		1001111
+		1011011
+		1011111
+		1101011
+		1101111
+		1111011
+		1111111
+	use gray code
+   
+features:
+   value or UNKNOWN
+
+Lattices:
+   drawing capabilities
+        000
+        /|\
+       / | \
+      /  |  \
+     /   |   \
+   001  010  100
+   | \  / \  / |
+   |  \/   \/  |
+   |  /\   /\  |
+   | /  \ /  \ |
+   011  101  110
+     \   |   /
+      \  |  /
+       \ | /
+        \|/
+        111
+		or graphviz;
+		
+supracontextual lattice: elements are supracontexts
+  lattice[2^n]
+  
+supracontext:
+	label, ?
+	
+map: break supracontextual lattice into several smaller lattices
+
+Classifier
+	AM works like this:
+	list out supracontexts and their subcontexts
+	determine which supracontexts are heterogenous
+	count pointers within those
+	assign probabilities to each outcome depending on how many pointers point to a data item with
+		that outcome.
+		
+Licensing:
+	in any interactive output, need this (don't think we'll need it):
+	Java Analogical Modeling  Copyright (C) 2011 Nathan Glenn
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
