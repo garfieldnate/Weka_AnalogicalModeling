@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class TestItem {
+public class TestExemplar {
 
 	@Test
 	public void test() {

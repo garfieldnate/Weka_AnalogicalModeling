@@ -53,6 +53,22 @@ public class DataLoader {
 	}
 
 	/**
+	 * Loads file and converts into a list of Exemplars
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 */
+	public LinkedList<Exemplar> exemplars(String fileName) throws IOException{
+		List<LinkedList<String>> data = load(fileName);
+		
+		LinkedList<Exemplar> exemplars = new LinkedList<Exemplar>();
+		for(LinkedList<String> sl : data)
+			exemplars.add(new Exemplar(sl));
+		
+		return exemplars;
+	}
+	
+	/**
 	 * 
 	 * @param name of exemplar file
 	 * @return List of String arrays. The first element will be the outcome, and the rest are
@@ -61,35 +77,43 @@ public class DataLoader {
 	 * @throws IllegalArgumentException if a line has the wrong number of features on it. The 
 	 * correct number of features is determined from the first line in the file.
 	 */
-	List<String[]> load(String fileName) throws IOException {
+	List<LinkedList<String>> load(String fileName) throws IOException {
+		//TODO: check for blank line
+		//TODO: allow first line to be blank
+		//TODO: grab outcome here so that we can make it the first or last item on the line
 		Scanner sc = FileIO.fileScanner(fileName);
 		if(!sc.hasNextLine())
 			throw new IOException("Exemplar file is empty!");
-		List<String[]> exemplars = new LinkedList<String[]>();
+		List<LinkedList<String>> exemplars = new LinkedList<LinkedList<String>>();
+		
+		//grab and trim first line; need it to set size of vector
 		String line = sc.nextLine().trim();
+		//remove any comments
 		if(line.contains(commentSep))
 			line = (String) line.subSequence(0, line.indexOf(commentSep));
+			
 		exemplars.add(splitElim(line,sepString));
+		
 		//make sure all lines are same length
-		int length = exemplars.get(0).length;
-		String[] temp2;
+		int length = exemplars.get(0).size();
+		LinkedList<String> vector;
 		int lineNum = 1;
 		while(sc.hasNextLine()){
 			lineNum++;
 			line = sc.nextLine();
 //			System.out.println(line);
 			if(line.indexOf(commentSep) != -1)
-				temp2 = splitElim((String) line.subSequence(0, line.indexOf(commentSep)),
+				vector = splitElim((String) line.subSequence(0, line.indexOf(commentSep)),
 						sepString);
 			else
-				temp2 = splitElim(line,sepString);
+				vector = splitElim(line,sepString);
 //			for(String s : temp2)
 //				System.out.print(s + "=");
-			if(temp2.length != length)
+			if(vector.size() != length)
 				throw new IllegalArgumentException("Line " + lineNum + " does not contain " +
 						"the correct number of features.\nShould have " + length + " but " +
-						"has " + temp2.length);
-			exemplars.add(temp2);
+						"has " + vector.size());
+			exemplars.add(vector);
 		}
 		return exemplars;
 	}
@@ -100,25 +124,21 @@ public class DataLoader {
 	 * @param regex to split on
 	 * @return split string array after removing all empty strings. Prevents creating false empty
 	 * features.
+	 * @TODO: shouldn't we do something with empty features?
 	 */
-	private static String[] splitElim(String s, String regex){
-		List<String> l = new ArrayList<String>();
+	private static LinkedList<String> splitElim(String s, String regex){
+		LinkedList<String> l = new LinkedList<String>();
 		for(String s2 : s.split(regex))
 			if(!s2.isEmpty())
 				l.add(s2);
-		String[] retVal = new String[l.size()];
-		//can't use toArray, which returns Object[].
-		for(int i = 0; i < l.size(); i++){
-			retVal[i] = l.get(i);
-		}
-		return retVal;
+		return l;
 	}
 	
 	public static void main(String[] args) throws Exception{
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
 		dl.setFeatureSeparator("[ ,]+");
-		for(String[] sa: dl.load("xPlural.txt")){
+		for(List<String> sa: dl.load("xPlural.txt")){
 			for(String s : sa)
 				System.out.print(s + ",");
 			System.out.println();

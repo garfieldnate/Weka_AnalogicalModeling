@@ -18,11 +18,29 @@
 
 package edu.byu.am.app;
 
+import java.io.IOException;
+
+import edu.byu.am.data.DataLoader;
+import edu.byu.am.data.Exemplar;
+
 /**
  * This controls all of the other AM classes in predicting item outcomes.
- * @author nate
+ * @author Nate Glenn
  *
  */
 public class Classifier {
-
+	public Classifier(String fileName){
+		DataLoader dl = new DataLoader();
+		dl.setCommentor("//");
+		dl.setFeatureSeparator("[ ,]+");
+		try {
+			for(Exemplar e: dl.exemplars("xPlural.txt")){
+				System.out.println();
+				for(int i : e.getFeatures())
+					System.out.print(i + ",");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

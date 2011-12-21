@@ -36,13 +36,12 @@ public class AM extends weka.classifiers.Classifier{
 	@Override
 	public void buildClassifier(Instances arg0) throws Exception {
 		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public Capabilities getCapabilities(){
-		Capabilities result = new Capabilities(null);//super.getCapabilities();
-		result.disableAllClasses();               // disable all class types
+		Capabilities result = new Capabilities(null);
 	    result.disableAllClassDependencies();     // no dependencies!
+		result.disableAllClasses();               // disable all class types
 	    result.enable(Capability.NOMINAL_CLASS);  // only nominal classes allowed
 		return result;
 	}

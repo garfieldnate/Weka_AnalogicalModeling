@@ -19,6 +19,7 @@
 package edu.byu.am.data;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class implements a double index for feature names; comparing String objects is relatively
@@ -29,25 +30,38 @@ import java.util.HashMap;
  */
 public class Index {
 
-	static HashMap<String,Integer> featToInt = new HashMap<String,Integer>();
-	static HashMap<Integer,String> intToFeat = new HashMap<Integer,String>();
+	private static HashMap<String,Integer> featToInt = new HashMap<String,Integer>();
+	private static HashMap<Integer,String> intToFeat = new HashMap<Integer,String>();
+	public static int counter = 0;
 	
-	static Integer getInt(String feat){
+	public static Integer getInt(String feat){
 		return featToInt.get(feat);
 	}
 	
-	static String getString(int i){
+	public static String getString(int i){
 		return intToFeat.get(i);
+	}
+	
+	/**
+	 * Clears the indeces and resets the counter which assigns ints to strings
+	 */
+	public static void reset(){
+		featToInt.clear();
+		counter = 0;
 	}
 	
 	/**
 	 * Indexes a new feature value.
 	 * @param newFeat String representing new feature value that should be indexed
+	 * @return int new representation of the string feature
 	 */
-	static public void insert(String newFeat){
+	public static int insert(String newFeat){
 		//do nothing if the indeces already contain the value
 		if(featToInt.containsKey(newFeat))
-			return;
+			return featToInt.get(newFeat);
+		featToInt.put(newFeat, ++counter);
+		intToFeat.put(counter, newFeat);
+		return counter;
 	}
 	
 	/**
@@ -56,8 +70,15 @@ public class Index {
 	 * @param features
 	 * @return
 	 */
-	static public int[] insert(String[] features){
+	static public int[] insert(List<String> features){
+		int length = features.size();
+		int[] ints = new int[length];
 		
-		return null;
+		//iterate through features, convert each string to an int and add it to the return array
+		int count = 0;
+		for(String s : features){
+			ints[count++] = insert(s);
+		}
+		return ints;
 	}
 }
