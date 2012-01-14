@@ -19,8 +19,9 @@
 Item:
    	array of features; input as string, convert to ints
    	converted to ints for quicker comparison
-   	getLabel(): return binary label given a test item.
+   	getLabel(testItem): return binary label given a test item.
 	outcome: also store as int
+	occurences: number of supracontexts containing the item
 
 Label:
 	will be an n-bit number, where n is the length of the feature vectors;
@@ -71,6 +72,7 @@ supracontext:
 		contains 2 or more subcontexts, and
 		data items in these subcontexts have different outcomes
 	otherwise homogeneous
+	items: number of items contained in the supracontext
 	
 map: break supracontextual lattice into several smaller lattices
 
@@ -81,6 +83,25 @@ Classifier
 	count pointers within those
 	assign probabilities to each outcome depending on how many pointers point to a data item with
 		that outcome.
+		
+	Algorithm:
+	create lattice. 
+		Just a long list of 2^n binary labels.
+		Generate using gray code.
+		Each is called a supracontext.
+		 n = feature length.
+	Using a test item, assign supracontextual labels to each data item.
+		0 means same, 1 means different.
+		data items are called subcontexts.
+	Place the item in all subsets of its supracontextual label.
+		Use gray codes
+	List homogeneous contexts
+		hetereogeneous if contains 2+ outcomes in its subcontexts
+		otherwise homogeneous
+	Data items in homogeneous contexts are the analogical set.
+	Calculate number of pointers for each item
+		sum of number of items in all homogeneous supracontexts containing the item
+	use numbers to predict outcome and determine analogical effect of item.
 		
 Licensing:
 	in any interactive output, need this (don't think we'll need it):

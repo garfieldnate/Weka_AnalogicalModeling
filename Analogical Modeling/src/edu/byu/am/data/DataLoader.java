@@ -27,15 +27,22 @@ import java.util.Scanner;
 /**
  * 
  * @author Nate Glenn
- * This class is for initially loading AM data files. Files can be either in the old AM format
- * or in <a href="http://www.cs.washington.edu/dm/vfml/appendixes/c45.htm">C4.5</a> format. 
- *
+ * This class is for initially loading AM data files. The index of the feature outcome, feature 
+ * separator, and commentor can be specified, so that files can be either in the old AM format,
+ * <a href="http://www.cs.washington.edu/dm/vfml/appendixes/c45.htm">C4.5</a> format, or anything
+ * else.
+ * TODO:something about the character used to mean UNKNOWN
  */
 public class DataLoader {
 
+	//regex to separate features in a vector
 	String sepString = "[\\s\t,]";
 	
-	String commentSep = "#";
+	//
+	String commentSep = "#|//";
+	
+	int outcomeIndex = -1;
+	
 	/**
 	 * 
 	 * @param Regex to split a line on.
@@ -51,19 +58,36 @@ public class DataLoader {
 	public void setCommentor(String sep){
 		commentSep = sep;
 	}
+	
+	/**
+	 * 
+	 * @param i Index of feature which indicates the outcome for the given vector. The default, -1,
+	 * will cause the loader to use the feature in each vector as the outcome.
+	 */
+	public void setOutcomeIndex(int i){
+		outcomeIndex = i;
+	}
 
 	/**
-	 * Loads file and converts into a list of Exemplars
+	 * Loads file and converts the contents into a list of Exemplars
 	 * @param fileName
-	 * @return
+	 * @return {@link java.util.LinkedList [LinkedList]} of {@link Exemplar [Exemplars]}, each
+	 * corresponding to one line of the file.
 	 * @throws IOException
 	 */
 	public LinkedList<Exemplar> exemplars(String fileName) throws IOException{
 		List<LinkedList<String>> data = load(fileName);
 		
 		LinkedList<Exemplar> exemplars = new LinkedList<Exemplar>();
-		for(LinkedList<String> sl : data)
-			exemplars.add(new Exemplar(sl));
+		int tempOutcomeIndex = outcomeIndex;
+		//by default, the last feature will be the outcome
+		if(tempOutcomeIndex == -1)
+			tempOutcomeIndex = exemplars.size();
+		String outcome;
+		for(LinkedList<String> sl : data){
+			outcome = sl.remove(tempOutcomeIndex);
+			exemplars.add(new Exemplar(sl,outcome));
+		}
 		
 		return exemplars;
 	}
@@ -79,7 +103,6 @@ public class DataLoader {
 	 */
 	List<LinkedList<String>> load(String fileName) throws IOException {
 		//TODO: check for blank line
-		//TODO: allow first line to be blank
 		//TODO: grab outcome here so that we can make it the first or last item on the line
 		Scanner sc = FileIO.fileScanner(fileName);
 		if(!sc.hasNextLine())
@@ -87,32 +110,26 @@ public class DataLoader {
 		List<LinkedList<String>> exemplars = new LinkedList<LinkedList<String>>();
 		
 		//grab and trim first line; need it to set size of vector
-		String line = sc.nextLine().trim();
-		//remove any comments
-		if(line.contains(commentSep))
-			line = (String) line.subSequence(0, line.indexOf(commentSep));
-			
+		String line = sc.nextLine().trim();//TODO:=getNextNonBlankLine(sc)
+		//remove comments
+		line = line.split(commentSep)[0];
 		exemplars.add(splitElim(line,sepString));
 		
-		//make sure all lines are same length
+		//to make sure all lines are same length
 		int length = exemplars.get(0).size();
 		LinkedList<String> vector;
 		int lineNum = 1;
 		while(sc.hasNextLine()){
 			lineNum++;
 			line = sc.nextLine();
-//			System.out.println(line);
-			if(line.indexOf(commentSep) != -1)
-				vector = splitElim((String) line.subSequence(0, line.indexOf(commentSep)),
-						sepString);
-			else
-				vector = splitElim(line,sepString);
-//			for(String s : temp2)
-//				System.out.print(s + "=");
+			//remove comments
+			line = line.split(commentSep)[0];
+			vector = splitElim(line,sepString);
+			
 			if(vector.size() != length)
-				throw new IllegalArgumentException("Line " + lineNum + " does not contain " +
-						"the correct number of features.\nShould have " + length + " but " +
-						"has " + vector.size());
+				throw new IllegalArgumentException("\nLine " + lineNum + " of " + fileName + 
+						" does not contain the correct number of features.\nShould have " +
+						length + " but " + "has " + vector.size());
 			exemplars.add(vector);
 		}
 		return exemplars;
@@ -137,11 +154,10 @@ public class DataLoader {
 	public static void main(String[] args) throws Exception{
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,]+");
-		for(List<String> sa: dl.load("xPlural.txt")){
-			for(String s : sa)
-				System.out.print(s + ",");
-			System.out.println();
+		dl.setFeatureSeparator("[ ,\t]+");
+		dl.setOutcomeIndex(0);
+		for(Exemplar ex: dl.exemplars("A-An corpus.txt")){
+				System.out.println(ex);
 		}
 	}
 }

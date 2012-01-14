@@ -31,12 +31,12 @@ public class Exemplar {
 	
 	/**
 	 * 
-	 * @param features String array representing feature vector, including
+	 * @param newFeats String array representing feature vector, including
+	 * @param so the outcome for the given vector
 	 */
-	public Exemplar(LinkedList<String> newFeats){
-		//grab outcome
-		stringOutcome = newFeats.removeLast();
-		outcome = Index.insert(stringOutcome);
+	public Exemplar(LinkedList<String> newFeats, String so){
+		stringOutcome = so;
+		outcome = Index.insert(so);
 		//convert to integer features
 		features = Index.insert(newFeats);
 		stringFeats = newFeats;
@@ -66,12 +66,19 @@ public class Exemplar {
 	
 	/**
 	 * 
-	 * @param i Data exemplar
-	 * @return
+	 * @param i Test exemplar
+	 * @return binary Supracontextual label of length n, where n is the length of the feature
+	 * vectors. If the features of the test exemplar and the current exemplar are the same at
+	 * index i, then the i'th bit will be 1; otherwise it will be 0.
 	 */
 	public BitSet getContextLabel(Exemplar e){
+		int length = features.length;
+		int[] otherFeats = e.getFeatures();
 		BitSet label = new BitSet(features.length);
-		return null;
+		for(int i = 0; i < length; i++)
+			if(otherFeats[i] != features[i])
+				label.set(i, true);
+		return label;
 	}
 	
 	/**
@@ -88,5 +95,16 @@ public class Exemplar {
 	 */
 	public LinkedList<String> stringFeats(){
 		return stringFeats;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for(String s : stringFeats){
+			sb.append(s);
+			sb.append(',');
+		}
+		sb.append("\t=\t");
+		sb.append(stringOutcome);
+		return sb.toString();
 	}
 }

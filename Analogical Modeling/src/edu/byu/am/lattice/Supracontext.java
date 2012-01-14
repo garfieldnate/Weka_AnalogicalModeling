@@ -25,12 +25,32 @@ public class Supracontext {
 	
 	private BitSet label;//binary label
 	
-	public Iterator<Supracontext> supracontextIterator(){
+	/**
+	 * 
+	 * @return Binary label of this supracontext
+	 */
+	public BitSet getLabel(){
+		return label;
+	}
+	
+	public Iterator<Supracontext> iterator(){
 		return null;
 		//list the gaps
 		//list g-bit integers
 		//flip bits using gray code
 		
+	}
+	
+	/**
+	 * @param superset Supracontext to test as a superset of subset
+	 * @param subset To test as a subset of superset
+	 * @return True if superset is a superset of subset;
+	 * that is, if superset & subset == superset.
+	 */
+	public static boolean isSupersetOf(Supracontext superset, Supracontext subset){
+		BitSet temp = superset.getLabel();
+		temp.and(subset.getLabel());
+		return temp.equals(superset.getLabel());
 	}
 	
 }

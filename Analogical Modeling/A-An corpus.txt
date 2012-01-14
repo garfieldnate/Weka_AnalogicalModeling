@@ -1,14 +1,14 @@
 a	V,ei,C,k,+,C,l,V,ei,C,ng,C,g,C,w	//Yea, I make a record in the language
 a	V,ei,C,m,+,C,p,V,I,C,l,C,r,C,E	//the Lord, there came a pillar of fire and
-a	V,a,V,n,+,C,r,V,a,C,k,C,b,Vi,C,f	//fire and dwelt upon a rock before him; and
+a	V,a,C,n,+,C,r,V,a,C,k,C,b,Vi,C	//fire and dwelt upon a rock before him; and
 a	V,I,C,n,+,C,v,V,I,C,Z,V,E,C,n	//was carried away in a avision, even that he
 a	V,I,C,m,+,C,b,C,U,C,k,V,aen,C,m	//and gave unto him a book, and bade him
-an	V,ei,C,k,+,V,E,C,k,V,aun,C?	//But I shall make an account of my proceedings
-an	V,ei,C,k,+,V,E,C,b,C,r,C,j	//days. Behold, I make an abridgment of the record
-an	C,l,C,t,+,V,a,C,l,C,t,C,r	//pass that he built an altar of stones, and
-an	V,I,C,D,+,V,ow,C,T,C,D,V,ae	unto him, even with an oath, that he need
-an	V,i,C,n,+,V,ei,C,n,C,j,C,l	//that ye have seen an angel of the Lord
-a	V,ei,C,k,+,C,s,C,l,V,i,Cp,V,I	//make a sleeping potion
+an	V,ei,C,k,+,V,E,C,k,V,aun,C,?,V,E	//But I shall make an account of my proceedings
+an	V,ei,C,k,+,V,E,C,b,C,r,V,I,C,j	//days. Behold, I make an abridgment of the record
+an	C,l,C,t,+,V,a,C,l,C,t,C,r,V,E	//pass that he built an altar of stones, and
+an	V,I,C,D,+,V,ow,C,T,C,D,V,ae,C,?		//unto him, even with an oath, that he need
+an	V,i,C,n,+,V,ei,C,n,C,j,C,l,V,E	//that ye have seen an angel of the Lord
+a	V,ei,C,k,+,C,s,C,l,V,i,C,p,V,I	//make a sleeping potion
 a	C,r,V,i,+,C,t,C,r,V,i,C,D,V,E	//flopped under a tree. The Weasley
 a	V,I,C,ng,+,C,l,V,a,C,r,C,j,C,b	//Harry, taking a large bite out
 a	C,m,C,d,+,C,l,V,I,C,fr,C,l,V,a	//Dumbledore hummed a little and smiled
