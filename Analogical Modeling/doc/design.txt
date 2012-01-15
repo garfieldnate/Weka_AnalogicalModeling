@@ -25,7 +25,9 @@ Item:
 
 Label:
 	will be an n-bit number, where n is the length of the feature vectors;
-	use java.util.BitSet
+	use Label class, which uses:
+		Long if number of features is Long.SIZE or less (should be always)
+		Java.util.BitSet otherwise
 	determines the context of the subcontext, where the label of the compared context (the data
 	item) is an n-bit BitSet of all 1's. A one means it matches the data item, a zero means it
 	does not.
