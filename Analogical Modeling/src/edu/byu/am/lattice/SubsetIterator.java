@@ -62,11 +62,10 @@ public class SubsetIterator implements Iterator<Integer> {
 	public Integer next() {
 		//choose gap to choose bit to flip; it's whichever is the rightmost 1 in binCounter
 		// find the rightmost 1 in t; from HAKMEM, I believe 
-//		System.out.println("buh");
 	  	int i, tt;
 		for (i = 0, tt = ~binCounter & (binCounter - 1); tt > 0; tt >>= 1, ++i);
-		System.out.println("Using " + Integer.toBinaryString(binCounter) + ", Rightmost 1 is " + i +
-				"; gaps[" + i + "] is " + Integer.toBinaryString(gaps[i]));
+//		System.out.println("Using " + Integer.toBinaryString(binCounter) + ", Rightmost 1 is " + i +
+//				"; gaps[" + i + "] is " + Integer.toBinaryString(gaps[i]));
 	  	current ^= gaps[i];
 	  	binCounter--;
 	  	if(binCounter == 0)

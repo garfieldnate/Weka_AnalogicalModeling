@@ -19,7 +19,10 @@
 package edu.byu.am.app;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
+import edu.byu.am.data.AnalogicalSet;
 import edu.byu.am.data.DataLoader;
 import edu.byu.am.data.Exemplar;
 
@@ -29,18 +32,48 @@ import edu.byu.am.data.Exemplar;
  *
  */
 public class Classifier {
+	List<Exemplar> data;
+	
 	public Classifier(String fileName){
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,]+");
+		dl.setFeatureSeparator("[ ,\t]+");
 		try {
-			for(Exemplar e: dl.exemplars("xPlural.txt")){
-				System.out.println();
-				for(int i : e.getFeatures())
-					System.out.print(i + ",");
-			}
+			data = dl.exemplars(fileName);
+//			for(Exemplar e: dl.exemplars(fileName)){
+//				System.out.println(e);
+//				for(int i : e.getFeatures())
+//					System.out.print(i + ",");
+//			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public List<AnalogicalSet> classify(String fileName){
+		DataLoader dl = new DataLoader();
+		dl.setCommentor("//");
+		dl.setFeatureSeparator("[ ,\t]+");
+		
+		List<AnalogicalSet> sets = new LinkedList<AnalogicalSet>();
+		try {
+			for(Exemplar ex : dl.exemplars(fileName))
+				sets.add(classify(ex));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	public AnalogicalSet classify(Exemplar testItem){
+		for(Exemplar ex : data)
+			ex.setContextLabel(testItem);
+		return null;
+	}
+	
+	public static void main(String[] args){
+		Classifier cl = new Classifier("ch3example.txt");
+		cl.classify("ch3examplePredict.txt");
 	}
 }

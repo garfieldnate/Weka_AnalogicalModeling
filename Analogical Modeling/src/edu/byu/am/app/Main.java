@@ -18,6 +18,11 @@
 
 package edu.byu.am.app;
 
+import java.io.IOException;
+
+import edu.byu.am.data.DataLoader;
+import edu.byu.am.data.Exemplar;
+
 /**
  * This class will be the entry point for using Analogical Modeling to predict behavior.
  * @author Nate Glenn
@@ -26,7 +31,14 @@ package edu.byu.am.app;
 public class Main {
 
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
+		DataLoader dl = new DataLoader();
+		dl.setCommentor("//");
+		dl.setFeatureSeparator("[ ,\t]+");
+		dl.setOutcomeIndex(0);
+		for(Exemplar ex: dl.exemplars("ch3example.txt")){
+				System.out.println(ex);
+		}
 		//parse args
 		//read data
 		//convert to ints

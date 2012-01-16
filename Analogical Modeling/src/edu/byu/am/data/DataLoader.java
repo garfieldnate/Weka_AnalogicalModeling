@@ -82,10 +82,16 @@ public class DataLoader {
 		int tempOutcomeIndex = outcomeIndex;
 		//by default, the last feature will be the outcome
 		if(tempOutcomeIndex == -1)
-			tempOutcomeIndex = exemplars.size();
+			tempOutcomeIndex = data.get(0).size()-1;
 		String outcome;
 		for(LinkedList<String> sl : data){
-			outcome = sl.remove(tempOutcomeIndex);
+			try{
+				outcome = sl.remove(tempOutcomeIndex);
+			}catch(IndexOutOfBoundsException e){
+				System.err.println("IndexOutOfBoundsException while accessing the outcome, index " + 
+						tempOutcomeIndex + " in this list: " + sl);
+				return null;
+			}
 			exemplars.add(new Exemplar(sl,outcome));
 		}
 		
@@ -102,28 +108,21 @@ public class DataLoader {
 	 * correct number of features is determined from the first line in the file.
 	 */
 	List<LinkedList<String>> load(String fileName) throws IOException {
-		//TODO: check for blank line
-		//TODO: grab outcome here so that we can make it the first or last item on the line
 		Scanner sc = FileIO.fileScanner(fileName);
-		if(!sc.hasNextLine())
-			throw new IOException("Exemplar file is empty!");
 		List<LinkedList<String>> exemplars = new LinkedList<LinkedList<String>>();
 		
 		//grab and trim first line; need it to set size of vector
-		String line = sc.nextLine().trim();//TODO:=getNextNonBlankLine(sc)
-		//remove comments
-		line = line.split(commentSep)[0];
+		String line = grabNextLine(sc);
+		if(line == null)
+			throw new IOException("Exemplar file is empty!");
 		exemplars.add(splitElim(line,sepString));
 		
 		//to make sure all lines are same length
 		int length = exemplars.get(0).size();
 		LinkedList<String> vector;
 		int lineNum = 1;
-		while(sc.hasNextLine()){
+		while((line = grabNextLine(sc)) != null){
 			lineNum++;
-			line = sc.nextLine();
-			//remove comments
-			line = line.split(commentSep)[0];
 			vector = splitElim(line,sepString);
 			
 			if(vector.size() != length)
@@ -151,12 +150,34 @@ public class DataLoader {
 		return l;
 	}
 	
+	/**
+	 * Finds and returns the next non-empty line; comments don't count
+	 * @return the next valid line, with comments and leading/trailing whitespace removed, or null
+	 * if there isn't one.
+	 */
+	private String grabNextLine(Scanner sc){
+		String line = null;
+		while(true){
+			if(!sc.hasNext())
+				return null;
+			line = sc.nextLine();
+			//get rid of comments
+			line = line.split(commentSep)[0];
+			//remove whitespace
+			line = line.trim();
+			//if the line is empty, don't return it
+			if(line.length() != 0){
+				return line;
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws Exception{
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
 		dl.setFeatureSeparator("[ ,\t]+");
-		dl.setOutcomeIndex(0);
-		for(Exemplar ex: dl.exemplars("A-An corpus.txt")){
+//		dl.setOutcomeIndex(0);
+		for(Exemplar ex: dl.exemplars("ch3example.txt")){
 				System.out.println(ex);
 		}
 	}
