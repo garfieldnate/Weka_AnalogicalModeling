@@ -15,6 +15,7 @@ public class Label {
 	//need functions for gray code iteration, set bit
 	private BitSet bigStorage;
 	private long smallStorage;
+	private int cardinality;
 	
 	/**
 	 * True if size of label is greater than {@link Long#SIZE};
@@ -33,6 +34,38 @@ public class Label {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param startIndex
+	 * @return
+	 */
+	public int nextClearBit(int startIndex){
+		if(!big)
+			return smallNextClearBit(startIndex);
+			else
+				return bigStorage.nextClearBit(startIndex);
+		}
+	private int smallNextClearBit(int startIndex) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int rightMostClearBit(){
+		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @return Size of the label in bits
+	 */
+	public int cardinality(){
+		return cardinality;
+	}
+	
+	/**
+	 * Sets bits
+	 * @param other Long to set current bits to
+	 */
 	public void set(Long other) {
 		if(!big)
 			smallStorage = other;
@@ -40,8 +73,27 @@ public class Label {
 			setBitSet(other);
 	}
 	
+	/**
+	 * 
+	 * @param index to set to true in the label.
+	 */
+	public void set(int index){
+		if(!big)
+			smallStorage |= (1 << index);
+		else
+			bigStorage.set(index);
+	}
+	
+	/**
+	 * Set all of the set bits of other to true in bigStorage
+	 * @param other
+	 */
 	private void setBitSet(Long other) {
 		bigStorage = new BitSet();
+		for(int i = 0; i < Long.SIZE; i++){
+			if(((1 << i) & other) != 0)
+				bigStorage.set(i);
+		}
 	}
 
 	public static void main(String[] args) {
