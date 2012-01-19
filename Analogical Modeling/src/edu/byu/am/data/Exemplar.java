@@ -111,4 +111,9 @@ public class Exemplar {
 		sb.append(stringOutcome);
 		return sb.toString();
 	}
+	
+	@Override
+	public int hashCode(){
+		return stringFeats.hashCode();
+	}
 }
