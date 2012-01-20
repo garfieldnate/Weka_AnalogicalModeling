@@ -25,6 +25,7 @@ import java.util.List;
 import edu.byu.am.data.AnalogicalSet;
 import edu.byu.am.data.DataLoader;
 import edu.byu.am.data.Exemplar;
+import edu.byu.am.lattice.Lattice;
 
 /**
  * This controls all of the other AM classes in predicting item outcomes.
@@ -32,8 +33,26 @@ import edu.byu.am.data.Exemplar;
  *
  */
 public class Classifier {
+	
+	/**
+	 * Exemplars
+	 */
 	List<Exemplar> data;
 	
+	/**
+	 * Supracontextual lattice
+	 */
+	Lattice lattice;//supracontextual lattice
+	
+	/**
+	 * cardinality of the vectors
+	 */
+	int card;
+	
+	/**
+	 * 
+	 * @param fileName containing exemplar vectors
+	 */
 	public Classifier(String fileName){
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
@@ -48,8 +67,14 @@ public class Classifier {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		card = data.get(0).size();
 	}
 	
+	/**
+	 * 
+	 * @param fileName containing test items
+	 * @return
+	 */
 	public List<AnalogicalSet> classify(String fileName){
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
@@ -66,9 +91,21 @@ public class Classifier {
 		return null;
 	}
 	
-	public AnalogicalSet classify(Exemplar testItem){
+	/**
+	 * 
+	 * @param testItem Item to make context base on
+	 * @return Analogical set which holds results of the classification for the given item
+	 */
+	private AnalogicalSet classify(Exemplar testItem){
+		//1. Place each data item in a subcontext by assigning it a binary label
 		for(Exemplar ex : data)
 			ex.setContextLabel(testItem);
+		lattice = new Lattice(card);
+		//2. Place subcontexts into the supracontextual lattice while keeping track of how many
+		//times a given list of items occur in the lattice
+		//3. pointers in homogeneous supracontexts are used to give the analogical set and
+		//predicted outcome.
+		
 		return null;
 	}
 	
