@@ -30,9 +30,19 @@ import java.util.List;
  */
 public class Index {
 
+	public static final int NONDETERMINISTIC = 0;
+	/**
+	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by 
+	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is '*' in the red book paper)
+	 */
 	private static HashMap<String,Integer> featToInt = new HashMap<String,Integer>();
 	private static HashMap<Integer,String> intToFeat = new HashMap<Integer,String>();
-	public static int counter = 0;
+	public static int counter = Integer.MIN_VALUE;
+	
+	static{
+		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
+		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
+	}
 	
 	public static Integer getInt(String feat){
 		return featToInt.get(feat);
@@ -47,7 +57,12 @@ public class Index {
 	 */
 	public static void reset(){
 		featToInt.clear();
-		counter = 0;
+		intToFeat.clear();
+
+		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
+		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
+		
+		counter = Integer.MIN_VALUE;
 	}
 	
 	/**

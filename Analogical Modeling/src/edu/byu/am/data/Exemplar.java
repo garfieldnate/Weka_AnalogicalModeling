@@ -28,7 +28,6 @@ import java.util.LinkedList;
  */
 public class Exemplar {
 	
-	int label = 0;
 	/**
 	 * 
 	 * @param newFeats String array representing feature vector, including
@@ -64,26 +63,13 @@ public class Exemplar {
 		return features.length;
 	}
 	
-	/**
-	 * 
-	 * @param i Test exemplar
-	 * @return binary Supracontextual label of length n, where n is the length of the feature
-	 * vectors. If the features of the test exemplar and the current exemplar are the same at
-	 * index i, then the i'th bit will be 1; otherwise it will be 0.
-	 */
-	public void setContextLabel(Exemplar e){
-		label = 0;
-		System.out.println("Data: " + this + "\nWith: " + e);
-		int length = features.length;
-		int[] otherFeats = e.getFeatures();
-		for(int i = 0; i < length; i++)
-			if(otherFeats[i] != features[i]){
-//				System.out.println(i + " is different, so |= " + Integer.toBinaryString(1 << i));
-				label |= (1 << i);
-			}
-		System.out.println(Integer.toBinaryString(label));
-		return;
-	}
+//	/**
+//	 * This function will return 0 if {@link #setContextLabel(Exemplar)} has not been called yet.
+//	 * @return Integer label
+//	 */
+//	public int getLabel(){
+//		return label;
+//	}
 	
 	/**
 	 * 
