@@ -30,11 +30,21 @@ import java.util.List;
  */
 public class Index {
 
-	public static final int NONDETERMINISTIC = 0;
+
 	/**
 	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by 
-	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is '*' in the red book paper)
+	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is '*' in the red book paper).
+	 * 
 	 */
+	public static final int NONDETERMINISTIC = 0;
+
+	/**
+	 * EMPTY will be mapped to "&empty&", and is used by 
+	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is *supralist in the red book paper).
+	 * 
+	 */
+	public static final int EMPTY = -1;
+	
 	private static HashMap<String,Integer> featToInt = new HashMap<String,Integer>();
 	private static HashMap<Integer,String> intToFeat = new HashMap<Integer,String>();
 	public static int counter = Integer.MIN_VALUE;
@@ -42,18 +52,27 @@ public class Index {
 	static{
 		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
 		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
+
+		featToInt.put("&empty&", EMPTY);
+		intToFeat.put(EMPTY,"&empty&");
 	}
 	
+	/**
+	 * @return Integer representing feature indicated by feat
+	 */
 	public static Integer getInt(String feat){
 		return featToInt.get(feat);
 	}
 	
+	/**
+	 * @return string for feature represented by i
+	 */
 	public static String getString(int i){
 		return intToFeat.get(i);
 	}
 	
 	/**
-	 * Clears the indeces and resets the counter which assigns ints to strings
+	 * Clears the indices and resets the counter which assigns ints to strings
 	 */
 	public static void reset(){
 		featToInt.clear();
@@ -61,6 +80,9 @@ public class Index {
 
 		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
 		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
+
+		featToInt.put("&empty&", EMPTY);
+		intToFeat.put(EMPTY,"&empty&");
 		
 		counter = Integer.MIN_VALUE;
 	}

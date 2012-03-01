@@ -19,14 +19,18 @@
 package edu.byu.am.app;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import edu.byu.am.data.AnalogicalSet;
 import edu.byu.am.data.DataLoader;
 import edu.byu.am.data.Exemplar;
 import edu.byu.am.lattice.Lattice;
+import edu.byu.am.lattice.Subcontext;
 import edu.byu.am.lattice.SubcontextList;
+import edu.byu.am.lattice.Supracontext;
 
 /**
  * This controls all of the other AM classes in predicting item outcomes.
@@ -51,6 +55,11 @@ public class Classifier {
 	 * cardinality of the vectors
 	 */
 	int card;
+	
+	/**
+	 * True if counting should be done quadratically; false if linearly
+	 */
+	public static boolean QUADRATIC = true;
 	
 	/**
 	 * 
@@ -91,7 +100,7 @@ public class Classifier {
 			e.printStackTrace();
 			return null;
 		}
-		return null;
+		return sets;
 	}
 	
 	/**
@@ -102,18 +111,19 @@ public class Classifier {
 	private AnalogicalSet classify(Exemplar testItem){
 		//1. Place each data item in a subcontext
 		subList = new SubcontextList(testItem, data);
+//		System.out.println("Subcontexts are: " + subList);
 //		2. Place subcontexts into the supracontextual lattice while keeping track of how many
 //		times a given list of items occur in the lattice
-//		lattice.
 		lattice = new Lattice(card, subList);
+//		System.out.println(lattice.supraListToString());
 		//3. pointers in homogeneous supracontexts are used to give the analogical set and
 		//predicted outcome.
-		
-		return null;
+		return new AnalogicalSet(lattice.getSupracontextList(), QUADRATIC);
 	}
+	
 	
 	public static void main(String[] args){
 		Classifier cl = new Classifier("ch3example.txt");
-		cl.classify("ch3examplePredict.txt");
+		System.out.println(cl.classify("ch3examplePredict.txt"));
 	}
 }

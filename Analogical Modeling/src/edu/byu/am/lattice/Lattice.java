@@ -18,10 +18,8 @@
 
 package edu.byu.am.lattice;
 
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-
-import edu.byu.am.data.Exemplar;
 
 /**
  * This class holds the supracontextual lattice and does the work of filling itself during
@@ -45,11 +43,6 @@ public class Lattice {
 	 */
 	private int cardinality;
 	
-	/**
-	 * Exemplars
-	 */
-	private List<Exemplar> data;
-	
 	//the current number of the subcontext being added 
 	private int index = -1;
 	
@@ -64,11 +57,11 @@ public class Lattice {
 		//set count to 1 so that cleanSupra doesn't destroy it
 		emptySupracontext.incrementCount();
 	}
+	
 	private static Supracontext heteroSupra;
 	static{
+		//points to nothing, has no data or outcome.
 		heteroSupra = new Supracontext();
-		//0 is used throughout to represent non-determinism
-		heteroSupra.setOutcome(0);
 	}
 	
 	/**
@@ -103,7 +96,6 @@ public class Lattice {
 		SubsetIterator si = new SubsetIterator(sub.getLabel(),cardinality);
 		while(si.hasNext()){
 			int temp = si.next();
-			System.out.println("adding " + sub + " to " + temp);
 			addToContext(sub,temp);
 			//remove supracontexts with count = 0 after every pass
 			cleanSupra();
@@ -116,6 +108,7 @@ public class Lattice {
 	 * @param label
 	 */
 	private boolean addToContext(Subcontext sub, int label){
+//		System.out.println("adding " + sub + " to " + Subcontext.binaryLabel(cardinality, label));
 		//the default value is the empty supracontext (leave null until now to save time/space)
 		if(lattice[label] == null){
 			lattice[label] = emptySupracontext;
@@ -131,21 +124,21 @@ public class Lattice {
 			if(lattice[label] != emptySupracontext)
 				lattice[label].decrementCount();
 			lattice[label] = lattice[label].getNext();
-			//if the context has been emptied, then it was found to be hetergeneous;
+			//if the context has been emptied, then it was found to be heterogeneous;
 			//mark this as heterogeneous, too
 			//[do not worry about this being emptySupracontext; it's index is -1]
-			if(lattice[label].hasData()){
-				lattice[label].incrementCount();
-			}
-			else
-				lattice[label] = heteroSupra;
+//			if(lattice[label].hasData()){
+			lattice[label].incrementCount();
+//			}
+//			else
+//				lattice[label] = heteroSupra;
 		}
 		//we now know that we will have to make a new Supracontext for this item;
-		//if outcomes don't match, then this Supracontext is now heterogeneous.
+		//if outcomes don't match, then this supracontext is now heterogeneous.
 		//if lattice[label]'s outcome is nondeterministic, it will be heterogeneous
 		else if(!lattice[label].isDeterministic() || 
 				lattice[label].hasData() && lattice[label].getOutcome() != sub.getOutcome()){
-			lattice[label].removePointers();
+			lattice[label].decrementCount();//removePointers();
 			lattice[label] = heteroSupra;
 			return false;
 		}
@@ -154,7 +147,7 @@ public class Lattice {
 			//don't decrement the count for the emptySupracontext!
 			if(lattice[label] != emptySupracontext)
 				lattice[label].decrementCount();
-			lattice[label] = insertNewAfter(lattice[label],sub);
+			lattice[label] = new Supracontext(lattice[label],sub,index);
 			lattice[label].incrementCount();
 		}
 		return true;
@@ -197,6 +190,41 @@ public class Lattice {
 				//linking supraPrev and supra.next() removes supra from the linked list
 				supraPrev.setNext(supra.getNext());
 			}
+			supraPrev = supra;
+			supra = supra.getNext();
+			
 		}
+	}
+	
+	/**
+	 * 
+	 * @return The list of supracontexts that were created by filling the supracontextual lattice.
+	 * From this, you can compute the analogical set.
+	 */
+	public List<Supracontext> getSupracontextList(){
+		List<Supracontext> supList = new LinkedList<Supracontext>();
+		Supracontext supra = emptySupracontext.getNext();
+		while(supra != emptySupracontext){
+			supList.add(supra);
+			supra = supra.getNext();
+		}
+		return supList;
+	}
+	
+	/**
+	 * 
+	 * @return A string representation of the list of Supracontexts created when the Lattice was filled
+	 */
+	public String supraListToString(){
+		StringBuilder sb = new StringBuilder();
+		Supracontext supra = emptySupracontext.getNext();
+		if(supra == emptySupracontext)
+			return "EMPTY";
+		while(supra != emptySupracontext){
+			sb.append(supra);
+			sb.append("->");
+			supra = supra.getNext();
+		}
+		return sb.toString();
 	}
 }

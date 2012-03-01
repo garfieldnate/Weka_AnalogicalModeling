@@ -1,6 +1,9 @@
 package edu.byu.am.lattice;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class for iterating over all of the binary labels of a supracontext's subsets.
@@ -22,35 +25,41 @@ public class SubsetIterator implements Iterator<Integer> {
 	
 	/**
 	 * @param supracontext integer representing a label for a supracontext 
-	 * @param size number of bits needed to represent the vector
+	 * @param card number of bits needed to represent the vector
 	 * @return Iterator over all subsets of the given label
 	 */
-	public SubsetIterator(int supracontext,int size){
+	public SubsetIterator(int supracontext,int card){
 		current = supracontext;
-		int card = size;
 		gaps = new int[card];
+		@SuppressWarnings("rawtypes")
+		List gapsTemp = new ArrayList();
 		
 		//iterate over the clear bits and create a list of gaps;
 		//each gap in the list is an int with all 0s except in the index where the gap was found
 		//in the supracontext
-		int gapIndex = 0;
-		for (int i = card-1; i > 0; i--) {
+//		int gapIndex = 0;
+		for (int i = 0; i < card; i++) {
 			if(((1 << i) & supracontext) == 0){
 				//create an int with only bit i set to 1
-				gaps[gapIndex] = 1 << i;
-				gapIndex++;
+				gapsTemp.add(1 << i);
 			}
+//			gapIndex++;
 		 }
+		int size = gapsTemp.size();
 		//if there were no gaps, then there is nothing to iterate over
-		if(gapIndex == 0) {
+		if(size == 0){//gapIndex == 0) {
 			hasNext = false;
 			return;
 		}
 		//binCounter needs to be all ones for the last n bits, where n is numGaps;
 		binCounter = 0;
-		for(int i = 0; i < gapIndex; i++)
+		for(int i = 0; i < size; i++)
 			binCounter |= 1 << i;
 		hasNext = true;
+		
+		gaps = new int[size];
+		for(int i = 0; i < size; i++)
+			gaps[i] = (Integer) gapsTemp.get(i);
 	}
 
 	@Override
@@ -80,8 +89,13 @@ public class SubsetIterator implements Iterator<Integer> {
 	}
 	
 	public static void main(String[] args){
-		System.out.println("Iterating over: " + Integer.toBinaryString(75));
-		SubsetIterator si = new SubsetIterator(75, 7);
+		System.out.println("Iterating over: " + Subcontext.binaryLabel(3, 4));
+		SubsetIterator si = new SubsetIterator(4, 3);
+		while(si.hasNext()){
+			System.out.println(Integer.toBinaryString(si.next()));
+		}
+		System.out.println("Iterating over: " + Subcontext.binaryLabel(7, 84));
+		si = new SubsetIterator(84,7);
 		while(si.hasNext()){
 			System.out.println(Integer.toBinaryString(si.next()));
 		}

@@ -19,12 +19,9 @@ package edu.byu.am.lattice;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import edu.byu.am.data.Exemplar;
-import edu.byu.am.data.Index;
 
 
 /**
@@ -71,18 +68,31 @@ public class SubcontextList implements Iterable<Subcontext>{
 	 */
 	public int getContextLabel(Exemplar data){
 		int label = 0;
-		System.out.println("Data: " + data + "\nWith: " + test);
+//		System.out.println("Data: " + data + "\nWith: " + test);
 		int length = test.getFeatures().length;
 		int[] testFeats = test.getFeatures();
 		int[] dataFeats = data.getFeatures();
 		for(int i = 0; i < length; i++)
 			if(testFeats[i] != dataFeats[i]){
 	//			System.out.println(i + " is different, so |= " + Integer.toBinaryString(1 << i));
-				label |= (1 << i);
+				//use label-1-i instead of i so that it's easier to understand how to match a
+				//binary label to an exemplar (using just i produces mirror images)
+				label |= (1 << length-1-i);
 			}
-		System.out.println(Integer.toBinaryString(label));
+//		System.out.println(Integer.toBinaryString(label));
 
 		return label;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder s = new StringBuilder();
+		Iterator<Subcontext> iter = iterator();
+		while(iter.hasNext()){
+			s.append(iter.next());
+			s.append(',');
+		}
+		return s.toString();
 	}
 	
 	/**

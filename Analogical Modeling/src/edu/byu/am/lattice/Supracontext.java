@@ -17,11 +17,6 @@
  */
 package edu.byu.am.lattice;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import edu.byu.am.data.Exemplar;
 import edu.byu.am.data.Index;
 
 
@@ -46,6 +41,7 @@ public class Supracontext{
 	 */
 	public Supracontext(){
 		data = new Subcontext[0];
+		outcome = Index.EMPTY;
 		index = -1;
 	}
 	
@@ -62,6 +58,8 @@ public class Supracontext{
 			outcome = sub.outcome;
 			data = new Subcontext[1];
 			data[0] = sub;
+			setNext(other.getNext());
+			other.setNext(this);
 			return;
 		}
 		outcome = other.outcome;
@@ -72,7 +70,7 @@ public class Supracontext{
 		data = new Subcontext[size+1];
 		for(int i = 0; i < size; i++)
 			data[i] = otherData[i];
-		data[size-1] = sub;
+		data[size] = sub;
 		setData(data);
 		
 		setNext(other.getNext());
@@ -131,11 +129,13 @@ public class Supracontext{
 	 * Remove all pointers to this Supracontext by setting count to zero and destroying its data.
 	 */
 	public void removePointers(){
+		System.err.println(this + " has been declared heterogeneous!");
 		count = 0;
 		data = null;
 	}
 	
 	public boolean hasData(){
+//		System.err.println(data);
 		return data.length != 0;
 	}
 	public int getCount(){
@@ -151,6 +151,27 @@ public class Supracontext{
 		if(data == null)
 			return true;
 		return outcome != Index.NONDETERMINISTIC;
+	}
+	
+	/**
+	 * @return String representation of this supracontext
+	 */
+	@Override
+	public String toString(){
+		if(data == null)
+			return "[NULL]";
+		if(data.length == 0)
+			return "[EMPTY]";
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		sb.append(count);
+		sb.append('x');
+		for(Subcontext sub : data){
+			sb.append(sub);
+			sb.append(',');
+		}
+		sb.append(']');
+		return sb.toString();
 	}
 	
 }

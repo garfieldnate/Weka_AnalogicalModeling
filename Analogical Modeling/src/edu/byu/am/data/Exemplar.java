@@ -87,14 +87,21 @@ public class Exemplar {
 		return stringFeats;
 	}
 	
+	/**
+	 * Return string in this form: <a,b,c|R>
+	 */
+	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		for(String s : stringFeats){
-			sb.append(s);
+		sb.append('<');
+		for(int i = 0; i < stringFeats.size()-1; i++){
+			sb.append(stringFeats.get(i));
 			sb.append(',');
 		}
-		sb.append("\t=\t");
+		sb.append(stringFeats.getLast());
+		sb.append('|');
 		sb.append(stringOutcome);
+		sb.append('>');
 		return sb.toString();
 	}
 	

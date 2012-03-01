@@ -69,5 +69,49 @@ import edu.byu.am.data.Index;
 			return label;
 		}
 		
+		@Override
+		public String toString(){
+			StringBuilder sb = new StringBuilder();
+			sb.append('(');
+			
+			sb.append(binaryLabel(data.get(0).size(),label));
+			sb.append('|');
+			
+			sb.append(Index.getString(outcome));
+			sb.append('|');
+			
+			for(int i = 0; i < data.size()-1; i++){
+				sb.append(data.get(i));
+				sb.append(',');
+			}
+			sb.append(data.get(data.size()-1));
+			
+			sb.append(')');
+			
+			return sb.toString();
+		}
 	
+		/**
+		 * @return list of Exemplars contained in this subcontext
+		 */
+		public List<Exemplar> getData(){
+			return data;
+		}
+		/**
+		 * 
+		 * @param card Number of features in the subcontext
+		 * @param label Integer label for the subcontext
+		 * @return String representation of binary label, with zeros padded in the front
+		 */
+		public static String binaryLabel(int card, int label){
+			StringBuilder sb = new StringBuilder();
+			String binary = Integer.toBinaryString(label);
+			
+			int diff = card - binary.length();
+			for(int i = 0; i < diff; i++)
+				sb.append('0');
+			
+			sb.append(binary);
+			return sb.toString();
+		}
 	}
