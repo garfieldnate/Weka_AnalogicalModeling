@@ -18,14 +18,15 @@
 
 package edu.byu.am.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
 /**
  * Tests for correct loading of data, including error handling.
+ * 
  * @author Nate Glenn
- *
+ * 
  */
 public class TestLoad {
 

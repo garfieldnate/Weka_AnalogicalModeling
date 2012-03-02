@@ -20,81 +20,85 @@ package edu.byu.am.data;
 
 import java.util.LinkedList;
 
-
 /**
  * This class is used to represent one exemplar, or feature vector.
+ * 
  * @author nate
- *
+ * 
  */
 public class Exemplar {
-	
+
 	/**
 	 * 
-	 * @param newFeats String array representing feature vector, including
-	 * @param so the outcome for the given vector
+	 * @param newFeats
+	 *            String array representing feature vector, including
+	 * @param so
+	 *            the outcome for the given vector
 	 */
-	public Exemplar(LinkedList<String> newFeats, String so){
+	public Exemplar(LinkedList<String> newFeats, String so) {
 		stringOutcome = so;
 		outcome = Index.insert(so);
-		//convert to integer features
+		// convert to integer features
 		features = Index.insert(newFeats);
 		stringFeats = newFeats;
 	}
 
 	private LinkedList<String> stringFeats;
 	private int[] features;
-	
+
 	private String stringOutcome;
 	private int outcome;
-	
-	public String getStringOutcome(){
+
+	public String getStringOutcome() {
 		return stringOutcome;
 	}
-	
-	public int getOutcome(){
+
+	public int getOutcome() {
 		return outcome;
 	}
-	
+
 	/**
 	 * 
 	 * @return Size of the feature vector, not including the outcome
 	 */
-	public int size(){
+	public int size() {
 		return features.length;
 	}
-	
-//	/**
-//	 * This function will return 0 if {@link #setContextLabel(Exemplar)} has not been called yet.
-//	 * @return Integer label
-//	 */
-//	public int getLabel(){
-//		return label;
-//	}
-	
+
+	// /**
+	// * This function will return 0 if {@link #setContextLabel(Exemplar)} has
+	// not been called yet.
+	// * @return Integer label
+	// */
+	// public int getLabel(){
+	// return label;
+	// }
+
 	/**
 	 * 
-	 * @return Array of integers representing the feature vector for this exemplar
+	 * @return Array of integers representing the feature vector for this
+	 *         exemplar
 	 */
-	public int[] getFeatures(){
+	public int[] getFeatures() {
 		return features;
 	}
-	
+
 	/**
 	 * 
 	 * @return Original feature vector for this exemplar
 	 */
-	public LinkedList<String> stringFeats(){
+	public LinkedList<String> stringFeats() {
 		return stringFeats;
 	}
-	
+
 	/**
 	 * Return string in this form: <a,b,c|R>
 	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('<');
-		for(int i = 0; i < stringFeats.size()-1; i++){
+		for (int i = 0; i < stringFeats.size() - 1; i++) {
 			sb.append(stringFeats.get(i));
 			sb.append(',');
 		}
@@ -104,9 +108,9 @@ public class Exemplar {
 		sb.append('>');
 		return sb.toString();
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return stringFeats.hashCode();
 	}
 }

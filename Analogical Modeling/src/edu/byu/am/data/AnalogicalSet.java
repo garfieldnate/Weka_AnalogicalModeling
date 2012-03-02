@@ -51,9 +51,20 @@ public class AnalogicalSet {
 
 	private int totalPointers = 0;
 
+	private int outcome = -1;
+	private double outcomeVal = Double.NEGATIVE_INFINITY;
+
+	/**
+	 * The exemplar whose outcome is being predicted by this set
+	 */
+	private Exemplar predictedEx;
+
 	private static String newline = System.getProperty("line.separator");
 
-	public AnalogicalSet(List<Supracontext> supraList, boolean quadratic) {
+	public AnalogicalSet(List<Supracontext> supraList, Exemplar predict,
+			boolean quadratic) {
+
+		setPredictedEx(predict);
 
 		// find numbers of pointers to individual exemplars
 		setPointerMap(getPointers(supraList, quadratic));
@@ -79,9 +90,19 @@ public class AnalogicalSet {
 			else
 				outcomePointerMap.put(e.getOutcome(), exPointerMap.get(e));
 		}
+
 		for (Integer i : outcomePointerMap.keySet())
 			outcomeLikeliehoodMap.put(i, outcomePointerMap.get(i)
 					/ (double) totalPointers);
+		// Set outcome to the most likely value
+		Double temp;
+		for (Integer i : outcomeLikeliehoodMap.keySet()) {
+			temp = outcomeLikeliehoodMap.get(i);
+			if (temp > getOutcomeVal()) {
+				setOutcomeVal(temp);
+				setOutcome(i);
+			}
+		}
 		// System.out.println(getEffectMap());
 		// System.out.println(outcomePointerMap);
 		// System.out.println(outcomeLikeliehoodMap);
@@ -127,16 +148,27 @@ public class AnalogicalSet {
 		return pointers;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("anological effect:" + newline);
+
+		sb.append("predicting:");
+		sb.append(getPredictedEx());
+		sb.append(newline);
+
+		sb.append("outcome: ");
+		sb.append(Index.getString(outcome));
+		sb.append(" (");
+		sb.append(outcomeVal);
+		sb.append(")");
+		sb.append(newline);
+
 		for (Entry<Exemplar, Double> e : getEffectMap().entrySet()) {
 			sb.append(e.getKey());
-			sb.append("\t");
+			sb.append(": ");
 			sb.append(e.getValue());
 			sb.append(newline);
 		}
-		sb.append("Outcome likelihoods;" + newline);
 		for (Integer i : outcomeLikeliehoodMap.keySet()) {
 			sb.append(Index.getString(i) + ": ");
 			sb.append(outcomeLikeliehoodMap.get(i) + newline);
@@ -174,5 +206,29 @@ public class AnalogicalSet {
 
 	public Map<Integer, Double> getOutcomeLikelihood() {
 		return outcomeLikeliehoodMap;
+	}
+
+	public Exemplar getPredictedEx() {
+		return predictedEx;
+	}
+
+	private void setPredictedEx(Exemplar predictedEx) {
+		this.predictedEx = predictedEx;
+	}
+
+	public double getOutcomeVal() {
+		return outcomeVal;
+	}
+
+	private void setOutcomeVal(double outcomeVal) {
+		this.outcomeVal = outcomeVal;
+	}
+
+	public int getOutcome() {
+		return outcome;
+	}
+
+	private void setOutcome(int outcome) {
+		this.outcome = outcome;
 	}
 }

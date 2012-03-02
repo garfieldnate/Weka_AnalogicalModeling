@@ -22,98 +22,110 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This class implements a double index for feature names; comparing String objects is relatively
- * slow, so the strings in feature vectors are converted to integers. This class stores which
- * strings are represented by what integers and vice versa.
+ * This class implements a double index for feature names; comparing String
+ * objects is relatively slow, so the strings in feature vectors are converted
+ * to integers. This class stores which strings are represented by what integers
+ * and vice versa.
+ * 
  * @author nate
- *
+ * 
  */
 public class Index {
 
-
 	/**
-	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by 
-	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is '*' in the red book paper).
+	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by
+	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is '*' in the
+	 * red book paper).
 	 * 
 	 */
 	public static final int NONDETERMINISTIC = 0;
 
 	/**
-	 * EMPTY will be mapped to "&empty&", and is used by 
-	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is *supralist in the red book paper).
+	 * EMPTY will be mapped to "&empty&", and is used by
+	 * {@link edu.byu.am.lattice.Supracontext Supracontext} (this is *supralist
+	 * in the red book paper).
 	 * 
 	 */
 	public static final int EMPTY = -1;
-	
-	private static HashMap<String,Integer> featToInt = new HashMap<String,Integer>();
-	private static HashMap<Integer,String> intToFeat = new HashMap<Integer,String>();
-	public static int counter = Integer.MIN_VALUE;
-	
-	static{
-		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
-		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
 
-		featToInt.put("&empty&", EMPTY);
-		intToFeat.put(EMPTY,"&empty&");
+	/**
+	 * MISSING will be mapped to "=" by default, and can be used to denote
+	 * missing data. TODO: let user set default string
+	 */
+	public static final int MISSING = -2;
+
+	private static HashMap<String, Integer> featToInt = new HashMap<String, Integer>();
+	private static HashMap<Integer, String> intToFeat = new HashMap<Integer, String>();
+	public static int counter = Integer.MIN_VALUE;
+
+	static {
+		reset();
 	}
-	
+
 	/**
 	 * @return Integer representing feature indicated by feat
 	 */
-	public static Integer getInt(String feat){
+	public static Integer getInt(String feat) {
 		return featToInt.get(feat);
 	}
-	
+
 	/**
 	 * @return string for feature represented by i
 	 */
-	public static String getString(int i){
+	public static String getString(int i) {
 		return intToFeat.get(i);
 	}
-	
+
 	/**
 	 * Clears the indices and resets the counter which assigns ints to strings
 	 */
-	public static void reset(){
+	public static void reset() {
 		featToInt.clear();
 		intToFeat.clear();
 
 		featToInt.put("&nondeterministic&", NONDETERMINISTIC);
-		intToFeat.put(NONDETERMINISTIC,"&nondeterministic&");
+		intToFeat.put(NONDETERMINISTIC, "&nondeterministic&");
 
 		featToInt.put("&empty&", EMPTY);
-		intToFeat.put(EMPTY,"&empty&");
-		
+		intToFeat.put(EMPTY, "&empty&");
+
+		featToInt.put("=", MISSING);
+		intToFeat.put(MISSING, "=");
+
 		counter = Integer.MIN_VALUE;
 	}
-	
+
 	/**
 	 * Indexes a new feature value.
-	 * @param newFeat String representing new feature value that should be indexed
+	 * 
+	 * @param newFeat
+	 *            String representing new feature value that should be indexed
 	 * @return int new representation of the string feature
 	 */
-	public static int insert(String newFeat){
-		//do nothing if the indeces already contain the value
-		if(featToInt.containsKey(newFeat))
+	public static int insert(String newFeat) {
+		// do nothing if the indeces already contain the value
+		if (featToInt.containsKey(newFeat))
 			return featToInt.get(newFeat);
 		featToInt.put(newFeat, ++counter);
 		intToFeat.put(counter, newFeat);
 		return counter;
 	}
-	
+
 	/**
-	 * Inserts each of the features into the index, if they are not already indexed, and returns
-	 * an integer array representing the features.
+	 * Inserts each of the features into the index, if they are not already
+	 * indexed, and returns an integer array representing the features.
+	 * 
 	 * @param features
 	 * @return
 	 */
-	static public int[] insert(List<String> features){
+	static public int[] insert(List<String> features) {
 		int length = features.size();
 		int[] ints = new int[length];
-		
-		//iterate through features, convert each string to an int and add it to the return array
+
+		// iterate through features, convert each string to an int and add it to
+		// the return array
 		int count = 0;
-		for(String s : features){
+		for (String s : features) {
 			ints[count++] = insert(s);
 		}
 		return ints;

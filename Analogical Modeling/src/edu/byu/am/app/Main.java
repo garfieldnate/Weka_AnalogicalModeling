@@ -24,23 +24,25 @@ import edu.byu.am.data.DataLoader;
 import edu.byu.am.data.Exemplar;
 
 /**
- * This class will be the entry point for using Analogical Modeling to predict behavior.
+ * This class will be the entry point for using Analogical Modeling to predict
+ * behavior.
+ * 
  * @author Nate Glenn
- *
+ * 
  */
 public class Main {
 
-	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException {
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
 		dl.setFeatureSeparator("[ ,\t]+");
 		dl.setOutcomeIndex(0);
-		for(Exemplar ex: dl.exemplars("ch3example.txt")){
-				System.out.println(ex);
+		for (Exemplar ex : dl.exemplars("ch3example.txt")) {
+			System.out.println(ex);
 		}
-		//parse args
-		//read data
-		//convert to ints
+
+		Classifier cl = new Classifier(dl, "xPlural.txt");
+		System.out.println(cl.leaveOneOut());
 	}
+
 }

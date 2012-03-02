@@ -17,16 +17,18 @@
  */
 
 package weka.classifiers.lazy;
+
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instances;
 
 /**
  * A Weka classifier implementing AM.
+ * 
  * @author Nathan Glenn
- *
+ * 
  */
-public class AM extends weka.classifiers.Classifier{
+public class AM extends weka.classifiers.Classifier {
 
 	/**
 	 * 
@@ -37,12 +39,13 @@ public class AM extends weka.classifiers.Classifier{
 	public void buildClassifier(Instances arg0) throws Exception {
 		// TODO Auto-generated method stub
 	}
+
 	@Override
-	public Capabilities getCapabilities(){
+	public Capabilities getCapabilities() {
 		Capabilities result = new Capabilities(null);
-	    result.disableAllClassDependencies();     // no dependencies!
-		result.disableAllClasses();               // disable all class types
-	    result.enable(Capability.NOMINAL_CLASS);  // only nominal classes allowed
+		result.disableAllClassDependencies(); // no dependencies!
+		result.disableAllClasses(); // disable all class types
+		result.enable(Capability.NOMINAL_CLASS); // only nominal classes allowed
 		return result;
 	}
 

@@ -19,82 +19,131 @@
 package edu.byu.am.app;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import edu.byu.am.data.AnalogicalSet;
 import edu.byu.am.data.DataLoader;
 import edu.byu.am.data.Exemplar;
 import edu.byu.am.lattice.Lattice;
-import edu.byu.am.lattice.Subcontext;
 import edu.byu.am.lattice.SubcontextList;
-import edu.byu.am.lattice.Supracontext;
 
 /**
  * This controls all of the other AM classes in predicting item outcomes.
+ * 
  * @author Nate Glenn
- *
+ * 
  */
 public class Classifier {
-	
+
 	/**
 	 * Exemplars
 	 */
 	List<Exemplar> data;
-	
+
 	/**
 	 * Supracontextual lattice
 	 */
-	Lattice lattice;//supracontextual lattice
-	
+	Lattice lattice;// supracontextual lattice
+
 	SubcontextList subList;
-	
+
+	/**
+	 * Preconfigured dataloader used when loading files.
+	 */
+	DataLoader dl;
+
 	/**
 	 * cardinality of the vectors
 	 */
 	int card;
-	
+
 	/**
 	 * True if counting should be done quadratically; false if linearly
 	 */
 	public static boolean QUADRATIC = true;
-	
+
 	/**
 	 * 
-	 * @param fileName containing exemplar vectors
+	 * @param fileName
+	 *            containing exemplar vectors
+	 * @throws IOException
+	 *             If an error occurs while reading fileName
 	 */
-	public Classifier(String fileName){
-		DataLoader dl = new DataLoader();
-		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,\t]+");
-		try {
-			data = dl.exemplars(fileName);
-//			for(Exemplar e: dl.exemplars(fileName)){
-//				System.out.println(e);
-//				for(int i : e.getFeatures())
-//					System.out.print(i + ",");
-//			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public Classifier(String fileName) throws IOException {
+		makeDataLoader();
+		load(fileName);
 		card = data.get(0).size();
 	}
-	
+
 	/**
 	 * 
-	 * @param fileName containing test items
-	 * @return
+	 * @param dloader
+	 *            preconfigured {@link DataLoader}
+	 * @param fileName
+	 *            containing exemplar vectors
+	 * @throws IOException
+	 *             If an error occurs while reading fileName
 	 */
-	public List<AnalogicalSet> classify(String fileName){
-		DataLoader dl = new DataLoader();
+	public Classifier(DataLoader dloader, String fileName) throws IOException {
+		dl = dloader;
+		load(fileName);
+		card = data.get(0).size();
+	}
+
+	/**
+	 * 
+	 * @param fileName
+	 *            Name of file to load exemplars from
+	 * @throws IOException
+	 *             If an error occurs while reading fileName
+	 */
+	public void load(String fileName) throws IOException {
+		data = dl.exemplars(fileName);
+	}
+
+	private void makeDataLoader() {
+		dl = new DataLoader();
 		dl.setCommentor("//");
 		dl.setFeatureSeparator("[ ,\t]+");
-		
+	}
+
+	public void setDataLoader(DataLoader dloader) {
+		dl = dloader;
+	}
+
+	/**
+	 * 
+	 * @return List of analogical sets representing a classification of one of
+	 *         the exemplars; each of the exemplars will be classified by all of
+	 *         the other exemplars.
+	 */
+	public List<AnalogicalSet> leaveOneOut() {
+		List<AnalogicalSet> sets = new LinkedList<AnalogicalSet>();
+		Exemplar temp;
+		for (int i = 0; i < data.size(); i++) {
+			temp = data.remove(i);
+			sets.add(classify(temp));
+			data.add(temp);
+		}
+		return sets;
+	}
+
+	/**
+	 * 
+	 * @param fileName
+	 *            containing test items
+	 * @return
+	 * @throws IOException
+	 *             If an error occurs while reading fileName
+	 */
+	public List<AnalogicalSet> classify(String fileName) {
+		if (dl == null)
+			makeDataLoader();
+
 		List<AnalogicalSet> sets = new LinkedList<AnalogicalSet>();
 		try {
-			for(Exemplar ex : dl.exemplars(fileName))
+			for (Exemplar ex : dl.exemplars(fileName))
 				sets.add(classify(ex));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -102,28 +151,31 @@ public class Classifier {
 		}
 		return sets;
 	}
-	
+
 	/**
 	 * 
-	 * @param testItem Item to make context base on
-	 * @return Analogical set which holds results of the classification for the given item
+	 * @param testItem
+	 *            Item to make context base on
+	 * @return Analogical set which holds results of the classification for the
+	 *         given item
 	 */
-	private AnalogicalSet classify(Exemplar testItem){
-		//1. Place each data item in a subcontext
+	private AnalogicalSet classify(Exemplar testItem) {
+		// 1. Place each data item in a subcontext
 		subList = new SubcontextList(testItem, data);
-//		System.out.println("Subcontexts are: " + subList);
-//		2. Place subcontexts into the supracontextual lattice while keeping track of how many
-//		times a given list of items occur in the lattice
+		// 2. Place subcontexts into the supracontextual lattice
 		lattice = new Lattice(card, subList);
-//		System.out.println(lattice.supraListToString());
-		//3. pointers in homogeneous supracontexts are used to give the analogical set and
-		//predicted outcome.
-		return new AnalogicalSet(lattice.getSupracontextList(), QUADRATIC);
+		// 3. pointers in homogeneous supracontexts are used to give the
+		// analogical set and predicted outcome.
+		return new AnalogicalSet(lattice.getSupracontextList(), testItem,
+				QUADRATIC);
 	}
-	
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) throws IOException {
 		Classifier cl = new Classifier("ch3example.txt");
-		System.out.println(cl.classify("ch3examplePredict.txt"));
+		// System.out.println(cl.classify("ch3examplePredict.txt"));
+		System.out.println(cl.leaveOneOut());
+
+		// cl = new Classifier("A-An corpus.txt");
+
 	}
 }
