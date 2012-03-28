@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import edu.byu.am.lattice.Subcontext;
 import edu.byu.am.lattice.Supracontext;
 
+
+//	TODO: check that analogical set is for exemplars, not subsets.
 /**
  * This class holds a list of the exemplars that influenced the predicted
  * outcome of a certain test item, along with the analogical effect of each.
@@ -62,12 +64,12 @@ public class AnalogicalSet {
 	private static String newline = System.getProperty("line.separator");
 
 	public AnalogicalSet(List<Supracontext> supraList, Exemplar predict,
-			boolean quadratic) {
+			boolean linear) {
 
 		setPredictedEx(predict);
 
 		// find numbers of pointers to individual exemplars
-		setPointerMap(getPointers(supraList, quadratic));
+		setPointerMap(getPointers(supraList, linear));
 
 		// find the total number of pointers
 		for (Exemplar e : getPointerMap().keySet())
@@ -114,19 +116,19 @@ public class AnalogicalSet {
 	 * @param supraList
 	 *            List of Supracontexts created by filling the supracontextual
 	 *            lattice.
-	 * @param quadratic
-	 *            True if pointer counting should be done quadratically; false
-	 *            otherwise
+	 * @param linear
+	 *            True if pointer counting should be done linearly; false
+	 *            if it should be done quadratically
 	 * @return A mapping of each exemplar to the number of pointers pointing to
 	 *         it.
 	 */
 	private Map<Exemplar, Integer> getPointers(List<Supracontext> supraList,
-			boolean quadratic) {
+			boolean linear) {
 		Map<Exemplar, Integer> pointers = new HashMap<Exemplar, Integer>();
 		int pointersInList = 0;
 		int pointersToSupra = 0;
 		for (Supracontext supra : supraList) {
-			if (quadratic) {
+			if (!linear) {
 				pointersInList = 0;
 				for (Subcontext sub : supra.getData())
 					pointersInList += sub.getData().size();
@@ -137,10 +139,10 @@ public class AnalogicalSet {
 					// add together if already in the map
 					if (pointers.get(e) != null)
 						pointers.put(e, pointers.get(e)
-								+ (quadratic ? pointersInList : 1)
+								+ (linear ? 1 : pointersInList)
 								* pointersToSupra);
 					else
-						pointers.put(e, (quadratic ? pointersInList : 1)
+						pointers.put(e, (linear ? 1 : pointersInList)
 								* pointersToSupra);
 				}
 			}

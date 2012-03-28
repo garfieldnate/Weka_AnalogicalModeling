@@ -1,0 +1,13 @@
+verbose = false
+input.comment = //
+input.missing.string = =
+algorithm.missing.strategy = variable
+exemplar.sep = ;
+exemplar.feature.sep = [ ,\t]+
+input.path = data
+test.path = test
+output.path = results
+algorithm.pointers.linear = false
+algorithm.removeDuplicates = false
+#default value will be the last feature in the exemplar
+exemplar.outcome.index = -1

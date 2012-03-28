@@ -18,10 +18,12 @@
 
 package edu.byu.am.app;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import edu.byu.am.data.DataLoader;
-import edu.byu.am.data.Exemplar;
 
 /**
  * This class will be the entry point for using Analogical Modeling to predict
@@ -30,19 +32,29 @@ import edu.byu.am.data.Exemplar;
  * @author Nate Glenn
  * 
  */
-public class Main {
-
+public class Controller {
+	
 	public static void main(String[] args) throws IOException {
-		DataLoader dl = new DataLoader();
-		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,\t]+");
-		dl.setOutcomeIndex(0);
-		for (Exemplar ex : dl.exemplars("ch3example.txt")) {
-			System.out.println(ex);
-		}
-
-		Classifier cl = new Classifier(dl, "xPlural.txt");
-		System.out.println(cl.leaveOneOut());
+		Options.parseArgs(args);
+		FileWriter output = new FileWriter(Options.getOption(Options.OUTPUT_PATH));
+		if(Options.getBooleanOption(Options.VERBOSE))
+			Options.writeOptions(output);
+		Classifier cl = new Classifier(Options.getOption(Options.INPUT_PATH));
+		if(Options.getOption(Options.TEST_PATH).equals(Options.LEAVE_ONE_OUT))
+			output.write(cl.leaveOneOut().toString());
+		else
+			output.write(cl.classify(Options.getOption(Options.TEST_PATH)).toString());
 	}
 
+	public static void demo() throws IOException{
+		DataLoader dl = new DataLoader();
+		dl.setCommentor("//");
+		dl.setFeatureSeparator("");//"[ ,\t]+");
+
+		dl.setOutcomeIndex(0);
+		Classifier cl = new Classifier(dl, "finnverb.txt");//"xPlural.txt");
+//		cl.
+//		new FileWriter("demoOutput.txt").write(cl.leaveOneOut().toString());
+//		System.out.println(cl.leaveOneOut());
+	}
 }

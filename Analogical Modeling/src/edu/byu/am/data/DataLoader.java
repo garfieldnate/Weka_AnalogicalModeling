@@ -23,30 +23,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.byu.am.app.Options;
+
 /**
  * This class is for initially loading AM data files. The index of the feature
  * outcome, feature separator, and commentor can be specified, so that files can
  * be either in the old AM format, <a
  * href="http://www.cs.washington.edu/dm/vfml/appendixes/c45.htm" >C4.5</a>
- * format, or anything else. TODO:something about the character used to mean
- * UNKNOWN
+ * format, or anything else.
  * 
  * @author Nate Glenn
  */
 public class DataLoader {
 
 	// regex to separate features in a vector
-	String sepString = "[\\s\t,]";
+	private String sepString;
 
 	//
-	String commentSep = "#|//";
+	private String commentSep;
 
 	/**
 	 * String used to represent missing data
 	 */
-	String missing = "=";
+	String missing;
 
-	int outcomeIndex = -1;
+	int outcomeIndex;
+	
+	public DataLoader(){
+		sepString = Options.INPUT_FEATURE_SEP;
+		commentSep = Options.INPUT_COMMENT;
+		missing = Options.INPUT_MISSING_STRING;
+		outcomeIndex = Integer.parseInt(Options.getOption(Options.EXEMPLAR_OUTCOME_INDEX));
+	}
 
 	/**
 	 * 
@@ -198,9 +206,9 @@ public class DataLoader {
 	public static void main(String[] args) throws Exception {
 		DataLoader dl = new DataLoader();
 		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,\t]+");
-		// dl.setOutcomeIndex(0);
-		for (Exemplar ex : dl.exemplars("ch3example.txt")) {
+		dl.setFeatureSeparator("");//"[ ,\t]+");
+		 dl.setOutcomeIndex(0);
+		for (Exemplar ex : dl.exemplars("finnverb.txt")){
 			System.out.println(ex);
 		}
 	}

@@ -31,11 +31,12 @@ import edu.byu.am.lattice.SubcontextList;
 /**
  * This controls all of the other AM classes in predicting item outcomes.
  * 
+ * TODO: add documentation on options
  * @author Nate Glenn
  * 
  */
 public class Classifier {
-
+	
 	/**
 	 * Exemplars
 	 */
@@ -57,11 +58,6 @@ public class Classifier {
 	 * cardinality of the vectors
 	 */
 	int card;
-
-	/**
-	 * True if counting should be done quadratically; false if linearly
-	 */
-	public static boolean QUADRATIC = true;
 
 	/**
 	 * 
@@ -102,10 +98,11 @@ public class Classifier {
 		data = dl.exemplars(fileName);
 	}
 
+	//create the data loader with settings based on the contents of properties
 	private void makeDataLoader() {
 		dl = new DataLoader();
-		dl.setCommentor("//");
-		dl.setFeatureSeparator("[ ,\t]+");
+		dl.setCommentor(Options.properties.getProperty("input.comment"));
+		dl.setFeatureSeparator(Options.properties.getProperty("input.feature.sep"));
 	}
 
 	public void setDataLoader(DataLoader dloader) {
@@ -140,6 +137,7 @@ public class Classifier {
 	public List<AnalogicalSet> classify(String fileName) {
 		if (dl == null)
 			makeDataLoader();
+		System.out.println("here: " + fileName);
 
 		List<AnalogicalSet> sets = new LinkedList<AnalogicalSet>();
 		try {
@@ -149,6 +147,7 @@ public class Classifier {
 			e.printStackTrace();
 			return null;
 		}
+		System.out.println(sets.size());
 		return sets;
 	}
 
@@ -160,6 +159,7 @@ public class Classifier {
 	 *         given item
 	 */
 	private AnalogicalSet classify(Exemplar testItem) {
+		System.out.println("Classifying: " + testItem);
 		// 1. Place each data item in a subcontext
 		subList = new SubcontextList(testItem, data);
 		// 2. Place subcontexts into the supracontextual lattice
@@ -167,7 +167,7 @@ public class Classifier {
 		// 3. pointers in homogeneous supracontexts are used to give the
 		// analogical set and predicted outcome.
 		return new AnalogicalSet(lattice.getSupracontextList(), testItem,
-				QUADRATIC);
+				Boolean.parseBoolean(Options.properties.getProperty("algorithm.pointers.linear")));
 	}
 
 	public static void main(String[] args) throws IOException {
