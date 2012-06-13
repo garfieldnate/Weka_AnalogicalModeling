@@ -63,7 +63,7 @@ public class SubsetIterator implements Iterator<Integer> {
 
 		gaps = new int[size];
 		for (int i = 0; i < size; i++)
-			gaps[i] = (Integer) gapsTemp.get(i);
+			gaps[i] = gapsTemp.get(i);
 	}
 
 	@Override

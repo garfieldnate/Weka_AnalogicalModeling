@@ -17,16 +17,16 @@ public class CombineLattice {
 	 * @param subs Two or more sublattices that together comprise a full lattice
 	 * @return An {@link AnalogicalSet} representing the relative outcome predictions given subs
 	 */
-	AnalogicalSet predict(Sublattice... subs){
+	public static AnalogicalSet predict(Sublattice... subs){
 		return null;
 	}
 	
 	/**
 	 * 
-	 * @param subs Two or more sublattices that together compreise a full lattice
+	 * @param subs Two or more sublattices that together comprise a full lattice
 	 * @return Another {@link Sublattice} which represents the combination of both lattices.
 	 */
-	Sublattice combine(Sublattice... subs){
+	public static Sublattice combine(boolean isFinal, Sublattice... subs){
 		return null;
 		
 	}

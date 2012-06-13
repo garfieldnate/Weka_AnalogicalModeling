@@ -18,10 +18,15 @@
 
 package edu.byu.am.data;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+
+import javax.swing.event.ListSelectionEvent;
 
 /**
  * This class is used to represent one exemplar, or feature vector.
+ * This class is immutable.
  * 
  * @author nate
  * 
@@ -35,12 +40,17 @@ public class Exemplar {
 	 * @param so
 	 *            the outcome for the given vector
 	 */
+	//it's checked as the parameter
+	@SuppressWarnings("unchecked")
 	public Exemplar(LinkedList<String> newFeats, String so) {
 		stringOutcome = so;
 		outcome = Index.insert(so);
 		// convert to integer features
 		features = Index.insert(newFeats);
-		stringFeats = newFeats;
+		//defensive copy
+//		stringFeats = new LinkedList<String>();
+		stringFeats = (LinkedList<String>) newFeats.clone();
+//		Collections.copy(stringFeats, newFeats);
 	}
 
 	private LinkedList<String> stringFeats;
@@ -80,7 +90,8 @@ public class Exemplar {
 	 *         exemplar
 	 */
 	public int[] getFeatures() {
-		return features;
+		//defensive copy
+		return Arrays.copyOf(features, features.length);
 	}
 
 	/**

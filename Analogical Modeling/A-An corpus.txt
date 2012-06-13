@@ -1,20 +1,20 @@
-a	V,ei,C,k,+,C,l,V,ei,C,ng,C,g,C,w	//Yea, I make a record in the language
-a	V,ei,C,m,+,C,p,V,I,C,l,C,r,C,E	//the Lord, there came a pillar of fire and
-a	V,a,C,n,+,C,r,V,a,C,k,C,b,Vi,C	//fire and dwelt upon a rock before him; and
-a	V,I,C,n,+,C,v,V,I,C,Z,V,E,C,n	//was carried away in a avision, even that he
-a	V,I,C,m,+,C,b,C,U,C,k,V,aen,C,m	//and gave unto him a book, and bade him
-an	V,ei,C,k,+,V,E,C,k,V,aun,C,?,V,E	//But I shall make an account of my proceedings
-an	V,ei,C,k,+,V,E,C,b,C,r,V,I,C,j	//days. Behold, I make an abridgment of the record
-an	C,l,C,t,+,V,a,C,l,C,t,C,r,V,E	//pass that he built an altar of stones, and
-an	V,I,C,D,+,V,ow,C,T,C,D,V,ae,C,?		//unto him, even with an oath, that he need
-an	V,i,C,n,+,V,ei,C,n,C,j,C,l,V,E	//that ye have seen an angel of the Lord
-a	V,ei,C,k,+,C,s,C,l,V,i,C,p,V,I	//make a sleeping potion
-a	C,r,V,i,+,C,t,C,r,V,i,C,D,V,E	//flopped under a tree. The Weasley
-a	V,I,C,ng,+,C,l,V,a,C,r,C,j,C,b	//Harry, taking a large bite out
-a	C,m,C,d,+,C,l,V,I,C,fr,C,l,V,a	//Dumbledore hummed a little and smiled
-a	V,I,C,ng,+,C,l,V,I,C,s,C,t,V,E	//before, making a list of students
-an	V,E,V,v,+,V,ow,C,k,C,h,V,i,C,k	//branches of an oak he called
-an	V,ae,C,f,+,V,aw,V,r,V,a,C,l,C,r	//fer half an hour already.
-an	V,I,C,n,+,E,e,C,k,C,s,V,E,C,l	//had been an excellent adventure
-an	V,I,C,D,+,V,i,V,v,V,E,C,n,C,n	//with an even nastier
-an	C,ch,C,t,+,V,aw,C,l,C,f,C,l,C,fr	//watched an owl flutter
+V,ei,C,k,+,C,l,V,ei,C,ng,C,g,C,w	a	//Yea, I make a record in the language
+V,ei,C,m,+,C,p,V,I,C,l,C,r,C,E	a	//the Lord, there came a pillar of fire and
+V,a,C,n,+,C,r,V,a,C,k,C,b,Vi,C	a	//fire and dwelt upon a rock before him; and
+V,I,C,n,+,C,v,V,I,C,Z,V,E,C,n	a	//was carried away in a avision, even that he
+V,I,C,m,+,C,b,C,U,C,k,V,aen,C,m	a	//and gave unto him a book, and bade him
+V,ei,C,k,+,V,E,C,k,V,aun,C,?,V,E	an	//But I shall make an account of my proceedings
+V,ei,C,k,+,V,E,C,b,C,r,V,I,C,j	an	//days. Behold, I make an abridgment of the record
+C,l,C,t,+,V,a,C,l,C,t,C,r,V,E	an	//pass that he built an altar of stones, and
+V,I,C,D,+,V,ow,C,T,C,D,V,ae,C,?		an	//unto him, even with an oath, that he need
+V,i,C,n,+,V,ei,C,n,C,j,C,l,V,E	an	//that ye have seen an angel of the Lord
+V,ei,C,k,+,C,s,C,l,V,i,C,p,V,I	a	//make a sleeping potion
+C,r,V,i,+,C,t,C,r,V,i,C,D,V,E	a	//flopped under a tree. The Weasley
+V,I,C,ng,+,C,l,V,a,C,r,C,j,C,b	a	//Harry, taking a large bite out
+C,m,C,d,+,C,l,V,I,C,fr,C,l,V,a	a	//Dumbledore hummed a little and smiled
+V,I,C,ng,+,C,l,V,I,C,s,C,t,V,E	a	//before, making a list of students
+V,E,V,v,+,V,ow,C,k,C,h,V,i,C,k	an	//branches of an oak he called
+V,ae,C,f,+,V,aw,V,r,V,a,C,l,C,r	an	//fer half an hour already.
+V,I,C,n,+,E,e,C,k,C,s,V,E,C,l	an	//had been an excellent adventure
+V,I,C,D,+,V,i,V,v,V,E,C,n,C,n	an	//with an even nastier
+C,ch,C,t,+,V,aw,C,l,C,f,C,l,C,fr	an	//watched an owl flutter

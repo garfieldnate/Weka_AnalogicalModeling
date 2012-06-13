@@ -23,6 +23,7 @@ import java.util.List;
 
 import edu.byu.am.data.Exemplar;
 import edu.byu.am.data.Index;
+import edu.byu.am.lattice.distributed.SubsubcontextList;
 
 /**
  * Manages the list of subcontexts
@@ -40,13 +41,14 @@ public class SubcontextList implements Iterable<Subcontext> {
 	Exemplar test;
 
 	/**
-	 * Defines how missing data will be treated. TODO: let the user set this
-	 * somehow.
+	 * Defines how missing data will be treated. TODO:move to Options
 	 */
 	MissingDataCompare mdc = MissingDataCompare.MATCH;
 
 	/**
-	 * 
+	 * This is the easiest to use constructor. Using the parameters,
+	 * it makes all of the subcontexts and fills them with the exemplars
+	 * that they contain.
 	 * @param testEx
 	 *            Exemplar which is being classified and assigns contexts
 	 * @param data
@@ -57,7 +59,41 @@ public class SubcontextList implements Iterable<Subcontext> {
 		for (Exemplar e : data)
 			add(e);
 	}
+	
+	/**
+	 * If you use this constructor, you will have to call the add method repeatedly 
+	 * in order to fill the contexts.
+	 * @param testEx Exemplar which is being classified and assigns contexts
+	 */
+	public SubcontextList(Exemplar testEx){
+		test = testEx;
+	}
 
+	
+	/**
+	 * Adds the exemplar to the context with the same label.
+	 * This was implemented for use by {@link SubsubcontextList},
+	 * which finds it useful for splitting lattices.
+	 * 
+	 * @param data Exemplar to be added
+	 * @param label Integer label for the exemplar
+	 */
+	public void add(Exemplar data, int label){
+		if (!labelToSubcontext.containsKey(label))
+			labelToSubcontext.put(label, new Subcontext(label));
+		labelToSubcontext.get(label).add(data);
+	}
+	
+	/**
+	 * Adds the exemplars to the correct subcontext
+	 * 
+	 * @param data Exemplars to add
+	 */
+	public void addAll(Iterable<Exemplar> data){
+		for(Exemplar d : data)
+			add(d);
+	}
+	
 	/**
 	 * Adds the exemplar to the correct subcontext
 	 * 
@@ -88,7 +124,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 			if (testFeats[i] == Index.MISSING || dataFeats[i] == Index.MISSING)
 				label |= (mdc.outcome(testFeats[i], dataFeats[i]));
 			else if (testFeats[i] != dataFeats[i]) {
-				// use label-1-i instead of i so that it's easier to understand
+				// use length-1-i instead of i so that it's easier to understand
 				// how to match a
 				// binary label to an exemplar (using just i produces mirror
 				// images)

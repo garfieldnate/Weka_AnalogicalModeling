@@ -2,8 +2,8 @@ verbose = false
 input.comment = //
 input.missing.string = =
 algorithm.missing.strategy = variable
-exemplar.sep = ;
-exemplar.feature.sep = [ ,\t]+
+input.exemplar.sep = ;
+input.feature.sep = [ ,\t]+
 input.path = data
 test.path = test
 output.path = results

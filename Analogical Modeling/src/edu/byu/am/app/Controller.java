@@ -18,11 +18,8 @@
 
 package edu.byu.am.app;
 
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-
 import edu.byu.am.data.DataLoader;
 
 /**
@@ -39,7 +36,8 @@ public class Controller {
 		FileWriter output = new FileWriter(Options.getOption(Options.OUTPUT_PATH));
 		if(Options.getBooleanOption(Options.VERBOSE))
 			Options.writeOptions(output);
-		Classifier cl = new Classifier(Options.getOption(Options.INPUT_PATH));
+//		Classifier cl = new Classifier(Options.getOption(Options.INPUT_PATH));
+		DistTest cl = new DistTest(Options.getOption(Options.INPUT_PATH));
 		if(Options.getOption(Options.TEST_PATH).equals(Options.LEAVE_ONE_OUT))
 			output.write(cl.leaveOneOut().toString());
 		else

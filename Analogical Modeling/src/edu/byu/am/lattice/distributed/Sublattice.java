@@ -1,5 +1,9 @@
 package edu.byu.am.lattice.distributed;
 
+import java.util.concurrent.Callable;
+
+import edu.byu.am.lattice.Supracontext;
+
 
 /**
  * Represents a lattice which is to be combined with other sublattices to determine predictions
@@ -22,6 +26,26 @@ package edu.byu.am.lattice.distributed;
  * @author Nate Glenn
  *
  */
-public class Sublattice {
+public class Sublattice implements Callable<Supracontext>{
+	
+	/**
+	 * Lattice is a 2^n array of Supracontexts
+	 */
+	private Supracontext[] lattice;
+
+	/**
+	 * Cardinality of the labels in the lattice
+	 */
+	private int cardinality;
+
+	/**
+	 * Fills the lattice and returns the Supracontext linked list
+	 */
+	@Override
+	public Supracontext call() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 }

@@ -20,12 +20,10 @@ package edu.byu.am.app;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -61,7 +59,7 @@ public class Options {
 	public static final String INPUT_PATH = "input.path";
 	public static final String TEST_PATH = "test.path";
 	public static final String OUTPUT_PATH = "output.path";
-	public static final String POINTERS_COUNT = "algorithm.pointers.count";
+	public static final String POINTERS_COUNT_LINEAR = "algorithm.pointers.linear";
 	public static final String REMOVE_DUPLICATES = "algorithm.removeDuplicates";
 	public static final String EXEMPLAR_OUTCOME_INDEX = "exemplar.outcome.index";
 	public static final String LEAVE_ONE_OUT = "leave_one_out";
@@ -199,12 +197,12 @@ public class Options {
 		
 		Boolean linearBool = (Boolean) clp.getOptionValue(linear);
 		if(linearBool != null)
-			setOption(POINTERS_COUNT,"linear");
+			setOption(POINTERS_COUNT_LINEAR,"linear");
 		
 		//TODO: check input; must be one of three strings
 		String missingStrategyString = (String) clp.getOptionValue(missingStrategy);
 		if(missingStrategyString != null)
-			setOption(ALGORITHM_MISSING_STRATEGY,missingStrategyString);
+			setOption(ALGORITHM_MISSING_STRATEGY,missingStrategyString);//TODO:finish implementing
 		
 		String missingString = (String) clp.getOptionValue(missingStr);
 		if(missingString != null)
