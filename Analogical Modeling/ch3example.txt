@@ -1,7 +1,0 @@
-//this is the example given in chapter three of "Analogical Modeling of Language"
-//when queried with "3,1,2", it should return .308 for e, .692 for r.
-3	1	0	3	3	,	e
-2	1	0	4	3	,	r
-0	3	2	6	3	,	r
-2	1	2	6	3	,	r
-3	1	1	6	3	,	r

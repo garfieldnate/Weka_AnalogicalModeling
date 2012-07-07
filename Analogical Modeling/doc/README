@@ -18,8 +18,8 @@
  
  This project is a Java implementation of Analogical Modeling (AM), the exemplar-based learning
  mechanism invented by Royall Skousen, a BYU professor of linguistics.
- More information on AM, see 
- For the original AM code, written in Perl XS, see 
+ More information on AM, see www.wikipedia.org/analogical_modeling.html.
+ For the original AM code, written in Perl XS, see humanities.byu.edu/am.
  
  
  This project is currently in planning mode. See "design.txt" for the current design plan.
