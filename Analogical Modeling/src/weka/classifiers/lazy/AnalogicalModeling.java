@@ -126,8 +126,8 @@ import weka.core.Utils;
  * *  Remove test exemplar from training set
  * </pre>
  * 
- * * *
- *TODO: actually use user's input for missing comparison
+ * * * TODO: actually use user's input for missing comparison
+ * 
  * <pre>
  * -M &lt;method&gt;
  * *  Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat missing data as a all one variable, 'match' means that missing data will be considered the same as whatever it is compared with, and 'mismatch' means that missing data will always be unequal to whatever it is compared with. Default is 'variable'
@@ -503,6 +503,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		// System.err.println(instances.size());
 		// test data against capabilities
 		getCapabilities().testWithFail(instances);
+
+		if (instances.numAttributes() > 33)
+			throw new IllegalArgumentException(
+					"The AnalogicalModeling classifier can only handle 33 attributes (including the class)!");
 		// remove instances with missing class value,
 		// but don’t modify original data
 		instances = new Instances(instances);
@@ -536,6 +540,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	private boolean parallelFlag = true;
+
 	/**
 	 * @see weka.classifiers.AbstractClassifier#distributionForInstance(weka.core.Instance)
 	 * @return {@inheritDoc}
@@ -598,12 +603,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private AnalogicalSet classify(Exemplar testItem) {
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
-		
-		if(parallelFlag){
-			SubsubcontextList sslist = new SubsubcontextList(testItem, trainingExemplars);
-			//TODO: next step is to fill several lattices
+
+		if (parallelFlag) {
+			SubsubcontextList sslist = new SubsubcontextList(testItem,
+					trainingExemplars);
+			// TODO: next step is to fill several lattices
 		}
-		
+
 		// 1. Place each data item in a subcontext
 		SubcontextList subList = new SubcontextList(testItem, trainingExemplars);// TODO:debug
 																					// statement
@@ -645,7 +651,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * @param options
 	 *            the commandline options
 	 */
-	public static void runClassifier(AnalogicalModeling classifier, String[] options) {
+	public static void runClassifier(AnalogicalModeling classifier,
+			String[] options) {
 		try {
 			System.out.println(Evaluation.evaluateModel(classifier, options));
 		} catch (Exception e) {

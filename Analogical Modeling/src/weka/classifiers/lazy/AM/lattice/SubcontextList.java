@@ -128,7 +128,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 				// how to match a
 				// binary label to an exemplar (using just i produces mirror
 				// images)
-				label |= (1 << length - 1 - i);
+				label |= (1 << i);//length - 1 - i
 			}
 		}
 		// System.out.println(Integer.toBinaryString(label));
