@@ -1,40 +1,41 @@
-/*
- * 	Analogical Modeling Java module
- *  Copyright (C) 2011  Nathan Glenn
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.lattice.distributed;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import weka.classifiers.lazy.AM.lattice.Subcontext;
+import weka.classifiers.lazy.AM.lattice.SubcontextList;
+import weka.classifiers.lazy.AM.lattice.SubsetIterator;
+import weka.classifiers.lazy.AM.lattice.Supracontext;
 
 /**
- * This class holds the supracontextual lattice and does the work of filling
- * itself during classification. The supractontextual lattice is a boolean
- * algebra which models supra- and subcontexts for the AM algorithm. Using
- * boolean algebra allows efficient computation of these as well as traversal of
- * all subcontexts within a supracontext.
+ * Same as a normal lattice, except no supracontext is deemed heterogeneous and
+ * hence everything is kept.
+ * 
+ * Represents a lattice which is to be combined with other sublattices to
+ * determine predictions later on. When a sublattice is filled, there are two
+ * main differences: <list> <li>Only a part of a an exemplar's features are used
+ * to assign lattice locations; this is taken care of by
+ * {@link Subsubcontextlist}.</li> <li>No supracontext is ever determined to be
+ * heterogeneous. This is, of course, less efficient in some ways.</li> </list>
+ * Inefficiencies brought about by not eliminating heterogeneous supracontexts
+ * and by having to combine sublattices are a compromise to the alternative,
+ * using a single lattice for any size exemplars. Remember that the underlying
+ * structure of a lattice is an array of size 2^n, n being the size of the
+ * exemplars contained. So if the exemplars are 20 features long, a signle
+ * lattice would be 2^20 or 1M elements long. On the other hand, if the
+ * exemplars are split in 4, then 4 sublattices of size 2^5, or 32, can be used
+ * instead, making for close to 100,000 times less memory used.
+ * <p>
+ * In terms of processing power, more is required to use sublattices. However,
+ * using threads the processing of each can be done in parallel.
  * 
  * @author Nate Glenn
+ * @author Nathan Glenn
  * 
  */
-public class Lattice {
-	
+public class HeterogeneousLattice {
+
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
@@ -52,14 +53,6 @@ public class Lattice {
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
 	private static Supracontext emptySupracontext;
-	// static {
-	// }
-
-	private static Supracontext heteroSupra;
-	static {
-		// points to nothing, has no data or outcome.
-		heteroSupra = new Supracontext();
-	}
 
 	/**
 	 * Initializes the empty and the heterogeneous supracontexts as well as the
@@ -73,9 +66,6 @@ public class Lattice {
 		emptySupracontext.setNext(emptySupracontext);
 		// set count to 1 so that cleanSupra doesn't destroy it
 		emptySupracontext.incrementCount();
-
-		// points to nothing
-		heteroSupra = new Supracontext();
 
 		lattice = new Supracontext[(int) (Math.pow(2, card))];
 		cardinality = card;
@@ -94,8 +84,7 @@ public class Lattice {
 	 * @param subList
 	 *            List of subcontexts
 	 */
-	public Lattice(int card, SubcontextList subList) {
-
+	public HeterogeneousLattice(SubcontextList subList) {
 		init(subList.getCardinality());
 
 		// Fill the lattice with all of the subcontexts
@@ -138,10 +127,6 @@ public class Lattice {
 			lattice[label] = emptySupracontext;
 		}
 
-		// if the Supracontext is heterogeneous, ignore it
-		if (lattice[label] == heteroSupra) {
-			return false;
-		}
 		// if the following supracontext matches the current index, just repoint
 		// to that one.
 		else if (lattice[label].getNext().getIndex() == index) {
@@ -159,17 +144,6 @@ public class Lattice {
 			// }
 			// else
 			// lattice[label] = heteroSupra;
-		}
-		// we now know that we will have to make a new Supracontext for this
-		// item;
-		// if outcomes don't match, then this supracontext is now heterogeneous.
-		// if lattice[label]'s outcome is nondeterministic, it will be
-		// heterogeneous
-		else if (!lattice[label].isDeterministic() || lattice[label].hasData()
-				&& lattice[label].getOutcome() != sub.getOutcome()) {
-			lattice[label].decrementCount();// removePointers();
-			lattice[label] = heteroSupra;
-			return false;
 		}
 		// otherwise make a new Supracontext and add it
 		else {

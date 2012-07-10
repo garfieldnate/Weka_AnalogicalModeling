@@ -45,55 +45,76 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 */
 	MissingDataCompare mdc = MissingDataCompare.MATCH;
 
+	private int cardinality;
+
 	/**
-	 * This is the easiest to use constructor. Using the parameters,
-	 * it makes all of the subcontexts and fills them with the exemplars
-	 * that they contain.
+	 * 
+	 * @return the number of attributes used to predict an outcome
+	 */
+	public int getCardinality() {
+		return cardinality;
+	}
+
+	/**
+	 * This is the easiest to use constructor. Using the parameters, it makes
+	 * all of the subcontexts and fills them with the exemplars that they
+	 * contain.
+	 * 
 	 * @param testEx
 	 *            Exemplar which is being classified and assigns contexts
 	 * @param data
 	 *            to add to subcontexts
+	 * @param card
+	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Exemplar testEx, List<Exemplar> data) {
+	public SubcontextList(Exemplar testEx, List<Exemplar> data, int card) {
+		cardinality = card;
 		test = testEx;
 		for (Exemplar se : data)
 			add(se);
 	}
-	
+
 	/**
-	 * If you use this constructor, you will have to call the add method repeatedly 
-	 * in order to fill the contexts.
-	 * @param testEx Exemplar which is being classified and assigns contexts
+	 * If you use this constructor, you will have to call the add method
+	 * repeatedly in order to fill the contexts.
+	 * 
+	 * @param testEx
+	 *            Exemplar which is being classified and assigns contexts
+	 * @param the
+	 *            number of attributes being used to classify the instance
 	 */
-	public SubcontextList(Exemplar testEx){
+	public SubcontextList(Exemplar testEx, int card) {
 		test = testEx;
+		cardinality = card;
 	}
 
-	
 	/**
-	 * Adds the exemplar to the context with the same label.
-	 * This was implemented for use by {@link SubsubcontextList},
-	 * which finds it useful for splitting lattices.
+	 * Adds the exemplar to the context with the same label. This was
+	 * implemented for use by {@link SubsubcontextList}, which finds it useful
+	 * for splitting lattices.
 	 * 
-	 * @param data Exemplar to be added
-	 * @param label Integer label for the exemplar
+	 * @param data
+	 *            Exemplar to be added
+	 * @param label
+	 *            Integer label for the exemplar
 	 */
-	public void add(Exemplar data, int label){
+	public void add(Exemplar data, int label) {
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
 	}
-	
+
 	/**
 	 * Adds the exemplars to the correct subcontext
 	 * 
-	 * @param data Exemplars to add
+	 * @param data
+	 *            Exemplars to add
 	 */
-	public void addAll(Iterable<Exemplar> data){
-		for(Exemplar d : data)
+	public void addAll(Iterable<Exemplar> data) {
+		for (Exemplar d : data)
 			add(d);
 	}
-	
+
 	/**
 	 * Adds the exemplar to the correct subcontext
 	 * 
@@ -121,14 +142,15 @@ public class SubcontextList implements Iterable<Subcontext> {
 		int[] testFeats = test.getFeatures();
 		int[] dataFeats = data.getFeatures();
 		for (int i = 0; i < length; i++) {
-			if (testFeats[i] == AMconstants.MISSING || dataFeats[i] == AMconstants.MISSING)
+			if (testFeats[i] == AMconstants.MISSING
+					|| dataFeats[i] == AMconstants.MISSING)
 				label |= (mdc.outcome(testFeats[i], dataFeats[i]));
 			else if (testFeats[i] != dataFeats[i]) {
 				// use length-1-i instead of i so that it's easier to understand
 				// how to match a
 				// binary label to an exemplar (using just i produces mirror
 				// images)
-				label |= (1 << i);//length - 1 - i
+				label |= (1 << i);// length - 1 - i
 			}
 		}
 		// System.out.println(Integer.toBinaryString(label));

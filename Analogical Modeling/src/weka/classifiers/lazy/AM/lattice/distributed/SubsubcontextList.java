@@ -1,6 +1,7 @@
 package weka.classifiers.lazy.AM.lattice.distributed;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
-import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 
 /**
@@ -29,10 +29,6 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 	MissingDataCompare mdc = MissingDataCompare.MATCH;
 
 	/**
-	 * Number of exemplars in the lists
-	 */
-	private int size = 0;
-	/**
 	 * The number of sublattices to use.
 	 */
 	private final int SPLIT_NUM = 4;
@@ -51,9 +47,49 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 	/**
 	 * size of the feature vectors
 	 */
-	int cardinality;
+	private int cardinality;
 
-	List<SubcontextList> subcontextLists = new LinkedList<SubcontextList>();
+	/**
+	 * Returns the size of the feature vectors
+	 * 
+	 * @return number of attributes in a feature vector (not including class)
+	 */
+	public int getCardinality() {
+		return cardinality;
+	}
+
+	/**
+	 * Number of exemplars in each list
+	 */
+	int numExemplars = 0;
+
+
+	/**
+	 * 
+	 * @return the number of subcontext lists in this list
+	 */
+	int getSize() {
+		return subcontextLists.size();
+	}
+
+	/**
+	 * Returns the number of exemplars in the list
+	 * 
+	 * @return the number of exemplars in the list
+	 */
+	int getNumExemplars() {
+		return numExemplars;
+	}
+
+	private List<SubcontextList> subcontextLists = new LinkedList<SubcontextList>();
+	
+	/**
+	 * Returns the list of subcontext lists
+	 * @return the list of subcontexts lists
+	 */
+	public Collection<SubcontextList> getSublistList(){
+		return Collections.unmodifiableCollection(subcontextLists);
+	}
 
 	private int splitPoints[];
 
@@ -69,7 +105,7 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 		cardinality = test.size();
 		createMasks();
 		for (int i = 0; i < masks.length; i++) {
-			subcontextLists.add(new SubcontextList(test));
+			subcontextLists.add(new SubcontextList(test,masks[i].length));
 		}
 		// System.out.println("Sublattices: " + subcontextLists.size());
 		for (Exemplar e : data)
@@ -91,15 +127,15 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 		// as determined by masks
 		// splitPoints is guaranteed to have at least 1 entry at this point
 		Iterator<SubcontextList> iter = subcontextLists.iterator();
-//		int labelOriginal = getContextLabel(data);
-//		 System.out.println("_________\noriginal:   "
-//		 + Subcontext.binaryLabel(cardinality, labelOriginal));
+		// int labelOriginal = getContextLabel(data);
+		// System.out.println("_________\noriginal:   "
+		// + Subcontext.binaryLabel(cardinality, labelOriginal));
 		int label;
 		for (int i = 0; i < masks.length; i++) {
-			label = getContextLabel(data,masks[i]);
+			label = getContextLabel(data, masks[i]);
 			iter.next().add(data, label);
 		}
-		size++;
+		numExemplars++;
 	}
 
 	/**
@@ -132,7 +168,7 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 
 		return label;
 	}
-	
+
 	/**
 	 * @param data
 	 *            Exemplar to be added to a subcontext
@@ -145,25 +181,28 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 		int label = 0;
 		int[] testFeats = test.getFeatures();
 		int[] dataFeats = data.getFeatures();
-//		System.out.println(Arrays.toString(testFeats));
-//		System.out.println(Arrays.toString(dataFeats));
-//		System.out.println(mask);
+		// System.out.println(Arrays.toString(testFeats));
+		// System.out.println(Arrays.toString(dataFeats));
+		// System.out.println(mask);
 		for (int i = mask.start, j = 0; i <= mask.end; i++, j++) {
 			if (testFeats[i] == AMconstants.MISSING
 					|| dataFeats[i] == AMconstants.MISSING)
 				label |= (mdc.outcome(testFeats[i], dataFeats[i]));
 			else if (testFeats[i] != dataFeats[i]) {
 				label |= (1 << j);
-//				System.out.println("|=" + Subcontext.binaryLabel(mask.length, 1 << j));
+				// System.out.println("|=" + Subcontext.binaryLabel(mask.length,
+				// 1 << j));
 			}
 		}
-//		System.out.println("Label: " + Subcontext.binaryLabel(mask.length, label));
+		// System.out.println("Label: " + Subcontext.binaryLabel(mask.length,
+		// label));
 
 		return label;
 	}
 
 	/**
-	 * Sets the masks to use in assigning sublattice labels.
+	 * Sets the masks to use in assigning sublattice labels. The number of masks
+	 * will determine how many piece each subcontext will be split into.
 	 */
 	private void createMasks() {
 		setSplitPoints();
@@ -209,23 +248,6 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 	}
 
 	/**
-	 * @param first
-	 *            First bit to set
-	 * @param last
-	 *            Last bit to set
-	 * @return an integer with bits first through last set to 1 and the rest set
-	 *         to zero.
-	 */
-	private int getMask(int first, int last) {
-		int mask = 0;
-		for (int i = first; i <= last; i++)
-			mask |= 1 << i;
-		// System.out.println("masking from " + first + " to " + last + ": "
-		// + Subcontext.binaryLabel(cardinality, mask));
-		return mask;
-	}
-
-	/**
 	 * @return an iterator which gives each of the {@link Subcontextlist
 	 *         Subcontext lists}.
 	 */
@@ -268,9 +290,9 @@ public final class SubsubcontextList implements Iterable<SubcontextList> {
 			this.end = end;
 			length = end - start + 1;
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return start + "-" + end + '(' + length + ')';
 		}
 

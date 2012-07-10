@@ -34,6 +34,7 @@ import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
+import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
 import weka.classifiers.lazy.AM.lattice.distributed.SubsubcontextList;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -539,7 +540,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			System.out.println("Added instance: " + instance);
 	}
 
-	private boolean parallelFlag = true;
 
 	/**
 	 * @see weka.classifiers.AbstractClassifier#distributionForInstance(weka.core.Instance)
@@ -593,6 +593,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		return as;
 	}
 
+	private boolean parallelFlag = true;
 	/**
 	 * 
 	 * @param testItem
@@ -607,12 +608,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (parallelFlag) {
 			SubsubcontextList sslist = new SubsubcontextList(testItem,
 					trainingExemplars);
-			// TODO: next step is to fill several lattices
+			DistributedLattice distLattice = new DistributedLattice(sslist);
 		}
 
 		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(testItem, trainingExemplars);// TODO:debug
-																					// statement
+		SubcontextList subList = new SubcontextList(testItem,
+				trainingExemplars, trainingInstances.numAttributes() - 1);// TODO:debug
+		// statement
 		if (getDebug())
 			System.out.println("Subcontexts: " + subList);
 		// 2. Place subcontexts into the supracontextual lattice

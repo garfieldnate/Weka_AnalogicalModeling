@@ -68,7 +68,7 @@ public class Subcontext {
 	/**
 	 * @return Binary label of of this subcontext
 	 */
-	int getLabel() {
+	public int getLabel() {
 		return label;
 	}
 
