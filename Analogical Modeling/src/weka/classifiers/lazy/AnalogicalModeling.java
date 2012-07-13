@@ -606,9 +606,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			System.out.println("Classifying: " + testItem);
 
 		if (parallelFlag) {
-			SubsubcontextList sslist = new SubsubcontextList(testItem,
-					trainingExemplars);
-			DistributedLattice distLattice = new DistributedLattice(sslist);
+//			SubsubcontextList sslist = new SubsubcontextList(testItem,
+//					trainingExemplars);
+			SubcontextList subList = new SubcontextList(testItem, trainingExemplars, trainingInstances.numAttributes() - 1);
+			DistributedLattice distLattice = new DistributedLattice(subList);
 		}
 
 		// 1. Place each data item in a subcontext
