@@ -7,7 +7,16 @@ Todo on current task:
 - follow line of execution all the way through and simplify/clarify documentation
 - make sure exemplar size constraint is clear
 - create a vocabulary list
+    - outcome/class
+    - exemplar
+    - subcontext
+    - supracontext
+    - lattice
+    
 - write a high-level explanation of AM
+
+Later TODO:
+- put label logic in its own class
 
 Engineering Tasks
 - Add (unit) tests

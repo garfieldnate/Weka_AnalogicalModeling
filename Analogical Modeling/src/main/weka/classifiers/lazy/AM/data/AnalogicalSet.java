@@ -140,14 +140,14 @@ public class AnalogicalSet {
 				pointersInList = 0;
 				//sum number of exemplars for each subcontext
 				for (int index : supra.getData())
-					pointersInList += Subcontext.getSubcontext(index).getData().size();
+					pointersInList += Subcontext.getSubcontext(index).getExemplars().size();
 			}
 			//iterate subcontexts in supracontext
 			for (int index : supra.getData()) {
 				//number of supras containing this subcontext
 				pointersToSupra = supra.getCount();
 				//iterate exemplars in subcontext
-				for (Exemplar e : Subcontext.getSubcontext(index).getData()) {
+				for (Exemplar e : Subcontext.getSubcontext(index).getExemplars()) {
 					//pointers to exemplar = pointersToSupra * pointers in list
 					// add together if already in the map
 					if (pointers.get(e) != null)

@@ -111,12 +111,12 @@ public class SubsetIterator implements Iterator<Integer> {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Iterating over: " + Subcontext.binaryLabel(3, 4));
+		System.out.println("Iterating over: " + Utils.binaryLabel(3, 4));
 		SubsetIterator si = new SubsetIterator(4, 3);
 		while (si.hasNext()) {
 			System.out.println(Integer.toBinaryString(si.next()));
 		}
-		System.out.println("Iterating over: " + Subcontext.binaryLabel(7, 84));
+		System.out.println("Iterating over: " + Utils.binaryLabel(7, 84));
 		si = new SubsetIterator(84, 7);
 		while (si.hasNext()) {
 			System.out.println(Integer.toBinaryString(si.next()));

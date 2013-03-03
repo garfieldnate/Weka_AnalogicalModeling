@@ -22,37 +22,61 @@ import java.util.List;
 import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.data.Exemplar;
 
-
-
 /**
  * Represents a subcontext, containing a list of Exemplars which belong to it.
  * Also keeps track of all instances of Subcontext in a static index.
+ * 
+ * A subcontext is a list of exemplars with the same assigned label. In
+ * analogical modeling, an exemplar is classified using a list of previously
+ * classified exemplars. Each previously classified exemplar is given a label by
+ * comparing it to the exemplar being classified. The label is actual a vector
+ * of boolean values, each representing whether the exemplars have the same
+ * value for a given feature. The label is currently assigned by
+ * {@link Utils#getContextLabel}.
+ * 
+ * For example, if we were classifying an exemplar <a, b, c>, and we had three
+ * already classified exemplars, <x, y, c>, <w, m, c> and <a, b, z>, the labels
+ * would be <no, no, yes>, <no, no, yes>, and <yes, yes, no>. Two of the
+ * exemplars have the same label, and so would be placed into the same
+ * subcontext.
+ * 
+ * Each subcontext is also assigned a class based on the classification of its
+ * contained exemplars. The value of this class is either the value of all of
+ * its contained exemplars, or {@link AMconstants#NONDETERMINISTIC} if the
+ * exemplars do not all have the same classification.
+ * 
+ * Underlyingly, each label is represented by an integer, with each bit
+ * representing one feature. 0 represents a match, and 1 a mismatch. This allows
+ * for quick processing later on via a boolean lattice (see {@link Supracontext}
+ * ).
+ * 
  */
 public class Subcontext {
-	//store an index of all existing instances of Subcontext
+	// store an index of all existing instances of Subcontext
 	private static List<Subcontext> index = new ArrayList<Subcontext>();
-	
+
 	/**
 	 * 
-	 * @param indexLocation Index of the desired Subcontext in the Subcontext index
+	 * @param indexLocation
+	 *            Index of the desired Subcontext in the Subcontext index
 	 * @return Subcontext contained in the index
 	 */
-	public static Subcontext getSubcontext(int indexLocation){
-		assert(indexLocation < index.size());
+	public static Subcontext getSubcontext(int indexLocation) {
+		assert (indexLocation < index.size());
 		return index.get(indexLocation);
 	}
-	
+
 	private List<Exemplar> data;
 	private int outcome;
 	private int label;
-	
+
 	/**
 	 * The location of this instance in {@link #index}
 	 */
 	private int indexLocation;
 
 	/**
-	 * Initializes the subcontext by creating the list to hold the data
+	 * Initializes the subcontext by creating a list to hold the data
 	 * 
 	 * @param l
 	 *            Binary label of the subcontext
@@ -60,7 +84,7 @@ public class Subcontext {
 	public Subcontext(int l) {
 		data = new LinkedList<Exemplar>();
 		label = l;
-		
+
 		index.add(this);
 		indexLocation = index.size() - 1;
 	}
@@ -72,7 +96,7 @@ public class Subcontext {
 	 * 
 	 * @param e
 	 */
-	public void add(Exemplar e) {
+	void add(Exemplar e) {
 		if (data.size() != 0) {
 			if (e.getOutcome() != data.get(0).getOutcome())
 				outcome = AMconstants.NONDETERMINISTIC;
@@ -92,12 +116,12 @@ public class Subcontext {
 	public int getLabel() {
 		return label;
 	}
-	
+
 	/**
 	 * 
 	 * @return the location of this Subcontext in the static Subcontext index
 	 */
-	public int getIndex(){
+	public int getIndex() {
 		return indexLocation;
 	}
 
@@ -106,12 +130,12 @@ public class Subcontext {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
-		sb.append(binaryLabel(data.get(0).size(), label));
+		sb.append(Utils.binaryLabel(data.get(0).size(), label));
 		sb.append('|');
 
-		//we know all of the exemplars must have the same outcome;
-		//otherwise the outcome is nondeterministic
-		if(outcome == AMconstants.NONDETERMINISTIC)
+		// we know all of the exemplars must have the same outcome;
+		// otherwise the outcome is nondeterministic
+		if (outcome == AMconstants.NONDETERMINISTIC)
 			sb.append(AMconstants.NONDETERMINISTIC_STRING);
 		else
 			sb.append(data.get(0).getStringOutcome());
@@ -131,28 +155,7 @@ public class Subcontext {
 	/**
 	 * @return list of Exemplars contained in this subcontext
 	 */
-	public List<Exemplar> getData() {
+	public List<Exemplar> getExemplars() {
 		return data;
-	}
-
-	/**
-	 * 
-	 * @param card
-	 *            Number of features in the subcontext
-	 * @param label
-	 *            Integer label for the subcontext
-	 * @return String representation of binary label, with zeros padded in the
-	 *         front
-	 */
-	public static String binaryLabel(int card, int label) {
-		StringBuilder sb = new StringBuilder();
-		String binary = Integer.toBinaryString(label);
-
-		int diff = card - binary.length();
-		for (int i = 0; i < diff; i++)
-			sb.append('0');
-
-		sb.append(binary);
-		return sb.toString();
 	}
 }
