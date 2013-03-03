@@ -46,7 +46,6 @@ import weka.core.TechnicalInformation.Type;
 import weka.core.TechnicalInformationHandler;
 import weka.core.Utils;
 
-// TODO: Auto-generated Javadoc
 /**
  * <!-- globalinfo-start --> * Implements the Analogical Modeling algorith,
  * invented by Royall Skousen. Analogical modeling is an instance-based
@@ -138,7 +137,7 @@ import weka.core.Utils;
  */
 public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		implements TechnicalInformationHandler, UpdateableClassifier,
-		Summarizable{
+		Summarizable {
 
 	/** The training instances used for classification. */
 	private Instances trainingInstances;
@@ -151,6 +150,48 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1212462913157286103L;
+
+	private boolean parallelFlag = Boolean.parseBoolean(System.getProperty("am.parallel"));
+
+	/**
+	 * This method is where all of the action happens! Given test item, it uses
+	 * existing exemplars to assign outcome probabilities to it.
+	 * 
+	 * @param testItem
+	 *            Item to make context base on
+	 * @return Analogical set which holds results of the classification for the
+	 *         given item
+	 */
+	private AnalogicalSet classify(Exemplar testItem) {
+		if (getDebug())
+			System.out.println("Classifying: " + testItem);
+
+		if (parallelFlag) {
+			SubcontextList subList = new SubcontextList(testItem,
+					trainingExemplars, trainingInstances.numAttributes() - 1);
+			DistributedLattice distLattice = new DistributedLattice(subList);
+			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem,
+					m_linearCount);
+		}
+
+		// 3 steps to assigning outcome probabilities:
+		// 1. Place each data item in a subcontext
+		SubcontextList subList = new SubcontextList(testItem,
+				trainingExemplars, trainingInstances.numAttributes() - 1);// TODO:debug
+		if (getDebug())
+			System.out.println("Subcontexts: " + subList);
+
+		// 2. Place subcontexts into the supracontextual lattice
+		Lattice lattice = new Lattice(testItem.size(), subList);
+		if (getDebug())
+			System.out.println("Lattice: " + lattice);
+
+		// 3. pointers in homogeneous supracontexts are used to give the
+		// analogical set and predicted outcome.
+		as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
+				m_linearCount);
+		return as;
+	}
 
 	// ////OPTION STORAGE VARIABLES
 	/**
@@ -227,7 +268,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *         values with other data
 	 */
 	public SelectedTag getMissingDataCompare() {
-		return new SelectedTag(AMconstants.missingDataCompare.ordinal(), TAGS_MISSING);
+		return new SelectedTag(AMconstants.missingDataCompare.ordinal(),
+				TAGS_MISSING);
 	}
 
 	/**
@@ -239,7 +281,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 */
 	public void setMissingDataCompare(SelectedTag newMode) {
 		if (newMode.getTags() == TAGS_MISSING) {
-			AMconstants.missingDataCompare = MissingDataCompare.getElement(newMode);
+			AMconstants.missingDataCompare = MissingDataCompare
+					.getElement(newMode);
 		}
 	}
 
@@ -253,14 +296,15 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * Global info.
+	 * Returns basic human readable information about the classifier, including
+	 * references.
 	 * 
 	 * @return General information and references about the Analogical Modeling
 	 *         classifier
 	 */
 	public String globalInfo() {
 		StringBuilder info = new StringBuilder();
-		info.append("Implements the Analogical Modeling algorith, invented by Royall Skousen. "
+		info.append("Implements the Analogical Modeling algorithm, invented by Royall Skousen. "
 				+ "Analogical modeling is an instance-based algorithm designed to model "
 				+ "human behavior."
 				+ "For more information, see the following references:\n\n");
@@ -268,17 +312,19 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		return info.toString();
 	}
 
-	/**
-	 * Returns the revision string.
-	 * 
-	 * @return the revision
-	 */
-	@Override
-	public String getRevision() {
-		return RevisionUtils.extract("$Revision: 8034 $");
-	}
+	// /**
+	// * Returns the revision string.
+	// *
+	// * @return the revision
+	// */
+	// @Override
+	// public String getRevision() {
+	// return RevisionUtils.extract("$Revision: 8034 $");
+	// }
 
 	/**
+	 * Lists the options available for this classifier.
+	 * 
 	 * @see weka.classifiers.AbstractClassifier#listOptions()
 	 * @return {@inheritDoc}
 	 */
@@ -320,6 +366,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
+	 * Returns the options currently set.
+	 * 
 	 * @see weka.classifiers.AbstractClassifier#getOptions()
 	 * @return {@inheritDoc}
 	 */
@@ -396,7 +444,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * Analogical Modeling can handle only nominal class attributes. Missing
-	 * classes are also handled.
+	 * classes are handled, too, although you must specify how to handle them
+	 * (see {@link #setOptions}).
 	 * 
 	 * @return {@inheritDoc}
 	 */
@@ -487,6 +536,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
+	 * This is used to build the classifier; it specifies the capabilities of
+	 * the classifier and loads in examplars to be used for prediction. No
+	 * actual analysis happens here because AM is a lazy classifier.
+	 * 
 	 * @see weka.classifiers.Classifier#buildClassifier(weka.core.Instances)
 	 */
 	@Override
@@ -516,6 +569,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
+	 * This is used to add more information to the classifier.
+	 * 
 	 * @see weka.classifiers.UpdateableClassifier#updateClassifier(weka.core.Instance)
 	 */
 	@Override
@@ -530,7 +585,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Added instance: " + instance);
 	}
-
 
 	/**
 	 * @see weka.classifiers.AbstractClassifier#distributionForInstance(weka.core.Instance)
@@ -585,41 +639,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		return as;
 	}
 
-	private boolean parallelFlag = true;
-	/**
-	 * 
-	 * @param testItem
-	 *            Item to make context base on
-	 * @return Analogical set which holds results of the classification for the
-	 *         given item
-	 */
-	private AnalogicalSet classify(Exemplar testItem) {
-		if (getDebug())
-			System.out.println("Classifying: " + testItem);
-
-		if (parallelFlag) {
-			SubcontextList subList = new SubcontextList(testItem, trainingExemplars, trainingInstances.numAttributes() - 1);
-			DistributedLattice distLattice = new DistributedLattice(subList);
-			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem, m_linearCount);
-		}
-
-		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(testItem,
-				trainingExemplars, trainingInstances.numAttributes() - 1);// TODO:debug
-		// statement
-		if (getDebug())
-			System.out.println("Subcontexts: " + subList);
-		// 2. Place subcontexts into the supracontextual lattice
-		Lattice lattice = new Lattice(testItem.size(), subList);
-		if (getDebug())
-			System.out.println("Lattice: " + lattice);
-		// 3. pointers in homogeneous supracontexts are used to give the
-		// analogical set and predicted outcome.
-		as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
-				m_linearCount);
-		return as;
-	}
-
 	@Override
 	public String toSummaryString() {
 		return "Analogical Modeling module (2012) by Nathan Glenn";
@@ -633,7 +652,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Analogical Modeling Classifier (2012 Nathan Glenn)\n");
-		sb.append("Training instances: " + trainingExemplars.size() + "\n");
+		if (trainingExemplars != null)
+			sb.append("Training instances: " + trainingExemplars.size() + "\n");
 		return sb.toString();
 	}
 

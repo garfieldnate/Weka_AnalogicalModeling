@@ -1,0 +1,14 @@
+
+Current Task:
+- Improve all documentation!
+    - make it readable to new people
+
+Todo on current task:
+- follow line of execution all the way through and simplify/clarify documentation
+- make sure exemplar size constraint is clear
+- create a vocabulary list
+- write a high-level explanation of AM
+
+Engineering Tasks
+- Add (unit) tests
+- Finish parallel implementation

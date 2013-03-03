@@ -22,7 +22,11 @@ import java.util.List;
 import weka.classifiers.lazy.AM.data.Exemplar;
 
 /**
- * Manages the list of subcontexts
+ * Creating subcontexts is a necessary step in classifying exemplars with
+ * analogical modeling. Each exemplar with a known outcome is assigned a
+ * subcontext by the exemplar being classified. This class efficiently creates
+ * and manages a list of subcontexts created given a set of known exemplars and
+ * an exemplar to be classified.
  * 
  * @author Nate Glenn
  * 
@@ -50,7 +54,6 @@ public class SubcontextList implements Iterable<Subcontext> {
 	public int getCardinality() {
 		return cardinality;
 	}
-	
 
 	/**
 	 * If you use this constructor, you will have to call the add method
@@ -67,26 +70,25 @@ public class SubcontextList implements Iterable<Subcontext> {
 	}
 
 	/**
-	 * This is the easiest to use constructor. Using the parameters, it makes
-	 * all of the subcontexts and fills them with the exemplars that they
-	 * contain.
+	 * This is the easiest to use constructor. Makes and stores a list of all
+	 * the subcontexts contained in data.
 	 * 
 	 * @param testEx
-	 *            Exemplar which is being classified and assigns contexts
+	 *            Exemplar which is being classified
 	 * @param data
-	 *            to add to subcontexts
-	 * @param card
+	 *            Exemplars used to classify testEx
+	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Exemplar testEx, List<Exemplar> data, int card) {
-		cardinality = card;
+	public SubcontextList(Exemplar testEx, List<Exemplar> data, int cardinality) {
+		this.cardinality = cardinality;
 		test = testEx;
 		for (Exemplar se : data)
 			add(se);
 	}
 
 	/**
-	 * Adds the exemplar to the context with the same label. This was
+	 * Adds the exemplar to the context with the given label. This was
 	 * implemented for use by {@link SubsubcontextList}, which finds it useful
 	 * for splitting lattices.
 	 * 
@@ -102,7 +104,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	}
 
 	/**
-	 * Adds the exemplars to the correct subcontext
+	 * Adds the exemplars to the correct subcontexts
 	 * 
 	 * @param data
 	 *            Exemplars to add
@@ -123,8 +125,6 @@ public class SubcontextList implements Iterable<Subcontext> {
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
 	}
-
-
 
 	@Override
 	public String toString() {

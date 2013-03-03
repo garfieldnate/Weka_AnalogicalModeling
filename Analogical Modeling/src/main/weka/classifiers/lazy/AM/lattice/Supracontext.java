@@ -145,6 +145,11 @@ public class Supracontext {
 		return data.length != 0;
 	}
 
+	/**
+	 * 
+	 * @return the number of supracontexts sharing this list of subcontexts, or the number
+		of arrows pointing to it from the supracontextual lattice
+	 */
 	public int getCount() {
 		return count;
 	}

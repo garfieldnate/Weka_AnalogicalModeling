@@ -1,3 +1,11 @@
+High level summary:
+	Create subcontexts from exemplars
+	Fill supracontexts
+	Calculate pointers to each exemplar
+		number of exemplars in entire supracontext
+	Sum for each outcome, divide by total
+
+
 Item:
    	array of features; input as string, convert to ints
    	converted to ints for quicker comparison
@@ -76,17 +84,17 @@ Classifier
 		Generate using gray code.
 		Each is called a supracontext.
 		 n = feature length.
-	Using a test item, assign supracontextual labels to each data item.
+	Using a test item, assign labels to each data item.
 		0 means same, 1 means different.
-		data items are called subcontexts.
-	Place the item in all subsets of its supracontextual label.
-		Use gray codes
+	Place data items into subcontexts
+	Place the subcontexts in the supracontextual lattice
+		Use gray codes to iterate children of supracontext
 	List homogeneous contexts
 		hetereogeneous if contains 2+ outcomes in its subcontexts
 		otherwise homogeneous
 	Data items in homogeneous contexts are the analogical set.
 	Calculate number of pointers for each item
-		sum of number of items in all homogeneous supracontexts containing the item
+		sum of number of subcontexts in all homogeneous supracontexts containing the item
 	use numbers to predict outcome and determine analogical effect of item.
 		
 Licensing:

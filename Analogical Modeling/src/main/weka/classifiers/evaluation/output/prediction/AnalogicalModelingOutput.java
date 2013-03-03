@@ -138,7 +138,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			int index) throws Exception {
 		if (!(classifier instanceof AnalogicalModeling))
 			throw new IllegalArgumentException(
-					"This output can only be used with the Analogical Modeling classifier");
+					"You are using " + classifier.getClass() + "This output can only be used with the Analogical Modeling classifier");
 
 		AnalogicalModeling am = (AnalogicalModeling) classifier;
 		Instance withMissing = (Instance) inst.copy();
@@ -412,5 +412,12 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 	 */
 	public String analogicalSetTipText() {
 		return "Whether to print analogical sets";
+	}
+
+	@Override
+	protected void doPrintClassification(double[] arg0, Instance arg1, int arg2)
+			throws Exception {
+		// TODO Auto-generated method stub
+		append("TODO: doPrintClassification()");
 	}
 }

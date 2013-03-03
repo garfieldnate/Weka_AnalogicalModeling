@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Weka"/>
+	<classpathentry kind="lib" path="lib/weka-tests.jar" sourcepath="C:/Users/Nate Glenn/Desktop/wekaSrc/weka/src/test/java/weka"/>
+	<classpathentry kind="lib" path="lib/weka.jar" sourcepath="C:/Users/Nate Glenn/Desktop/wekaSrc/weka/src/main/java/weka"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
