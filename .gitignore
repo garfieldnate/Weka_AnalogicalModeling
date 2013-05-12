@@ -1,2 +1,3 @@
 #ignore compiled Java classes
-*.class
+**/*.class
+Analogical Modeling/bin/*
