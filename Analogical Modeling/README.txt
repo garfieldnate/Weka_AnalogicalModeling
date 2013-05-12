@@ -1,0 +1,2 @@
+Run AnalogicalModeling with these args: -t data/ch3example.arff -x 5
+Or run weka.gui.GUIChooser, and use AnalogicalModeling to classify the ch3example data. Even better, use the Analogical Modeling output class.

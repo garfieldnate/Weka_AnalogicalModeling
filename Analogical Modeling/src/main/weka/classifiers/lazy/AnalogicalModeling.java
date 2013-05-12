@@ -679,6 +679,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		}
 	}
 
+	//try with -t data/ch3example.arff -x 5
 	/**
 	 * Main method for testing this class.
 	 * 
