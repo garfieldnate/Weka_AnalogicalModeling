@@ -1,2 +1,4 @@
 #ignore compiled Java classes
 *.class
+Analogical Modeling/bin/
+Analogical Modeling/wekarefs/
