@@ -23,7 +23,7 @@ import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.SubsetIterator;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
-import weka.classifiers.lazy.AM.lattice.Utils.Mask;
+import weka.classifiers.lazy.AM.lattice.Labeler.Mask;
 
 /**
  * Same as a normal lattice, except no supracontext is deemed heterogeneous and

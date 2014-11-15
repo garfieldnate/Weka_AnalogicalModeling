@@ -25,6 +25,9 @@ import weka.classifiers.lazy.AM.data.Exemplar;
  * This class creates and manages a list of {@link Subcontext subcontexts}
  * from a set of previously classified exemplars and an exemplar to be classified.
  * 
+ * Create a list of subcontexts by calling {@link #SubcontextList(Exemplar, List, int)}.
+ * Iterate through the created subcontexts using the {@link Iterator} returned by {@link #iterator()}.
+ * 
  * @author Nate Glenn
  * 
  */
@@ -117,7 +120,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 */
 	void add(Exemplar data) {
-		int label = Utils.getContextLabel(data, test);
+		int label = Labeler.getContextLabel(data, test);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);

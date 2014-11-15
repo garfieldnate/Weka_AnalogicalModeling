@@ -32,7 +32,7 @@ import weka.classifiers.lazy.AM.data.Exemplar;
  * comparing it to the exemplar being classified. The label is actual a vector
  * of boolean values, each representing whether the exemplars have the same
  * value for a given feature. The label is currently assigned by
- * {@link Utils#getContextLabel}.
+ * {@link Labeler#getContextLabel}.
  * 
  * For example, if we were classifying an exemplar <a, b, c>, and we had three
  * already classified exemplars, <x, y, c>, <w, m, c> and <a, b, z>, the labels
@@ -125,12 +125,19 @@ public class Subcontext {
 		return indexLocation;
 	}
 
+	/**
+	 * @return list of Exemplars contained in this subcontext
+	 */
+	public List<Exemplar> getExemplars() {
+		return data;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
-		sb.append(Utils.binaryLabel(data.get(0).size(), label));
+		sb.append(Labeler.binaryLabel(data.get(0).size(), label));
 		sb.append('|');
 
 		// we know all of the exemplars must have the same outcome;
@@ -150,12 +157,5 @@ public class Subcontext {
 		sb.append(')');
 
 		return sb.toString();
-	}
-
-	/**
-	 * @return list of Exemplars contained in this subcontext
-	 */
-	public List<Exemplar> getExemplars() {
-		return data;
 	}
 }

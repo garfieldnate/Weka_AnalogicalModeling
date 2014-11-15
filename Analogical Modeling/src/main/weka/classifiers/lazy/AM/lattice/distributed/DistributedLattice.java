@@ -26,8 +26,8 @@ import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
-import weka.classifiers.lazy.AM.lattice.Utils;
-import weka.classifiers.lazy.AM.lattice.Utils.Mask;
+import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.Labeler.Mask;
 import weka.classifiers.lazy.AM.lattice.distributed.HeterogeneousLattice;
 
 /**
@@ -61,7 +61,7 @@ public class DistributedLattice {
 	 */
 	public DistributedLattice(SubcontextList subList) {
 		// Collection<SubcontextList> sublistList = sslist.getSublistList();
-		Mask[] masks = Utils.getMasks(subList.getCardinality());
+		Mask[] masks = Labeler.getMasks(subList.getCardinality());
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
 		for (int i = 0; i < masks.length; i++) {
 			// TODO: spawn task for simultaneous filling

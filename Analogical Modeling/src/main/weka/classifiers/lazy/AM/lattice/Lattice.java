@@ -21,16 +21,18 @@ import java.util.List;
 
 /**
  * This class holds the supracontextual lattice and does the work of filling
- * itself during classification. The supractontextual lattice is a boolean
- * algebra which models supra- and subcontexts for the AM algorithm. Using
- * boolean algebra allows efficient computation of these as well as traversal of
- * all subcontexts within a supracontext.
+ * itself during classification.
+ * 
+ * This class represents the supracontextual lattice. The supractontextual
+ * lattice is a boolean algebra which models supra- and subcontexts for the AM
+ * algorithm. Using boolean algebra allows efficient computation of these as
+ * well as traversal of all subcontexts within a supracontext.
  * 
  * @author Nate Glenn
  * 
  */
 public class Lattice {
-	
+
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
