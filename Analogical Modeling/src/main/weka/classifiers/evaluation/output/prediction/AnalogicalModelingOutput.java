@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AnalogicalModeling;
+import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.core.Instance;
@@ -133,12 +134,21 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		// TODO: print something?
 	}
 
+	//TODO use platform newline
+	
+	/**
+	 * Make sure to call {@link #setHeader(weka.core.Instances) setHeader}
+	 * first, or this will throw a NullPointerException. All decimals are
+	 * rounded to five decimal places.
+	 */
 	@Override
 	protected void doPrintClassification(Classifier classifier, Instance inst,
 			int index) throws Exception {
 		if (!(classifier instanceof AnalogicalModeling))
 			throw new IllegalArgumentException(
-					"You are using " + classifier.getClass() + "This output can only be used with the Analogical Modeling classifier");
+					"You are using "
+							+ classifier.getClass()
+							+ "This output can only be used with the Analogical Modeling classifier");
 
 		AnalogicalModeling am = (AnalogicalModeling) classifier;
 		Instance withMissing = (Instance) inst.copy();
@@ -163,7 +173,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			append("Class probability distribution: \n");
 			for (int i = 0; i < distribution.length; i++) {
 				append(m_Header.classAttribute().value(i) + ": "
-						+ distribution[i] + "\n");
+						+ String.format(AMconstants.DECIMAL_FORMAT, distribution[i]) + "\n");
 			}
 		}
 
@@ -175,18 +185,25 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			append("Analogical Set:\n");
 			for (Entry<Exemplar, Integer> e : as.getExemplarPointers()
 					.entrySet())
-				append(e.getKey() + " : " + e.getValue() + " (" + e.getValue()
-						/ totalPointers + ")\n");
+				append(e.getKey()
+						+ " : "
+						+ e.getValue()
+						+ " ("
+						+ String.format(AMconstants.DECIMAL_FORMAT, e.getValue()
+								/ totalPointers) + ")\n");
 			// append a list of the class distribution with pointers and
 			// probabilities
 			append("Class totals:\n");
 			for (Entry<Integer, Integer> e : as.getClassPointers().entrySet())
-				append(m_Header.classAttribute().value(e.getKey()) + " : "
-						+ e.getValue() + " (" + e.getValue() / totalPointers
-						+ ")\n");
+				append(m_Header.classAttribute().value(e.getKey())
+						+ " : "
+						+ e.getValue()
+						+ " ("
+						+ String.format(AMconstants.DECIMAL_FORMAT, e.getValue()
+								/ totalPointers) + ")\n");
 		}
-		if(getGangs())
-			;//TODO:print gangs
+		if (getGangs())
+			;// TODO:print gangs
 	}
 
 	@Override

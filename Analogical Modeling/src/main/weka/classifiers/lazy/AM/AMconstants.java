@@ -80,4 +80,6 @@ public class AMconstants {
 	 */
 	public static MissingDataCompare missingDataCompare = MissingDataCompare.VARIABLE;
 
+	//used for printing all decimal numbers
+	public static final String DECIMAL_FORMAT = "%.5f";
 }
