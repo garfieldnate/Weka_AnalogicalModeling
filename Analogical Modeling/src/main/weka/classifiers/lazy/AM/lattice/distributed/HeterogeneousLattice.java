@@ -103,12 +103,12 @@ public class HeterogeneousLattice {
 	 *            to use in assigning labels
 	 */
 	public HeterogeneousLattice(SubcontextList subList, LabelMask labelMask) {
-		init(labelMask.getLength());
+		init(labelMask.getCardinality());
 
 		// Fill the lattice with all of the subcontexts, masking labels
 		for (Subcontext sub : subList) {
 			index++;
-			insert(sub, sub.getLabel() | labelMask.getMask());
+			insert(sub, labelMask.mask(sub.getLabel()));
 		}
 	}
 

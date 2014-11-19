@@ -7,24 +7,18 @@ package weka.classifiers.lazy.AM.lattice;
 public class LabelMask {
 
 	private int mask;
-
-	/**
-	 * @return the integer mask
-	 */
-	public int getMask() {
-		return mask;
-	}
+	private int start;
 
 	/**
 	 * The number of attributes to be compared
 	 */
-	private int length;
+	private int cardinality;
 
 	/**
 	 * @return The cardinality of the integer mask
 	 */
-	public int getLength() {
-		return length;
+	public int getCardinality() {
+		return cardinality;
 	}
 
 	/**
@@ -34,11 +28,20 @@ public class LabelMask {
 	 *            The last feature index to be considered
 	 */
 	LabelMask(int start, int end) {
-		length = end - start + 1;
+		if(start < 0)
+			throw new IllegalArgumentException("start should be non-negative");
+		if(end < start)
+			throw new IllegalArgumentException("end should be greater than or equal to start");
+		
+		this.start = start;
+		cardinality = end - start + 1;
 		mask = 0;
 		for (int i = start; i <= end; i++)
-			mask |= 1 << i;
-		// TODO: test with print statement
+			mask |= (1 << i);
+	}
+
+	public int mask(int label) {
+		return (mask & label) >> start;
 	}
 
 }
