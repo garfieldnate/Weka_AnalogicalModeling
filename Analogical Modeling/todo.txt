@@ -21,3 +21,6 @@ Later TODO:
 Engineering Tasks
 - Add (unit) tests
 - Finish parallel implementation
+
+Thoughts:
+- is there a connection between k-d trees and AM's splitting into sub contexts?

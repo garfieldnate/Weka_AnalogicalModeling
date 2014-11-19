@@ -90,7 +90,7 @@ public class Exemplar implements Serializable {
 	 * 
 	 * @return Size of the feature vector, not including the outcome
 	 */
-	public int size() {
+	public int cardinality() {
 		return cardinality;
 	}
 

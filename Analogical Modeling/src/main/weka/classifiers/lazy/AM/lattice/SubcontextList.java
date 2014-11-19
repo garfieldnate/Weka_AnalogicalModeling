@@ -35,24 +35,14 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 	private HashMap<Integer, Subcontext> labelToSubcontext = new HashMap<Integer, Subcontext>();
 
-	/**
-	 * Exemplar which is being classified and assigns contexts
-	 */
-	Exemplar test;
-
-	/**
-	 * Defines how missing data will be treated. TODO:move to Options
-	 */
-	MissingDataCompare mdc = MissingDataCompare.MATCH;
-
-	private int cardinality;
-
+	private Labeler labeler;
+	
 	/**
 	 * 
 	 * @return the number of attributes used to predict an outcome
 	 */
 	public int getCardinality() {
-		return cardinality;
+		return labeler.getCardinality();
 	}
 
 	/**
@@ -64,9 +54,8 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param the
 	 *            number of attributes being used to classify the instance
 	 */
-	SubcontextList(Exemplar testEx, int card) {
-		test = testEx;
-		cardinality = card;
+	SubcontextList(Labeler labeler) {
+		this.labeler = labeler;
 	}
 
 	/**
@@ -80,24 +69,19 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Exemplar testEx, List<Exemplar> data, int cardinality) {
-		this.cardinality = cardinality;
-		test = testEx;
+	public SubcontextList(Labeler labeler, List<Exemplar> data) {
+		this.labeler = labeler;
 		for (Exemplar se : data)
 			add(se);
 	}
 
 	/**
-	 * Adds the exemplar to the context with the given label. This was
-	 * implemented for use by {@link SubsubcontextList}, which finds it useful
-	 * for splitting lattices.
+	 * Adds the exemplar to the correct subcontext.
 	 * 
 	 * @param data
-	 *            Exemplar to be added
-	 * @param label
-	 *            Integer label for the exemplar
 	 */
-	void add(Exemplar data, int label) {
+	void add(Exemplar data) {
+		int label = labeler.getContextLabel(data);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
@@ -112,18 +96,6 @@ public class SubcontextList implements Iterable<Subcontext> {
 	void addAll(Iterable<Exemplar> data) {
 		for (Exemplar d : data)
 			add(d);
-	}
-
-	/**
-	 * Adds the exemplar to the correct subcontext.
-	 * 
-	 * @param data
-	 */
-	void add(Exemplar data) {
-		int label = Labeler.getContextLabel(data, test);
-		if (!labelToSubcontext.containsKey(label))
-			labelToSubcontext.put(label, new Subcontext(label));
-		labelToSubcontext.get(label).add(data);
 	}
 
 	@Override

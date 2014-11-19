@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.lattice.LabelMask;
+import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
-import weka.classifiers.lazy.AM.lattice.Labeler;
-import weka.classifiers.lazy.AM.lattice.Labeler.Mask;
-import weka.classifiers.lazy.AM.lattice.distributed.HeterogeneousLattice;
 
 /**
  * This lass manages several smaller, heterogeneous lattices.
@@ -60,9 +59,10 @@ public class DistributedLattice {
 	 *            list of Subcontexts to add to the lattice
 	 */
 	public DistributedLattice(SubcontextList subList) {
-		// Collection<SubcontextList> sublistList = sslist.getSublistList();
-		Mask[] masks = Labeler.getMasks(subList.getCardinality());
+		LabelMask[] masks = Labeler.getMasks(AMconstants.NUM_LATTICES,
+				subList.getCardinality());
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
+
 		for (int i = 0; i < masks.length; i++) {
 			// TODO: spawn task for simultaneous filling
 			hlattices.add(new HeterogeneousLattice(subList, masks[i]));

@@ -29,9 +29,10 @@ public class AMconstants {
 	 * The number of lattices to use during distributional
 	 * processing
 	 */
-	public static int LATTICE_NUM = 4;
+	public static final int NUM_LATTICES = 4;
 	
-	public static int LATTICE_SIZE_MAX = 4;
+	//TODO: perhaps use this to create a dynamic number of lattices of maximum cardinality 4?
+//	public static int LATTICE_SIZE_MAX = 4;
 
 	// Missing value handling modes
 	/**
@@ -74,11 +75,6 @@ public class AMconstants {
 	 */
 	public static final int MISSING = -3;
 	public static final String MISSING_STRING = "?";
-
-	/**
-	 * This is the default strategy for handling missing data.
-	 */
-	public static MissingDataCompare missingDataCompare = MissingDataCompare.VARIABLE;
 
 	//used for printing all decimal numbers
 	public static final String DECIMAL_FORMAT = "%.5f";

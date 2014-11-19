@@ -25,9 +25,9 @@ import java.util.Vector;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
-import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.data.Exemplar;
+import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
@@ -37,7 +37,6 @@ import weka.core.Capabilities.Capability;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
-import weka.core.RevisionUtils;
 import weka.core.SelectedTag;
 import weka.core.Summarizable;
 import weka.core.Tag;
@@ -151,7 +150,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1212462913157286103L;
 
-	private boolean parallelFlag = Boolean.parseBoolean(System.getProperty("am.parallel"));
+	private boolean parallelFlag = Boolean.parseBoolean(System
+			.getProperty("am.parallel"));
+
+	private MissingDataCompare mdc = MissingDataCompare.MATCH;
 
 	/**
 	 * This method is where all of the action happens! Given test item, it uses
@@ -166,23 +168,27 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
+		Labeler labeler = new Labeler(mdc, testItem,
+				trainingInstances.numAttributes() - 1);
+
 		if (parallelFlag) {
-			SubcontextList subList = new SubcontextList(testItem,
-					trainingExemplars, trainingInstances.numAttributes() - 1);
+			SubcontextList subList = new SubcontextList(labeler,
+					trainingExemplars);
+			// Lattice lattice = new Lattice(subList.getCardinality(), subList);
 			DistributedLattice distLattice = new DistributedLattice(subList);
+			// as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
 			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem,
 					m_linearCount);
 		}
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(testItem,
-				trainingExemplars, trainingInstances.numAttributes() - 1);// TODO:debug
+		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);// TODO:debug
 		if (getDebug())
 			System.out.println("Subcontexts: " + subList);
 
 		// 2. Place subcontexts into the supracontextual lattice
-		Lattice lattice = new Lattice(testItem.size(), subList);
+		Lattice lattice = new Lattice(testItem.cardinality(), subList);
 		if (getDebug())
 			System.out.println("Lattice: " + lattice);
 
@@ -268,7 +274,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *         values with other data
 	 */
 	public SelectedTag getMissingDataCompare() {
-		return new SelectedTag(AMconstants.missingDataCompare.ordinal(),
+		return new SelectedTag(mdc.ordinal(),
 				TAGS_MISSING);
 	}
 
@@ -281,8 +287,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 */
 	public void setMissingDataCompare(SelectedTag newMode) {
 		if (newMode.getTags() == TAGS_MISSING) {
-			AMconstants.missingDataCompare = MissingDataCompare
-					.getElement(newMode);
+			mdc = MissingDataCompare.getElement(newMode);
 		}
 	}
 
@@ -379,7 +384,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getRemoveTestExemplar())
 			options.add("-R");
 		options.add("-M");
-		options.add(AMconstants.missingDataCompare.getOptionString());
+		options.add(mdc.getOptionString());
 		// add all options of the superclass
 		options.addAll(Arrays.asList(super.getOptions()));
 		return options.toArray(new String[options.size()]);
@@ -435,7 +440,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			if (optionString.length() != 0)
 				for (MissingDataCompare mdc : MissingDataCompare.values())
 					if (mdc.getOptionString().equals(optionString))
-						AMconstants.missingDataCompare = mdc;
+						this.mdc = mdc;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -679,7 +684,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		}
 	}
 
-	//try with -t data/ch3example.arff -x 5
+	// try with -t data/ch3example.arff -x 5
 	/**
 	 * Main method for testing this class.
 	 * 

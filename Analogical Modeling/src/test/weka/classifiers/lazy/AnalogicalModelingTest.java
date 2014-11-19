@@ -42,7 +42,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		return new AnalogicalModeling();
 	}
 	
-	private final double DELTA = 1e-10;
+	private static final double DELTA = 1e-10;
 	@Test
 	public void testChapter3data() throws Exception {
 		DataSource source = new DataSource("data/ch3example.arff");

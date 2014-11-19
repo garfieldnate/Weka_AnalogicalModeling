@@ -19,6 +19,7 @@ import weka.core.SelectedTag;
 import weka.core.Tag;
 
 //TODO: 0 being a match and 1 being a mismatch is a leaked abstraction; change these to booleans.
+//TODO: get rid of Weka stuff in here; it's a leak.
 public enum MissingDataCompare {
 	/**
 	 * Always returns 0, considering the missing data to match anything

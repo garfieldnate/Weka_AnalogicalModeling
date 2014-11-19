@@ -19,11 +19,11 @@ package weka.classifiers.lazy.AM.lattice.distributed;
 import java.util.LinkedList;
 import java.util.List;
 
+import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.SubsetIterator;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
-import weka.classifiers.lazy.AM.lattice.Labeler.Mask;
 
 /**
  * Same as a normal lattice, except no supracontext is deemed heterogeneous and
@@ -102,7 +102,7 @@ public class HeterogeneousLattice {
 	 * @param labelMask
 	 *            to use in assigning labels
 	 */
-	public HeterogeneousLattice(SubcontextList subList, Mask labelMask) {
+	public HeterogeneousLattice(SubcontextList subList, LabelMask labelMask) {
 		init(labelMask.getLength());
 
 		// Fill the lattice with all of the subcontexts, masking labels

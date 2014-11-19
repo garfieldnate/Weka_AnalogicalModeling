@@ -137,7 +137,7 @@ public class Subcontext {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
-		sb.append(Labeler.binaryLabel(data.get(0).size(), label));
+		sb.append(Utils.labelToString(data.get(0).cardinality(), label));
 		sb.append('|');
 
 		// we know all of the exemplars must have the same outcome;
