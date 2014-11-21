@@ -62,14 +62,11 @@ public class Labeler {
 					|| dataFeats[i] == AMconstants.MISSING)
 				label |= (mdc.outcome(testFeats[i], dataFeats[i]));
 			else if (testFeats[i] != dataFeats[i]) {
-				// use length-1-i instead of i so that it's easier to understand
-				// how to match a
-				// binary label to an exemplar (using just i produces mirror
-				// images)
-				label |= (1 << i);// length - 1 - i
+				// use length-1-i instead of i so that in binary the labels show
+				// left to right, first to last feature.
+				label |= (1 << (length - 1 - i));
 			}
 		}
-		// System.out.println(Integer.toBinaryString(label));
 		return label;
 	}
 
@@ -85,54 +82,15 @@ public class Labeler {
 	 * @return A set of masks for splitting labels
 	 */
 	public static LabelMask[] getMasks(int numMasks, int cardinality) {
-		int[] splitPoints = getSplitPoints(numMasks, cardinality);
-		// System.out.println("split into: " + Arrays.toString(splitPoints));
-		LabelMask[] masks = new LabelMask[splitPoints.length - 1];
-		masks[0] = new LabelMask(0, splitPoints[1]);
-		for (int i = 1; i < splitPoints.length - 1; i++)
-			masks[i] = new LabelMask(splitPoints[i] + 1, splitPoints[i + 1]);
+		LabelMask[] masks = new LabelMask[numMasks];
+
+		int latticeSize = (int) Math.ceil((double) cardinality / numMasks);
+		int index = 0;
+		for (int i = 0; i < cardinality; i += latticeSize) {
+			masks[index] = new LabelMask(i, Math.min(i + latticeSize - 1,
+					cardinality - 1));
+			index++;
+		}
 		return masks;
 	}
-
-	// /////////////////
-	// PRIVATE METHODS//
-	// /////////////////
-
-	/**
-	 * Sets the boundaries for splitting the exemplars (and then the lattices).
-	 * It does it based on the SPLIT_NUM, which defines the number of lattices
-	 * to use The length of the array will be SPLIT_NUM-1 unlles the cardinality
-	 * of the exemplars is smaller than or equal to SPLIT_NUM, in which case it
-	 * will be 2. If splitPoints = {0,3,7,11}, then that means there will be 3
-	 * lattices, the first using features 0-3, and the last using features 7-11,
-	 * etc. The if the cardinality of the exemplars does not divide evenly by
-	 * SPLIT_NUM, then the last lattice will always be the one with less
-	 * exemplars.
-	 * 
-	 * TODO: parameterize splitting strategy for experimentation
-	 * 
-	 * @param cardinality
-	 *            the number of features in the exemplar
-	 */
-	private static int[] getSplitPoints(int numLattices, int cardinality) {
-		int[] splitPoints;
-		if (numLattices >= cardinality) {
-			System.out.println("No split");
-			splitPoints = new int[] { cardinality - 1 };
-			// return splitPoints;
-		}
-		int splitTimes = (int) Math.ceil(cardinality / numLattices) + 1;
-		// need extra space for ending index
-		splitPoints = new int[splitTimes + 1];
-		// the first index is 0 by default
-		splitPoints[0] = 0;
-		for (int i = 1, splitPoint = numLattices - 1; i <= splitTimes; i++, splitPoint += numLattices) {
-			if (splitPoint > cardinality - 1) {
-				splitPoints[i] = cardinality - 1;
-			} else
-				splitPoints[i] = splitPoint;
-		}
-		return splitPoints;
-	}
-
 }

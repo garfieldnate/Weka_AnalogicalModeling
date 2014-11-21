@@ -27,13 +27,13 @@ public class LabelMaskTest {
 	@Test
 	public void testGetLength() {
 		LabelMask mask = new LabelMask(3, 3);
-		assertEquals(1, mask.getLength());
+		assertEquals(1, mask.getCardinality());
 		
 		mask = new LabelMask(3, 4);
-		assertEquals(2, mask.getLength());
+		assertEquals(2, mask.getCardinality());
 		
 		mask = new LabelMask(0, 10);
-		assertEquals(11, mask.getLength());
+		assertEquals(11, mask.getCardinality());
 	}
 
 	@Test
