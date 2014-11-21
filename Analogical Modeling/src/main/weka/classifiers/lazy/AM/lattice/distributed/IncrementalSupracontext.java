@@ -33,7 +33,7 @@ public class IncrementalSupracontext extends Supracontext{
 	/**
 	 * Outcome of the Exempars contained in this Supracontext
 	 */
-	int outcome;
+	double outcome;
 	
 	/**
 	 * 

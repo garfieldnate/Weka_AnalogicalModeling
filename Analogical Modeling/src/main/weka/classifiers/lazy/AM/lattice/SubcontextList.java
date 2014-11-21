@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import weka.classifiers.lazy.AM.data.Exemplar;
+import weka.core.Instance;
 
 /**
  * This class creates and manages a list of {@link Subcontext subcontexts}
@@ -69,9 +69,9 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Labeler labeler, List<Exemplar> data) {
+	public SubcontextList(Labeler labeler, List<Instance> data) {
 		this.labeler = labeler;
-		for (Exemplar se : data)
+		for (Instance se : data)
 			add(se);
 	}
 
@@ -80,7 +80,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * 
 	 * @param data
 	 */
-	void add(Exemplar data) {
+	void add(Instance data) {
 		int label = labeler.getContextLabel(data);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
@@ -93,8 +93,8 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 *            Exemplars to add
 	 */
-	void addAll(Iterable<Exemplar> data) {
-		for (Exemplar d : data)
+	void addAll(Iterable<Instance> data) {
+		for (Instance d : data)
 			add(d);
 	}
 

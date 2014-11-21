@@ -16,8 +16,8 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
-import weka.classifiers.lazy.AM.AMconstants;
-import weka.classifiers.lazy.AM.data.Exemplar;
+import weka.core.Attribute;
+import weka.core.Instance;
 
 /**
  * This class contains functions for assigning binary labels.
@@ -28,17 +28,15 @@ import weka.classifiers.lazy.AM.data.Exemplar;
 public class Labeler {
 
 	private final MissingDataCompare mdc;
-	private final Exemplar testItem;
-	private int cardinality;
+	private final Instance testItem;
 
-	public Labeler(MissingDataCompare mdc, Exemplar testItem, int card) {
+	public Labeler(MissingDataCompare mdc, Instance instance) {
 		this.mdc = mdc;
-		this.testItem = testItem;
-		cardinality = card;
+		this.testItem = instance;
 	}
 
 	public int getCardinality() {
-		return cardinality;
+		return testItem.numAttributes() - 1;
 	}
 
 	/**
@@ -51,17 +49,16 @@ public class Labeler {
 	 *         exemplar are the same at index i, then the i'th bit will be 1;
 	 *         otherwise it will be 0.
 	 */
-	public int getContextLabel(Exemplar data) {
+	public int getContextLabel(Instance data) {
 		int label = 0;
-		// System.out.println("Data: " + data + "\nWith: " + test);
-		int length = testItem.getFeatures().length;
-		int[] testFeats = testItem.getFeatures();
-		int[] dataFeats = data.getFeatures();
+		int length = getCardinality();
+		Attribute att;
 		for (int i = 0; i < length; i++) {
-			if (testFeats[i] == AMconstants.MISSING
-					|| dataFeats[i] == AMconstants.MISSING)
-				label |= (mdc.outcome(testFeats[i], dataFeats[i]));
-			else if (testFeats[i] != dataFeats[i]) {
+			att = testItem.attribute(i);
+			if (testItem.isMissing(i)
+					|| data.isMissing(i))
+				label |= (mdc.outcome(testItem, data, att));
+			else if (testItem.value(att) != data.value(att)) {
 				// use length-1-i instead of i so that in binary the labels show
 				// left to right, first to last feature.
 				label |= (1 << (length - 1 - i));

@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -21,7 +20,7 @@ public class LabelerTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	private static Instances dataset;
-	private static List<Exemplar> exemplars;
+	private static List<Instance> exemplars;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -48,25 +47,26 @@ public class LabelerTest {
 				// NaN means a missing attribute
 				new double[] { 0, 1, 2, 1, Double.NaN, 1 },
 				new double[] { 0, 1, 2, Double.NaN, 1, 1 } };
-		exemplars = new ArrayList<Exemplar>();
+		exemplars = new ArrayList<>();
 		for (double[] datum : data) {
 			Instance instance = new DenseInstance(6, datum);
 			instance.setDataset(dataset);
-			exemplars.add(new Exemplar(instance));
+			exemplars.add(instance);
 		}
 	}
 
 	@Test
 	public void testGetCardinality() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, null, 4);
-		assertEquals(labeler.getCardinality(), 4);
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, exemplars.get(0));
+		assertEquals(labeler.getCardinality(), 5);
 	}
 
 	@Test
 	public void testGetContextLabel() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(0), 5);
+				exemplars.get(0));
 		assertEquals(0b00000, labeler.getContextLabel(exemplars.get(1)));
+		System.out.println(Integer.toBinaryString(labeler.getContextLabel(exemplars.get(2))));
 		assertEquals(0b10110, labeler.getContextLabel(exemplars.get(2)));
 		assertEquals(0b00011, labeler.getContextLabel(exemplars.get(3)));
 		assertEquals(0b10011, labeler.getContextLabel(exemplars.get(4)));
@@ -76,7 +76,7 @@ public class LabelerTest {
 	@Test
 	public void testGetContextLabelWithMissingData() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(6), 5);
+				exemplars.get(6));
 		//TODO: test missing data labeling
 	}
 

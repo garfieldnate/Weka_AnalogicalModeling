@@ -22,7 +22,7 @@ public class Supracontext {
 	// number representing when this supracontext was created
 	private int index = -1;
 	// Zero means nondeterministic
-	private int outcome;
+	private double outcome;
 	// an array listing the indeces of the contained subcontexts
 	private int[] data;
 	// the number of supracontexts sharing this list of subcontexts, or the
@@ -82,12 +82,12 @@ public class Supracontext {
 		other.setNext(this);
 	}
 
-	public int getOutcome() {
+	public double getOutcome() {
 		return outcome;
 	}
 
-	public void setOutcome(int o) {
-		outcome = o;
+	public void setOutcome(double d) {
+		outcome = d;
 	}
 
 	public Supracontext getNext() {

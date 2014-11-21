@@ -1,25 +1,18 @@
-
-Current Task:
-- Improve all documentation!
-    - make it readable to new people
-
-Todo on current task:
-- follow line of execution all the way through and simplify/clarify documentation
-- make sure exemplar size constraint is clear
-- create a vocabulary list
-    - outcome/class
-    - exemplar
-    - subcontext
-    - supracontext
-    - lattice
-    
-- write a high-level explanation of AM
+Next:
+- Fix incorrect classification, to complete refactor to removing Exemplar
+- finish labeler testing.
 
 Later TODO:
-- put label logic in its own class
+- Implement ignoring unknowns in the test item. Check that that's how it's done in the Perl version.
+- test everything!
+- toString method for Lattice
+- get rid of Exemplar, which does nothing
+- use BitSets for unlimited-size labels
+- use BigIntegers for scoring
+- remove Eclipse stuff and use Gradle
+- make sure the Weka jar isn't in Git 
 
 Engineering Tasks
-- Add (unit) tests
 - Finish parallel implementation
 
 Thoughts:

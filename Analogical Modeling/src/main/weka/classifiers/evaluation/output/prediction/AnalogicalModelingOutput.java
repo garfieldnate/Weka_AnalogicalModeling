@@ -20,14 +20,13 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
-import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.core.Instance;
 import weka.core.Option;
 import weka.core.Utils;
@@ -183,7 +182,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			// their
 			// percentage of the total
 			append("Analogical Set:\n");
-			for (Entry<Exemplar, Integer> e : as.getExemplarPointers()
+			for (Entry<Instance, Integer> e : as.getExemplarPointers()
 					.entrySet())
 				append(e.getKey()
 						+ " : "
@@ -194,8 +193,8 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			// append a list of the class distribution with pointers and
 			// probabilities
 			append("Class totals:\n");
-			for (Entry<Integer, Integer> e : as.getClassPointers().entrySet())
-				append(m_Header.classAttribute().value(e.getKey())
+			for (Entry<Double, Integer> e : as.getClassPointers().entrySet())
+				append(m_Header.classAttribute().value(e.getKey().intValue())
 						+ " : "
 						+ e.getValue()
 						+ " ("

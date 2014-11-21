@@ -57,8 +57,8 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test.firstInstance());
 		assertEquals("distribution given for two classes", prediction.length, 2);
-		assertEquals(prediction[0], 0.6923076923076923, DELTA);
-		assertEquals(prediction[1], 0.3076923076923077, DELTA);
+		assertEquals(0.6923076923076923, prediction[0], DELTA);
+		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}
 
 	public static junit.framework.Test suite() {

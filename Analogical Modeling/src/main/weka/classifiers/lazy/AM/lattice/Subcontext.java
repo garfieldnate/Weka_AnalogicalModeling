@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import weka.classifiers.lazy.AM.AMconstants;
-import weka.classifiers.lazy.AM.data.Exemplar;
+import weka.core.Instance;
 
 /**
  * Represents a subcontext, containing a list of Exemplars which belong to it.
@@ -66,8 +66,8 @@ public class Subcontext {
 		return index.get(indexLocation);
 	}
 
-	private List<Exemplar> data;
-	private int outcome;
+	private List<Instance> data;
+	private double outcome;
 	private int label;
 
 	/**
@@ -82,7 +82,7 @@ public class Subcontext {
 	 *            Binary label of the subcontext
 	 */
 	public Subcontext(int l) {
-		data = new LinkedList<Exemplar>();
+		data = new LinkedList<>();
 		label = l;
 
 		index.add(this);
@@ -96,17 +96,17 @@ public class Subcontext {
 	 * 
 	 * @param e
 	 */
-	void add(Exemplar e) {
+	void add(Instance e) {
 		if (data.size() != 0) {
-			if (e.getOutcome() != data.get(0).getOutcome())
+			if (e.classValue() != data.get(0).classValue())
 				outcome = AMconstants.NONDETERMINISTIC;
 		} else {
-			outcome = e.getOutcome();
+			outcome = e.classValue();
 		}
 		data.add(e);
 	}
 
-	public int getOutcome() {
+	public double getOutcome() {
 		return outcome;
 	}
 
@@ -128,7 +128,7 @@ public class Subcontext {
 	/**
 	 * @return list of Exemplars contained in this subcontext
 	 */
-	public List<Exemplar> getExemplars() {
+	public List<Instance> getExemplars() {
 		return data;
 	}
 
@@ -137,7 +137,7 @@ public class Subcontext {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
-		sb.append(Utils.labelToString(data.get(0).cardinality(), label));
+		sb.append(Utils.labelToString(data.get(0).numAttributes() - 1, label));
 		sb.append('|');
 
 		// we know all of the exemplars must have the same outcome;
@@ -145,7 +145,7 @@ public class Subcontext {
 		if (outcome == AMconstants.NONDETERMINISTIC)
 			sb.append(AMconstants.NONDETERMINISTIC_STRING);
 		else
-			sb.append(data.get(0).getStringOutcome());
+			sb.append(data.get(0).value(data.get(0).classAttribute()));
 		sb.append('|');
 
 		for (int i = 0; i < data.size() - 1; i++) {

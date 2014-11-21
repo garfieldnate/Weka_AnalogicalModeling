@@ -223,7 +223,7 @@ public class DistributedLattice {
 			set.add(i);
 
 		Set<Integer> intersection = new HashSet<Integer>();
-		int outcome = 0;
+		double outcome = 0;
 		for (Integer i : larger)
 			// determine heterogeneity whenever we add a new subcontext
 			if (set.contains(i)) {

@@ -15,18 +15,19 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
+import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.SelectedTag;
 import weka.core.Tag;
 
 //TODO: 0 being a match and 1 being a mismatch is a leaked abstraction; change these to booleans.
-//TODO: get rid of Weka stuff in here; it's a leak.
 public enum MissingDataCompare {
 	/**
 	 * Always returns 0, considering the missing data to match anything
 	 */
 	MATCH("match", "Consider the missing attribute value to match anything") {
 		@Override
-		public int outcome(int var1, int var2) {
+		public int outcome(Instance i1, Instance i2, Attribute att) {
 			return 0;
 		}
 
@@ -38,7 +39,7 @@ public enum MissingDataCompare {
 	MISMATCH("mismatch",
 			"Consider the missing attribute value to be a mismatch") {
 		@Override
-		public int outcome(int var1, int var2) {
+		public int outcome(Instance i1, Instance i2, Attribute att) {
 			return 1;
 		}
 
@@ -53,8 +54,10 @@ public enum MissingDataCompare {
 			"Treat the the missing attribute value as an attribute value of its own; "
 					+ "a missing value will match another missing value, but nothing else.") {
 		@Override
-		public int outcome(int var1, int var2) {
-			return var1 != var2 ? 1 : 0;
+		public int outcome(Instance i1, Instance i2, Attribute att) {
+			if (i1.isMissing(att) && i2.isMissing(att))
+				return 0;
+			return 1;
 		}
 
 	};
@@ -123,12 +126,17 @@ public enum MissingDataCompare {
 	}
 
 	/**
+	 * Compare the two instances and return the comparison result. It is assumed
+	 * that has a missing value for the given attribute.
 	 * 
-	 * @param first
-	 *            value
-	 * @param second
-	 *            value
-	 * @return 0 or 1, depending on how the comparison is done.
+	 * @param i1
+	 *            First instance
+	 * @param i2
+	 *            Second instance
+	 * @param att
+	 *            Attribute to be compared between the two instances
+	 * @return 0 for a match, and 1 for a mismatch, depending on the chosen
+	 *         algorithm.
 	 */
-	public abstract int outcome(int var1, int var2);
+	public abstract int outcome(Instance i1, Instance i2, Attribute att);
 }

@@ -26,7 +26,6 @@ import java.util.Vector;
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
-import weka.classifiers.lazy.AM.data.Exemplar;
 import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
@@ -142,7 +141,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private Instances trainingInstances;
 
 	/** The training exemplars used for classification. */
-	private List<Exemplar> trainingExemplars;
+	private List<Instance> trainingExemplars;
 
 	/** The number of attributes. */
 	protected int cardinality;
@@ -164,12 +163,11 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * @return Analogical set which holds results of the classification for the
 	 *         given item
 	 */
-	private AnalogicalSet classify(Exemplar testItem) {
+	private AnalogicalSet classify(Instance testItem) {
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		Labeler labeler = new Labeler(mdc, testItem,
-				trainingInstances.numAttributes() - 1);
+		Labeler labeler = new Labeler(mdc, testItem);
 
 		if (parallelFlag) {
 			SubcontextList subList = new SubcontextList(labeler,
@@ -188,7 +186,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			System.out.println("Subcontexts: " + subList);
 
 		// 2. Place subcontexts into the supracontextual lattice
-		Lattice lattice = new Lattice(testItem.cardinality(), subList);
+		Lattice lattice = new Lattice(testItem.numAttributes() - 1, subList);
 		if (getDebug())
 			System.out.println("Lattice: " + lattice);
 
@@ -568,9 +566,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 				instances.numInstances());
 
 		// create exemplars for actually running the classifier
-		trainingExemplars = new LinkedList<Exemplar>();
+		trainingExemplars = new LinkedList<Instance>();
 		for (Instance i : instances)
-			trainingExemplars.add(new Exemplar(i));
+			trainingExemplars.add(i);
 	}
 
 	/**
@@ -586,7 +584,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (instance.classIsMissing())
 			return;
 		trainingInstances.add(instance);
-		trainingExemplars.add(new Exemplar(instance));
+		trainingExemplars.add(instance);
 		if (getDebug())
 			System.out.println("Added instance: " + instance);
 	}
@@ -614,13 +612,14 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			return new double[] { 1 };
 		}
 
-		AnalogicalSet as = classify(new Exemplar(instance));
+		AnalogicalSet as = classify(instance);
 		if (getDebug())
 			System.out.println(as);
 
 		double[] classProbability = new double[trainingInstances.numClasses()];
-		for (Entry<Integer, Double> entry : as.getClassLikelihood().entrySet())
-			classProbability[entry.getKey()] = entry.getValue();
+		int index = 0;
+		for (Entry<Double, Double> entry : as.getClassLikelihood().entrySet())
+			classProbability[index++] = entry.getValue();
 
 		return classProbability;
 	}
