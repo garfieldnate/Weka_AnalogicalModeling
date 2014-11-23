@@ -49,7 +49,7 @@ public class Lattice {
 	/**
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
-	private static Supracontext emptySupracontext;
+	private Supracontext emptySupracontext;
 	// static {
 	// }
 
@@ -218,6 +218,8 @@ public class Lattice {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
 				supraPrev.setNext(supra.getNext());
+				//avoid circular references
+				supra.setNext(null);
 			}
 			supraPrev = supra;
 			supra = supra.getNext();
