@@ -124,7 +124,7 @@ public class HeterogeneousLattice {
 		// skip all children if this exemplar is heterogeneous
 		if (!addToContext(sub, label))
 			return;
-		SubsetIterator si = new SubsetIterator(sub.getLabel(), cardinality);
+		SubsetIterator si = new SubsetIterator(label, cardinality);
 		while (si.hasNext()) {
 			int temp = si.next();
 			addToContext(sub, temp);

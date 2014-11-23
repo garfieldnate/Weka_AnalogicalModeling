@@ -94,6 +94,9 @@ public class LabelerTest {
 		assertEquals(0b11, masks[1].mask(0b11111));
 		assertEquals(0b00, masks[1].mask(0b00000));
 		assertEquals(0b10, masks[1].mask(0b10111));
+		
+		masks = Labeler.getMasks(4, 3);
+		assertEquals("Number of masks does not exceed cardinality", masks.length, 3);
 	}
 
 }

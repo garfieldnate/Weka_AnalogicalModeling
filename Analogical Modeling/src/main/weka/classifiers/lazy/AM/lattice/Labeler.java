@@ -55,8 +55,7 @@ public class Labeler {
 		Attribute att;
 		for (int i = 0; i < length; i++) {
 			att = testItem.attribute(i);
-			if (testItem.isMissing(i)
-					|| data.isMissing(i))
+			if (testItem.isMissing(i) || data.isMissing(i))
 				label |= (mdc.outcome(testItem, data, att));
 			else if (testItem.value(att) != data.value(att)) {
 				// use length-1-i instead of i so that in binary the labels show
@@ -73,12 +72,17 @@ public class Labeler {
 	 * 
 	 * @param numMasks
 	 *            the number of masks to be created, or the number of separate
-	 *            labels that a given label will be separated into.
+	 *            labels that a given label will be separated into. If the
+	 *            number of masks exceeds the cardinality, then the number will
+	 *            be reduced to match the cardinality (creating masks of one bit
+	 *            each)
 	 * @param cardinality
 	 *            the number of features in the exemplar
 	 * @return A set of masks for splitting labels
 	 */
 	public static LabelMask[] getMasks(int numMasks, int cardinality) {
+		if (numMasks > cardinality)
+			numMasks = cardinality;
 		LabelMask[] masks = new LabelMask[numMasks];
 
 		int latticeSize = (int) Math.ceil((double) cardinality / numMasks);

@@ -16,14 +16,13 @@
 
 package weka.classifiers.lazy;
 
-import weka.classifiers.AbstractClassifierTest;
-import weka.classifiers.Classifier;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
+import junit.framework.TestSuite;
 
 import org.junit.Test;
 
-import junit.framework.TestSuite;
+import weka.classifiers.AbstractClassifierTest;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  * Tests AnalogicalModeling.
@@ -38,13 +37,13 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	/** Creates a default AnalogicalModeling */
 	@Override
-	public Classifier getClassifier() {
+	public AnalogicalModeling getClassifier() {
 		return new AnalogicalModeling();
 	}
 	
 	private static final double DELTA = 1e-10;
 	@Test
-	public void testChapter3data() throws Exception {
+	public void testChapter3dataSerial() throws Exception {
 		DataSource source = new DataSource("data/ch3example.arff");
 		Instances train = source.getDataSet();
 		train.setClassIndex(train.numAttributes() - 1);
@@ -53,7 +52,28 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		Instances test = source.getDataSet();
 		test.setClassIndex(test.numAttributes() - 1);
 		
-		Classifier am = getClassifier();
+		AnalogicalModeling am = getClassifier();
+		
+		am.buildClassifier(train);
+		double[] prediction = am.distributionForInstance(test.firstInstance());
+		assertEquals("distribution given for two classes", prediction.length, 2);
+		assertEquals(0.6923076923076923, prediction[0], DELTA);
+		assertEquals(0.3076923076923077, prediction[1], DELTA);
+	}
+	
+	@Test
+	public void testChapter3dataParallel() throws Exception {
+		DataSource source = new DataSource("data/ch3example.arff");
+		Instances train = source.getDataSet();
+		train.setClassIndex(train.numAttributes() - 1);
+		
+		source = new DataSource("data/ch3exampleTest.arff");
+		Instances test = source.getDataSet();
+		test.setClassIndex(test.numAttributes() - 1);
+		
+		AnalogicalModeling am = getClassifier();
+		am.setParallel(true);
+		
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test.firstInstance());
 		assertEquals("distribution given for two classes", prediction.length, 2);

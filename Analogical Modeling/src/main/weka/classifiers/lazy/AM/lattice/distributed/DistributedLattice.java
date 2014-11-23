@@ -189,7 +189,7 @@ public class DistributedLattice {
 		for (Integer i : larger)
 			if (set.contains(i))
 				intersection.add(i);
-		Integer[] ints = (Integer[]) intersection.toArray();
+		Integer[] ints = intersection.toArray(new Integer[intersection.size()]);
 
 		int[] returnVal = new int[ints.length];
 		for (int i = 0; i < returnVal.length; i++)
@@ -240,7 +240,7 @@ public class DistributedLattice {
 					return null;
 				}
 			}
-		Integer[] ints = (Integer[]) intersection.toArray();
+		Integer[] ints = intersection.toArray(new Integer[intersection.size()]);
 
 		int[] returnVal = new int[ints.length];
 		for (int i = 0; i < returnVal.length; i++)

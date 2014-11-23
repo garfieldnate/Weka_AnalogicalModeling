@@ -149,9 +149,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1212462913157286103L;
 
-	private boolean parallelFlag = Boolean.parseBoolean(System
-			.getProperty("am.parallel"));
-
 	private MissingDataCompare mdc = MissingDataCompare.MATCH;
 
 	/**
@@ -169,39 +166,46 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 		Labeler labeler = new Labeler(mdc, testItem);
 
-		if (parallelFlag) {
+		// 3 steps to assigning outcome probabilities:
+		if (m_parallel) {
+			// 1. Place each data item in a subcontext
 			SubcontextList subList = new SubcontextList(labeler,
 					trainingExemplars);
-			// Lattice lattice = new Lattice(subList.getCardinality(), subList);
+			// 2. Place subcontexts into the supracontextual lattice
 			DistributedLattice distLattice = new DistributedLattice(subList);
-			// as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
+			// 3. pointers in homogeneous supracontexts are used to give the
+			// analogical set and predicted outcome.
 			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem,
 					m_linearCount);
+		} else {
+			// 1. Place each data item in a subcontext
+			SubcontextList subList = new SubcontextList(labeler,
+					trainingExemplars);// TODO:debug
+			if (getDebug())
+				System.out.println("Subcontexts: " + subList);
+
+			// 2. Place subcontexts into the supracontextual lattice
+			Lattice lattice = new Lattice(testItem.numAttributes() - 1, subList);
+			if (getDebug())
+				System.out.println("Lattice: " + lattice);
+
+			// 3. pointers in homogeneous supracontexts are used to give the
+			// analogical set and predicted outcome.
+			as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
+					m_linearCount);
 		}
-
-		// 3 steps to assigning outcome probabilities:
-		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);// TODO:debug
-		if (getDebug())
-			System.out.println("Subcontexts: " + subList);
-
-		// 2. Place subcontexts into the supracontextual lattice
-		Lattice lattice = new Lattice(testItem.numAttributes() - 1, subList);
-		if (getDebug())
-			System.out.println("Lattice: " + lattice);
-
-		// 3. pointers in homogeneous supracontexts are used to give the
-		// analogical set and predicted outcome.
-		as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
-				m_linearCount);
 		return as;
 	}
 
 	// ////OPTION STORAGE VARIABLES
+	
+	
 	/**
 	 * By default, we use quadratic calculation of pointer values.
 	 */
 	private boolean m_linearCount = false;
+
+	private boolean m_parallel;
 
 	/**
 	 * 
@@ -228,6 +232,16 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	public String linearCountTipText() {
 		return "Set this to true if counting of pointers within homogeneous supracontexts should be "
 				+ "done linearly instead of quadratically.";
+	}
+	
+	public boolean getParallel(){
+		return m_parallel;
+	}
+	public void setParallel(boolean parallel){
+		m_parallel = parallel;
+	}
+	public String parallelTipText() {
+		return "set to true if the distributed lattice algorithm should be used.";
 	}
 
 	/**
@@ -272,8 +286,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *         values with other data
 	 */
 	public SelectedTag getMissingDataCompare() {
-		return new SelectedTag(mdc.ordinal(),
-				TAGS_MISSING);
+		return new SelectedTag(mdc.ordinal(), TAGS_MISSING);
 	}
 
 	/**
