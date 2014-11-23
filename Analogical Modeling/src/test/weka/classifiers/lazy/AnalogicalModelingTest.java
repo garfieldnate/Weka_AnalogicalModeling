@@ -31,9 +31,9 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:garfieldnate@gmail.com">Nate Glenn</a>
  */
 public class AnalogicalModelingTest extends AbstractClassifierTest {
-
 	public AnalogicalModelingTest(String name) {
 		super(name);
+//		DEBUG = true;
 	}
 
 	/** Creates a default AnalogicalModeling */

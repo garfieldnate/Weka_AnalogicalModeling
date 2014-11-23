@@ -1,9 +1,11 @@
 Next:
-- Fix incorrect classification, to complete refactor to removing Exemplar
-- finish labeler testing.
+- fix output test (in progress)
+- Implement ignoring unknowns in the test item. Check that that's how it's done in the Perl version.
 
 Later TODO:
-- Implement ignoring unknowns in the test item. Check that that's how it's done in the Perl version.
+- change AM_double_format to a formatter method in Utils
+- change \n's everywhere to System.getProperty("line.separator")
+- fix broken tests
 - test everything!
 - toString method for Lattice
 - get rid of Exemplar, which does nothing
@@ -17,3 +19,7 @@ Engineering Tasks
 
 Thoughts:
 - is there a connection between k-d trees and AM's splitting into sub contexts?
+
+Weka is annoying because:
+	- Instances aren't sortable
+	- doubles and integers are both used for indexing

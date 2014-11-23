@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 import weka.classifiers.Classifier;
@@ -133,8 +132,8 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		// TODO: print something?
 	}
 
-	//TODO use platform newline
-	
+	// TODO use platform newline
+
 	/**
 	 * Make sure to call {@link #setHeader(weka.core.Instances) setHeader}
 	 * first, or this will throw a NullPointerException. All decimals are
@@ -171,36 +170,15 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		if (getOutputDistribution()) {
 			append("Class probability distribution: \n");
 			for (int i = 0; i < distribution.length; i++) {
-				append(m_Header.classAttribute().value(i) + ": "
-						+ String.format(AMconstants.DECIMAL_FORMAT, distribution[i]) + "\n");
+				append(m_Header.classAttribute().value(i)
+						+ ": "
+						+ String.format(AMconstants.DECIMAL_FORMAT,
+								distribution[i]) + "\n");
 			}
 		}
 
-		if (getAnalogicalSet()) {
-			double totalPointers = (double) as.getTotalPointers();
-			// append the entire analogical set, with numbers of pointers and
-			// their
-			// percentage of the total
-			append("Analogical Set:\n");
-			for (Entry<Instance, Integer> e : as.getExemplarPointers()
-					.entrySet())
-				append(e.getKey()
-						+ " : "
-						+ e.getValue()
-						+ " ("
-						+ String.format(AMconstants.DECIMAL_FORMAT, e.getValue()
-								/ totalPointers) + ")\n");
-			// append a list of the class distribution with pointers and
-			// probabilities
-			append("Class totals:\n");
-			for (Entry<Double, Integer> e : as.getClassPointers().entrySet())
-				append(m_Header.classAttribute().value(e.getKey().intValue())
-						+ " : "
-						+ e.getValue()
-						+ " ("
-						+ String.format(AMconstants.DECIMAL_FORMAT, e.getValue()
-								/ totalPointers) + ")\n");
-		}
+		if (getAnalogicalSet())
+			append(as.toString());
 		if (getGangs())
 			;// TODO:print gangs
 	}

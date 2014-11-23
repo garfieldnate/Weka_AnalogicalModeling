@@ -618,7 +618,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 		double[] classProbability = new double[trainingInstances.numClasses()];
 		int index = 0;
-		for (Entry<Double, Double> entry : as.getClassLikelihood().entrySet())
+		for (Entry<String, Double> entry : as.getClassLikelihood().entrySet())
 			classProbability[index++] = entry.getValue();
 
 		return classProbability;
