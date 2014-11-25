@@ -167,10 +167,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		Labeler labeler = new Labeler(mdc, testItem);
 
 		// 3 steps to assigning outcome probabilities:
+		// 1. Place each data item in a subcontext
+		SubcontextList subList = new SubcontextList(labeler,
+				trainingExemplars);
 		if (m_parallel) {
-			// 1. Place each data item in a subcontext
-			SubcontextList subList = new SubcontextList(labeler,
-					trainingExemplars);
 			// 2. Place subcontexts into the supracontextual lattice
 			DistributedLattice distLattice = new DistributedLattice(subList);
 			// 3. pointers in homogeneous supracontexts are used to give the
@@ -178,9 +178,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem,
 					m_linearCount);
 		} else {
-			// 1. Place each data item in a subcontext
-			SubcontextList subList = new SubcontextList(labeler,
-					trainingExemplars);// TODO:debug
 			if (getDebug())
 				System.out.println("Subcontexts: " + subList);
 
@@ -560,8 +557,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 */
 	@Override
 	public void buildClassifier(Instances instances) throws Exception {
-		// System.err.println(instances);
-		// System.err.println(instances.size());
 		// test data against capabilities
 		getCapabilities().testWithFail(instances);
 

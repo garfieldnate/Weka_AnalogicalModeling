@@ -128,8 +128,6 @@ public class Lattice {
 	 * @param label
 	 */
 	private boolean addToContext(Subcontext sub, int label) {
-		// System.out.println("adding " + sub + " to " +
-		// Subcontext.binaryLabel(cardinality, label));
 		// the default value is the empty supracontext (leave null until now to
 		// save time/space)
 		if (lattice[label] == null) {
@@ -218,8 +216,6 @@ public class Lattice {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
 				supraPrev.setNext(supra.getNext());
-				//avoid circular references
-				supra.setNext(null);
 			}
 			supraPrev = supra;
 			supra = supra.getNext();

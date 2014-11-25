@@ -43,5 +43,9 @@ public class LabelMask {
 	public int mask(int label) {
 		return (mask & label) >> start;
 	}
+	
+	public String toString(){
+		return start + "-" + (start+cardinality) + ":" + Integer.toBinaryString(mask);
+	}
 
 }

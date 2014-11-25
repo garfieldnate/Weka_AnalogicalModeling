@@ -1,13 +1,17 @@
 Next:
-- fix output test (in progress)
+- The supracontexts in the distributed lattice are for some reason keeping references to supras with 0 pointers.
 - Implement ignoring unknowns in the test item. Check that that's how it's done in the Perl version.
 
 Later TODO:
+- the fact that Subcontexts are given integer indices is leaked and should be fixed. 
+	- could pass around Sublist objects instead
 - change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
 - fix broken tests
+- mask could be done with left and right shift, instead of right shift and &
 - test everything!
 - toString method for Lattice
+- better toString method for Supracontext, or a list of Supracontexts
 - get rid of Exemplar, which does nothing
 - use BitSets for unlimited-size labels
 - use BigIntegers for scoring

@@ -69,7 +69,7 @@ public class HeterogeneousLattice {
 	/**
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
-	private static Supracontext emptySupracontext;
+	private Supracontext emptySupracontext;
 
 	/**
 	 * Initializes the empty and the heterogeneous supracontexts as well as the
@@ -121,9 +121,8 @@ public class HeterogeneousLattice {
 	 *            mask to use in assigning labels
 	 */
 	public void insert(Subcontext sub, int label) {
-		// skip all children if this exemplar is heterogeneous
-		if (!addToContext(sub, label))
-			return;
+		addToContext(sub, label);
+		cleanSupra();
 		SubsetIterator si = new SubsetIterator(label, cardinality);
 		while (si.hasNext()) {
 			int temp = si.next();
@@ -134,13 +133,11 @@ public class HeterogeneousLattice {
 	}
 
 	/**
-	 * @return false if the item was added to heteroSupra, true otherwise
+	 * Add the given subcontext to the supracontext with the given label
 	 * @param sub
 	 * @param label
 	 */
-	private boolean addToContext(Subcontext sub, int label) {
-		// System.out.println("adding " + sub + " to " +
-		// Subcontext.binaryLabel(cardinality, label));
+	private void addToContext(Subcontext sub, int label) {
 		// the default value is the empty supracontext (leave null until now to
 		// save time/space)
 		if (lattice[label] == null) {
@@ -149,21 +146,12 @@ public class HeterogeneousLattice {
 
 		// if the following supracontext matches the current index, just repoint
 		// to that one.
-		else if (lattice[label].getNext().getIndex() == index) {
+		if (lattice[label].getNext().getIndex() == index) {
 			// don't decrement count on emptySupracontext!
 			if (lattice[label] != emptySupracontext)
 				lattice[label].decrementCount();
 			lattice[label] = lattice[label].getNext();
-			// if the context has been emptied, then it was found to be
-			// heterogeneous;
-			// mark this as heterogeneous, too
-			// [do not worry about this being emptySupracontext; it's index is
-			// -1]
-			// if(lattice[label].hasData()){
 			lattice[label].incrementCount();
-			// }
-			// else
-			// lattice[label] = heteroSupra;
 		}
 		// otherwise make a new Supracontext and add it
 		else {
@@ -173,7 +161,6 @@ public class HeterogeneousLattice {
 			lattice[label] = new Supracontext(lattice[label], sub, index);
 			lattice[label].incrementCount();
 		}
-		return true;
 	}
 
 	/**
@@ -231,6 +218,7 @@ public class HeterogeneousLattice {
 		List<Supracontext> supList = new LinkedList<Supracontext>();
 		Supracontext supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
+			assert(supra.getCount() != 0);
 			supList.add(supra);
 			supra = supra.getNext();
 		}

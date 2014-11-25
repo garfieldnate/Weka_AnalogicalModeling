@@ -66,7 +66,6 @@ public class LabelerTest {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
 				exemplars.get(0));
 		assertEquals(0b00000, labeler.getContextLabel(exemplars.get(1)));
-		System.out.println(Integer.toBinaryString(labeler.getContextLabel(exemplars.get(2))));
 		assertEquals(0b10110, labeler.getContextLabel(exemplars.get(2)));
 		assertEquals(0b00011, labeler.getContextLabel(exemplars.get(3)));
 		assertEquals(0b10011, labeler.getContextLabel(exemplars.get(4)));

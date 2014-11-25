@@ -122,6 +122,9 @@ public class Supracontext {
 		count--;
 	}
 
+	/**
+	 * @return an integer array containing the indices of the contained subcontexts
+	 */
 	public int[] getData() {
 		return data;
 	}
@@ -130,18 +133,7 @@ public class Supracontext {
 		this.data = data;
 	}
 
-	/**
-	 * Remove all pointers to this Supracontext by setting count to zero and
-	 * destroying its data.
-	 */
-	public void removePointers() {
-		System.err.println(this + " has been declared heterogeneous!");
-		count = 0;
-		data = null;
-	}
-
 	public boolean hasData() {
-		// System.err.println(data);
 		return data.length != 0;
 	}
 
@@ -152,6 +144,14 @@ public class Supracontext {
 	 */
 	public int getCount() {
 		return count;
+	}
+	
+	/**
+	 * Set the number of arrows pointing to this supracontext from the supracontextual lattice.
+	 * @param c
+	 */
+	public void setCount(int c){
+		count = c;
 	}
 
 	/**
