@@ -15,7 +15,6 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM;
 
-import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 
 /**
  * This class holds several constants used in the AM classifier.
@@ -34,23 +33,6 @@ public class AMconstants {
 	//TODO: perhaps use this to create a dynamic number of lattices of maximum cardinality 4?
 //	public static int LATTICE_SIZE_MAX = 4;
 
-	// Missing value handling modes
-	/**
-	 * Considers the missing attribute value to match anything
-	 */
-	public static final int M_VARIABLE = MissingDataCompare.VARIABLE.ordinal();
-
-	/**
-	 * Considers the missing attribute value to be a mismatch
-	 */
-	public static final int M_MATCH = MissingDataCompare.MATCH.ordinal();
-
-	/**
-	 * Treats missing value as like any other value; two missing values match,
-	 * but a missing value matches nothing else.
-	 */
-	public static final int M_MISMATCH = MissingDataCompare.MISMATCH.ordinal();
-
 	/**
 	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by
 	 * {@link weka.classifiers.lazy.AnalogicalModeling.lattice.Supracontext
@@ -68,13 +50,6 @@ public class AMconstants {
 	 * 
 	 */
 	public static final int EMPTY = -2;
-
-	/**
-	 * MISSING will be mapped to "?" by default, and can be used to denote
-	 * missing data. TODO: has Weka made this obsolete? Weka uses Double.NaN...
-	 */
-	public static final int MISSING = -3;
-	public static final String MISSING_STRING = "?";
 
 	//used for printing all decimal numbers
 	public static final String DECIMAL_FORMAT = "%.5f";
