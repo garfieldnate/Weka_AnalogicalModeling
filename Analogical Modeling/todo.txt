@@ -1,8 +1,7 @@
 Next:
-- The supracontexts in the distributed lattice are for some reason keeping references to supras with 0 pointers.
-- Implement ignoring unknowns in the test item. Check that that's how it's done in the Perl version.
-
+	- getMasks() must account for ignored attributes, but that probably means it shouldn't be static; this will take some redesigning.
 Later TODO:
+- Labeler won't work if the class attribute isn't the last one.
 - the fact that Subcontexts are given integer indices is leaked and should be fixed. 
 	- could pass around Sublist objects instead
 - change AM_double_format to a formatter method in Utils

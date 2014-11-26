@@ -61,7 +61,7 @@ public enum MissingDataCompare {
 		}
 
 	};
-
+	
 	// string used on command line to indicate the use of this strategy
 	private final String optionString;
 	// string which describes comparison strategy for a given entry

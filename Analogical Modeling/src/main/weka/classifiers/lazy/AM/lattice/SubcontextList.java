@@ -33,7 +33,7 @@ import weka.core.Instance;
  */
 public class SubcontextList implements Iterable<Subcontext> {
 
-	private HashMap<Integer, Subcontext> labelToSubcontext = new HashMap<Integer, Subcontext>();
+	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
 
 	private Labeler labeler;
 	
@@ -81,7 +81,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 */
 	void add(Instance data) {
-		int label = labeler.getContextLabel(data);
+		Label label = labeler.getContextLabel(data);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
@@ -118,7 +118,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 		return new Iterator<Subcontext>() {
 
-			Iterator<Integer> keyIterator = labelToSubcontext.keySet()
+			Iterator<Label> keyIterator = labelToSubcontext.keySet()
 					.iterator();
 
 			@Override

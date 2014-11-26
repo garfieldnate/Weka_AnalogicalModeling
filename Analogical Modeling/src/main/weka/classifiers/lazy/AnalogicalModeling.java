@@ -164,7 +164,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		Labeler labeler = new Labeler(mdc, testItem);
+		Labeler labeler = new Labeler(mdc, testItem, false);
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext

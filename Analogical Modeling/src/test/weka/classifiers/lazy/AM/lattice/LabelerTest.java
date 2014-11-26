@@ -15,7 +15,6 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 
-//TODO: next finish testing labels. Will need some unknown data for this to work. Then look at the todo file.
 public class LabelerTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -45,7 +44,8 @@ public class LabelerTest {
 				new double[] { 2, 1, 2, 0, 2, 1 },
 				new double[] { 1, 0, 1, 0, 0, 1 },
 				// NaN means a missing attribute
-				new double[] { 0, 1, 2, 1, Double.NaN, 1 },
+				new double[] { 0, 1, 1, 1, Double.NaN, 1 },
+				new double[] { 0, 1, 0, 1, Double.NaN, 1 },
 				new double[] { 0, 1, 2, Double.NaN, 1, 1 } };
 		exemplars = new ArrayList<>();
 		for (double[] datum : data) {
@@ -57,26 +57,44 @@ public class LabelerTest {
 
 	@Test
 	public void testGetCardinality() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, exemplars.get(0));
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, exemplars.get(0), false);
 		assertEquals(labeler.getCardinality(), 5);
 	}
 
 	@Test
 	public void testGetContextLabel() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(0));
-		assertEquals(0b00000, labeler.getContextLabel(exemplars.get(1)));
-		assertEquals(0b10110, labeler.getContextLabel(exemplars.get(2)));
-		assertEquals(0b00011, labeler.getContextLabel(exemplars.get(3)));
-		assertEquals(0b10011, labeler.getContextLabel(exemplars.get(4)));
-		assertEquals(0b11111, labeler.getContextLabel(exemplars.get(5)));
+				exemplars.get(0), false);
+		assertEquals(new Label(0b00000, 5), labeler.getContextLabel(exemplars.get(1)));
+		assertEquals(new Label(0b10110, 5), labeler.getContextLabel(exemplars.get(2)));
+		assertEquals(new Label(0b00011, 5), labeler.getContextLabel(exemplars.get(3)));
+		assertEquals(new Label(0b10011, 5), labeler.getContextLabel(exemplars.get(4)));
+		assertEquals(new Label(0b11111, 5), labeler.getContextLabel(exemplars.get(5)));
 	}
 	
 	@Test
-	public void testGetContextLabelWithMissingData() {
+	public void testGetContextLabelMissingDataCompares() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(6));
-		//TODO: test missing data labeling
+				exemplars.get(6), false);
+		assertEquals("MATCH: always matches", new Label(0b00100, 5), labeler.getContextLabel(exemplars.get(0)));
+
+		labeler = new Labeler(MissingDataCompare.MISMATCH,
+				exemplars.get(6), false);
+		assertEquals("MISMATCH: always mismatches", new Label(0b00101, 5), labeler.getContextLabel(exemplars.get(0)));
+
+		labeler = new Labeler(MissingDataCompare.VARIABLE,
+				exemplars.get(6), false);
+		assertEquals("VARIABLE: matches other unknowns", new Label(0b00100, 5), labeler.getContextLabel(exemplars.get(7)));
+		assertEquals("VARIABLE: mismatches non-unknowns", new Label(0b00101, 5), labeler.getContextLabel(exemplars.get(8)));
+	}
+	
+	@Test
+	public void testIgnoreUnknowns() {
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
+				exemplars.get(6), true);
+		assertEquals("IGNORE: unknown attributes removed from label", labeler.getContextLabel(exemplars.get(5)), new Label(0b1101, 4));
+		assertEquals("IGNORE: mdc used for data unknowns", labeler.getContextLabel(exemplars.get(8)), new Label(0b0010, 4));
+		
 	}
 
 	@Test
@@ -86,13 +104,13 @@ public class LabelerTest {
 		assertEquals(3, masks[0].getCardinality());
 		assertEquals(2, masks[1].getCardinality());
 		
-		assertEquals(0b111, masks[0].mask(0b11111));
-		assertEquals(0b000, masks[0].mask(0b00000));
-		assertEquals(0b101, masks[0].mask(0b11101));
+		assertEquals(new Label(0b111, 3), masks[0].mask(new Label(0b11111, 5)));
+		assertEquals(new Label(0b000, 3), masks[0].mask(new Label(0b00000, 5)));
+		assertEquals(new Label(0b101, 3), masks[0].mask(new Label(0b11101, 5)));
 
-		assertEquals(0b11, masks[1].mask(0b11111));
-		assertEquals(0b00, masks[1].mask(0b00000));
-		assertEquals(0b10, masks[1].mask(0b10111));
+		assertEquals(new Label(0b11, 2), masks[1].mask(new Label(0b11111, 5)));
+		assertEquals(new Label(0b00, 2), masks[1].mask(new Label(0b00000, 5)));
+		assertEquals(new Label(0b10, 2), masks[1].mask(new Label(0b10111, 5)));
 		
 		masks = Labeler.getMasks(4, 3);
 		assertEquals("Number of masks does not exceed cardinality", masks.length, 3);

@@ -16,6 +16,7 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,11 +38,6 @@ public class Lattice {
 	 * Lattice is a 2^n array of Supracontexts
 	 */
 	private Supracontext[] lattice;
-
-	/**
-	 * Cardinality of the labels in the lattice
-	 */
-	private int cardinality;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -76,7 +72,6 @@ public class Lattice {
 		heteroSupra = new Supracontext();
 
 		lattice = new Supracontext[(int) (Math.pow(2, card))];
-		cardinality = card;
 	}
 
 	/**
@@ -111,12 +106,11 @@ public class Lattice {
 	 */
 	public void insert(Subcontext sub) {
 		// skip all children if this exemplar is heterogeneous
-		if (!addToContext(sub, sub.getLabel()))
+		if (!addToContext(sub, sub.getLabel().intLabel()))
 			return;
-		SubsetIterator si = new SubsetIterator(sub.getLabel(), cardinality);
+		Iterator<Label> si = sub.getLabel().subsetIterator();
 		while (si.hasNext()) {
-			int temp = si.next();
-			addToContext(sub, temp);
+			addToContext(sub, si.next().intLabel());
 			// remove supracontexts with count = 0 after every pass
 			cleanSupra();
 		}

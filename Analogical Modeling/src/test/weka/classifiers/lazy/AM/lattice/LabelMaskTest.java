@@ -38,12 +38,12 @@ public class LabelMaskTest {
 
 	@Test
 	public void testMask() {
-		int label = 0b1101101;
+		Label label = new Label(0b1101101, 7);
 		LabelMask mask = new LabelMask(0, 0);
-		assertEquals(0b1, mask.mask(label));
+		assertEquals(mask.mask(label), new Label(0b1, 1));
 		
 		mask = new LabelMask(2, 5);
-		assertEquals(0b1011, mask.mask(label));
+		assertEquals(mask.mask(label), new Label(0b1011, 4));
 	}
 
 }

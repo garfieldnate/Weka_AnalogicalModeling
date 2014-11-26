@@ -16,6 +16,9 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import weka.core.Attribute;
 import weka.core.Instance;
 
@@ -29,14 +32,29 @@ public class Labeler {
 
 	private final MissingDataCompare mdc;
 	private final Instance testItem;
+	private final Set<Integer> ignoreSet;
+	private final boolean ignoreUnknowns;
 
-	public Labeler(MissingDataCompare mdc, Instance instance) {
+	public Labeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
 		this.mdc = mdc;
 		this.testItem = instance;
+		this.ignoreUnknowns = ignoreUnknowns;
+		ignoreSet = new HashSet<>();
+		if(ignoreUnknowns){
+			int length = testItem.numAttributes() - 1;
+			for (int i = 0; i < length; i++) {
+				if (testItem.isMissing(i))
+					ignoreSet.add(i);
+			}
+		}
 	}
 
 	public int getCardinality() {
-		return testItem.numAttributes() - 1;
+		return testItem.numAttributes() - ignoreSet.size() - 1;
+	}
+	
+	public boolean getIgnoreUnknowns(){
+		return ignoreUnknowns;
 	}
 
 	/**
@@ -49,11 +67,13 @@ public class Labeler {
 	 *         exemplar are the same at index i, then the i'th bit will be 1;
 	 *         otherwise it will be 0.
 	 */
-	public int getContextLabel(Instance data) {
+	public Label getContextLabel(Instance data) {
 		int label = 0;
 		int length = getCardinality();
 		Attribute att;
 		for (int i = 0; i < length; i++) {
+			if(ignoreSet.contains(i))
+				continue;
 			att = testItem.attribute(i);
 			if (testItem.isMissing(i) || data.isMissing(i))
 				label |= (mdc.outcome(testItem, data, att));
@@ -63,7 +83,7 @@ public class Labeler {
 				label |= (1 << (length - 1 - i));
 			}
 		}
-		return label;
+		return new Label(label, getCardinality());
 	}
 
 	/**

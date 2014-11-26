@@ -40,8 +40,8 @@ public class LabelMask {
 			mask |= (1 << i);
 	}
 
-	public int mask(int label) {
-		return (mask & label) >> start;
+	public Label mask(Label label) {
+		return new Label((mask & label.intLabel()) >> start, getCardinality());
 	}
 	
 	public String toString(){

@@ -16,13 +16,14 @@
 
 package weka.classifiers.lazy.AM.lattice.distributed;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import weka.classifiers.lazy.AM.lattice.Label;
 import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
-import weka.classifiers.lazy.AM.lattice.SubsetIterator;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 
 /**
@@ -58,11 +59,6 @@ public class HeterogeneousLattice {
 	 */
 	private Supracontext[] lattice;
 
-	/**
-	 * Cardinality of the labels in the lattice
-	 */
-	private int cardinality;
-
 	// the current number of the subcontext being added
 	private int index = -1;
 
@@ -85,7 +81,6 @@ public class HeterogeneousLattice {
 		emptySupracontext.incrementCount();
 
 		lattice = new Supracontext[(int) (Math.pow(2, card))];
-		cardinality = card;
 	}
 
 	/**
@@ -117,16 +112,15 @@ public class HeterogeneousLattice {
 	 * 
 	 * @param sub
 	 *            Subcontext to be inserted
-	 * @param labelMask
-	 *            mask to use in assigning labels
+	 * @param label
+	 *            label to be assigned to the subcontext
 	 */
-	public void insert(Subcontext sub, int label) {
-		addToContext(sub, label);
+	public void insert(Subcontext sub, Label label) {
+		addToContext(sub, label.intLabel());
 		cleanSupra();
-		SubsetIterator si = new SubsetIterator(label, cardinality);
+		Iterator<Label> si = label.subsetIterator();
 		while (si.hasNext()) {
-			int temp = si.next();
-			addToContext(sub, temp);
+			addToContext(sub, si.next().intLabel());
 			// remove supracontexts with count = 0 after every pass
 			cleanSupra();
 		}

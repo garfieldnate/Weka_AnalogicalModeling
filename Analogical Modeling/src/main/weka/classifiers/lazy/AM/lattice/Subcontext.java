@@ -68,7 +68,7 @@ public class Subcontext {
 
 	private List<Instance> data;
 	private double outcome;
-	private int label;
+	private Label label;
 
 	/**
 	 * The location of this instance in {@link #index}
@@ -81,7 +81,7 @@ public class Subcontext {
 	 * @param l
 	 *            Binary label of the subcontext
 	 */
-	public Subcontext(int l) {
+	public Subcontext(Label l) {
 		data = new LinkedList<>();
 		label = l;
 
@@ -113,7 +113,7 @@ public class Subcontext {
 	/**
 	 * @return Binary label of of this subcontext
 	 */
-	public int getLabel() {
+	public Label getLabel() {
 		return label;
 	}
 
@@ -137,7 +137,7 @@ public class Subcontext {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
-		sb.append(Utils.labelToString(data.get(0).numAttributes() - 1, label));
+		sb.append(label);
 		sb.append('|');
 
 		// we know all of the exemplars must have the same outcome;
