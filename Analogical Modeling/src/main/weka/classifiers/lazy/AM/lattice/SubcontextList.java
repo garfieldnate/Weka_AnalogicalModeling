@@ -18,6 +18,7 @@ package weka.classifiers.lazy.AM.lattice;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import weka.core.Instance;
 
@@ -33,7 +34,7 @@ import weka.core.Instance;
  */
 public class SubcontextList implements Iterable<Subcontext> {
 
-	private HashMap<Integer, Subcontext> labelToSubcontext = new HashMap<Integer, Subcontext>();
+	private Map<Integer, Subcontext> labelToSubcontext = new HashMap<Integer, Subcontext>();
 
 	private Labeler labeler;
 	
@@ -107,6 +108,18 @@ public class SubcontextList implements Iterable<Subcontext> {
 			s.append(',');
 		}
 		return s.toString();
+	}
+	
+	/**
+	 * Returns equals if both lists contain the same data in the same subcontexts. Does not compare
+	 * the Labeler object. 
+	 */
+	@Override
+	public boolean equals(Object other){
+		if(!(other instanceof SubcontextList))
+			return false;
+		SubcontextList otherList = (SubcontextList) other;
+		return labelToSubcontext.equals(otherList.labelToSubcontext);
 	}
 
 	/**

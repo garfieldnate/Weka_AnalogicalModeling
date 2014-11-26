@@ -3,7 +3,6 @@ package weka.classifiers.lazy.AM.lattice;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -20,7 +19,6 @@ public class LabelerTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	private static Instances dataset;
-	private static List<Instance> exemplars;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -47,35 +45,33 @@ public class LabelerTest {
 				// NaN means a missing attribute
 				new double[] { 0, 1, 2, 1, Double.NaN, 1 },
 				new double[] { 0, 1, 2, Double.NaN, 1, 1 } };
-		exemplars = new ArrayList<>();
 		for (double[] datum : data) {
 			Instance instance = new DenseInstance(6, datum);
-			instance.setDataset(dataset);
-			exemplars.add(instance);
+			dataset.add(instance);
 		}
 	}
 
 	@Test
 	public void testGetCardinality() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, exemplars.get(0));
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0));
 		assertEquals(labeler.getCardinality(), 5);
 	}
 
 	@Test
 	public void testGetContextLabel() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(0));
-		assertEquals(0b00000, labeler.getContextLabel(exemplars.get(1)));
-		assertEquals(0b10110, labeler.getContextLabel(exemplars.get(2)));
-		assertEquals(0b00011, labeler.getContextLabel(exemplars.get(3)));
-		assertEquals(0b10011, labeler.getContextLabel(exemplars.get(4)));
-		assertEquals(0b11111, labeler.getContextLabel(exemplars.get(5)));
+				dataset.get(0));
+		assertEquals(0b00000, labeler.getContextLabel(dataset.get(1)));
+		assertEquals(0b10110, labeler.getContextLabel(dataset.get(2)));
+		assertEquals(0b00011, labeler.getContextLabel(dataset.get(3)));
+		assertEquals(0b10011, labeler.getContextLabel(dataset.get(4)));
+		assertEquals(0b11111, labeler.getContextLabel(dataset.get(5)));
 	}
 	
 	@Test
 	public void testGetContextLabelWithMissingData() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				exemplars.get(6));
+				dataset.get(6));
 		//TODO: test missing data labeling
 	}
 

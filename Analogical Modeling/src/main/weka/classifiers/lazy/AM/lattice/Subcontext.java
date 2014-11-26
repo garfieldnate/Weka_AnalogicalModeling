@@ -23,33 +23,14 @@ import weka.classifiers.lazy.AM.AMconstants;
 import weka.core.Instance;
 
 /**
- * Represents a subcontext, containing a list of Exemplars which belong to it.
- * Also keeps track of all instances of Subcontext in a static index.
+ * Represents a subcontext, containing a list of {@link Instance Instances}
+ * which belong to it, along with their shared {@link Label} and common outcome.
+ * If the contained instances do not have the same outcome, then the outcome is
+ * set to {@link AMconstants#NONDETERMINISTIC}.
  * 
- * A subcontext is a list of exemplars with the same assigned label. In
- * analogical modeling, an exemplar is classified using a list of previously
- * classified exemplars. Each previously classified exemplar is given a label by
- * comparing it to the exemplar being classified. The label is actual a vector
- * of boolean values, each representing whether the exemplars have the same
- * value for a given feature. The label is currently assigned by
- * {@link Labeler#getContextLabel}.
+ * This class also keeps track of all instances of Subcontext in a static index.
  * 
- * For example, if we were classifying an exemplar <a, b, c>, and we had three
- * already classified exemplars, <x, y, c>, <w, m, c> and <a, b, z>, the labels
- * would be <no, no, yes>, <no, no, yes>, and <yes, yes, no>. Two of the
- * exemplars have the same label, and so would be placed into the same
- * subcontext.
- * 
- * Each subcontext is also assigned a class based on the classification of its
- * contained exemplars. The value of this class is either the value of all of
- * its contained exemplars, or {@link AMconstants#NONDETERMINISTIC} if the
- * exemplars do not all have the same classification.
- * 
- * Underlyingly, each label is represented by an integer, with each bit
- * representing one feature. 0 represents a match, and 1 a mismatch. This allows
- * for quick processing later on via a boolean lattice (see {@link Supracontext}
- * ).
- * 
+ * @author Nathan Glenn
  */
 public class Subcontext {
 	// store an index of all existing instances of Subcontext
@@ -132,11 +113,26 @@ public class Subcontext {
 		return data;
 	}
 
+	/**
+	 * Two Subcontexts are considered equal if they have the same label and
+	 * contain the same instances.
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Subcontext))
+			return false;
+		Subcontext otherSub = (Subcontext) other;
+		if (label != otherSub.label)
+			return false;
+		return data.equals(otherSub.data);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 
+		// TODO: won't work with missing data
 		sb.append(Utils.labelToString(data.get(0).numAttributes() - 1, label));
 		sb.append('|');
 
@@ -145,12 +141,15 @@ public class Subcontext {
 		if (outcome == AMconstants.NONDETERMINISTIC)
 			sb.append(AMconstants.NONDETERMINISTIC_STRING);
 		else
-			sb.append(data.get(0).value(data.get(0).classAttribute()));
+			sb.append(data.get(0).stringValue(data.get(0).classAttribute()));
 		sb.append('|');
 
+		// TODO: won't work if class isn't last item
 		for (int i = 0; i < data.size() - 1; i++) {
 			sb.append(data.get(i));
-			sb.append(',');
+			// Instance.toString() separates attributes with commas, so we can't
+			// use a comma here or it will be difficult to read
+			sb.append('/');
 		}
 		sb.append(data.get(data.size() - 1));
 
