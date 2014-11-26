@@ -17,7 +17,16 @@ package weka.classifiers.lazy.AM.lattice;
 
 import weka.classifiers.lazy.AM.AMconstants;
 
+/**
+ * A supracontext is a list of subcontexts with certain commonalities in their
+ * labels
+ * 
+ * @author Nathan Glenn
+ * 
+ */
 public class Supracontext {
+	// TODO: store some kind of label?
+
 	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
 	private int index = -1;
@@ -51,7 +60,7 @@ public class Supracontext {
 	 * @param other
 	 *            Supracontext to place this one after
 	 * @param sub
-	 *            Exemplar to insert in the new Supracontext
+	 *            Subcontext to insert in the new Supracontext
 	 * @param ind
 	 *            index of new Supracontext
 	 */
@@ -123,7 +132,8 @@ public class Supracontext {
 	}
 
 	/**
-	 * @return an integer array containing the indices of the contained subcontexts
+	 * @return an integer array containing the indices of the contained
+	 *         subcontexts
 	 */
 	public int[] getData() {
 		return data;
@@ -139,18 +149,21 @@ public class Supracontext {
 
 	/**
 	 * 
-	 * @return the number of supracontexts sharing this list of subcontexts, or the number
-		of arrows pointing to it from the supracontextual lattice
+	 * @return the number of supracontexts sharing this list of subcontexts, or
+	 *         the number of arrows pointing to it from the supracontextual
+	 *         lattice
 	 */
 	public int getCount() {
 		return count;
 	}
-	
+
 	/**
-	 * Set the number of arrows pointing to this supracontext from the supracontextual lattice.
+	 * Set the number of arrows pointing to this supracontext from the
+	 * supracontextual lattice.
+	 * 
 	 * @param c
 	 */
-	public void setCount(int c){
+	public void setCount(int c) {
 		count = c;
 	}
 
@@ -184,6 +197,36 @@ public class Supracontext {
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+
+	// TODO: this requires both Supras to have subs in the same order. That's
+	// fine for now, since this is just for testing, but it could trip me up.
+	/**
+	 * Two Supracontexts are equal if they have the same outcome, number of pointers, 
+	 * and same subcontexts. The indices are not compared for equality, nor is the Supracontext
+	 * returned by {@link getNext}.
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Supracontext))
+			return false;
+		Supracontext otherSupra = (Supracontext) other;
+
+		if (otherSupra.isDeterministic() != isDeterministic())
+			return false;
+		if (otherSupra.hasData() != hasData())
+			return false;
+		if (otherSupra.getCount() != getCount())
+			return false;
+
+		int[] otherData = otherSupra.data;
+		if (otherData.length != data.length)
+			return false;
+		for (int i = 0; i < otherData.length; i++)
+			if (!Subcontext.getSubcontext(otherData[i]).equals(
+					Subcontext.getSubcontext(data[i])))
+				return false;
+		return true;
 	}
 
 }
