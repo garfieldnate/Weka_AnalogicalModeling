@@ -122,9 +122,10 @@ public class Subcontext {
 		if (!(other instanceof Subcontext))
 			return false;
 		Subcontext otherSub = (Subcontext) other;
-		if (label != otherSub.label)
+		if (!label.equals(otherSub.label))
 			return false;
-		return data.equals(otherSub.data);
+		boolean ret = data.equals(otherSub.data);
+		return ret;
 	}
 
 	@Override
@@ -144,13 +145,14 @@ public class Subcontext {
 		sb.append('|');
 
 		// TODO: won't work if class isn't last item
-		for (int i = 0; i < data.size() - 1; i++) {
-			sb.append(data.get(i));
+		for (Instance instance : data) {
+			sb.append(instance);
 			// Instance.toString() separates attributes with commas, so we can't
 			// use a comma here or it will be difficult to read
 			sb.append('/');
 		}
-		sb.append(data.get(data.size() - 1));
+		//remove last slash
+		sb.deleteCharAt(sb.length() - 1);
 
 		sb.append(')');
 

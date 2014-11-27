@@ -15,6 +15,8 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +33,7 @@ import weka.core.Instance;
  * @author Nate Glenn
  * 
  */
+//TODO: why use an iterator, instead of just returning a list?
 public class SubcontextList implements Iterable<Subcontext> {
 
 	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
@@ -100,12 +103,16 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 	@Override
 	public String toString() {
+		List<Label> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
+		Collections.sort(sortedLabels);
+		
 		StringBuilder s = new StringBuilder();
-		Iterator<Subcontext> iter = iterator();
-		while (iter.hasNext()) {
-			s.append(iter.next());
+		for (Label label : sortedLabels) {
+			s.append(labelToSubcontext.get(label));
 			s.append(',');
 		}
+		//remove last comma
+		s.deleteCharAt(s.length() - 1);
 		return s.toString();
 	}
 	
