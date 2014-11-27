@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Label {
+public class Label implements Comparable<Label>{
 	private final int label;
 	private final int card;
 
@@ -29,6 +29,11 @@ public class Label {
 	}
 
 	@Override
+	public int compareTo(Label other) {
+		return Integer.compare(label, other.label);
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		String binary = Integer.toBinaryString(intLabel());
@@ -50,6 +55,12 @@ public class Label {
 				&& otherLabel.getCard() == getCard())
 			return true;
 		return false;
+	}
+
+	private static final int SEED = 37;
+	@Override
+	public int hashCode() {
+		return SEED * intLabel() + getCard();
 	}
 
 	public Iterator<Label> subsetIterator() {
