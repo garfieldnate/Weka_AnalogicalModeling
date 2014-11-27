@@ -84,11 +84,18 @@ public class SupracontextTest {
 		Subcontext sub2 = new Subcontext(new Label(0b1, 1));
 		sub2.add(dataset.get(1));
 		
+		//equality depends on number of pointers, contents of data, and outcome
+		//TODO: outcome should really be just a function of data; it should not be settable directly
 		empty.setData(new int[] {sub1.getIndex(), sub2.getIndex()});
 		Supracontext testSupra = new Supracontext();
+		assertNotEquals(testSupra, empty);
 		testSupra.setData(new int[] {sub1.getIndex(), sub2.getIndex()});
 		assertEquals(testSupra, empty);
 		testSupra.setCount(2);
+		assertNotEquals(testSupra, empty);
+		empty.setCount(2);
+		assertEquals(testSupra, empty);
+		empty.setOutcome(5.0);
 		assertNotEquals(testSupra, empty);
 	}
 	

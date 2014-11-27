@@ -1,6 +1,7 @@
 package weka.classifiers.lazy.AM.lattice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class LatticeTest {
 		expected.setData(new int[]{sub1.getIndex()});
 		expected.setCount(1);
 		expected.setOutcome(0);//r
-		assertEquals(expected, supras.get(0));
+		assertTrue(supras.contains(expected));
 		
 		expected = new Supracontext();
 		sub1 = new Subcontext(new Label(0b100, 3));
@@ -48,7 +49,7 @@ public class LatticeTest {
 		expected.setData(new int[]{sub1.getIndex(), sub2.getIndex()});
 		expected.setCount(1);
 		expected.setOutcome(0);//r
-		assertEquals(expected, supras.get(1));
+		assertTrue(supras.contains(expected));
 		
 		expected = new Supracontext();
 		sub1 = new Subcontext(new Label(0b001, 3));
@@ -57,7 +58,7 @@ public class LatticeTest {
 		expected.setData(new int[]{sub1.getIndex()});
 		expected.setCount(2);
 		expected.setOutcome(AMconstants.NONDETERMINISTIC);
-		assertEquals(expected, supras.get(2));
+		assertTrue(supras.contains(expected));
 	}
 
 }

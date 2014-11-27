@@ -24,22 +24,23 @@ import java.util.List;
 import weka.core.Instance;
 
 /**
- * This class creates and manages a list of {@link Subcontext subcontexts}
- * from a set of previously classified exemplars and an exemplar to be classified.
+ * This class creates and manages a list of {@link Subcontext subcontexts} from
+ * a set of previously classified exemplars and an exemplar to be classified.
  * 
- * Create a list of subcontexts by calling {@link #SubcontextList(Exemplar, List, int)}.
- * Iterate through the created subcontexts using the {@link Iterator} returned by {@link #iterator()}.
+ * Create a list of subcontexts by calling
+ * {@link #SubcontextList(Exemplar, List, int)}. Iterate through the created
+ * subcontexts using the {@link Iterator} returned by {@link #iterator()}.
  * 
  * @author Nate Glenn
  * 
  */
-//TODO: why use an iterator, instead of just returning a list?
+// TODO: why use an iterator, instead of just returning a list?
 public class SubcontextList implements Iterable<Subcontext> {
 
 	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
 
 	private Labeler labeler;
-	
+
 	/**
 	 * 
 	 * @return the number of attributes used to predict an outcome
@@ -49,8 +50,8 @@ public class SubcontextList implements Iterable<Subcontext> {
 	}
 
 	/**
-	 * If you use this constructor, you will have to call the {@link #add} method
-	 * repeatedly in order to fill the contexts.
+	 * If you use this constructor, you will have to call the {@link #add}
+	 * method repeatedly in order to fill the contexts.
 	 * 
 	 * @param testEx
 	 *            Exemplar which is being classified and assigns contexts
@@ -101,28 +102,32 @@ public class SubcontextList implements Iterable<Subcontext> {
 			add(d);
 	}
 
+	/**
+	 * This method is not particularly speedy, since it sorts the contained
+	 * subcontexts by label.
+	 */
 	@Override
 	public String toString() {
 		List<Label> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
 		Collections.sort(sortedLabels);
-		
+
 		StringBuilder s = new StringBuilder();
 		for (Label label : sortedLabels) {
 			s.append(labelToSubcontext.get(label));
 			s.append(',');
 		}
-		//remove last comma
+		// remove last comma
 		s.deleteCharAt(s.length() - 1);
 		return s.toString();
 	}
-	
+
 	/**
-	 * Returns equals if both lists contain the same data in the same subcontexts. Does not compare
-	 * the Labeler object. 
+	 * Returns equals if both lists contain the same data in the same
+	 * subcontexts. Does not compare the Labeler object.
 	 */
 	@Override
-	public boolean equals(Object other){
-		if(!(other instanceof SubcontextList))
+	public boolean equals(Object other) {
+		if (!(other instanceof SubcontextList))
 			return false;
 		SubcontextList otherList = (SubcontextList) other;
 		return labelToSubcontext.equals(otherList.labelToSubcontext);
@@ -137,8 +142,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 		return new Iterator<Subcontext>() {
 
-			Iterator<Label> keyIterator = labelToSubcontext.keySet()
-					.iterator();
+			Iterator<Label> keyIterator = labelToSubcontext.keySet().iterator();
 
 			@Override
 			public boolean hasNext() {

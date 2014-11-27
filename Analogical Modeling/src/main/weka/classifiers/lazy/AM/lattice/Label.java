@@ -28,9 +28,13 @@ public class Label implements Comparable<Label>{
 		return card;
 	}
 
+	/**
+	 * This relies on the underlying representation to sort the labels, so it is
+	 * not guaranteed to sort the same way in the future.
+	 */
 	@Override
-	public int compareTo(Label other) {
-		return Integer.compare(label, other.label);
+	public int compareTo(Label otherLabel) {
+		return Integer.compare(intLabel(), otherLabel.intLabel());
 	}
 
 	@Override
@@ -58,6 +62,7 @@ public class Label implements Comparable<Label>{
 	}
 
 	private static final int SEED = 37;
+
 	@Override
 	public int hashCode() {
 		return SEED * intLabel() + getCard();

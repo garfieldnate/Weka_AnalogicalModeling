@@ -195,16 +195,17 @@ public class Supracontext {
 			sb.append(Subcontext.getSubcontext(index));
 			sb.append(',');
 		}
+		// remove last commas
+		sb.deleteCharAt(sb.length() - 1);
 		sb.append(']');
 		return sb.toString();
 	}
 
-	// TODO: this requires both Supras to have subs in the same order. That's
-	// fine for now, since this is just for testing, but it could trip me up.
 	/**
-	 * Two Supracontexts are equal if they have the same outcome, number of pointers, 
-	 * and same subcontexts. The indices are not compared for equality, nor is the Supracontext
-	 * returned by {@link getNext}.
+	 * Two Supracontexts are equal if they have the same outcome, number of
+	 * pointers, and same subcontexts. The indices are not compared for
+	 * equality, nor is the Supracontext returned by {@link getNext}. Note that
+	 * this implementation is very slow, and should be used only for testing.
 	 */
 	@Override
 	public boolean equals(Object other) {
@@ -212,21 +213,30 @@ public class Supracontext {
 			return false;
 		Supracontext otherSupra = (Supracontext) other;
 
-		if (otherSupra.isDeterministic() != isDeterministic())
+		if (otherSupra.getOutcome() != getOutcome())
 			return false;
+
 		if (otherSupra.hasData() != hasData())
 			return false;
 		if (otherSupra.getCount() != getCount())
 			return false;
 
-		int[] otherData = otherSupra.data;
-		if (otherData.length != data.length)
+		if (otherSupra.data.length != data.length)
 			return false;
-		for (int i = 0; i < otherData.length; i++)
-			if (!Subcontext.getSubcontext(otherData[i]).equals(
-					Subcontext.getSubcontext(data[i])))
-				return false;
+		
+		for(int datum : data){
+				if(!containsSub(otherSupra.data, datum))
+					return false;
+		}
 		return true;
+	}
+	
+	private static boolean containsSub(int[] subIndices, int query){
+		for(int index : subIndices)
+			if(Subcontext.getSubcontext(query).equals(
+					Subcontext.getSubcontext(index)))
+				return true;
+		return false;
 	}
 
 }
