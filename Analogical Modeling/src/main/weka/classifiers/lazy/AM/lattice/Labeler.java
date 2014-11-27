@@ -23,10 +23,21 @@ import weka.core.Attribute;
 import weka.core.Instance;
 
 /**
- * This class contains functions for assigning binary labels.
+ * Analogical Modeling uses labels composed of boolean vectors in order to group
+ * instances into subcontexts and subcontexts in supracontexts. Training set
+ * instances are assigned labels by comparing them with the instance to be
+ * classified and encoding matched attributes and mismatched attributes in a
+ * boolean vector.
+ * 
+ * For example, if we were classifying an instance <a, b, c>, and we had three
+ * training instances <x, y, c>, <w, m, c> and <a, b, z>, and used 'n' to
+ * represent mismatches and 'y' for matches, the labels would be <n, n, y>, <n,
+ * n, y>, and <y, y, n>.
+ * 
+ * The current implementation takes advantage of binary arithmetic by
+ * representing mismatches as a 1 bit and matches as a 0 bit.
  * 
  * @author Nathan Glenn
- * 
  */
 public class Labeler {
 
@@ -35,6 +46,13 @@ public class Labeler {
 	private final Set<Integer> ignoreSet;
 	private final boolean ignoreUnknowns;
 
+	/**
+	 * 
+	 * @param mdc
+	 *            Specifies how to compare missing attributes
+	 * @param instance
+	 *            Instance being classified
+	 */
 	public Labeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
 		this.mdc = mdc;
 		this.testItem = instance;
@@ -49,6 +67,11 @@ public class Labeler {
 		}
 	}
 
+	/**
+	 * 
+	 * @return The cardinality of the label, or how many instance attributes are
+	 *         considered during labeling.
+	 */
 	public int getCardinality() {
 		return testItem.numAttributes() - ignoreSet.size() - 1;
 	}
@@ -59,9 +82,7 @@ public class Labeler {
 
 	/**
 	 * @param data
-	 *            Exemplar to be added to a subcontext
-	 * @param test
-	 *            Exemplar being classified
+	 *            Instance to be labeled
 	 * @return binary label of length n, where n is the length of the feature
 	 *         vectors. If the features of the test exemplar and the data
 	 *         exemplar are the same at index i, then the i'th bit will be 1;

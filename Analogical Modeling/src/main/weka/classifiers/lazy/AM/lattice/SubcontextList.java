@@ -108,6 +108,18 @@ public class SubcontextList implements Iterable<Subcontext> {
 		}
 		return s.toString();
 	}
+	
+	/**
+	 * Returns equals if both lists contain the same data in the same subcontexts. Does not compare
+	 * the Labeler object. 
+	 */
+	@Override
+	public boolean equals(Object other){
+		if(!(other instanceof SubcontextList))
+			return false;
+		SubcontextList otherList = (SubcontextList) other;
+		return labelToSubcontext.equals(otherList.labelToSubcontext);
+	}
 
 	/**
 	 * 

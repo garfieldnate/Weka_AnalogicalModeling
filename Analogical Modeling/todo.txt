@@ -4,9 +4,10 @@ Later TODO:
 - Labeler won't work if the class attribute isn't the last one.
 - the fact that Subcontexts are given integer indices is leaked and should be fixed. 
 	- could pass around Sublist objects instead
+- factor out common test code
+	- mainly the reading of the chapter3 test files
 - change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
-- fix broken tests
 - mask could be done with left and right shift, instead of right shift and &
 - test everything!
 - toString method for Lattice
