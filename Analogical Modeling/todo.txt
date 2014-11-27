@@ -9,7 +9,6 @@ Later TODO:
 	- mainly the reading of the chapter3 test files
 - change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
-- fix broken tests
 - mask could be done with left and right shift, instead of right shift and &
 - test everything!
 - toString method for Lattice
