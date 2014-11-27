@@ -121,16 +121,16 @@ public class Labeler {
 	 *            the number of features in the exemplar
 	 * @return A set of masks for splitting labels
 	 */
-	public static LabelMask[] getMasks(int numMasks, int cardinality) {
-		if (numMasks > cardinality)
-			numMasks = cardinality;
+	public LabelMask[] getMasks(int numMasks) {
+		if (numMasks > getCardinality())
+			numMasks = getCardinality();
 		LabelMask[] masks = new LabelMask[numMasks];
 
-		int latticeSize = (int) Math.ceil((double) cardinality / numMasks);
+		int latticeSize = (int) Math.ceil((double) getCardinality() / numMasks);
 		int index = 0;
-		for (int i = 0; i < cardinality; i += latticeSize) {
+		for (int i = 0; i < getCardinality(); i += latticeSize) {
 			masks[index] = new LabelMask(i, Math.min(i + latticeSize - 1,
-					cardinality - 1));
+					getCardinality() - 1));
 			index++;
 		}
 		return masks;

@@ -102,27 +102,31 @@ public class LabelerTest {
 				labeler.getContextLabel(dataset.get(5)), new Label(0b1101, 4));
 		assertEquals("IGNORE: mdc used for data unknowns",
 				labeler.getContextLabel(dataset.get(8)), new Label(0b0010, 4));
-		// TODO: test missing data labeling
 	}
 
 	@Test
 	public void testGetMasks() {
-		LabelMask[] masks = Labeler.getMasks(2, 5);
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
+				false);
+		LabelMask[] masks = labeler.getMasks(2);
 		assertEquals(2, masks.length);
-		assertEquals(3, masks[0].getCardinality());
-		assertEquals(2, masks[1].getCardinality());
+		assertEquals(new LabelMask(0, 2), masks[0]);
+		assertEquals(new LabelMask(3, 4), masks[1]);
 
-		assertEquals(new Label(0b111, 3), masks[0].mask(new Label(0b11111, 5)));
-		assertEquals(new Label(0b000, 3), masks[0].mask(new Label(0b00000, 5)));
-		assertEquals(new Label(0b101, 3), masks[0].mask(new Label(0b11101, 5)));
-
-		assertEquals(new Label(0b11, 2), masks[1].mask(new Label(0b11111, 5)));
-		assertEquals(new Label(0b00, 2), masks[1].mask(new Label(0b00000, 5)));
-		assertEquals(new Label(0b10, 2), masks[1].mask(new Label(0b10111, 5)));
-
-		masks = Labeler.getMasks(4, 3);
+		masks = labeler.getMasks(8);
 		assertEquals("Number of masks does not exceed cardinality",
-				masks.length, 3);
+				masks.length, 5);
+	}
+
+	@Test
+	public void testGetMasksWithIgnoreUnknowns() {
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(6),
+				true);
+		LabelMask[] masks = labeler.getMasks(2);
+		assertEquals(2, masks.length);
+		assertEquals(new LabelMask(0, 1), masks[0]);
+		assertEquals(new LabelMask(2, 3), masks[1]);
+
 	}
 
 }

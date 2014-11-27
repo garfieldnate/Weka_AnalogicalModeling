@@ -58,10 +58,9 @@ public class DistributedLattice {
 	 * @param subList
 	 *            list of Subcontexts to add to the lattice
 	 */
-	public DistributedLattice(SubcontextList subList) {
+	public DistributedLattice(SubcontextList subList, Labeler labeler) {
 		// create masks for splitting labels
-		LabelMask[] masks = Labeler.getMasks(AMconstants.NUM_LATTICES,
-				subList.getCardinality());
+		LabelMask[] masks = labeler.getMasks(AMconstants.NUM_LATTICES);
 
 		// fill heterogeneous lattices
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);

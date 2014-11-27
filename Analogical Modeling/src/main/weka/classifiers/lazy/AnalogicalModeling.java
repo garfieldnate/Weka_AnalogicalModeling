@@ -172,7 +172,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 				trainingExemplars);
 		if (m_parallel) {
 			// 2. Place subcontexts into the supracontextual lattice
-			DistributedLattice distLattice = new DistributedLattice(subList);
+			DistributedLattice distLattice = new DistributedLattice(subList, labeler);
 			// 3. pointers in homogeneous supracontexts are used to give the
 			// analogical set and predicted outcome.
 			as = new AnalogicalSet(distLattice.getSupracontextList(), testItem,

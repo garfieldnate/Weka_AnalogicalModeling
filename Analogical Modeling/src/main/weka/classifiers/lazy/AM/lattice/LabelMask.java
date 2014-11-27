@@ -28,11 +28,12 @@ public class LabelMask {
 	 *            The last feature index to be considered
 	 */
 	LabelMask(int start, int end) {
-		if(start < 0)
+		if (start < 0)
 			throw new IllegalArgumentException("start should be non-negative");
-		if(end < start)
-			throw new IllegalArgumentException("end should be greater than or equal to start");
-		
+		if (end < start)
+			throw new IllegalArgumentException(
+					"end should be greater than or equal to start");
+
 		this.start = start;
 		cardinality = end - start + 1;
 		mask = 0;
@@ -43,9 +44,20 @@ public class LabelMask {
 	public Label mask(Label label) {
 		return new Label((mask & label.intLabel()) >> start, getCardinality());
 	}
-	
-	public String toString(){
-		return start + "-" + (start+cardinality) + ":" + Integer.toBinaryString(mask);
+
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof LabelMask))
+			return false;
+		LabelMask otherMask = (LabelMask) other;
+		return getCardinality() == otherMask.getCardinality()
+				&& mask == otherMask.mask && start == otherMask.start;
+	}
+
+	@Override
+	public String toString() {
+		return start + "-" + (start + cardinality) + ":"
+				+ Integer.toBinaryString(mask);
 	}
 
 }
