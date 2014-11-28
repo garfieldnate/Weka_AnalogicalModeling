@@ -6,7 +6,6 @@ Later TODO:
 - add high-level algorithm explanations for the lattice, etc.
 - test complete classification with ignored unknowns
 - make Supracontexts have sorted subs so that quicker merging and equality testing can be performed.
-- Labeler won't work if the class attribute isn't the last one.
 - the fact that Subcontexts are given integer indices is leaked and should be fixed. 
 	- could pass around Sublist objects instead
 - factor out common test code

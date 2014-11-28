@@ -45,6 +45,7 @@ public class Labeler {
 	private final Instance testItem;
 	private final Set<Integer> ignoreSet;
 	private final boolean ignoreUnknowns;
+	private int classIndex;
 
 	/**
 	 * 
@@ -58,6 +59,7 @@ public class Labeler {
 		this.testItem = instance;
 		this.ignoreUnknowns = ignoreUnknowns;
 		ignoreSet = new HashSet<>();
+		classIndex = instance.classIndex();
 		if(ignoreUnknowns){
 			int length = testItem.numAttributes() - 1;
 			for (int i = 0; i < length; i++) {
@@ -92,17 +94,22 @@ public class Labeler {
 		int label = 0;
 		int length = getCardinality();
 		Attribute att;
-		for (int i = 0; i < length; i++) {
+		int index = 0;
+		for (int i = 0; i < testItem.numAttributes(); i++) {
+			// skip ignored attributes and the class attribute
 			if(ignoreSet.contains(i))
+				continue;
+			if(i == classIndex)
 				continue;
 			att = testItem.attribute(i);
 			if (testItem.isMissing(i) || data.isMissing(i))
 				label |= (mdc.outcome(testItem, data, att));
 			else if (testItem.value(att) != data.value(att)) {
-				// use length-1-i instead of i so that in binary the labels show
+				// use length-1-index instead of index so that in binary the labels show
 				// left to right, first to last feature.
-				label |= (1 << (length - 1 - i));
+				label |= (1 << (length - 1 - index));
 			}
+			index++;
 		}
 		return new Label(label, getCardinality());
 	}

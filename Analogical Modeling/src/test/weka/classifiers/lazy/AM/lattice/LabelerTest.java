@@ -72,6 +72,16 @@ public class LabelerTest {
 				labeler.getContextLabel(dataset.get(4)));
 		assertEquals(new Label(0b11111, 5),
 				labeler.getContextLabel(dataset.get(5)));
+		
+		// now test with a different class index, to make sure it's not hard coded
+		dataset.setClassIndex(2);
+		labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
+				false);
+		assertEquals(new Label(0b10100, 5), labeler.getContextLabel(dataset.get(2)));
+		assertEquals(new Label(0b00110, 5), labeler.getContextLabel(dataset.get(3)));
+		assertEquals(new Label(0b10110, 5), labeler.getContextLabel(dataset.get(4)));
+		assertEquals(new Label(0b11110, 5), labeler.getContextLabel(dataset.get(5)));
+		dataset.setClassIndex(dataset.numAttributes() - 1);
 	}
 
 	@Test
@@ -127,6 +137,11 @@ public class LabelerTest {
 		assertEquals(new LabelMask(0, 1), masks[0]);
 		assertEquals(new LabelMask(2, 3), masks[1]);
 
+	}
+	
+	@Test
+	public void testClassNotLastAttribute() {
+		
 	}
 
 }
