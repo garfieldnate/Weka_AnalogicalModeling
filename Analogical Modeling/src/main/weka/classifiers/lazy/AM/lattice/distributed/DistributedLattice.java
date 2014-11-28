@@ -17,14 +17,17 @@
 package weka.classifiers.lazy.AM.lattice.distributed;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMconstants;
 import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.ILattice;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
@@ -35,7 +38,7 @@ import weka.classifiers.lazy.AM.lattice.Supracontext;
  * @author Nathan Glenn
  * 
  */
-public class DistributedLattice {
+public class DistributedLattice implements ILattice {
 
 	private List<HeterogeneousLattice> hlattices;
 
@@ -71,7 +74,8 @@ public class DistributedLattice {
 
 		// then combine them into one non-heterogeneous lattice; all but the
 		// last combination will create another heterogeneous lattice. The last
-		// combination will remove heterogeneous, non-deterministic supracontexts.
+		// combination will remove heterogeneous, non-deterministic
+		// supracontexts.
 		supras = hlattices.get(0).getSupracontextList();
 		for (int i = 1; i < hlattices.size() - 1; i++) {
 			supras = combine(supras, hlattices.get(i).getSupracontextList());
@@ -96,8 +100,9 @@ public class DistributedLattice {
 		List<Supracontext> combinedList = new LinkedList<Supracontext>();
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
-				subIndeces = intersection(supra1.getData(), supra2.getData());
-				if(subIndeces.length == 0)
+				subIndeces = intersectionOfSubs(supra1.getData(),
+						supra2.getData());
+				if (subIndeces.length == 0)
 					continue;
 				supra = new Supracontext();
 				supra.setData(subIndeces);
@@ -122,31 +127,50 @@ public class DistributedLattice {
 			List<Supracontext> supraList2) {
 		Supracontext supra;
 		int[] subIndices;
-		List<Supracontext> combinedList = new LinkedList<Supracontext>();
+		// the same supracontext may be formed via different combinations, so we
+		// use this as a set (Set doesn't provide a get(Object) method);
+		Map<Supracontext, Supracontext> finalSupras = new HashMap<Supracontext, Supracontext>();
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
-				subIndices = intersectionFinal(supra1.getData(), supra2.getData());
-				if(subIndices.length == 0)
+				// find the intersection of subcontexts
+				subIndices = intersectionOfSubsRemoveHeterogeneous(
+						supra1.getData(), supra2.getData());
+				// continue if no non-heterogeneous supracontext could be formed
+				if (subIndices.length == 0)
 					continue;
+				// make a new supracontext containing the combined data and a
+				// combined count
 				supra = new Supracontext();
 				supra.setData(subIndices);
 				supra.setCount(supra1.getCount() * supra2.getCount());
-				combinedList.add(supra);
+				// add to the existing count if the same supra was formed from a
+				// previous combination
+				if (finalSupras.containsKey(supra)) {
+					Supracontext existing = finalSupras.get(supra);
+					int count = supra.getCount() + existing.getCount();
+					existing.setCount(count);
+				} else {
+					supra.setOutcome(Subcontext.getSubcontext(
+							supra.getData()[0]).getOutcome());
+					finalSupras.put(supra, supra);
+				}
 			}
 		}
-		return combinedList;
+		return new ArrayList<Supracontext>(finalSupras.keySet());
 	}
 
 	/**
 	 * 
-	 * Computes the intersection of 2 arrays of integers
+	 * Computes the intersection of 2 arrays of integers (which represent
+	 * subcontext indices).
 	 * 
 	 * @param list1
 	 * @param list2
 	 * @return intersection of the two integer arrays
 	 */
-	private int[] intersection(int[] list1, int[] list2) {
-		//TODO: these should really be sorted and then we can do a quick manual merge
+	private int[] intersectionOfSubs(int[] list1, int[] list2) {
+		// TODO: these should already be sorted and then we can do a quick
+		// manual merge
 		int[] smaller;
 		int[] larger;
 		if (list1.length > list2.length) {
@@ -175,15 +199,16 @@ public class DistributedLattice {
 
 	/**
 	 * 
-	 * Computes the intersection of 2 arrays of integers; Since the integers
-	 * represent subcontexts, we use method as a final supracontext determiner
-	 * which returns nothing as soon as it detects heterogeneity.
+	 * Computes the intersection of 2 given arrays of integers representing
+	 * subcontext indices. This method returns an empty array if the
+	 * intersection contains indices of subcontexts which would create a
+	 * heterogeneous supracontext.
 	 * 
 	 * @param list1
 	 * @param list2
 	 * @return intersection of the two integer arrays
 	 */
-	private int[] intersectionFinal(int[] list1, int[] list2) {
+	private int[] intersectionOfSubsRemoveHeterogeneous(int[] list1, int[] list2) {
 		int[] smaller;
 		int[] larger;
 		if (list1.length > list2.length) {
@@ -214,7 +239,7 @@ public class DistributedLattice {
 				else if (outcome == AMconstants.NONDETERMINISTIC
 						|| outcome != Subcontext.getSubcontext(i).getOutcome()) {
 					return new int[0];
-				}else{
+				} else {
 					intersection.add(i);
 				}
 			}
@@ -226,5 +251,4 @@ public class DistributedLattice {
 			returnVal[i] = ints[i];
 		return returnVal;
 	}
-
 }

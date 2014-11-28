@@ -201,42 +201,43 @@ public class Supracontext {
 		return sb.toString();
 	}
 
+	private int hash = -1;
+	private static final int SEED = 37;
+	@Override
+	public int hashCode() {
+		if (hash != -1)
+			return hash;
+		int code = 0;
+		for (int index : data)
+			code += SEED * code + index;
+		hash = code;
+		return code;
+	}
+
 	/**
-	 * Two Supracontexts are equal if they have the same outcome, number of
-	 * pointers, and same subcontexts. The indices are not compared for
-	 * equality, nor is the Supracontext returned by {@link getNext}. Note that
-	 * this implementation is very slow, and should be used only for testing.
+	 * Two supracontexts are the same if they contain the exact same subcontext
+	 * objects (no deep comparison of subcontexts is performed). Outcome and
+	 * count are not compared.
 	 */
+	// TODO: this would be a lot faster if we could guarantee sorted order for
+	// the subcontexts
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Supracontext))
 			return false;
 		Supracontext otherSupra = (Supracontext) other;
-
-		if (otherSupra.getOutcome() != getOutcome())
+		if (data.length != otherSupra.data.length)
 			return false;
-
-		if (otherSupra.hasData() != hasData())
-			return false;
-		if (otherSupra.getCount() != getCount())
-			return false;
-
-		if (otherSupra.data.length != data.length)
-			return false;
-		
-		for(int datum : data){
-				if(!containsSub(otherSupra.data, datum))
-					return false;
-		}
+		for (int index : data)
+			if (!containsSub(otherSupra.data, index))
+				return false;
 		return true;
 	}
-	
-	private static boolean containsSub(int[] subIndices, int query){
-		for(int index : subIndices)
-			if(Subcontext.getSubcontext(query).equals(
-					Subcontext.getSubcontext(index)))
+
+	private boolean containsSub(int[] subIndices, int query) {
+		for (int index : subIndices)
+			if (query == index)
 				return true;
 		return false;
 	}
-
 }

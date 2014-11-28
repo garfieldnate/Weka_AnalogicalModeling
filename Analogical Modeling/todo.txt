@@ -1,8 +1,11 @@
 Next:
-	- getMasks() must account for ignored attributes, but that probably means it shouldn't be static; this will take some redesigning.
 
 Later TODO:
 - test the distributed implementation classes
+- refactor supracontext a little so that it does more of its own work
+- add high-level algorithm explanations for the lattice, etc.
+- test complete classification with ignored unknowns
+- make Supracontexts have sorted subs so that quicker merging and equality testing can be performed.
 - Labeler won't work if the class attribute isn't the last one.
 - the fact that Subcontexts are given integer indices is leaked and should be fixed. 
 	- could pass around Sublist objects instead
@@ -11,10 +14,12 @@ Later TODO:
 - change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
 - mask could be done with left and right shift, instead of right shift and &
+	- could eliminate need to store an extra variable
 - use BitSets for unlimited-size labels
 - use BigIntegers for scoring
 - remove Eclipse stuff and use Gradle
-- make sure the Weka jar isn't in Git 
+- make sure the Weka jar isn't in Git
+- what would it take to make AM more of an updateable classifier, making changes to the lattice as more data is recieved.
 
 Engineering Tasks
 - Finish parallel implementation

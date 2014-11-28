@@ -27,7 +27,8 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.lattice.Labeler;
-import weka.classifiers.lazy.AM.lattice.Lattice;
+import weka.classifiers.lazy.AM.lattice.BasicLattice;
+import weka.classifiers.lazy.AM.lattice.ILattice;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
@@ -182,7 +183,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 				System.out.println("Subcontexts: " + subList);
 
 			// 2. Place subcontexts into the supracontextual lattice
-			Lattice lattice = new Lattice(testItem.numAttributes() - 1, subList);
+			ILattice lattice = new BasicLattice(subList);
 			if (getDebug())
 				System.out.println("Lattice: " + lattice);
 
