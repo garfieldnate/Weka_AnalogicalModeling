@@ -1,0 +1,19 @@
+Next:
+
+Later TODO:
+- unit-test the distributed implementation classes
+- refactor supracontext a little so that it does more of its own work
+- add high-level algorithm explanations for the lattice, etc.
+	- package-info.java?
+- test complete classification with ignored unknowns
+- use BitSets for unlimited-size labels
+	- or perhaps give multiple implementations: short, int, long, bitset
+- use BigIntegers for scoring
+
+Engineering Tasks
+- profile with big data sets
+
+Thoughts:
+- is there a connection between k-d trees and AM's splitting into sub contexts?
+- what would it take to make AM more of an updateable classifier, making changes to the lattice as more data is recieved.
+

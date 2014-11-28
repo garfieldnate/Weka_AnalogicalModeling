@@ -1,4 +1,22 @@
-#ignore compiled Java classes
+### Weka ###
+wekarefs/
+
+
+### Java ###
 *.class
-Analogical Modeling/bin/
-Analogical Modeling/wekarefs/
+
+# Package Files #
+*.jar
+
+### Gradle ###
+.gradle
+build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+bin/

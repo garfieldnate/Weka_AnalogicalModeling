@@ -1,0 +1,111 @@
+High level summary:
+	Create subcontexts from exemplars
+	Fill supracontexts
+	Calculate pointers to each exemplar
+		number of exemplars in entire supracontext
+	Sum for each outcome, divide by total
+
+
+Item:
+   	array of features; input as string, convert to ints
+   	converted to ints for quicker comparison
+   	getLabel(testItem): return binary label given a test item.
+	outcome: also store as int
+	occurences: number of supracontexts containing the item
+
+Label:
+	will be an n-bit number, where n is the length of the feature vectors;
+	Xuse Label class, which uses:
+	X	Long if number of features is Long.SIZE or less (should be always)
+	X	Java.util.BitSet otherwise
+	use an int
+		max of 32 featrues- too big for AM anyways.
+	determines the context of the subcontext, where the label of the compared context (the data
+	item) is an n-bit BitSet of all 1's. A one means it matches the data item, a zero means it
+	does not.
+ 	 iterator:
+     given 1001011, need to return
+		1001111
+		1011011
+		1011111
+		1101011
+		1101111
+		1111011
+		1111111
+	use gray code
+   
+features:
+   value or UNKNOWN
+
+Lattices:
+   drawing capabilities
+        000
+        /|\
+       / | \
+      /  |  \
+     /   |   \
+   001  010  100
+   | \  / \  / |
+   |  \/   \/  |
+   |  /\   /\  |
+   | /  \ /  \ |
+   011  101  110
+     \   |   /
+      \  |  /
+       \ | /
+        \|/
+        111
+		or graphviz;
+		
+supracontextual lattice: elements are supracontexts
+  lattice[2^n]
+  
+supracontext:
+	label, ?
+	heterogeneous if:
+		contains 2 or more subcontexts, and
+		data items in these subcontexts have different outcomes
+	otherwise homogeneous
+	items: number of items contained in the supracontext
+	
+map: break supracontextual lattice into several smaller lattices
+
+Classifier
+	AM works like this:
+	list out supracontexts and their subcontexts
+	determine which supracontexts are heterogenous
+	count pointers within those
+	assign probabilities to each outcome depending on how many pointers point to a data item with
+		that outcome.
+		
+	Algorithm:
+	create lattice. 
+		Just a long list of 2^n binary labels.
+		Generate using gray code.
+		Each is called a supracontext.
+		 n = feature length.
+	Using a test item, assign labels to each data item.
+		0 means same, 1 means different.
+	Place data items into subcontexts
+	Place the subcontexts in the supracontextual lattice
+		Use gray codes to iterate children of supracontext
+	List homogeneous contexts
+		hetereogeneous if contains 2+ outcomes in its subcontexts
+		otherwise homogeneous
+	Data items in homogeneous contexts are the analogical set.
+	Calculate number of pointers for each item
+		sum of number of subcontexts in all homogeneous supracontexts containing the item
+	use numbers to predict outcome and determine analogical effect of item.
+		
+Licensing:
+	in any interactive output, need this (don't think we'll need it):
+	Java Analogical Modeling  Copyright (C) 2011 Nathan Glenn
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
+    
+Important:
+	see AM.html and Lattice.html for original implementation. These are from the
+	original distribution, and need to be removed in the future in case they violate
+	copyright laws (although I doubt Royall or Theron, the original writers, care).
+	
