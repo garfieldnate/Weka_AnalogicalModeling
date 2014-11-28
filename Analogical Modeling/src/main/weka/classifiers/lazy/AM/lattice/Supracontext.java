@@ -15,6 +15,9 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import weka.classifiers.lazy.AM.AMconstants;
 
 /**
@@ -30,10 +33,10 @@ public class Supracontext {
 	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
 	private int index = -1;
-	// Zero means nondeterministic
+	// Zero means nondeterministic; any other number is the class attribute index given by Weka
 	private double outcome;
-	// an array listing the indeces of the contained subcontexts
-	private int[] data;
+	// the contained subcontexts
+	private Set<Subcontext> data;
 	// the number of supracontexts sharing this list of subcontexts, or the
 	// number
 	// of arrows pointing to it from the supracontextual lattice
@@ -48,7 +51,7 @@ public class Supracontext {
 	 * will be 0 by default
 	 */
 	public Supracontext() {
-		data = new int[0];
+		data = new HashSet<Subcontext>();
 		outcome = AMconstants.EMPTY;
 		index = -1;
 	}
@@ -70,8 +73,8 @@ public class Supracontext {
 		// subcontext
 		if (!other.hasData()) {
 			outcome = sub.getOutcome();
-			data = new int[1];
-			data[0] = sub.getIndex();
+			data = new HashSet<Subcontext>(1);
+			data.add(sub);
 			setNext(other.getNext());
 			other.setNext(this);
 			return;
@@ -79,12 +82,9 @@ public class Supracontext {
 		outcome = other.outcome;
 		// count will equal 0
 
-		int[] otherData = other.getData();
-		int size = otherData.length;
-		data = new int[size + 1];
-		for (int i = 0; i < size; i++)
-			data[i] = otherData[i];
-		data[size] = sub.getIndex();
+		data = new HashSet<Subcontext>(other.getData().size() + 1);
+		data.addAll(other.getData());
+		data.add(sub);
 		setData(data);
 
 		setNext(other.getNext());
@@ -135,16 +135,16 @@ public class Supracontext {
 	 * @return an integer array containing the indices of the contained
 	 *         subcontexts
 	 */
-	public int[] getData() {
+	public Set<Subcontext> getData() {
 		return data;
 	}
 
-	public void setData(int[] data) {
-		this.data = data;
+	public void setData(Set<Subcontext> subs) {
+		this.data = subs;
 	}
 
 	public boolean hasData() {
-		return data.length != 0;
+		return data.size() != 0;
 	}
 
 	/**
@@ -185,14 +185,14 @@ public class Supracontext {
 	public String toString() {
 		if (data == null)
 			return "[NULL]";
-		if (data.length == 0)
+		if (data.isEmpty())
 			return "[EMPTY]";
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		sb.append(count);
 		sb.append('x');
-		for (int index : data) {
-			sb.append(Subcontext.getSubcontext(index));
+		for (Subcontext sub : data) {
+			sb.append(sub);
 			sb.append(',');
 		}
 		// remove last commas
@@ -208,8 +208,8 @@ public class Supracontext {
 		if (hash != -1)
 			return hash;
 		int code = 0;
-		for (int index : data)
-			code += SEED * code + index;
+		for (Subcontext sub : data)
+			code += SEED * code + sub.hashCode();
 		hash = code;
 		return code;
 	}
@@ -219,25 +219,12 @@ public class Supracontext {
 	 * objects (no deep comparison of subcontexts is performed). Outcome and
 	 * count are not compared.
 	 */
-	// TODO: this would be a lot faster if we could guarantee sorted order for
-	// the subcontexts
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Supracontext))
 			return false;
 		Supracontext otherSupra = (Supracontext) other;
-		if (data.length != otherSupra.data.length)
-			return false;
-		for (int index : data)
-			if (!containsSub(otherSupra.data, index))
-				return false;
-		return true;
+		return data.equals(otherSupra.data);
 	}
 
-	private boolean containsSub(int[] subIndices, int query) {
-		for (int index : subIndices)
-			if (query == index)
-				return true;
-		return false;
-	}
 }

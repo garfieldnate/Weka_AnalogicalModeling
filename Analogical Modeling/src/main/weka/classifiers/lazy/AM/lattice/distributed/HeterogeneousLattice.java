@@ -158,33 +158,6 @@ public class HeterogeneousLattice {
 	}
 
 	/**
-	 * Creates a new Supracontext and places it in the Supracontextual linked
-	 * list right after the other one it is created from.
-	 * 
-	 * @param other
-	 * @param sub
-	 */
-	public Supracontext insertNewAfter(Supracontext other, Subcontext sub) {
-		Supracontext newSup = new Supracontext();
-		newSup.setOutcome(other.getOutcome());
-		newSup.setIndex(index);
-		// count will equal 0
-
-		int[] otherData = other.getData();
-		int size = otherData.length;
-		int[] data = new int[size + 1];
-		for (int i = 0; i < size; i++)
-			data[i] = otherData[i];
-		data[size - 1] = sub.getIndex();
-		newSup.setData(data);
-
-		newSup.setNext(other.getNext());
-		other.setNext(newSup);
-
-		return newSup;
-	}
-
-	/**
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {

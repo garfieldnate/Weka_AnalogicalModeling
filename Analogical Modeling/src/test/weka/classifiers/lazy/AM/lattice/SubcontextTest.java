@@ -62,8 +62,6 @@ public class SubcontextTest {
 		assertEquals("Multiple outcomes lead to non-determinism",
 				s.getOutcome(), AMconstants.NONDETERMINISTIC, DELTA);
 
-		assertEquals("Subcontext indexing",
-				Subcontext.getSubcontext(s.getIndex()), s);
 		assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
 
 	}

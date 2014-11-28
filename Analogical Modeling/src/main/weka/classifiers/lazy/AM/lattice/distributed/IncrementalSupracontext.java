@@ -40,8 +40,7 @@ public class IncrementalSupracontext extends Supracontext{
 	 * @param subIndex index of the subcontext being added
 	 * @return true if the Supracontext is still considered homogeneous; false otherwise
 	 */
-	public boolean add(int subIndex){
-		Subcontext sub = Subcontext.getSubcontext(subIndex);
+	public boolean add(Subcontext sub){
 		// the first time we add a Subcontext, we set the current
 		// outcome to its outcome, and add the Subcontext to the list
 		if (subs.size() == 0) {

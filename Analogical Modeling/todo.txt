@@ -5,12 +5,9 @@ Later TODO:
 - refactor supracontext a little so that it does more of its own work
 - add high-level algorithm explanations for the lattice, etc.
 - test complete classification with ignored unknowns
-- make Supracontexts have sorted subs so that quicker merging and equality testing can be performed.
-- the fact that Subcontexts are given integer indices is leaked and should be fixed. 
-	- could pass around Sublist objects instead
-- change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
 - use BitSets for unlimited-size labels
+	- or perhaps give multiple implementations: int, long, 
 - use BigIntegers for scoring
 - remove Eclipse stuff and use Gradle
 - make sure the Weka jar isn't in Git

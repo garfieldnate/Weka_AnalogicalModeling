@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.lattice.ILattice;
 import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Labeler;
-import weka.classifiers.lazy.AM.lattice.ILattice;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
@@ -96,13 +96,13 @@ public class DistributedLattice implements ILattice {
 	private List<Supracontext> combine(List<Supracontext> supraList1,
 			List<Supracontext> supraList2) {
 		Supracontext supra;
-		int[] subIndeces;
+		Set<Subcontext> subIndeces;
 		List<Supracontext> combinedList = new LinkedList<Supracontext>();
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
 				subIndeces = intersectionOfSubs(supra1.getData(),
 						supra2.getData());
-				if (subIndeces.length == 0)
+				if (subIndeces.isEmpty())
 					continue;
 				supra = new Supracontext();
 				supra.setData(subIndeces);
@@ -126,22 +126,22 @@ public class DistributedLattice implements ILattice {
 	private List<Supracontext> combineFinal(List<Supracontext> supraList1,
 			List<Supracontext> supraList2) {
 		Supracontext supra;
-		int[] subIndices;
+		Set<Subcontext> intersectedSubs;
 		// the same supracontext may be formed via different combinations, so we
 		// use this as a set (Set doesn't provide a get(Object) method);
 		Map<Supracontext, Supracontext> finalSupras = new HashMap<Supracontext, Supracontext>();
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
 				// find the intersection of subcontexts
-				subIndices = intersectionOfSubsRemoveHeterogeneous(
+				intersectedSubs = intersectionOfSubsRemoveHeterogeneous(
 						supra1.getData(), supra2.getData());
 				// continue if no non-heterogeneous supracontext could be formed
-				if (subIndices.length == 0)
+				if (intersectedSubs.isEmpty())
 					continue;
 				// make a new supracontext containing the combined data and a
 				// combined count
 				supra = new Supracontext();
-				supra.setData(subIndices);
+				supra.setData(intersectedSubs);
 				supra.setCount(supra1.getCount() * supra2.getCount());
 				// add to the existing count if the same supra was formed from a
 				// previous combination
@@ -150,8 +150,7 @@ public class DistributedLattice implements ILattice {
 					int count = supra.getCount() + existing.getCount();
 					existing.setCount(count);
 				} else {
-					supra.setOutcome(Subcontext.getSubcontext(
-							supra.getData()[0]).getOutcome());
+					supra.setOutcome(intersectedSubs.iterator().next().getOutcome());
 					finalSupras.put(supra, supra);
 				}
 			}
@@ -164,37 +163,26 @@ public class DistributedLattice implements ILattice {
 	 * Computes the intersection of 2 arrays of integers (which represent
 	 * subcontext indices).
 	 * 
-	 * @param list1
-	 * @param list2
+	 * @param set1
+	 * @param set2
 	 * @return intersection of the two integer arrays
 	 */
-	private int[] intersectionOfSubs(int[] list1, int[] list2) {
-		// TODO: these should already be sorted and then we can do a quick
-		// manual merge
-		int[] smaller;
-		int[] larger;
-		if (list1.length > list2.length) {
-			smaller = list2;
-			larger = list1;
+	//TODO: is the smaller/larger optimization really necessary here?
+	private Set<Subcontext> intersectionOfSubs(Set<Subcontext> set1,
+			Set<Subcontext> set2) {
+		Set<Subcontext> smaller;
+		Set<Subcontext> larger;
+		if (set1.size() > set2.size()) {
+			smaller = set2;
+			larger = set1;
 		} else {
-			smaller = list1;
-			larger = list2;
+			smaller = set1;
+			larger = set2;
 		}
 
-		Set<Integer> set = new HashSet<Integer>();
-		for (Integer i : smaller)
-			set.add(i);
-
-		Set<Integer> intersection = new HashSet<Integer>();
-		for (Integer i : larger)
-			if (set.contains(i))
-				intersection.add(i);
-		Integer[] ints = intersection.toArray(new Integer[intersection.size()]);
-
-		int[] returnVal = new int[ints.length];
-		for (int i = 0; i < returnVal.length; i++)
-			returnVal[i] = ints[i];
-		return returnVal;
+		Set<Subcontext> set = new HashSet<>(smaller);
+		set.retainAll(larger);
+		return set;
 	}
 
 	/**
@@ -204,51 +192,44 @@ public class DistributedLattice implements ILattice {
 	 * intersection contains indices of subcontexts which would create a
 	 * heterogeneous supracontext.
 	 * 
-	 * @param list1
-	 * @param list2
+	 * @param set1
+	 * @param set2
 	 * @return intersection of the two integer arrays
 	 */
-	private int[] intersectionOfSubsRemoveHeterogeneous(int[] list1, int[] list2) {
-		int[] smaller;
-		int[] larger;
-		if (list1.length > list2.length) {
-			smaller = list2;
-			larger = list1;
+	private Set<Subcontext> intersectionOfSubsRemoveHeterogeneous(
+			Set<Subcontext> set1, Set<Subcontext> set2) {
+		Set<Subcontext> smaller;
+		Set<Subcontext> larger;
+		if (set1.size() > set2.size()) {
+			smaller = set2;
+			larger = set1;
 		} else {
-			smaller = list1;
-			larger = list2;
+			smaller = set1;
+			larger = set2;
 		}
+		Set<Subcontext> set = new HashSet<>(smaller);
 
-		Set<Integer> set = new HashSet<Integer>();
-		for (Integer i : smaller)
-			set.add(i);
-
-		Set<Integer> intersection = new HashSet<Integer>();
+		Set<Subcontext> intersection = new HashSet<>();
+		//TODO: magic number?
 		double outcome = 0;
-		for (Integer i : larger)
+		for (Subcontext sub : larger)
 			// determine heterogeneity whenever we add a new subcontext
-			if (set.contains(i)) {
+			if (set.contains(sub)) {
 				// the first time we add a Subcontext, we set the current
 				// outcome to its outcome, and add the Subcontext to the list
 				if (intersection.size() == 0) {
-					intersection.add(i);
-					outcome = Subcontext.getSubcontext(i).getOutcome();
+					intersection.add(sub);
+					outcome = sub.getOutcome();
 				}
 				// subsequent times, we detect heterogeneity through
 				// non-determinism and outcome disagreement among Subcontexts
 				else if (outcome == AMconstants.NONDETERMINISTIC
-						|| outcome != Subcontext.getSubcontext(i).getOutcome()) {
-					return new int[0];
+						|| outcome != sub.getOutcome()) {
+					return new HashSet<Subcontext>();
 				} else {
-					intersection.add(i);
+					intersection.add(sub);
 				}
 			}
-		Integer[] ints = intersection.toArray(new Integer[intersection.size()]);
-
-		// unbox
-		int[] returnVal = new int[ints.length];
-		for (int i = 0; i < returnVal.length; i++)
-			returnVal[i] = ints[i];
-		return returnVal;
+		return intersection;
 	}
 }

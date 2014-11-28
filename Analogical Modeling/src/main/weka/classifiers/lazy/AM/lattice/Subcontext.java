@@ -15,7 +15,6 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,25 +27,9 @@ import weka.core.Instance;
  * If the contained instances do not have the same outcome, then the outcome is
  * set to {@link AMconstants#NONDETERMINISTIC}.
  * 
- * This class also keeps track of all instances of Subcontext in a static index.
- * 
  * @author Nathan Glenn
  */
 public class Subcontext {
-	// store an index of all existing instances of Subcontext
-	private static List<Subcontext> index = new ArrayList<Subcontext>();
-
-	/**
-	 * 
-	 * @param indexLocation
-	 *            Index of the desired Subcontext in the Subcontext index
-	 * @return Subcontext contained in the index
-	 */
-	public static Subcontext getSubcontext(int indexLocation) {
-		assert (indexLocation < index.size());
-		return index.get(indexLocation);
-	}
-
 	private List<Instance> data;
 	private double outcome;
 	private Label label;
@@ -65,9 +48,6 @@ public class Subcontext {
 	public Subcontext(Label l) {
 		data = new LinkedList<>();
 		label = l;
-
-		index.add(this);
-		indexLocation = index.size() - 1;
 	}
 
 	/**
@@ -128,6 +108,17 @@ public class Subcontext {
 		return ret;
 	}
 
+	private final static int SEED = 37;
+	private int hash = -1;
+
+	@Override
+	public int hashCode() {
+		if (hash != -1)
+			return hash;
+		hash = SEED * label.hashCode() + data.hashCode();
+		return hash;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -144,14 +135,13 @@ public class Subcontext {
 			sb.append(data.get(0).stringValue(data.get(0).classAttribute()));
 		sb.append('|');
 
-		// TODO: won't work if class isn't last item
 		for (Instance instance : data) {
 			sb.append(instance);
 			// Instance.toString() separates attributes with commas, so we can't
 			// use a comma here or it will be difficult to read
 			sb.append('/');
 		}
-		//remove last slash
+		// remove last slash
 		sb.deleteCharAt(sb.length() - 1);
 
 		sb.append(')');

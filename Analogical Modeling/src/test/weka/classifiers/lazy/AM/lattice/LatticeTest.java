@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -48,34 +49,35 @@ public class LatticeTest {
 				DistributedLattice.class.getSimpleName() });
 	}
 
+	@SuppressWarnings("serial")
 	@Test
 	public void testChapter3Data() throws Exception {
 		List<Supracontext> supras = testLattice.getSupracontextList();
 		assertEquals(3, supras.size());
 
 		Supracontext expected = new Supracontext();
-		Subcontext sub1 = new Subcontext(new Label(0b100, 3));
+		final Subcontext sub1 = new Subcontext(new Label(0b100, 3));
 		sub1.add(train.get(3)); // 212r
-		expected.setData(new int[] { sub1.getIndex() });
+		expected.setData(new HashSet<Subcontext>() {{ add(sub1); }});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
 		assertTrue(findSupra(supras, expected));
 
 		expected = new Supracontext();
-		sub1 = new Subcontext(new Label(0b100, 3));
-		sub1.add(train.get(3));// 212r
-		Subcontext sub2 = new Subcontext(new Label(0b110, 3));
-		sub2.add(train.get(2));// 032r
-		expected.setData(new int[] { sub1.getIndex(), sub2.getIndex() });
+		final Subcontext sub2 = new Subcontext(new Label(0b100, 3));
+		sub2.add(train.get(3));// 212r
+		final Subcontext sub3 = new Subcontext(new Label(0b110, 3));
+		sub3.add(train.get(2));// 032r
+		expected.setData(new HashSet<Subcontext>() {{ add(sub2); add(sub3);}});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
 		assertTrue(findSupra(supras, expected));
 
 		expected = new Supracontext();
-		sub1 = new Subcontext(new Label(0b001, 3));
-		sub1.add(train.get(0));// 310e
-		sub1.add(train.get(4));// 311r
-		expected.setData(new int[] { sub1.getIndex() });
+		final Subcontext sub4 = new Subcontext(new Label(0b001, 3));
+		sub4.add(train.get(0));// 310e
+		sub4.add(train.get(4));// 311r
+		expected.setData(new HashSet<Subcontext>() {{ add(sub4); }});
 		expected.setCount(2);
 		expected.setOutcome(AMconstants.NONDETERMINISTIC);
 		assertTrue(findSupra(supras, expected));
@@ -97,22 +99,7 @@ public class LatticeTest {
 		if (s1.getCount() != s2.getCount())
 			return false;
 
-		if (s1.getData().length != s2.getData().length)
-			return false;
-
-		for (int datum : s2.getData()) {
-			if (!containsSub(s1.getData(), datum))
-				return false;
-		}
-		return true;
+		return s1.getData().equals(s2.getData());
 	}
-
-	private static boolean containsSub(int[] subIndices, int query) {
-		for (int index : subIndices)
-			if (Subcontext.getSubcontext(query).equals(
-					Subcontext.getSubcontext(index)))
-				return true;
-		return false;
-	}
-
 }
+
