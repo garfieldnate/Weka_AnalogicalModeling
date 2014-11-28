@@ -12,16 +12,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
+import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 
 @RunWith(Parameterized.class)
 public class LatticeTest {
 
 	private ILattice testLattice;
 	private static Instances train;
-	private static Instances test;
+	private static Instance test;
 
 	public LatticeTest(ILattice lattice, String implName) {
 		testLattice = lattice;
@@ -34,23 +35,17 @@ public class LatticeTest {
 	 */
 	@Parameterized.Parameters(name = "{1}")
 	public static Collection<Object[]> instancesToTest() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-
-		source = new DataSource("data/ch3exampleTest.arff");
-		test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
+		train = TestUtils.chapter3Train();
+		test = TestUtils.chapter3Test();
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				test.firstInstance(), false);
+				test, false);
 
 		SubcontextList subList = new SubcontextList(labeler, train);
-		return Arrays.asList(
-				new Object[] { new BasicLattice(subList),
-						BasicLattice.class.getSimpleName() }, new Object[] {
-						new DistributedLattice(subList, labeler),
-						DistributedLattice.class.getSimpleName() });
+		return Arrays.asList(new Object[] { new BasicLattice(subList),
+				BasicLattice.class.getSimpleName() }, new Object[] {
+				new DistributedLattice(subList, labeler),
+				DistributedLattice.class.getSimpleName() });
 	}
 
 	@Test
@@ -85,39 +80,39 @@ public class LatticeTest {
 		expected.setOutcome(AMconstants.NONDETERMINISTIC);
 		assertTrue(findSupra(supras, expected));
 	}
-	
+
 	private boolean findSupra(List<Supracontext> supras, Supracontext expected) {
-		for(Supracontext supra : supras)
-			if(deepEquals(supra, expected))
+		for (Supracontext supra : supras)
+			if (deepEquals(supra, expected))
 				return true;
 		return false;
 	}
 
-	private boolean deepEquals(Supracontext s1, Supracontext s2){
-		 if (s1.getOutcome() != s2.getOutcome())
-		 return false;
-		
-		 if (s1.hasData() != s2.hasData())
-		 return false;
-		 if (s1.getCount() != s2.getCount())
-		 return false;
-		
-		 if (s1.getData().length != s2.getData().length)
-		 return false;
-		
-		 for(int datum : s2.getData()){
-		 if(!containsSub(s1.getData(), datum))
-		 return false;
-		 }
-		 return true;
+	private boolean deepEquals(Supracontext s1, Supracontext s2) {
+		if (s1.getOutcome() != s2.getOutcome())
+			return false;
+
+		if (s1.hasData() != s2.hasData())
+			return false;
+		if (s1.getCount() != s2.getCount())
+			return false;
+
+		if (s1.getData().length != s2.getData().length)
+			return false;
+
+		for (int datum : s2.getData()) {
+			if (!containsSub(s1.getData(), datum))
+				return false;
+		}
+		return true;
 	}
 
-	 private static boolean containsSub(int[] subIndices, int query){
-	 for(int index : subIndices)
-	 if(Subcontext.getSubcontext(query).equals(
-	 Subcontext.getSubcontext(index)))
-	 return true;
-	 return false;
-	 }
+	private static boolean containsSub(int[] subIndices, int query) {
+		for (int index : subIndices)
+			if (Subcontext.getSubcontext(query).equals(
+					Subcontext.getSubcontext(index)))
+				return true;
+		return false;
+	}
 
 }

@@ -10,9 +10,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AnalogicalModeling;
+import weka.classifiers.lazy.AM.TestUtils;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  * Test the data contained in AnalogicalSet after classifying the chapter 3
@@ -24,22 +24,17 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class AnalogicalSetTest {
 
 	private static Instances train;
-	private static Instances test;
+	private static Instance test;
 	private static AnalogicalSet as;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-
-		source = new DataSource("data/ch3exampleTest.arff");
-		test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
+		train = TestUtils.chapter3Train();
+		test = TestUtils.chapter3Test();
 
 		AnalogicalModeling am = new AnalogicalModeling();
 		am.buildClassifier(train);
-		am.distributionForInstance(test.firstInstance());
+		am.distributionForInstance(test);
 
 		as = am.getAnalogicalSet();
 	}
@@ -106,7 +101,7 @@ public class AnalogicalSetTest {
 	
 	@Test
 	public void classifiedExTest() {
-		assertEquals(as.getClassifiedEx(), test.firstInstance());
+		assertEquals(as.getClassifiedEx(), test);
 	}
 
 }

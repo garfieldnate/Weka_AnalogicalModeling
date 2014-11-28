@@ -21,8 +21,9 @@ import junit.framework.TestSuite;
 import org.junit.Test;
 
 import weka.classifiers.AbstractClassifierTest;
+import weka.classifiers.lazy.AM.TestUtils;
+import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  * Tests AnalogicalModeling.
@@ -44,18 +45,13 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	private static final double DELTA = 1e-10;
 	@Test
 	public void testChapter3dataSerial() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		Instances train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-		
-		source = new DataSource("data/ch3exampleTest.arff");
-		Instances test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
+		Instances train = TestUtils.chapter3Train();
+		Instance test = TestUtils.chapter3Test();
 		
 		AnalogicalModeling am = getClassifier();
 		
 		am.buildClassifier(train);
-		double[] prediction = am.distributionForInstance(test.firstInstance());
+		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
@@ -63,19 +59,14 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	
 	@Test
 	public void testChapter3dataParallel() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		Instances train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-		
-		source = new DataSource("data/ch3exampleTest.arff");
-		Instances test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
+		Instances train = TestUtils.chapter3Train();
+		Instance test = TestUtils.chapter3Test();
 		
 		AnalogicalModeling am = getClassifier();
 		am.setParallel(true);
 		
 		am.buildClassifier(train);
-		double[] prediction = am.distributionForInstance(test.firstInstance());
+		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);

@@ -9,23 +9,19 @@ import java.util.List;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.TestUtils;
+import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 
 public class SubcontextListTest {
 
 	@Test
 	public void testChapter3Data() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		Instances train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-
-		source = new DataSource("data/ch3exampleTest.arff");
-		Instances test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
+		Instances train = TestUtils.chapter3Train();
+		Instance test = TestUtils.chapter3Test();
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				test.firstInstance(), false);
+				test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals(subs.getCardinality(), 3);
