@@ -10,8 +10,6 @@ Later TODO:
 	- could pass around Sublist objects instead
 - change AM_double_format to a formatter method in Utils
 - change \n's everywhere to System.getProperty("line.separator")
-- mask could be done with left and right shift, instead of right shift and &
-	- could eliminate need to store an extra variable
 - use BitSets for unlimited-size labels
 - use BigIntegers for scoring
 - remove Eclipse stuff and use Gradle
