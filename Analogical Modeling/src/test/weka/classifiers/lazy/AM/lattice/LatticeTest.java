@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
 import weka.core.Instance;
@@ -79,7 +79,7 @@ public class LatticeTest {
 		sub4.add(train.get(4));// 311r
 		expected.setData(new HashSet<Subcontext>() {{ add(sub4); }});
 		expected.setCount(2);
-		expected.setOutcome(AMconstants.NONDETERMINISTIC);
+		expected.setOutcome(AMUtils.NONDETERMINISTIC);
 		assertTrue(findSupra(supras, expected));
 	}
 

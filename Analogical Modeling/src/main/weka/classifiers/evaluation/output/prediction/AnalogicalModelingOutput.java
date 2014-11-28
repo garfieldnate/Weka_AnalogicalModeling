@@ -24,7 +24,7 @@ import java.util.Vector;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AnalogicalModeling;
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.core.Instance;
 import weka.core.Option;
@@ -132,8 +132,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		// TODO: print something?
 	}
 
-	// TODO use platform newline
-
 	/**
 	 * Make sure to call {@link #setHeader(weka.core.Instances) setHeader}
 	 * first, or this will throw a NullPointerException. All decimals are
@@ -161,19 +159,22 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 
 		if (getSummary()) {
 			// StringBuilder sb = new StringBuilder();
-			append("Total pointers: " + as.getTotalPointers() + "\n");
+
+			append("Total pointers: "
+					+ AMUtils.formatDouble(as.getTotalPointers())
+					+ AMUtils.LINE_SEPARATOR);
 			append("Instances in analogical set: "
 					+ as.getExemplarEffectMap().size());
 		}
-		append("\n");
+		append(AMUtils.LINE_SEPARATOR);
 
 		if (getOutputDistribution()) {
-			append("Class probability distribution: \n");
+			append("Class probability distribution:"
+					+ AMUtils.LINE_SEPARATOR);
 			for (int i = 0; i < distribution.length; i++) {
-				append(m_Header.classAttribute().value(i)
-						+ ": "
-						+ String.format(AMconstants.DECIMAL_FORMAT,
-								distribution[i]) + "\n");
+				append(m_Header.classAttribute().value(i) + ": "
+						+ AMUtils.formatDouble(distribution[i])
+						+ AMUtils.LINE_SEPARATOR);
 			}
 		}
 

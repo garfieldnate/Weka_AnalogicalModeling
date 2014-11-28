@@ -19,7 +19,7 @@ package weka.classifiers.lazy.AM.lattice.distributed;
 import java.util.ArrayList;
 import java.util.List;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 
@@ -50,7 +50,7 @@ public class IncrementalSupracontext extends Supracontext{
 		}
 		// subsequent times, we detect heterogeneity through
 		// non-determinism and outcome disagreement among Subcontexts
-		else if (outcome == AMconstants.NONDETERMINISTIC
+		else if (outcome == AMUtils.NONDETERMINISTIC
 				|| outcome != sub.getOutcome()) {
 			return false;
 		}

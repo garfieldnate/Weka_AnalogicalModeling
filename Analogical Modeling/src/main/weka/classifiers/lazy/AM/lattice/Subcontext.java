@@ -18,14 +18,14 @@ package weka.classifiers.lazy.AM.lattice;
 import java.util.LinkedList;
 import java.util.List;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.core.Instance;
 
 /**
  * Represents a subcontext, containing a list of {@link Instance Instances}
  * which belong to it, along with their shared {@link Label} and common outcome.
  * If the contained instances do not have the same outcome, then the outcome is
- * set to {@link AMconstants#NONDETERMINISTIC}.
+ * set to {@link AMUtils#NONDETERMINISTIC}.
  * 
  * @author Nathan Glenn
  */
@@ -60,7 +60,7 @@ public class Subcontext {
 	void add(Instance e) {
 		if (data.size() != 0) {
 			if (e.classValue() != data.get(0).classValue())
-				outcome = AMconstants.NONDETERMINISTIC;
+				outcome = AMUtils.NONDETERMINISTIC;
 		} else {
 			outcome = e.classValue();
 		}
@@ -129,8 +129,8 @@ public class Subcontext {
 
 		// we know all of the exemplars must have the same outcome;
 		// otherwise the outcome is nondeterministic
-		if (outcome == AMconstants.NONDETERMINISTIC)
-			sb.append(AMconstants.NONDETERMINISTIC_STRING);
+		if (outcome == AMUtils.NONDETERMINISTIC)
+			sb.append(AMUtils.NONDETERMINISTIC_STRING);
 		else
 			sb.append(data.get(0).stringValue(data.get(0).classAttribute()));
 		sb.append('|');

@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -55,7 +55,7 @@ public class SupracontextTest {
 		assertTrue(empty.getData().isEmpty());
 		assertFalse(empty.hasData());
 		assertEquals(empty.getNext(), null);
-		assertEquals(empty.getOutcome(), AMconstants.EMPTY, DELTA);
+		assertEquals(empty.getOutcome(), AMUtils.EMPTY, DELTA);
 		assertTrue(empty.isDeterministic());
 		assertTrue(empty.equals(empty));
 	}
@@ -162,7 +162,7 @@ public class SupracontextTest {
 		assertEquals(testSupra2, 88);
 		assertTrue(testSupra1.getNext() == testSupra2);
 		assertTrue(testSupra2.getNext() == null);
-		assertEquals(testSupra2.getOutcome(), AMconstants.NONDETERMINISTIC,
+		assertEquals(testSupra2.getOutcome(), AMUtils.NONDETERMINISTIC,
 				DELTA);
 		assertFalse(testSupra2.isDeterministic());
 

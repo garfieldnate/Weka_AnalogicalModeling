@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 import weka.core.Instance;
@@ -64,16 +64,18 @@ public class AnalogicalSet {
 
 	private static String newline = System.getProperty("line.separator");
 
-	//these are used for sorting items to be printed
+	// these are used for sorting items to be printed
 	Comparator<Map.Entry<Instance, Integer>> entryComparator1 = new Comparator<Entry<Instance, Integer>>() {
 		@Override
 		public int compare(Entry<Instance, Integer> arg1,
 				Entry<Instance, Integer> arg2) {
-			//compare all attribute string values and then the number of pointers
+			// compare all attribute string values and then the number of
+			// pointers
 			int compare = 0;
-			for(int i = 0; i < arg1.getKey().numAttributes(); i++){
-				compare = arg1.getKey().stringValue(i).compareTo(arg2.getKey().stringValue(i));
-				if(compare != 0){
+			for (int i = 0; i < arg1.getKey().numAttributes(); i++) {
+				compare = arg1.getKey().stringValue(i)
+						.compareTo(arg2.getKey().stringValue(i));
+				if (compare != 0) {
 					return compare;
 				}
 			}
@@ -85,11 +87,11 @@ public class AnalogicalSet {
 		@Override
 		public int compare(Entry<String, Integer> arg1,
 				Entry<String, Integer> arg2) {
-			//compare number of pointers
+			// compare number of pointers
 			return arg1.getValue().compareTo(arg2.getValue());
 		}
 	};
-	
+
 	/**
 	 * 
 	 * @param supraList
@@ -122,10 +124,8 @@ public class AnalogicalSet {
 		for (Instance e : exPointerMap.keySet()) {
 			String className = e.stringValue(e.classAttribute());
 			if (classPointerMap.containsKey(className))
-				classPointerMap.put(
-						className,
-						classPointerMap.get(className)
-								+ exPointerMap.get(e));
+				classPointerMap.put(className, classPointerMap.get(className)
+						+ exPointerMap.get(e));
 			else
 				classPointerMap.put(className, exPointerMap.get(e));
 		}
@@ -161,26 +161,26 @@ public class AnalogicalSet {
 	private Map<Instance, Integer> getPointers(List<Supracontext> supraList,
 			boolean linear) {
 		Map<Instance, Integer> pointers = new HashMap<>();
-		
-		//number of pointers in a supracontext,
-		//that is the number of exemplars in the whole thing
+
+		// number of pointers in a supracontext,
+		// that is the number of exemplars in the whole thing
 		int pointersInList = 0;
 		int pointersToSupra = 0;
-		//iterate all supracontext
+		// iterate all supracontext
 		for (Supracontext supra : supraList) {
 			if (!linear) {
 				pointersInList = 0;
-				//sum number of exemplars for each subcontext
+				// sum number of exemplars for each subcontext
 				for (Subcontext sub : supra.getData())
 					pointersInList += sub.getExemplars().size();
 			}
-			//iterate subcontexts in supracontext
+			// iterate subcontexts in supracontext
 			for (Subcontext sub : supra.getData()) {
-				//number of supras containing this subcontext
+				// number of supras containing this subcontext
 				pointersToSupra = supra.getCount();
-				//iterate exemplars in subcontext
+				// iterate exemplars in subcontext
 				for (Instance e : sub.getExemplars()) {
-					//pointers to exemplar = pointersToSupra * pointers in list
+					// pointers to exemplar = pointersToSupra * pointers in list
 					// add together if already in the map
 					if (pointers.get(e) != null)
 						pointers.put(e, pointers.get(e)
@@ -206,23 +206,26 @@ public class AnalogicalSet {
 		sb.append("outcome: ");
 		sb.append(predictedClass);
 		sb.append(" (");
-		sb.append(String.format(AMconstants.DECIMAL_FORMAT, classProbability));
+		sb.append(AMUtils.formatDouble(classProbability));
 		sb.append(")");
 		sb.append(newline);
 
-		Set<Entry<Instance, Integer>> sortedEntries1 = new TreeSet<>(entryComparator1);
+		Set<Entry<Instance, Integer>> sortedEntries1 = new TreeSet<>(
+				entryComparator1);
 		sortedEntries1.addAll(getExemplarPointers().entrySet());
 		sb.append("Exemplar effects:");
-		sb.append("\n");
+		sb.append(AMUtils.LINE_SEPARATOR);
 		for (Entry<Instance, Integer> e : sortedEntries1)
 			sb.append(e.getKey()
 					+ " : "
 					+ e.getValue()
 					+ " ("
-					+ String.format(AMconstants.DECIMAL_FORMAT,
-							e.getValue() / (double)totalPointers) + ")\n");
+					+ AMUtils.formatDouble(e.getValue()
+							/ (double) totalPointers) + ")"
+					+ AMUtils.LINE_SEPARATOR);
 
-		Set<Entry<String, Integer>> sortedEntries2 = new TreeSet<>(entryComparator2);
+		Set<Entry<String, Integer>> sortedEntries2 = new TreeSet<>(
+				entryComparator2);
 		sortedEntries2.addAll(getClassPointers().entrySet());
 		sb.append("Outcome likelihoods:" + newline);
 		for (Entry<String, Integer> e : sortedEntries2)
@@ -230,8 +233,9 @@ public class AnalogicalSet {
 					+ " : "
 					+ e.getValue()
 					+ " ("
-					+ String.format(AMconstants.DECIMAL_FORMAT,
-							e.getValue() / (double) totalPointers) + ")\n");
+					+ AMUtils.formatDouble(e.getValue()
+							/ (double) totalPointers) + ")"
+					+ AMUtils.LINE_SEPARATOR);
 
 		return sb.toString();
 	}
@@ -309,7 +313,7 @@ public class AnalogicalSet {
 	 * 
 	 * @return Index of the predicted class attribute value
 	 */
-	//TODO: this could actually be a tie, so it should return multiple
+	// TODO: this could actually be a tie, so it should return multiple
 	public String getPredictedClass() {
 		return predictedClass;
 	}

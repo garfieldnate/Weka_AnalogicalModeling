@@ -18,7 +18,7 @@ package weka.classifiers.lazy.AM.lattice;
 import java.util.HashSet;
 import java.util.Set;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 
 /**
  * A supracontext is a list of subcontexts with certain commonalities in their
@@ -52,7 +52,7 @@ public class Supracontext {
 	 */
 	public Supracontext() {
 		data = new HashSet<Subcontext>();
-		outcome = AMconstants.EMPTY;
+		outcome = AMUtils.EMPTY;
 		index = -1;
 	}
 
@@ -175,7 +175,7 @@ public class Supracontext {
 		// empty is still deterministic
 		if (data == null)
 			return true;
-		return outcome != AMconstants.NONDETERMINISTIC;
+		return outcome != AMUtils.NONDETERMINISTIC;
 	}
 
 	/**

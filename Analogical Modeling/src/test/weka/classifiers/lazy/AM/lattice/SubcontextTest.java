@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -60,7 +60,7 @@ public class SubcontextTest {
 			}
 		});
 		assertEquals("Multiple outcomes lead to non-determinism",
-				s.getOutcome(), AMconstants.NONDETERMINISTIC, DELTA);
+				s.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
 
 		assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
 

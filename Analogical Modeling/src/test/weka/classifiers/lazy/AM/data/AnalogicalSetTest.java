@@ -103,5 +103,6 @@ public class AnalogicalSetTest {
 	public void classifiedExTest() {
 		assertEquals(as.getClassifiedEx(), test);
 	}
+	//TODO: test toString
 
 }

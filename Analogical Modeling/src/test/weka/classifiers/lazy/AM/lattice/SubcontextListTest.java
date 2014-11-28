@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -28,7 +28,7 @@ public class SubcontextListTest {
 
 		assertEquals(
 				"(001|"
-						+ AMconstants.NONDETERMINISTIC_STRING
+						+ AMUtils.NONDETERMINISTIC_STRING
 						+ "|3,1,0,e/3,1,1,r),(100|r|2,1,2,r),(101|r|2,1,0,r),(110|r|0,3,2,r)",
 				subs.toString());
 		

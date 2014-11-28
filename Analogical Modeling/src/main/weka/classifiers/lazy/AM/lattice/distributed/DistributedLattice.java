@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import weka.classifiers.lazy.AM.AMconstants;
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.ILattice;
 import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Labeler;
@@ -63,7 +63,7 @@ public class DistributedLattice implements ILattice {
 	 */
 	public DistributedLattice(SubcontextList subList, Labeler labeler) {
 		// create masks for splitting labels
-		LabelMask[] masks = labeler.getMasks(AMconstants.NUM_LATTICES);
+		LabelMask[] masks = labeler.getMasks(AMUtils.NUM_LATTICES);
 
 		// fill heterogeneous lattices
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
@@ -223,7 +223,7 @@ public class DistributedLattice implements ILattice {
 				}
 				// subsequent times, we detect heterogeneity through
 				// non-determinism and outcome disagreement among Subcontexts
-				else if (outcome == AMconstants.NONDETERMINISTIC
+				else if (outcome == AMUtils.NONDETERMINISTIC
 						|| outcome != sub.getOutcome()) {
 					return new HashSet<Subcontext>();
 				} else {

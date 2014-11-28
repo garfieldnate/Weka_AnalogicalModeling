@@ -5,7 +5,6 @@ Later TODO:
 - refactor supracontext a little so that it does more of its own work
 - add high-level algorithm explanations for the lattice, etc.
 - test complete classification with ignored unknowns
-- change \n's everywhere to System.getProperty("line.separator")
 - use BitSets for unlimited-size labels
 	- or perhaps give multiple implementations: int, long, 
 - use BigIntegers for scoring
