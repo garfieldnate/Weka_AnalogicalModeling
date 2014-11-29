@@ -201,17 +201,9 @@ public class Supracontext {
 		return sb.toString();
 	}
 
-	private int hash = -1;
-	private static final int SEED = 37;
 	@Override
 	public int hashCode() {
-		if (hash != -1)
-			return hash;
-		int code = 0;
-		for (Subcontext sub : data)
-			code += SEED * code + sub.hashCode();
-		hash = code;
-		return code;
+		return data.hashCode();
 	}
 
 	/**

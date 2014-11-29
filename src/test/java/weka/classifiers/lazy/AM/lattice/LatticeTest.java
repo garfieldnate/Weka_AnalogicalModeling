@@ -1,7 +1,6 @@
 package weka.classifiers.lazy.AM.lattice;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +60,7 @@ public class LatticeTest {
 		expected.setData(new HashSet<Subcontext>() {{ add(sub1); }});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
-		assertTrue(findSupra(supras, expected));
+		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
 		final Subcontext sub2 = new Subcontext(new Label(0b100, 3));
@@ -71,7 +70,7 @@ public class LatticeTest {
 		expected.setData(new HashSet<Subcontext>() {{ add(sub2); add(sub3);}});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
-		assertTrue(findSupra(supras, expected));
+		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
 		final Subcontext sub4 = new Subcontext(new Label(0b001, 3));
@@ -80,26 +79,7 @@ public class LatticeTest {
 		expected.setData(new HashSet<Subcontext>() {{ add(sub4); }});
 		expected.setCount(2);
 		expected.setOutcome(AMUtils.NONDETERMINISTIC);
-		assertTrue(findSupra(supras, expected));
-	}
-
-	private boolean findSupra(List<Supracontext> supras, Supracontext expected) {
-		for (Supracontext supra : supras)
-			if (deepEquals(supra, expected))
-				return true;
-		return false;
-	}
-
-	private boolean deepEquals(Supracontext s1, Supracontext s2) {
-		if (s1.getOutcome() != s2.getOutcome())
-			return false;
-
-		if (s1.hasData() != s2.hasData())
-			return false;
-		if (s1.getCount() != s2.getCount())
-			return false;
-
-		return s1.getData().equals(s2.getData());
+		TestUtils.assertContainsSupra(supras, expected);
 	}
 }
 

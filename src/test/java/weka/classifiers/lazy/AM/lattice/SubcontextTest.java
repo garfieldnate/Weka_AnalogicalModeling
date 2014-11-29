@@ -3,6 +3,7 @@ package weka.classifiers.lazy.AM.lattice;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class SubcontextTest {
 		Label label = new Label(0, 1);
 		Subcontext s = new Subcontext(label);
 		s.add(dataset.get(0));
-		assertEquals(s.getExemplars(), new ArrayList<Instance>() {
+		assertEquals(s.getExemplars(), new HashSet<Instance>() {
 			{
 				add(dataset.get(0));
 			}
@@ -53,7 +54,7 @@ public class SubcontextTest {
 		assertEquals("(0|r|1,r,{2})", s.toString());
 
 		s.add(dataset.get(1));
-		assertEquals(s.getExemplars(), new ArrayList<Instance>() {
+		assertEquals(s.getExemplars(), new HashSet<Instance>() {
 			{
 				add(dataset.get(0));
 				add(dataset.get(1));

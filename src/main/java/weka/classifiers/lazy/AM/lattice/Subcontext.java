@@ -15,8 +15,8 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.core.Instance;
@@ -30,7 +30,7 @@ import weka.core.Instance;
  * @author Nathan Glenn
  */
 public class Subcontext {
-	private List<Instance> data;
+	private Set<Instance> data;
 	private double outcome;
 	private Label label;
 
@@ -46,7 +46,7 @@ public class Subcontext {
 	 *            Binary label of the subcontext
 	 */
 	public Subcontext(Label l) {
-		data = new LinkedList<>();
+		data = new HashSet<>();
 		label = l;
 	}
 
@@ -57,9 +57,9 @@ public class Subcontext {
 	 * 
 	 * @param e
 	 */
-	void add(Instance e) {
+	public void add(Instance e) {
 		if (data.size() != 0) {
-			if (e.classValue() != data.get(0).classValue())
+			if (e.classValue() != data.iterator().next().classValue())
 				outcome = AMUtils.NONDETERMINISTIC;
 		} else {
 			outcome = e.classValue();
@@ -89,7 +89,7 @@ public class Subcontext {
 	/**
 	 * @return list of Exemplars contained in this subcontext
 	 */
-	public List<Instance> getExemplars() {
+	public Set<Instance> getExemplars() {
 		return data;
 	}
 
@@ -132,7 +132,8 @@ public class Subcontext {
 		if (outcome == AMUtils.NONDETERMINISTIC)
 			sb.append(AMUtils.NONDETERMINISTIC_STRING);
 		else
-			sb.append(data.get(0).stringValue(data.get(0).classAttribute()));
+			sb.append(data.iterator().next()
+					.stringValue(data.iterator().next().classAttribute()));
 		sb.append('|');
 
 		for (Instance instance : data) {

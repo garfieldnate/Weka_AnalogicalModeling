@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -26,12 +25,6 @@ public class SubcontextListTest {
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals(subs.getCardinality(), 3);
 
-		assertEquals(
-				"(001|"
-						+ AMUtils.NONDETERMINISTIC_STRING
-						+ "|3,1,0,e/3,1,1,r),(100|r|2,1,2,r),(101|r|2,1,0,r),(110|r|0,3,2,r)",
-				subs.toString());
-		
 		List<Subcontext> subList = getSubList(subs);
 		assertEquals(subList.size(), 4);
 
