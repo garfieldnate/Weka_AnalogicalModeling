@@ -96,7 +96,7 @@ public class DistributedLattice implements ILattice {
 			throw new IllegalArgumentException(
 					"numLattices should be greater than 1");
 		// create masks for splitting labels
-		LabelMask[] masks = LabelMask.getMasks(numLattices, labeler.getCardinality());
+		LabelMask[] masks = LabelMask.getMasks(labeler.getCardinality(), numLattices);
 
 		// fill heterogeneous lattices
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);

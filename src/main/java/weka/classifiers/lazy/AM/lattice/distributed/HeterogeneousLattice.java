@@ -97,6 +97,8 @@ public class HeterogeneousLattice {
 	 *            to use in assigning labels
 	 */
 	public HeterogeneousLattice(SubcontextList subList, LabelMask labelMask) {
+		if(labelMask == null)
+			throw new IllegalArgumentException("labelMask can't be null!");
 		init(labelMask.getCardinality());
 
 		// Fill the lattice with all of the subcontexts, masking labels

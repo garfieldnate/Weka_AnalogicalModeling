@@ -26,10 +26,11 @@ public class HeterogeneousLatticeTest {
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
-		// each mask will contain one feature
-		LabelMask[] masks = LabelMask.getMasks(1, labeler.getCardinality());
+		// normally a single mask which gives the whole label would not be
+		// created, but for testing purposes we use it here.
+		LabelMask mask = new LabelMask(0, 3);
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
-				masks[0]);
+				mask);
 		List<Supracontext> supras = heteroLattice.getSupracontextList();
 
 		final Subcontext sub1 = new Subcontext(new Label(0b001, 3));

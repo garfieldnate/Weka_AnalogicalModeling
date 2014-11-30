@@ -17,7 +17,7 @@ public class LabelerTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		dataset = TestUtils.sixCardinalityTestSet();
+		dataset = TestUtils.sixCardinalityData();
 	}
 
 	@Test

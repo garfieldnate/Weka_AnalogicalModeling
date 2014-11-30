@@ -33,7 +33,7 @@ import weka.core.Instances;
 public class AnalogicalModelingTest extends AbstractClassifierTest {
 	public AnalogicalModelingTest(String name) {
 		super(name);
-//		DEBUG = true;
+		// DEBUG = true;
 	}
 
 	/** Creates a default AnalogicalModeling */
@@ -41,30 +41,31 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	public AnalogicalModeling getClassifier() {
 		return new AnalogicalModeling();
 	}
-	
+
 	private static final double DELTA = 1e-10;
+
 	@Test
 	public void testChapter3dataSerial() throws Exception {
 		Instances train = TestUtils.chapter3Train();
 		Instance test = TestUtils.chapter3Test();
-		
+
 		AnalogicalModeling am = getClassifier();
-		
+
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}
-	
+
 	@Test
 	public void testChapter3dataParallel() throws Exception {
 		Instances train = TestUtils.chapter3Train();
 		Instance test = TestUtils.chapter3Test();
-		
+
 		AnalogicalModeling am = getClassifier();
 		am.setParallel(true);
-		
+
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);

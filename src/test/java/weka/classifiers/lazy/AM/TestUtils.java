@@ -36,7 +36,7 @@ public class TestUtils {
 		return test.firstInstance();
 	}
 
-	public static Instances sixCardinalityTestSet() throws Exception {
+	public static Instances sixCardinalityData() throws Exception {
 		ArrayList<Attribute> atts = new ArrayList<Attribute>();
 		ArrayList<String> classes = new ArrayList<String>();
 		classes.add("e");

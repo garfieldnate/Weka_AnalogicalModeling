@@ -150,7 +150,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1212462913157286103L;
 
-	private MissingDataCompare mdc = MissingDataCompare.MATCH;
+	private MissingDataCompare mdc = MissingDataCompare.VARIABLE;
 
 	/**
 	 * This method is where all of the action happens! Given test item, it uses
@@ -165,7 +165,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		Labeler labeler = new Labeler(mdc, testItem, false);
+		Labeler labeler = new Labeler(mdc, testItem, m_ignoreUnknowns);
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
@@ -203,7 +203,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 */
 	private boolean m_linearCount = false;
 
-	private boolean m_parallel;
+	private boolean m_parallel = false;
+
+	private boolean m_ignoreUnknowns = false;
 
 	/**
 	 * 
@@ -238,8 +240,20 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	public void setParallel(boolean parallel){
 		m_parallel = parallel;
 	}
+	
 	public String parallelTipText() {
 		return "set to true if the distributed lattice algorithm should be used.";
+	}
+	
+	public boolean getIgnoreUnknowns(){
+		return m_ignoreUnknowns ;
+	}
+	public void setIgnoreUnknowns(boolean parallel){
+		m_ignoreUnknowns = parallel;
+	}
+	
+	public String ignoreUnknownsTipText() {
+		return "set to true attributes with unknown values in the test item should be ignored";
 	}
 
 	/**
