@@ -37,7 +37,7 @@ public class TestUtils {
 		for (Supracontext supra : supras)
 			if (supraDeepEquals(supra, expected))
 				return;
-		fail();
+		fail("Could not find " + expected + " in " + supras);
 	}
 
 	public static boolean supraDeepEquals(Supracontext s1, Supracontext s2) {

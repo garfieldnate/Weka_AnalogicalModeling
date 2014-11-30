@@ -1,7 +1,7 @@
 Next:
 
 Later TODO:
-- test that distributed lattice works even when not distributed; i.e. masks[].length == 1
+- move getMasks into DistributedLattice
 - refactor supracontext a little so that it does more of its own work
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?

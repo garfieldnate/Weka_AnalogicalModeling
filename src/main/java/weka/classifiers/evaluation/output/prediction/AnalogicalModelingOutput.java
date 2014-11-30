@@ -214,7 +214,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 	private Vector<Option> getOptionsOfSuper() {
 		Vector<Option> v = new Vector<Option>();
 		// super will always return Enumeration<Option>
-		@SuppressWarnings("unchecked")
 		Enumeration<Option> e = super.listOptions();
 		while (e.hasMoreElements()) {
 			Option option = e.nextElement();

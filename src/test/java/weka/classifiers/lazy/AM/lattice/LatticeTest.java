@@ -2,7 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -38,14 +38,22 @@ public class LatticeTest {
 		train = TestUtils.chapter3Train();
 		test = TestUtils.chapter3Test();
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				test, false);
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subList = new SubcontextList(labeler, train);
-		return Arrays.asList(new Object[] { new BasicLattice(subList),
-				BasicLattice.class.getSimpleName() }, new Object[] {
-				new DistributedLattice(subList, labeler),
+
+		Collection<Object[]> parameters = new ArrayList<>(3);
+		parameters.add(new Object[] { new BasicLattice(subList),
+				BasicLattice.class.getSimpleName() });
+		parameters.add(new Object[] { new DistributedLattice(subList, labeler),
 				DistributedLattice.class.getSimpleName() });
+		parameters.add(new Object[] { new DistributedLattice(subList, labeler, 2),
+				DistributedLattice.class.getSimpleName() + ": 2 sub-lattices" });
+		//10 should be reduced to 3, since there are only three attributes.
+		parameters.add(new Object[] { new DistributedLattice(subList, labeler, 10),
+				DistributedLattice.class.getSimpleName() + ": 10 sub-lattices" });
+
+		return parameters;
 	}
 
 	@SuppressWarnings("serial")
@@ -57,7 +65,11 @@ public class LatticeTest {
 		Supracontext expected = new Supracontext();
 		final Subcontext sub1 = new Subcontext(new Label(0b100, 3));
 		sub1.add(train.get(3)); // 212r
-		expected.setData(new HashSet<Subcontext>() {{ add(sub1); }});
+		expected.setData(new HashSet<Subcontext>() {
+			{
+				add(sub1);
+			}
+		});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
 		TestUtils.assertContainsSupra(supras, expected);
@@ -67,7 +79,12 @@ public class LatticeTest {
 		sub2.add(train.get(3));// 212r
 		final Subcontext sub3 = new Subcontext(new Label(0b110, 3));
 		sub3.add(train.get(2));// 032r
-		expected.setData(new HashSet<Subcontext>() {{ add(sub2); add(sub3);}});
+		expected.setData(new HashSet<Subcontext>() {
+			{
+				add(sub2);
+				add(sub3);
+			}
+		});
 		expected.setCount(1);
 		expected.setOutcome(0);// r
 		TestUtils.assertContainsSupra(supras, expected);
@@ -76,10 +93,13 @@ public class LatticeTest {
 		final Subcontext sub4 = new Subcontext(new Label(0b001, 3));
 		sub4.add(train.get(0));// 310e
 		sub4.add(train.get(4));// 311r
-		expected.setData(new HashSet<Subcontext>() {{ add(sub4); }});
+		expected.setData(new HashSet<Subcontext>() {
+			{
+				add(sub4);
+			}
+		});
 		expected.setCount(2);
 		expected.setOutcome(AMUtils.NONDETERMINISTIC);
 		TestUtils.assertContainsSupra(supras, expected);
 	}
 }
-

@@ -22,12 +22,6 @@ package weka.classifiers.lazy.AM;
  * 
  */
 public class AMUtils {
-
-	/**
-	 * The number of lattices to use during distributional
-	 * processing
-	 */
-	public static final int NUM_LATTICES = 4;
 	
 	//TODO: perhaps use this to create a dynamic number of lattices of maximum cardinality 4?
 //	public static int LATTICE_SIZE_MAX = 4;

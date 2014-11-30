@@ -40,6 +40,11 @@ import weka.classifiers.lazy.AM.lattice.Supracontext;
  */
 public class DistributedLattice implements ILattice {
 
+	/**
+	 * The default number of lattices to use during distributional processing.
+	 */
+	private static final int NUM_LATTICES = 4;
+
 	private List<HeterogeneousLattice> hlattices;
 
 	private List<Supracontext> supras;
@@ -56,14 +61,43 @@ public class DistributedLattice implements ILattice {
 	/**
 	 * Creates a distributed lattice for creating Supracontexts. The
 	 * supracontexts of smaller lattices are combined to create the final
+	 * Supracontexts. The number of lattices used will be {@link NUM_LATTICES}.
+	 * 
+	 * @param subList
+	 *            list of Subcontexts to add to the lattice
+	 * @param labeler
+	 *            The Labeler object that was used to assign labels to the
+	 *            subcontexts in subList (TODO: maybe that could just be
+	 *            retrieved from subList instead).
+	 */
+	public DistributedLattice(SubcontextList subList, Labeler labeler) {
+		this(subList, labeler, NUM_LATTICES);
+	}
+
+	/**
+	 * Creates a distributed lattice for creating Supracontexts. The
+	 * supracontexts of smaller lattices are combined to create the final
 	 * Supracontexts.
 	 * 
 	 * @param subList
 	 *            list of Subcontexts to add to the lattice
+	 * @param labeler
+	 *            The Labeler object that was used to assign labels to the
+	 *            subcontexts in subList (TODO: maybe that could just be
+	 *            retrieved from subList instead).
+	 * @numLattices The number of sub-lattices to use.
+	 * @throws IllegalArgumentException
+	 *             of numLattices is less than 2
 	 */
-	public DistributedLattice(SubcontextList subList, Labeler labeler) {
+	public DistributedLattice(SubcontextList subList, Labeler labeler,
+			int numLattices) {
+		// it would be possible to work with 1 lattice, but pointless, since
+		// BasicLattice is used for that and would be much more efficient.
+		if (numLattices < 2)
+			throw new IllegalArgumentException(
+					"numLattices should be greater than 1");
 		// create masks for splitting labels
-		LabelMask[] masks = labeler.getMasks(AMUtils.NUM_LATTICES);
+		LabelMask[] masks = labeler.getMasks(numLattices);
 
 		// fill heterogeneous lattices
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
@@ -150,7 +184,8 @@ public class DistributedLattice implements ILattice {
 					int count = supra.getCount() + existing.getCount();
 					existing.setCount(count);
 				} else {
-					supra.setOutcome(intersectedSubs.iterator().next().getOutcome());
+					supra.setOutcome(intersectedSubs.iterator().next()
+							.getOutcome());
 					finalSupras.put(supra, supra);
 				}
 			}
@@ -167,7 +202,7 @@ public class DistributedLattice implements ILattice {
 	 * @param set2
 	 * @return intersection of the two integer arrays
 	 */
-	//TODO: is the smaller/larger optimization really necessary here?
+	// TODO: is the smaller/larger optimization really necessary here?
 	private Set<Subcontext> intersectionOfSubs(Set<Subcontext> set1,
 			Set<Subcontext> set2) {
 		Set<Subcontext> smaller;
@@ -210,7 +245,7 @@ public class DistributedLattice implements ILattice {
 		Set<Subcontext> set = new HashSet<>(smaller);
 
 		Set<Subcontext> intersection = new HashSet<>();
-		//TODO: magic number?
+		// TODO: magic number?
 		double outcome = 0;
 		for (Subcontext sub : larger)
 			// determine heterogeneity whenever we add a new subcontext
