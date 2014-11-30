@@ -8,7 +8,6 @@ import org.junit.Test;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.lattice.Label;
-import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
@@ -28,7 +27,7 @@ public class HeterogeneousLatticeTest {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
 		// each mask will contain one feature
-		LabelMask[] masks = labeler.getMasks(1);
+		LabelMask[] masks = LabelMask.getMasks(1, labeler.getCardinality());
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
 				masks[0]);
 		List<Supracontext> supras = heteroLattice.getSupracontextList();

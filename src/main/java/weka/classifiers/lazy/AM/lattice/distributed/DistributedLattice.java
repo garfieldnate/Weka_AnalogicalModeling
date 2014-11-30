@@ -26,7 +26,6 @@ import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.ILattice;
-import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
@@ -97,7 +96,7 @@ public class DistributedLattice implements ILattice {
 			throw new IllegalArgumentException(
 					"numLattices should be greater than 1");
 		// create masks for splitting labels
-		LabelMask[] masks = labeler.getMasks(numLattices);
+		LabelMask[] masks = LabelMask.getMasks(numLattices, labeler.getCardinality());
 
 		// fill heterogeneous lattices
 		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
@@ -117,7 +116,7 @@ public class DistributedLattice implements ILattice {
 		supras = combineFinal(supras, hlattices.get(hlattices.size() - 1)
 				.getSupracontextList());
 	}
-
+	
 	/**
 	 * Combines two lists of {@link Supracontext Supracontexts} to make a new
 	 * List representing the intersection of two lattices

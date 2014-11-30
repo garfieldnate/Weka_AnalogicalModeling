@@ -63,7 +63,9 @@ public class SubcontextTest {
 		assertEquals("Multiple outcomes lead to non-determinism",
 				s.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
 
-		assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
+		// TODO: can't test toString() like this because data is an unordered
+		// set
+		// assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
 
 	}
 

@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import weka.classifiers.lazy.AM.lattice.Label;
-import weka.classifiers.lazy.AM.lattice.LabelMask;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;

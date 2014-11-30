@@ -1,4 +1,6 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.lattice.distributed;
+
+import weka.classifiers.lazy.AM.lattice.Label;
 
 /**
  * A class for masking binary labels.
@@ -58,6 +60,35 @@ public class LabelMask {
 	public String toString() {
 		return start + "-" + (start + cardinality) + ":"
 				+ Integer.toBinaryString(mask);
+	}
+	
+	/**
+	 * Create and return a set of masks that can be used to split subcontext
+	 * labels for distributed processing.
+	 * 
+	 * @param numMasks
+	 *            the number of masks to be created, or the number of separate
+	 *            labels that a given label will be separated into. If the
+	 *            number of masks exceeds the cardinality, then the number will
+	 *            be reduced to match the cardinality (creating masks of one bit
+	 *            each)
+	 * @param cardinality
+	 *            the number of features in the exemplar
+	 * @return A set of masks for splitting labels
+	 */
+	static LabelMask[] getMasks(int numMasks, int cardinality) {
+		if (numMasks > cardinality)
+			numMasks = cardinality;
+		LabelMask[] masks = new LabelMask[numMasks];
+
+		int latticeSize = (int) Math.ceil((double) cardinality / numMasks);
+		int index = 0;
+		for (int i = 0; i < cardinality; i += latticeSize) {
+			masks[index] = new LabelMask(i, Math.min(i + latticeSize - 1,
+					cardinality - 1));
+			index++;
+		}
+		return masks;
 	}
 
 }

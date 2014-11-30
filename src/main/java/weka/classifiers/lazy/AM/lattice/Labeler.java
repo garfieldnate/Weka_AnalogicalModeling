@@ -113,33 +113,4 @@ public class Labeler {
 		}
 		return new Label(label, getCardinality());
 	}
-
-	/**
-	 * Create and return a set of masks that can be used to split sublattice
-	 * labels for distributed processing.
-	 * 
-	 * @param numMasks
-	 *            the number of masks to be created, or the number of separate
-	 *            labels that a given label will be separated into. If the
-	 *            number of masks exceeds the cardinality, then the number will
-	 *            be reduced to match the cardinality (creating masks of one bit
-	 *            each)
-	 * @param cardinality
-	 *            the number of features in the exemplar
-	 * @return A set of masks for splitting labels
-	 */
-	public LabelMask[] getMasks(int numMasks) {
-		if (numMasks > getCardinality())
-			numMasks = getCardinality();
-		LabelMask[] masks = new LabelMask[numMasks];
-
-		int latticeSize = (int) Math.ceil((double) getCardinality() / numMasks);
-		int index = 0;
-		for (int i = 0; i < getCardinality(); i += latticeSize) {
-			masks[index] = new LabelMask(i, Math.min(i + latticeSize - 1,
-					getCardinality() - 1));
-			index++;
-		}
-		return masks;
-	}
 }

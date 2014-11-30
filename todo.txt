@@ -1,7 +1,6 @@
 Next:
 
 Later TODO:
-- move getMasks into DistributedLattice
 - refactor supracontext a little so that it does more of its own work
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
