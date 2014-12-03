@@ -23,7 +23,8 @@ public class HeterogeneousLatticeTest {
 	@Test
 	public void testChapter3Data() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
+				0);
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
@@ -46,60 +47,45 @@ public class HeterogeneousLatticeTest {
 
 		// TODO: the heterolattice does not set outcomes in a meaningful way, so
 		// these should not be tested.
-		Supracontext expected = new Supracontext();
-		expected.setCount(BigInteger.valueOf(2));
-		expected.setOutcome(AMUtils.NONDETERMINISTIC);
-		expected.setData(new HashSet<Subcontext>() {
+		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 			}
-		});
+		}, BigInteger.valueOf(2), AMUtils.NONDETERMINISTIC);
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub2);
 			}
-		});
+		}, BigInteger.ONE, 0);//r
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 				add(sub3);
 			}
-		});
+		}, BigInteger.ONE, 0);// r
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub2);
 				add(sub4);
 			}
-		});
+		}, BigInteger.ONE, 0); //r
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 				add(sub3);
 				add(sub4);
 			}
-		});
+		}, BigInteger.ONE, 0); //r
 		TestUtils.assertContainsSupra(supras, expected);
 
 	}

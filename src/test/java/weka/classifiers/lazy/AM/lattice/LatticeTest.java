@@ -69,44 +69,35 @@ public class LatticeTest {
 		List<Supracontext> supras = testLattice.getSupracontextList();
 		assertEquals(3, supras.size());
 
-		Supracontext expected = new Supracontext();
 		final Subcontext sub1 = new Subcontext(new Label(0b100, 3));
 		sub1.add(train.get(3)); // 212r
-		expected.setData(new HashSet<Subcontext>() {
+		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 			}
-		});
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
+		}, BigInteger.ONE, 0);// r
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
 		final Subcontext sub2 = new Subcontext(new Label(0b100, 3));
 		sub2.add(train.get(3));// 212r
 		final Subcontext sub3 = new Subcontext(new Label(0b110, 3));
 		sub3.add(train.get(2));// 032r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub2);
 				add(sub3);
 			}
-		});
-		expected.setCount(BigInteger.ONE);
-		expected.setOutcome(0);// r
+		}, BigInteger.ONE, 0);// r
 		TestUtils.assertContainsSupra(supras, expected);
 
-		expected = new Supracontext();
 		final Subcontext sub4 = new Subcontext(new Label(0b001, 3));
 		sub4.add(train.get(0));// 310e
 		sub4.add(train.get(4));// 311r
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub4);
 			}
-		});
-		expected.setCount(BigInteger.valueOf(2));
-		expected.setOutcome(AMUtils.NONDETERMINISTIC);
+		}, BigInteger.valueOf(2), AMUtils.NONDETERMINISTIC);
 		TestUtils.assertContainsSupra(supras, expected);
 	}
 }

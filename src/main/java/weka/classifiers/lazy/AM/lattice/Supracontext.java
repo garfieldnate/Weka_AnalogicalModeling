@@ -16,6 +16,7 @@
 package weka.classifiers.lazy.AM.lattice;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,13 +35,13 @@ public class Supracontext {
 	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
 	private int index = -1;
-	// Zero means nondeterministic; any other number is the class attribute index given by Weka
+	// Zero means nondeterministic; any other number is the class attribute
+	// index given by Weka
 	private double outcome;
 	// the contained subcontexts
 	private Set<Subcontext> data;
 	// the number of supracontexts sharing this list of subcontexts, or the
-	// number
-	// of arrows pointing to it from the supracontextual lattice
+	// number of arrows pointing to it from the supracontextual lattice
 	private BigInteger count = BigInteger.ZERO;
 	// pointer which makes a circular linked list out of the lists of
 	// subcontext. Using a circular linked list allows optimizations that we
@@ -49,7 +50,7 @@ public class Supracontext {
 
 	/**
 	 * Creates a supracontext with no data and an index of -1; Note that outcome
-	 * will be 0 by default
+	 * will be {@link AMUtils#EMPTY} by default
 	 */
 	public Supracontext() {
 		data = new HashSet<Subcontext>();
@@ -58,8 +59,22 @@ public class Supracontext {
 	}
 
 	/**
+	 * Creates a new supracontext with the given parameters as the contents.
+	 * 
+	 * @param data
+	 * @param outcome
+	 * @param count
+	 */
+	public Supracontext(Set<Subcontext> data, BigInteger count, double outcome) {
+		this.data = data;
+		this.outcome = outcome;
+		this.count = count;
+	}
+
+	/**
 	 * Creates a new supracontext from an old one and another exemplar,
-	 * inserting the new after the old
+	 * inserting the new after the old. Assumes that the addition of the new
+	 * subcontext does not make the supracontext heterogeneous.
 	 * 
 	 * @param other
 	 *            Supracontext to place this one after
@@ -86,7 +101,6 @@ public class Supracontext {
 		data = new HashSet<Subcontext>(other.getData().size() + 1);
 		data.addAll(other.getData());
 		data.add(sub);
-		setData(data);
 
 		setNext(other.getNext());
 		other.setNext(this);
@@ -94,10 +108,6 @@ public class Supracontext {
 
 	public double getOutcome() {
 		return outcome;
-	}
-
-	public void setOutcome(double d) {
-		outcome = d;
 	}
 
 	public Supracontext getNext() {
@@ -110,10 +120,6 @@ public class Supracontext {
 
 	public int getIndex() {
 		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
 	}
 
 	/**
@@ -133,15 +139,11 @@ public class Supracontext {
 	}
 
 	/**
-	 * @return an integer array containing the indices of the contained
-	 *         subcontexts
+	 * @return An unmodifiable view of the set of {@link Subcontext Subcontexts}
+	 *         contained in this supracontext.
 	 */
 	public Set<Subcontext> getData() {
-		return data;
-	}
-
-	public void setData(Set<Subcontext> subs) {
-		this.data = subs;
+		return Collections.unmodifiableSet(data);
 	}
 
 	public boolean hasData() {
@@ -156,16 +158,6 @@ public class Supracontext {
 	 */
 	public BigInteger getCount() {
 		return count;
-	}
-
-	/**
-	 * Set the number of arrows pointing to this supracontext from the
-	 * supracontextual lattice.
-	 * 
-	 * @param c
-	 */
-	public void setCount(BigInteger c) {
-		count = c;
 	}
 
 	/**

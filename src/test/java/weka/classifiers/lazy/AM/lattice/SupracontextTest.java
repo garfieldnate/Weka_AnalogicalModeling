@@ -67,26 +67,28 @@ public class SupracontextTest {
 		assertEquals(empty.getCount(), BigInteger.ONE);
 		empty.decrementCount();
 		assertEquals(empty.getCount(), BigInteger.ZERO);
-		empty.setCount(BigInteger.TEN);
-		assertEquals(empty.getCount(), BigInteger.TEN);
+		
+		Supracontext testSupra = new Supracontext(new HashSet<Subcontext>(), BigInteger.valueOf(4), 0);
+		assertEquals(testSupra.getCount(), BigInteger.valueOf(4));
 	}
 
 	@SuppressWarnings("serial")
 	@Test
 	public void testData() {
+		assertEquals(empty.getData(), new HashSet<Subcontext>());
 		Label label = new Label(0b001, 3);
 		final Subcontext sub1 = new Subcontext(label);
 		final Subcontext sub2 = new Subcontext(label);
 		final Subcontext sub3 = new Subcontext(label);
-		empty.setData(new HashSet<Subcontext>() {
+		Supracontext supra = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 				add(sub3);
 			}
-		});
-		assertTrue(empty.hasData());
-		assertEquals(empty.getData(), new HashSet<Subcontext>() {
+		}, BigInteger.ZERO, 0);
+		assertTrue(supra.hasData());
+		assertEquals(supra.getData(), new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
@@ -104,27 +106,28 @@ public class SupracontextTest {
 		sub2.add(dataset.get(1));
 
 		// equality depends only on the exact subcontexts contained
-		empty.setData(new HashSet<Subcontext>() {
+		Supracontext supra = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 			}
-		});
-		Supracontext testSupra = new Supracontext();
-		assertNotEquals(testSupra, empty);
-		testSupra.setData(new HashSet<Subcontext>() {
+		}, BigInteger.ZERO, 0);
+		assertNotEquals(supra, empty);
+		Supracontext testSupra = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 			}
-		});
-		assertEquals(testSupra, empty);
+		}, BigInteger.ZERO, 0);
+		assertEquals(testSupra, supra);
 		// count and outcome are not considered
-		testSupra.setCount(BigInteger.valueOf(2));
-		assertEquals(testSupra, empty);
-		empty.setCount(BigInteger.valueOf(2));
-		empty.setOutcome(5.0);
-		assertEquals(testSupra, empty);
+		testSupra = new Supracontext(new HashSet<Subcontext>() {
+			{
+				add(sub1);
+				add(sub2);
+			}
+		}, BigInteger.valueOf(2), 5);
+		assertEquals(testSupra, supra);
 	}
 
 	// I called it generational because it creates a new supra from an old one
@@ -138,12 +141,11 @@ public class SupracontextTest {
 		final Subcontext sub3 = new Subcontext(new Label(0b0, 1));
 
 		Supracontext testSupra1 = new Supracontext(empty, sub1, 99);
-		Supracontext expected = new Supracontext();
-		expected.setData(new HashSet<Subcontext>() {
+		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 			}
-		});
+		}, BigInteger.ZERO, 0);
 		assertEquals(testSupra1, expected);
 		assertEquals(testSupra1, 99);
 		assertTrue(empty.getNext() == testSupra1);
@@ -153,12 +155,12 @@ public class SupracontextTest {
 		testSupra1.incrementCount();
 		Supracontext testSupra2 = new Supracontext(testSupra1, sub2, 88);
 		expected = new Supracontext();
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 			}
-		});
+		}, BigInteger.ZERO, 0);
 		assertEquals(testSupra2, expected);
 		assertEquals(testSupra2, 88);
 		assertTrue(testSupra1.getNext() == testSupra2);
@@ -168,12 +170,12 @@ public class SupracontextTest {
 
 		Supracontext testSupra3 = new Supracontext(testSupra1, sub3, 77);
 		expected = new Supracontext();
-		expected.setData(new HashSet<Subcontext>() {
+		expected = new Supracontext(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub3);
 			}
-		});
+		}, BigInteger.ZERO, 0);
 		assertEquals(testSupra3, expected);
 		assertTrue(testSupra1.getNext() == testSupra3);
 		assertTrue(testSupra3.getNext() == null);

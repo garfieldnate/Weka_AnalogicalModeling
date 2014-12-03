@@ -98,7 +98,7 @@ public class HeterogeneousLattice {
 	 *            to use in assigning labels
 	 */
 	public HeterogeneousLattice(SubcontextList subList, LabelMask labelMask) {
-		if(labelMask == null)
+		if (labelMask == null)
 			throw new IllegalArgumentException("labelMask can't be null!");
 		init(labelMask.getCardinality());
 
@@ -130,6 +130,7 @@ public class HeterogeneousLattice {
 
 	/**
 	 * Add the given subcontext to the supracontext with the given label
+	 * 
 	 * @param sub
 	 * @param label
 	 */
@@ -169,6 +170,8 @@ public class HeterogeneousLattice {
 			if (supra.getCount().equals(BigInteger.ZERO)) {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
+				// TODO: it will loiter, however, if there are references to it
+				// in the lattice array
 				supraPrev.setNext(supra.getNext());
 			}
 			supraPrev = supra;
@@ -187,7 +190,7 @@ public class HeterogeneousLattice {
 		List<Supracontext> supList = new LinkedList<Supracontext>();
 		Supracontext supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
-			assert(!supra.getCount().equals(BigInteger.ZERO));
+			assert (!supra.getCount().equals(BigInteger.ZERO));
 			supList.add(supra);
 			supra = supra.getNext();
 		}
