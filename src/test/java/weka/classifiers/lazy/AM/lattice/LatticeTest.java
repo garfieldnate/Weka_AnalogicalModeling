@@ -35,8 +35,8 @@ public class LatticeTest {
 	 */
 	@Parameterized.Parameters(name = "{1}")
 	public static Collection<Object[]> instancesToTest() throws Exception {
-		train = TestUtils.chapter3Train();
-		test = TestUtils.chapter3Test();
+		train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
+		test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 
@@ -47,11 +47,17 @@ public class LatticeTest {
 				BasicLattice.class.getSimpleName() });
 		parameters.add(new Object[] { new DistributedLattice(subList, labeler),
 				DistributedLattice.class.getSimpleName() });
-		parameters.add(new Object[] { new DistributedLattice(subList, labeler, 2),
-				DistributedLattice.class.getSimpleName() + ": 2 sub-lattices" });
-		//10 should be reduced to 3, since there are only three attributes.
-		parameters.add(new Object[] { new DistributedLattice(subList, labeler, 10),
-				DistributedLattice.class.getSimpleName() + ": 10 sub-lattices" });
+		parameters
+				.add(new Object[] {
+						new DistributedLattice(subList, labeler, 2),
+						DistributedLattice.class.getSimpleName()
+								+ ": 2 sub-lattices" });
+		// 10 should be reduced to 3, since there are only three attributes.
+		parameters
+				.add(new Object[] {
+						new DistributedLattice(subList, labeler, 10),
+						DistributedLattice.class.getSimpleName()
+								+ ": 10 sub-lattices" });
 
 		return parameters;
 	}

@@ -15,25 +15,52 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class TestUtils {
 
 	/**
-	 * @return The example chapter 3 training data
+	 * The name of the chapter 3 training data file.
+	 */
+	public static final String CHAPTER_3_TRAIN = "ch3example.arff";
+	/**
+	 * The name of the chapter 3 test data file.
+	 */
+	public static final String CHAPTER_3_TEST = "ch3exampleTest.arff";
+	/**
+	 * The name of the finnverb data file.
+	 */
+	public static final String FINNVERB = "finnverb.arff";
+
+	/**
+	 * Read a dataset from disk and return the Instances object. It is assumed
+	 * that the file is in the project data folder, and that the class attribute
+	 * is the last one.
+	 * 
+	 * @param fileInDataFolder
+	 *            Name of arff file in located in the project data folder
+	 * @return The dataset contained in the given file.
 	 * @throws Exception
 	 */
-	public static Instances chapter3Train() throws Exception {
-		DataSource source = new DataSource("data/ch3example.arff");
-		Instances train = source.getDataSet();
-		train.setClassIndex(train.numAttributes() - 1);
-		return train;
+	public static Instances getDataSet(String fileInDataFolder)
+			throws Exception {
+		DataSource source = new DataSource("data/" + fileInDataFolder);
+		Instances instances = source.getDataSet();
+		instances.setClassIndex(instances.numAttributes() - 1);
+		return instances;
 	}
 
 	/**
-	 * @return The example chapter 3 test instance
+	 * Read a dataset from disk and return the Instance object at the specified
+	 * index. It is assumed that the file is in the project data folder, and
+	 * that the class attribute is the last one.
+	 * 
+	 * @param fileInDataFolder
+	 *            Name of arff file in located in the project data folder
+	 * @param index TODO
+	 * @return The instance at the specified index of the dataset contained in the file
 	 * @throws Exception
 	 */
-	public static Instance chapter3Test() throws Exception {
-		DataSource source = new DataSource("data/ch3exampleTest.arff");
-		Instances test = source.getDataSet();
-		test.setClassIndex(test.numAttributes() - 1);
-		return test.firstInstance();
+	public static Instance getInstanceFromFile(String fileInDataFolder, int index)
+			throws Exception {
+		Instances instances = getDataSet(fileInDataFolder);
+		instances.setClassIndex(instances.numAttributes() - 1);
+		return instances.get(index);
 	}
 
 	public static Instances sixCardinalityData() throws Exception {

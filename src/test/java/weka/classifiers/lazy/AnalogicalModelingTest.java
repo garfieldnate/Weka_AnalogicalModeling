@@ -46,8 +46,8 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	@Test
 	public void testChapter3dataSerial() throws Exception {
-		Instances train = TestUtils.chapter3Train();
-		Instance test = TestUtils.chapter3Test();
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
 
 		AnalogicalModeling am = getClassifier();
 
@@ -60,8 +60,8 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	@Test
 	public void testChapter3dataParallel() throws Exception {
-		Instances train = TestUtils.chapter3Train();
-		Instance test = TestUtils.chapter3Test();
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
 
 		AnalogicalModeling am = getClassifier();
 		am.setParallel(true);

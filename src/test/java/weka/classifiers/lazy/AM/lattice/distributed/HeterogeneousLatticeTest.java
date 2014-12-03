@@ -21,8 +21,8 @@ public class HeterogeneousLatticeTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void testChapter3Data() throws Exception {
-		Instances train = TestUtils.chapter3Train();
-		Instance test = TestUtils.chapter3Test();
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
