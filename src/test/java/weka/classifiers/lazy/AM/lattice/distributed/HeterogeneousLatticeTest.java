@@ -1,5 +1,6 @@
 package weka.classifiers.lazy.AM.lattice.distributed;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class HeterogeneousLatticeTest {
 		// TODO: the heterolattice does not set outcomes in a meaningful way, so
 		// these should not be tested.
 		Supracontext expected = new Supracontext();
-		expected.setCount(2);
+		expected.setCount(BigInteger.valueOf(2));
 		expected.setOutcome(AMUtils.NONDETERMINISTIC);
 		expected.setData(new HashSet<Subcontext>() {
 			{
@@ -56,7 +57,7 @@ public class HeterogeneousLatticeTest {
 		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		expected.setData(new HashSet<Subcontext>() {
 			{
@@ -66,7 +67,7 @@ public class HeterogeneousLatticeTest {
 		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		expected.setData(new HashSet<Subcontext>() {
 			{
@@ -78,7 +79,7 @@ public class HeterogeneousLatticeTest {
 		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		expected.setData(new HashSet<Subcontext>() {
 			{
@@ -89,7 +90,7 @@ public class HeterogeneousLatticeTest {
 		TestUtils.assertContainsSupra(supras, expected);
 
 		expected = new Supracontext();
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		expected.setData(new HashSet<Subcontext>() {
 			{

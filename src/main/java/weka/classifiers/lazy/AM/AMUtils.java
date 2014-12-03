@@ -15,6 +15,9 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM;
 
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 /**
  * This class holds constants and methods used in the AM classifier.
  * 
@@ -22,9 +25,10 @@ package weka.classifiers.lazy.AM;
  * 
  */
 public class AMUtils {
-	
-	//TODO: perhaps use this to create a dynamic number of lattices of maximum cardinality 4?
-//	public static int LATTICE_SIZE_MAX = 4;
+
+	// TODO: perhaps use this to create a dynamic number of lattices of maximum
+	// cardinality 4?
+	// public static int LATTICE_SIZE_MAX = 4;
 
 	/**
 	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by
@@ -43,12 +47,21 @@ public class AMUtils {
 	 * 
 	 */
 	public static final int EMPTY = -2;
-	
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-	//used for printing all decimal numbers
+	public static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
+
+	// used for printing all decimal numbers
+	// TODO: is this really necessary now that we use BigDecimals?
 	private static final String DECIMAL_FORMAT = "%.5f";
-	public static String formatDouble(double d){
+
+	public static String formatDouble(double d) {
 		return String.format(DECIMAL_FORMAT, d);
 	}
+
+	/**
+	 * This is used by all of the BigDecimals. Precision is to 10 decimals.
+	 */
+	public static final MathContext matchContext = new MathContext(10,
+			RoundingMode.HALF_EVEN);
 }

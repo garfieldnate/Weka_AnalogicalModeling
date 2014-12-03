@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -51,7 +52,7 @@ public class SupracontextTest {
 
 	@Test
 	public void testEmpty() {
-		assertEquals(empty.getCount(), 0);
+		assertEquals(empty.getCount(), BigInteger.ZERO);
 		assertTrue(empty.getData().isEmpty());
 		assertFalse(empty.hasData());
 		assertEquals(empty.getNext(), null);
@@ -63,11 +64,11 @@ public class SupracontextTest {
 	@Test
 	public void testCount() {
 		empty.incrementCount();
-		assertEquals(empty.getCount(), 1);
+		assertEquals(empty.getCount(), BigInteger.ONE);
 		empty.decrementCount();
-		assertEquals(empty.getCount(), 0);
-		empty.setCount(10);
-		assertEquals(empty.getCount(), 10);
+		assertEquals(empty.getCount(), BigInteger.ZERO);
+		empty.setCount(BigInteger.TEN);
+		assertEquals(empty.getCount(), BigInteger.TEN);
 	}
 
 	@SuppressWarnings("serial")
@@ -119,9 +120,9 @@ public class SupracontextTest {
 		});
 		assertEquals(testSupra, empty);
 		// count and outcome are not considered
-		testSupra.setCount(2);
+		testSupra.setCount(BigInteger.valueOf(2));
 		assertEquals(testSupra, empty);
-		empty.setCount(2);
+		empty.setCount(BigInteger.valueOf(2));
 		empty.setOutcome(5.0);
 		assertEquals(testSupra, empty);
 	}
@@ -162,8 +163,7 @@ public class SupracontextTest {
 		assertEquals(testSupra2, 88);
 		assertTrue(testSupra1.getNext() == testSupra2);
 		assertTrue(testSupra2.getNext() == null);
-		assertEquals(testSupra2.getOutcome(), AMUtils.NONDETERMINISTIC,
-				DELTA);
+		assertEquals(testSupra2.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
 		assertFalse(testSupra2.isDeterministic());
 
 		Supracontext testSupra3 = new Supracontext(testSupra1, sub3, 77);

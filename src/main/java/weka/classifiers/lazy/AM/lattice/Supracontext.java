@@ -15,6 +15,7 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.lattice;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class Supracontext {
 	// the number of supracontexts sharing this list of subcontexts, or the
 	// number
 	// of arrows pointing to it from the supracontextual lattice
-	private int count = 0;
+	private BigInteger count = BigInteger.ZERO;
 	// pointer which makes a circular linked list out of the lists of
 	// subcontext. Using a circular linked list allows optimizations that we
 	// will see later.
@@ -120,7 +121,7 @@ public class Supracontext {
 	 * to this supracontext.
 	 */
 	public void incrementCount() {
-		count++;
+		count = count.add(BigInteger.ONE);
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class Supracontext {
 	 * should be destroyed, as nothing in the lattice points to it anymore.
 	 */
 	public void decrementCount() {
-		count--;
+		count = count.subtract(BigInteger.ONE);
 	}
 
 	/**
@@ -153,7 +154,7 @@ public class Supracontext {
 	 *         the number of arrows pointing to it from the supracontextual
 	 *         lattice
 	 */
-	public int getCount() {
+	public BigInteger getCount() {
 		return count;
 	}
 
@@ -163,7 +164,7 @@ public class Supracontext {
 	 * 
 	 * @param c
 	 */
-	public void setCount(int c) {
+	public void setCount(BigInteger c) {
 		count = c;
 	}
 

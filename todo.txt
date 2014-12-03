@@ -7,7 +7,6 @@ Later TODO:
 - test complete classification with ignored unknowns
 - use BitSets for unlimited-size labels
 	- or perhaps give multiple implementations: short, int, long, bitset
-- use BigIntegers for scoring
 
 Engineering Tasks
 - profile with big data sets

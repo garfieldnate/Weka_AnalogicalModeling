@@ -2,6 +2,8 @@ package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,64 +41,63 @@ public class AnalogicalSetTest {
 		as = am.getAnalogicalSet();
 	}
 
-	private static final double DELTA = 1e-10;
-
 	@Test
 	public void exemplarEffectsTest() {
-		Map<Instance, Double> effects = as.getExemplarEffectMap();
+		Map<Instance, BigDecimal> effects = as.getExemplarEffectMap();
 		assertEquals(effects.size(), 4);
 		// we have to do it this long way because Instance implements
 		// equals but not hashCode or comparable(!)
-		for (Entry<Instance, Double> entry : effects.entrySet()) {
+		for (Entry<Instance, BigDecimal> entry : effects.entrySet()) {
 			Instance i = entry.getKey();
 			if (i.equals(train.get(0)))
-				assertEquals(entry.getValue(), 0.3076923077923077, DELTA);
+				assertEquals(entry.getValue(), new BigDecimal("0.3076923077923077"));
 			if (i.equals(train.get(2)))
-				assertEquals(entry.getValue(), 0.15384615384615385, DELTA);
+				assertEquals(entry.getValue(), new BigDecimal("0.15384615384615385"));
 			if (i.equals(train.get(3)))
-				assertEquals(entry.getValue(), 0.23076923076923078, DELTA);
+				assertEquals(entry.getValue(), new BigDecimal("0.23076923076923078"));
 			if (i.equals(train.get(4)))
-				assertEquals(entry.getValue(), 0.307692307692307, DELTA);
+				assertEquals(entry.getValue(), new BigDecimal("0.307692307692307"));
 		}
 	}
 
 	@SuppressWarnings("serial")
 	@Test
 	public void pointersTest() {
-		assertEquals(as.getTotalPointers(), 13);
-		assertEquals(as.getClassPointers(), new HashMap<String, Integer>() {
+		assertEquals(as.getTotalPointers(), BigInteger.valueOf(13));
+		assertEquals(as.getClassPointers(), new HashMap<String, BigInteger>() {
 			{
-				put("r", 9);
-				put("e", 4);
+				put("r", BigInteger.valueOf(9));
+				put("e", BigInteger.valueOf(4));
 			}
 		});
-		Map<Instance, Integer> pointers = as.getExemplarPointers();
+		Map<Instance, BigInteger> pointers = as.getExemplarPointers();
 		assertEquals(pointers.size(), 4);
 		// we can't do effects.get(train.get(x)) because Instance implements
 		// equals but not hashCode or comparable(!)
-		for (Entry<Instance, Integer> entry : pointers.entrySet()) {
+		for (Entry<Instance, BigInteger> entry : pointers.entrySet()) {
 			Instance i = entry.getKey();
 			if (i.equals(train.get(0)))
-				assertEquals(entry.getValue(), new Integer(4));
+				assertEquals(entry.getValue(), BigInteger.valueOf(4));
 			if (i.equals(train.get(2)))
-				assertEquals(entry.getValue(), new Integer(2));
+				assertEquals(entry.getValue(), BigInteger.valueOf(2));
 			if (i.equals(train.get(3)))
-				assertEquals(entry.getValue(), new Integer(3));
+				assertEquals(entry.getValue(), BigInteger.valueOf(3));
 			if (i.equals(train.get(4)))
-				assertEquals(entry.getValue(), new Integer(4));
+				assertEquals(entry.getValue(), BigInteger.valueOf(4));
 		}
 	}
 
 	@Test
 	public void classDistributionTest() {
-		Map<String, Double> distribution = as.getClassLikelihood();
+		Map<String, BigDecimal> distribution = as.getClassLikelihood();
 		
 		assertEquals(distribution.size(), 2);
-		assertEquals(distribution.get("r"), 0.6923076923076923, DELTA);
-		assertEquals(distribution.get("e"), 0.3076923076923077, DELTA);
+		//test to 10 decimal places, the number used by AMUtils.mathContext
+		assertEquals(distribution.get("r"), new BigDecimal("0.6923076923"));
+		assertEquals(distribution.get("e"), new BigDecimal("0.3076923077"));
 
 		assertEquals(as.getPredictedClass(), "r");
-		assertEquals(as.getClassProbability(), 0.6923076923076923, DELTA);
+		assertEquals(as.getClassProbability(), new BigDecimal("0.6923076923"));
 	}
 	
 	@Test

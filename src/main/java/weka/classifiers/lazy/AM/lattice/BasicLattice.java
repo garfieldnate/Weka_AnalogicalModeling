@@ -16,6 +16,7 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -181,7 +182,7 @@ public class BasicLattice implements ILattice {
 		Supracontext supra = emptySupracontext.getNext();
 		Supracontext supraPrev = emptySupracontext;
 		while (supra != emptySupracontext) {
-			if (supra.getCount() == 0) {
+			if (supra.getCount().equals(BigInteger.ZERO)) {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
 				supraPrev.setNext(supra.getNext());

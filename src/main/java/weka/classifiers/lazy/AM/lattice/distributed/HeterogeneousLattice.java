@@ -16,6 +16,7 @@
 
 package weka.classifiers.lazy.AM.lattice.distributed;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -165,7 +166,7 @@ public class HeterogeneousLattice {
 		Supracontext supra = emptySupracontext.getNext();
 		Supracontext supraPrev = emptySupracontext;
 		while (supra != emptySupracontext) {
-			if (supra.getCount() == 0) {
+			if (supra.getCount().equals(BigInteger.ZERO)) {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
 				supraPrev.setNext(supra.getNext());
@@ -186,7 +187,7 @@ public class HeterogeneousLattice {
 		List<Supracontext> supList = new LinkedList<Supracontext>();
 		Supracontext supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
-			assert(supra.getCount() != 0);
+			assert(!supra.getCount().equals(BigInteger.ZERO));
 			supList.add(supra);
 			supra = supra.getNext();
 		}

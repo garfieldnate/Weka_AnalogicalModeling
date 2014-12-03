@@ -109,7 +109,7 @@ public class TestUtils {
 
 		if (s1.hasData() != s2.hasData())
 			return false;
-		if (s1.getCount() != s2.getCount())
+		if (!s1.getCount().equals(s2.getCount()))
 			return false;
 
 		return s1.getData().equals(s2.getData());

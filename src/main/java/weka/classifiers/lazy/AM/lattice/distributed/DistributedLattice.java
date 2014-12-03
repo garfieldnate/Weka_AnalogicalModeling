@@ -16,6 +16,7 @@
 
 package weka.classifiers.lazy.AM.lattice.distributed;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -139,7 +140,7 @@ public class DistributedLattice implements ILattice {
 					continue;
 				supra = new Supracontext();
 				supra.setData(subIndeces);
-				supra.setCount(supra1.getCount() * supra2.getCount());
+				supra.setCount(supra1.getCount().multiply(supra2.getCount()));
 				combinedList.add(supra);
 			}
 		}
@@ -175,13 +176,12 @@ public class DistributedLattice implements ILattice {
 				// combined count
 				supra = new Supracontext();
 				supra.setData(intersectedSubs);
-				supra.setCount(supra1.getCount() * supra2.getCount());
+				supra.setCount(supra1.getCount().multiply(supra2.getCount()));
 				// add to the existing count if the same supra was formed from a
 				// previous combination
 				if (finalSupras.containsKey(supra)) {
 					Supracontext existing = finalSupras.get(supra);
-					int count = supra.getCount() + existing.getCount();
-					existing.setCount(count);
+					existing.setCount(supra.getCount().add(existing.getCount()));
 				} else {
 					supra.setOutcome(intersectedSubs.iterator().next()
 							.getOutcome());

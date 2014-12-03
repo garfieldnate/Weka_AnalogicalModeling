@@ -54,6 +54,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
+		//test to 10 decimals places, the number used by AMUtils.matchContext
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}
@@ -69,6 +70,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
+		//test to 10 decimals places, the number used by AMUtils.matchContext
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}

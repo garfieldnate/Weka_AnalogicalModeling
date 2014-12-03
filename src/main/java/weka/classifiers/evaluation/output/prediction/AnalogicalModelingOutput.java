@@ -161,7 +161,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 			// StringBuilder sb = new StringBuilder();
 
 			append("Total pointers: "
-					+ AMUtils.formatDouble(as.getTotalPointers())
+					+ as.getTotalPointers()
 					+ AMUtils.LINE_SEPARATOR);
 			append("Instances in analogical set: "
 					+ as.getExemplarEffectMap().size());

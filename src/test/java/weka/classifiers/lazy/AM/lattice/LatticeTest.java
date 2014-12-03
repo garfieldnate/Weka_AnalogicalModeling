@@ -2,6 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -76,7 +77,7 @@ public class LatticeTest {
 				add(sub1);
 			}
 		});
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		TestUtils.assertContainsSupra(supras, expected);
 
@@ -91,7 +92,7 @@ public class LatticeTest {
 				add(sub3);
 			}
 		});
-		expected.setCount(1);
+		expected.setCount(BigInteger.ONE);
 		expected.setOutcome(0);// r
 		TestUtils.assertContainsSupra(supras, expected);
 
@@ -104,7 +105,7 @@ public class LatticeTest {
 				add(sub4);
 			}
 		});
-		expected.setCount(2);
+		expected.setCount(BigInteger.valueOf(2));
 		expected.setOutcome(AMUtils.NONDETERMINISTIC);
 		TestUtils.assertContainsSupra(supras, expected);
 	}

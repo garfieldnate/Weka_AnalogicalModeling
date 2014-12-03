@@ -16,6 +16,7 @@
 
 package weka.classifiers.lazy;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -26,9 +27,9 @@ import java.util.Vector;
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
-import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.classifiers.lazy.AM.lattice.ILattice;
+import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
@@ -640,8 +641,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 		double[] classProbability = new double[trainingInstances.numClasses()];
 		int index = 0;
-		for (Entry<String, Double> entry : as.getClassLikelihood().entrySet())
-			classProbability[index++] = entry.getValue();
+		for (Entry<String, BigDecimal> entry : as.getClassLikelihood().entrySet())
+			classProbability[index++] = entry.getValue().doubleValue();
 
 		return classProbability;
 	}

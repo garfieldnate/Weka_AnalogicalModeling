@@ -16,6 +16,8 @@
 
 package weka.classifiers.lazy.AM.data;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -41,21 +43,21 @@ public class AnalogicalSet {
 	/**
 	 * Mapping of an exemplar to its analogical effect
 	 */
-	private Map<Instance, Double> exEffectMap = new HashMap<>();
+	private Map<Instance, BigDecimal> exEffectMap = new HashMap<>();
 
 	/**
 	 * Mapping of exemplar to the number of pointers to it
 	 */
-	private Map<Instance, Integer> exPointerMap;
+	private Map<Instance, BigInteger> exPointerMap;
 
-	private Map<String, Integer> classPointerMap = new HashMap<>();
+	private Map<String, BigInteger> classPointerMap = new HashMap<>();
 
-	private Map<String, Double> classLikelihoodMap = new HashMap<>();
+	private Map<String, BigDecimal> classLikelihoodMap = new HashMap<>();
 
-	private int totalPointers = 0;
+	private BigInteger totalPointers = BigInteger.ZERO;
 
 	private String predictedClass = null;
-	private double classProbability = Double.NEGATIVE_INFINITY;
+	private BigDecimal classProbability = BigDecimal.valueOf(-1);
 
 	/**
 	 * The exemplar whose class is being predicted by this set
@@ -65,10 +67,10 @@ public class AnalogicalSet {
 	private static String newline = System.getProperty("line.separator");
 
 	// these are used for sorting items to be printed
-	Comparator<Map.Entry<Instance, Integer>> entryComparator1 = new Comparator<Entry<Instance, Integer>>() {
+	Comparator<Map.Entry<Instance, BigInteger>> entryComparator1 = new Comparator<Entry<Instance, BigInteger>>() {
 		@Override
-		public int compare(Entry<Instance, Integer> arg1,
-				Entry<Instance, Integer> arg2) {
+		public int compare(Entry<Instance, BigInteger> arg1,
+				Entry<Instance, BigInteger> arg2) {
 			// compare all attribute string values and then the number of
 			// pointers
 			int compare = 0;
@@ -83,10 +85,10 @@ public class AnalogicalSet {
 		}
 	};
 
-	Comparator<Entry<String, Integer>> entryComparator2 = new Comparator<Entry<String, Integer>>() {
+	Comparator<Entry<String, BigInteger>> entryComparator2 = new Comparator<Entry<String, BigInteger>>() {
 		@Override
-		public int compare(Entry<String, Integer> arg1,
-				Entry<String, Integer> arg2) {
+		public int compare(Entry<String, BigInteger> arg1,
+				Entry<String, BigInteger> arg2) {
 			// compare number of pointers
 			return arg1.getValue().compareTo(arg2.getValue());
 		}
@@ -112,20 +114,21 @@ public class AnalogicalSet {
 
 		// find the total number of pointers
 		for (Instance e : exPointerMap.keySet())
-			totalPointers += exPointerMap.get(e);
+			totalPointers = totalPointers.add(exPointerMap.get(e));
 
 		// find the analogical effect of an exemplar by dividing its pointer
 		// count by the total pointer count
 		for (Instance e : exPointerMap.keySet())
-			exEffectMap.put(e, exPointerMap.get(e)
-					/ ((double) getTotalPointers()));
+			exEffectMap.put(e, new BigDecimal(exPointerMap.get(e))
+					.divide(new BigDecimal(getTotalPointers()),
+							AMUtils.matchContext));
 
 		// find the likelihood for a given outcome based on the pointers
 		for (Instance e : exPointerMap.keySet()) {
 			String className = e.stringValue(e.classAttribute());
 			if (classPointerMap.containsKey(className))
 				classPointerMap.put(className, classPointerMap.get(className)
-						+ exPointerMap.get(e));
+						.add(exPointerMap.get(e)));
 			else
 				classPointerMap.put(className, exPointerMap.get(e));
 		}
@@ -133,13 +136,15 @@ public class AnalogicalSet {
 		// set the likelihood of each possible class index to be its share of
 		// the total pointers
 		for (String className : classPointerMap.keySet())
-			classLikelihoodMap.put(className, classPointerMap.get(className)
-					/ (double) totalPointers);
+			classLikelihoodMap.put(className,
+					new BigDecimal(classPointerMap.get(className))
+							.divide(new BigDecimal(totalPointers),
+									AMUtils.matchContext));
 		// Set the class index to that with the highest likelihood
-		Double temp;
+		BigDecimal temp;
 		for (String className : classLikelihoodMap.keySet()) {
 			temp = classLikelihoodMap.get(className);
-			if (temp > getClassProbability()) {
+			if (temp.compareTo(getClassProbability()) > 0) {
 				classProbability = temp;
 				predictedClass = className;
 			}
@@ -158,21 +163,22 @@ public class AnalogicalSet {
 	 * @return A mapping of each exemplar to the number of pointers pointing to
 	 *         it.
 	 */
-	private Map<Instance, Integer> getPointers(List<Supracontext> supraList,
+	private Map<Instance, BigInteger> getPointers(List<Supracontext> supraList,
 			boolean linear) {
-		Map<Instance, Integer> pointers = new HashMap<>();
+		Map<Instance, BigInteger> pointers = new HashMap<>();
 
 		// number of pointers in a supracontext,
 		// that is the number of exemplars in the whole thing
-		int pointersInList = 0;
-		int pointersToSupra = 0;
+		BigInteger pointersInList = BigInteger.ZERO;
+		BigInteger pointersToSupra = BigInteger.ZERO;
 		// iterate all supracontext
 		for (Supracontext supra : supraList) {
 			if (!linear) {
-				pointersInList = 0;
+				pointersInList = BigInteger.ZERO;
 				// sum number of exemplars for each subcontext
 				for (Subcontext sub : supra.getData())
-					pointersInList += sub.getExemplars().size();
+					pointersInList = pointersInList.add(BigInteger.valueOf(sub
+							.getExemplars().size()));
 			}
 			// iterate subcontexts in supracontext
 			for (Subcontext sub : supra.getData()) {
@@ -183,12 +189,15 @@ public class AnalogicalSet {
 					// pointers to exemplar = pointersToSupra * pointers in list
 					// add together if already in the map
 					if (pointers.get(e) != null)
-						pointers.put(e, pointers.get(e)
-								+ (linear ? 1 : pointersInList)
-								* pointersToSupra);
+						pointers.put(
+								e,
+								pointers.get(e).add(
+										(linear ? BigInteger.ONE
+												: pointersInList)
+												.multiply(pointersToSupra)));
 					else
-						pointers.put(e, (linear ? 1 : pointersInList)
-								* pointersToSupra);
+						pointers.put(e, (linear ? BigInteger.ONE
+								: pointersInList).multiply(pointersToSupra));
 				}
 			}
 		}
@@ -206,35 +215,35 @@ public class AnalogicalSet {
 		sb.append("outcome: ");
 		sb.append(predictedClass);
 		sb.append(" (");
-		sb.append(AMUtils.formatDouble(classProbability));
+		sb.append(classProbability);
 		sb.append(")");
 		sb.append(newline);
 
-		Set<Entry<Instance, Integer>> sortedEntries1 = new TreeSet<>(
+		Set<Entry<Instance, BigInteger>> sortedEntries1 = new TreeSet<>(
 				entryComparator1);
 		sortedEntries1.addAll(getExemplarPointers().entrySet());
 		sb.append("Exemplar effects:");
 		sb.append(AMUtils.LINE_SEPARATOR);
-		for (Entry<Instance, Integer> e : sortedEntries1)
+		for (Entry<Instance, BigInteger> e : sortedEntries1)
 			sb.append(e.getKey()
 					+ " : "
 					+ e.getValue()
 					+ " ("
-					+ AMUtils.formatDouble(e.getValue()
-							/ (double) totalPointers) + ")"
+					+ new BigDecimal(e.getValue()).divide(new BigDecimal(
+							totalPointers), AMUtils.matchContext) + ")"
 					+ AMUtils.LINE_SEPARATOR);
 
-		Set<Entry<String, Integer>> sortedEntries2 = new TreeSet<>(
+		Set<Entry<String, BigInteger>> sortedEntries2 = new TreeSet<>(
 				entryComparator2);
 		sortedEntries2.addAll(getClassPointers().entrySet());
 		sb.append("Outcome likelihoods:" + newline);
-		for (Entry<String, Integer> e : sortedEntries2)
+		for (Entry<String, BigInteger> e : sortedEntries2)
 			sb.append(e.getKey()
 					+ " : "
 					+ e.getValue()
 					+ " ("
-					+ AMUtils.formatDouble(e.getValue()
-							/ (double) totalPointers) + ")"
+					+ new BigDecimal(e.getValue()).divide(new BigDecimal(
+							totalPointers), AMUtils.matchContext) + ")"
 					+ AMUtils.LINE_SEPARATOR);
 
 		return sb.toString();
@@ -245,7 +254,7 @@ public class AnalogicalSet {
 	 * @return A mapping between exemplars and their analogical effect (decimal
 	 *         percentage)
 	 */
-	public Map<Instance, Double> getExemplarEffectMap() {
+	public Map<Instance, BigDecimal> getExemplarEffectMap() {
 		return exEffectMap;
 	}
 
@@ -254,7 +263,7 @@ public class AnalogicalSet {
 	 * @return Mapping of exemplars in the analogical set to the number of
 	 *         pointers to it
 	 */
-	public Map<Instance, Integer> getExemplarPointers() {
+	public Map<Instance, BigInteger> getExemplarPointers() {
 		return exPointerMap;
 	}
 
@@ -263,7 +272,7 @@ public class AnalogicalSet {
 	 * @return A mapping between a possible class index and its likelihood
 	 *         (decimal probability)
 	 */
-	public Map<String, Double> getClassLikelihoodMap() {
+	public Map<String, BigDecimal> getClassLikelihoodMap() {
 		return classLikelihoodMap;
 	}
 
@@ -271,7 +280,7 @@ public class AnalogicalSet {
 	 * 
 	 * @return The total number of pointers in this analogical set
 	 */
-	public int getTotalPointers() {
+	public BigInteger getTotalPointers() {
 		return totalPointers;
 	}
 
@@ -280,7 +289,7 @@ public class AnalogicalSet {
 	 * @return A mapping between a class value index the number of pointers
 	 *         pointing to it
 	 */
-	public Map<String, Integer> getClassPointers() {
+	public Map<String, BigInteger> getClassPointers() {
 		return classPointerMap;
 	}
 
@@ -289,7 +298,7 @@ public class AnalogicalSet {
 	 * @return A mapping between the class value index and its selection
 	 *         probability
 	 */
-	public Map<String, Double> getClassLikelihood() {
+	public Map<String, BigDecimal> getClassLikelihood() {
 		return classLikelihoodMap;
 	}
 
@@ -305,7 +314,7 @@ public class AnalogicalSet {
 	 * 
 	 * @return Probability of the predicted class
 	 */
-	public double getClassProbability() {
+	public BigDecimal getClassProbability() {
 		return classProbability;
 	}
 
