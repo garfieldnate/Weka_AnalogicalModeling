@@ -1,4 +1,5 @@
 Next:
+- find bugs preventing finnverb from giving correct results
 
 Later TODO:
 - refactor supracontext a little so that it does more of its own work
@@ -10,6 +11,7 @@ Later TODO:
 - use BitSets for unlimited-size labels
 	- use will probably require changing Lattice to a Map instead of an array
 	- or perhaps give multiple implementations: short, int, long, bitset
+	- change intLabel() to bits()
 - parallelize creation and combination of hetero lattices
 - make splitting smarter so that the lattice array can't get too big
 	- if we want each lattice to be cardinality 4, then divide by 4 and that's the number of Hetero's to make.

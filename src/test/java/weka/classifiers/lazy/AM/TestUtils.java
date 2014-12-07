@@ -11,6 +11,8 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 public class TestUtils {
 
@@ -26,6 +28,10 @@ public class TestUtils {
 	 * The name of the finnverb data file.
 	 */
 	public static final String FINNVERB = "finnverb.arff";
+	/**
+	 * A paired-down finnverb for minimal testing.
+	 */
+	public static final String FINNVERB_MIN = "finn_min_gangs.arff";
 
 	/**
 	 * Read a dataset from disk and return the Instances object. It is assumed
@@ -45,6 +51,26 @@ public class TestUtils {
 		return instances;
 	}
 
+	public static Instances getReducedDataSet(String fileInDataFolder,
+			int numAtts) throws Exception {
+
+		Instances data = getDataSet(fileInDataFolder);
+		
+		// string needs to be "X-Y", specifying that attributes X-Y should be
+		// removed. -1 is used to prevent ignoring the class attribute, which is
+		// assumed to be last. Oddly, the atts are 1-indexed for this, whereas
+		// the get() methods are always 0-indexed.
+		String ignoreAtts = (numAtts + 1) + "-" + (data.numAttributes() - 1);
+		Remove remove = new Remove(); // new instance of filter
+		remove.setOptions(new String[] { "-R", ignoreAtts });
+		remove.setInputFormat(data);
+		
+		Instances newData = Filter.useFilter(data, remove); // apply filter
+		newData.setClassIndex(newData.numAttributes() - 1);
+		
+		return newData;
+	}
+
 	/**
 	 * Read a dataset from disk and return the Instance object at the specified
 	 * index. It is assumed that the file is in the project data folder, and
@@ -52,12 +78,14 @@ public class TestUtils {
 	 * 
 	 * @param fileInDataFolder
 	 *            Name of arff file in located in the project data folder
-	 * @param index TODO
-	 * @return The instance at the specified index of the dataset contained in the file
+	 * @param index
+	 *            TODO
+	 * @return The instance at the specified index of the dataset contained in
+	 *         the file
 	 * @throws Exception
 	 */
-	public static Instance getInstanceFromFile(String fileInDataFolder, int index)
-			throws Exception {
+	public static Instance getInstanceFromFile(String fileInDataFolder,
+			int index) throws Exception {
 		Instances instances = getDataSet(fileInDataFolder);
 		instances.setClassIndex(instances.numAttributes() - 1);
 		return instances.get(index);
@@ -114,5 +142,4 @@ public class TestUtils {
 
 		return s1.getData().equals(s2.getData());
 	}
-
 }

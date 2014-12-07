@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import weka.classifiers.lazy.AM.AMUtils;
+
 /**
  * This class holds the supracontextual lattice and does the work of filling
  * itself during classification.
@@ -39,6 +41,7 @@ public class BasicLattice implements ILattice {
 	 * Lattice is a 2^n array of Supracontexts
 	 */
 	private Supracontext[] lattice;
+	private int cardinality;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -64,6 +67,7 @@ public class BasicLattice implements ILattice {
 	 *            the size of the exemplars
 	 */
 	private void init(int card) {
+		cardinality = card;
 		emptySupracontext = new Supracontext();
 		emptySupracontext.setNext(emptySupracontext);
 		// set count to 1 so that cleanSupra doesn't destroy it
@@ -100,19 +104,22 @@ public class BasicLattice implements ILattice {
 	}
 
 	/**
-	 * Inserts sub into the lattice. I believe this requires that the sub be of
-	 * a label not previously inserted into the Lattice.
+	 * Inserts sub into the lattice.
 	 * 
 	 * @param sub
 	 *            Subcontext to be inserted
 	 */
 	private void insert(Subcontext sub) {
-		// skip all children if this exemplar is heterogeneous
-		if (!addToContext(sub, sub.getLabel().intLabel()))
+		// skip this if the supracontext to be added to is already heterogeneous;
+		// it would not be possible to make any non-heterogeneous supracontexts.
+		if(lattice[sub.getLabel().intLabel()] == heteroSupra)
 			return;
+		// add the sub to its label position
+		addToContext(sub, sub.getLabel());
+		// then add the sub to all of the children of its label position
 		Iterator<Label> si = sub.getLabel().subsetIterator();
 		while (si.hasNext()) {
-			addToContext(sub, si.next().intLabel());
+			addToContext(sub, si.next());
 			// remove supracontexts with count = 0 after every pass
 			cleanSupra();
 		}
@@ -123,32 +130,33 @@ public class BasicLattice implements ILattice {
 	 * @param sub
 	 * @param label
 	 */
-	private boolean addToContext(Subcontext sub, int label) {
+	private void addToContext(Subcontext sub, Label label) {
+		int labelBits = label.intLabel();
 		// the default value is the empty supracontext (leave null until now to
 		// save time/space)
-		if (lattice[label] == null) {
-			lattice[label] = emptySupracontext;
+		if (lattice[labelBits] == null) {
+			lattice[labelBits] = emptySupracontext;
 		}
 
 		// if the Supracontext is heterogeneous, ignore it
-		if (lattice[label] == heteroSupra) {
-			return false;
+		if (lattice[labelBits] == heteroSupra) {
+			return;
 		}
 		// if the following supracontext matches the current index, just
 		// re-point
 		// to that one.
-		else if (lattice[label].getNext().getIndex() == index) {
+		else if (lattice[labelBits].getNext().getIndex() == index) {
 			// don't decrement count on emptySupracontext!
-			if (lattice[label] != emptySupracontext)
-				lattice[label].decrementCount();
-			lattice[label] = lattice[label].getNext();
+			if (lattice[labelBits] != emptySupracontext)
+				lattice[labelBits].decrementCount();
+			lattice[labelBits] = lattice[labelBits].getNext();
 			// if the context has been emptied, then it was found to be
 			// heterogeneous;
 			// mark this as heterogeneous, too
 			// [do not worry about this being emptySupracontext; it's index is
 			// -1]
 			// if(lattice[label].hasData()){
-			lattice[label].incrementCount();
+			lattice[labelBits].incrementCount();
 			// }
 			// else
 			// lattice[label] = heteroSupra;
@@ -158,21 +166,21 @@ public class BasicLattice implements ILattice {
 		// if outcomes don't match, then this supracontext is now heterogeneous.
 		// if lattice[label]'s outcome is nondeterministic, it will be
 		// heterogeneous
-		else if (!lattice[label].isDeterministic() || lattice[label].hasData()
-				&& lattice[label].getOutcome() != sub.getOutcome()) {
-			lattice[label].decrementCount();// removePointers();
-			lattice[label] = heteroSupra;
-			return false;
+		else if (!lattice[labelBits].isDeterministic() || lattice[labelBits].hasData()
+				&& lattice[labelBits].getOutcome() != sub.getOutcome()) {
+			lattice[labelBits].decrementCount();// removePointers();
+			lattice[labelBits] = heteroSupra;
+			return;
 		}
 		// otherwise make a new Supracontext and add it
 		else {
 			// don't decrement the count for the emptySupracontext!
-			if (lattice[label] != emptySupracontext)
-				lattice[label].decrementCount();
-			lattice[label] = new Supracontext(lattice[label], sub, index);
-			lattice[label].incrementCount();
+			if (lattice[labelBits] != emptySupracontext)
+				lattice[labelBits].decrementCount();
+			lattice[labelBits] = new Supracontext(lattice[labelBits], sub, index);
+			lattice[labelBits].incrementCount();
 		}
-		return true;
+		return;
 	}
 
 	/**
@@ -207,5 +215,23 @@ public class BasicLattice implements ILattice {
 			supra = supra.getNext();
 		}
 		return supList;
+	}
+	
+	//useful for private debugging on occasion
+	@SuppressWarnings("unused")
+	private String dumpLattice(){
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < Math.pow(2, cardinality); i++){
+			sb.append(new Label(i, cardinality));
+			sb.append(':');
+			if(lattice[i] == heteroSupra)
+				sb.append("[hetero]");
+			else if(lattice[i] == null)
+				sb.append("[empty]");
+			else
+				sb.append(lattice[i]);
+			sb.append(AMUtils.LINE_SEPARATOR);
+		}
+		return sb.toString();
 	}
 }

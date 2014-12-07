@@ -16,12 +16,16 @@
 
 package weka.classifiers.lazy;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+
 import junit.framework.TestSuite;
 
 import org.junit.Test;
 
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -47,14 +51,15 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	@Test
 	public void testChapter3dataSerial() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
+				0);
 
 		AnalogicalModeling am = getClassifier();
 
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
-		//test to 10 decimals places, the number used by AMUtils.matchContext
+		// test to 10 decimals places, the number used by AMUtils.matchContext
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}
@@ -62,7 +67,8 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	@Test
 	public void testChapter3dataParallel() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
+				0);
 
 		AnalogicalModeling am = getClassifier();
 		am.setParallel(true);
@@ -70,9 +76,42 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		am.buildClassifier(train);
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
-		//test to 10 decimals places, the number used by AMUtils.matchContext
+		// test to 10 decimals places, the number used by AMUtils.matchContext
 		assertEquals(0.6923076923076923, prediction[0], DELTA);
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
+	}
+
+	@Test
+	@SuppressWarnings("serial")
+	public void testReducedFinnverb() throws Exception {
+		Instances train = TestUtils
+				.getReducedDataSet(TestUtils.FINNVERB_MIN, 5);
+		AnalogicalSet set = leaveOneOut(train, 0);
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("A", BigInteger.valueOf(17));
+				put("B", BigInteger.valueOf(2));
+				put("C", BigInteger.valueOf(2));
+			}
+		}, set.getClassPointers());
+		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, 5);
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("A", BigInteger.valueOf(652));
+				put("B", BigInteger.valueOf(12));
+				put("C", BigInteger.valueOf(2));
+			}
+		}, leaveOneOut(train, 15).getClassPointers());
+	}
+
+	private AnalogicalSet leaveOneOut(Instances data, int index)
+			throws Exception {
+		Instance test = data.get(index);
+		data.remove(index);
+		AnalogicalModeling am = getClassifier();
+		am.buildClassifier(data);
+		am.distributionForInstance(test);
+		return am.getAnalogicalSet();
 	}
 
 	public static junit.framework.Test suite() {

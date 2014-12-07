@@ -1,0 +1,35 @@
+% This file contains a small number of items used for testing proper lattice 
+% functionality. Item 0 should be the test item, and the other items are grouped 
+% by their subcontext.
+@relation finnverb
+
+@attribute 1 { A , E , H , I , J , K , L , M , N , O , P , R , S , T , U , V , Y } 
+@attribute 2 { A , E , I , O , U , a , Y , o } 
+@attribute 3 { 0 , V } 
+@attribute 4 { U , A , I , O , Y , E , a , o } 
+@attribute 5 { 0 , S } 
+@attribute 6 { L , N , R , n } 
+@attribute 7 { 0 , O } 
+@attribute 8 { T , S , H , K , P } 
+@attribute 9 { J , K , T , L , S , M , H , V , P , N , R } 
+@attribute 10 { A , a , E } 
+@attribute class { B , A , C } 
+
+
+@data
+H , U , V , U , 0 , ? , 0 , ? , T , A , C
+
+U , U , V , I , 0 , ? , O , T , T , A , A
+
+K , U , V , U , 0 , ? , 0 , ? , L , E , A 
+
+P , U , 0 , ? , 0 , ? , 0 , ? , K , E , A
+ 
+H , A , V , I , 0 , ? , 0 , ? , S , E , A
+H , A , V , A , 0 , ? , O , S , T , A , B
+
+H , U , V , O , S , L , 0 , ? , T , A , C
+
+N , A , V , U , 0 , ? , 0 , ? , R , A , B
+K , U , V , U , S , L , 0 , ? , T , A , C
+H , A , 0 , ? , 0 , ? , 0 , ? , K , E , A

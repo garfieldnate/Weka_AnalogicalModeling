@@ -18,6 +18,7 @@ package weka.classifiers.lazy.AM.data;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,8 @@ public class AnalogicalSet {
 	private Map<String, BigInteger> classPointerMap = new HashMap<>();
 
 	private Map<String, BigDecimal> classLikelihoodMap = new HashMap<>();
+	
+	private List<Supracontext> supraList;
 
 	private BigInteger totalPointers = BigInteger.ZERO;
 
@@ -108,6 +111,7 @@ public class AnalogicalSet {
 			boolean linear) {
 
 		this.classifiedExemplar = testItem;
+		this.supraList = supraList;
 
 		// find numbers of pointers to individual exemplars
 		exPointerMap = getPointers(supraList, linear);
@@ -325,5 +329,13 @@ public class AnalogicalSet {
 	// TODO: this could actually be a tie, so it should return multiple
 	public String getPredictedClass() {
 		return predictedClass;
+	}
+	
+	/**
+	 * 
+	 * @return The Supracontexts that comprise the analogical set.
+	 */
+	public List<Supracontext> getSupraList(){
+		return Collections.unmodifiableList(supraList);
 	}
 }

@@ -30,7 +30,6 @@ import weka.classifiers.lazy.AM.AMUtils;
  * 
  */
 public class Supracontext {
-	// TODO: store some kind of label?
 
 	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
@@ -178,8 +177,9 @@ public class Supracontext {
 	public String toString() {
 		if (data == null)
 			return "[NULL]";
-		if (data.isEmpty())
+		if(data.isEmpty())
 			return "[EMPTY]";
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		sb.append(count);
