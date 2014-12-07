@@ -1,0 +1,23 @@
+##Analogical Modeling Weka Plugin
+
+###Building
+
+This project is managed with Gradle. To download the dependencies and build the project:
+
+    gradle build
+    
+To test:
+
+    gradle test
+    
+To create an Eclipse project to work with:
+
+    gradle eclipse
+    
+###Running
+
+Under construction; try testing AnalogicalModeling.java with `-t data/ch3example.arff -x 5`.
+
+### License
+
+Released under the Apache 2.0 license (see the LICENSE file for details). Copyright Nathan Glenn, 2014.

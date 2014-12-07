@@ -2,6 +2,7 @@ Next:
 
 Later TODO:
 - refactor supracontext a little so that it does more of its own work
+	- the copy(ish) constructor doesn't check for heterogeneity; it shouldn't for the distributed implementation, but it should for the BasicLattice implementation.
 - test the SupracontextCombiner class.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?

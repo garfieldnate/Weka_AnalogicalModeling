@@ -1,3 +1,0 @@
-Analogical Modeling Weka Plugin
-This project currently consists of one Eclipse project containing the source to an Analogical Modeling plugin for the Weka Machine Learning Toolkit.
-To compile the code properly, you must have the latest version of Weka in your classpath.
