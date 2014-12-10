@@ -54,13 +54,14 @@ public class Labeler {
 	 * @param instance
 	 *            Instance being classified
 	 */
-	public Labeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
+	public Labeler(MissingDataCompare mdc, Instance instance,
+			boolean ignoreUnknowns) {
 		this.mdc = mdc;
 		this.testItem = instance;
 		this.ignoreUnknowns = ignoreUnknowns;
 		ignoreSet = new HashSet<>();
 		classIndex = instance.classIndex();
-		if(ignoreUnknowns){
+		if (ignoreUnknowns) {
 			int length = testItem.numAttributes() - 1;
 			for (int i = 0; i < length; i++) {
 				if (testItem.isMissing(i))
@@ -77,8 +78,8 @@ public class Labeler {
 	public int getCardinality() {
 		return testItem.numAttributes() - ignoreSet.size() - 1;
 	}
-	
-	public boolean getIgnoreUnknowns(){
+
+	public boolean getIgnoreUnknowns() {
 		return ignoreUnknowns;
 	}
 
@@ -97,16 +98,19 @@ public class Labeler {
 		int index = 0;
 		for (int i = 0; i < testItem.numAttributes(); i++) {
 			// skip ignored attributes and the class attribute
-			if(ignoreSet.contains(i))
+			if (ignoreSet.contains(i))
 				continue;
-			if(i == classIndex)
+			if (i == classIndex)
 				continue;
 			att = testItem.attribute(i);
-			if (testItem.isMissing(i) || data.isMissing(i))
-				label |= (mdc.outcome(testItem, data, att));
-			else if (testItem.value(att) != data.value(att)) {
-				// use length-1-index instead of index so that in binary the labels show
-				// left to right, first to last feature.
+			// use mdc if were are comparing a missing attribute
+			if (testItem.isMissing(i) || data.isMissing(i)) {
+				if (!mdc.matches(testItem, data, att))
+					// use length-1-index instead of index so that in binary the
+					// labels show left to right, first to last feature.
+					label |= (1 << (length - 1 - index));
+			} else if (testItem.value(att) != data.value(att)) {
+				// same as above
 				label |= (1 << (length - 1 - index));
 			}
 			index++;

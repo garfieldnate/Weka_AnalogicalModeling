@@ -70,7 +70,7 @@ public class LabelerTest {
 		assertEquals("VARIABLE: matches other unknowns", new Label(0b00100, 5),
 				labeler.getContextLabel(dataset.get(7)));
 		assertEquals("VARIABLE: mismatches non-unknowns",
-				new Label(0b00101, 5), labeler.getContextLabel(dataset.get(8)));
+				new Label(0b00111, 5), labeler.getContextLabel(dataset.get(8)));
 	}
 
 	@Test
