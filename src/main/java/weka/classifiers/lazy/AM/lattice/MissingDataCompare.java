@@ -27,8 +27,8 @@ public enum MissingDataCompare {
 	 */
 	MATCH("match", "Consider the missing attribute value to match anything") {
 		@Override
-		public int outcome(Instance i1, Instance i2, Attribute att) {
-			return 0;
+		public boolean matches(Instance i1, Instance i2, Attribute att) {
+			return true;
 		}
 
 	},
@@ -39,8 +39,8 @@ public enum MissingDataCompare {
 	MISMATCH("mismatch",
 			"Consider the missing attribute value to be a mismatch") {
 		@Override
-		public int outcome(Instance i1, Instance i2, Attribute att) {
-			return 1;
+		public boolean matches(Instance i1, Instance i2, Attribute att) {
+			return false;
 		}
 
 	},
@@ -54,14 +54,14 @@ public enum MissingDataCompare {
 			"Treat the the missing attribute value as an attribute value of its own; "
 					+ "a missing value will match another missing value, but nothing else.") {
 		@Override
-		public int outcome(Instance i1, Instance i2, Attribute att) {
+		public boolean matches(Instance i1, Instance i2, Attribute att) {
 			if (i1.isMissing(att) && i2.isMissing(att))
-				return 0;
-			return 1;
+				return true;
+			return false;
 		}
 
 	};
-	
+
 	// string used on command line to indicate the use of this strategy
 	private final String optionString;
 	// string which describes comparison strategy for a given entry
@@ -135,8 +135,8 @@ public enum MissingDataCompare {
 	 *            Second instance
 	 * @param att
 	 *            Attribute to be compared between the two instances
-	 * @return 0 for a match, and 1 for a mismatch, depending on the chosen
-	 *         algorithm.
+	 * @return true if the attributes match, false if they do not; the matching
+	 *         mechanism depends on the chosen algorithm.
 	 */
-	public abstract int outcome(Instance i1, Instance i2, Attribute att);
+	public abstract boolean matches(Instance i1, Instance i2, Attribute att);
 }

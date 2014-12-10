@@ -1,5 +1,6 @@
 package weka.classifiers.lazy.AM.lattice;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -40,25 +41,25 @@ public class MissingDataCompareTest {
 	@Test
 	public void testMatch() {
 		MissingDataCompare mc = MissingDataCompare.MATCH;
-		assertTrue(mc.outcome(instances.get(0), instances.get(0), att) == 0);
-		assertTrue(mc.outcome(instances.get(0), instances.get(1), att) == 0);
-		assertTrue(mc.outcome(instances.get(1), instances.get(0), att) == 0);
+		assertTrue(mc.matches(instances.get(0), instances.get(0), att));
+		assertTrue(mc.matches(instances.get(0), instances.get(1), att));
+		assertTrue(mc.matches(instances.get(1), instances.get(0), att));
 	}
 
 	@Test
 	public void testMismatch() {
 		MissingDataCompare mc = MissingDataCompare.MISMATCH;
-		assertTrue(mc.outcome(instances.get(0), instances.get(0), att) == 1);
-		assertTrue(mc.outcome(instances.get(0), instances.get(1), att) == 1);
-		assertTrue(mc.outcome(instances.get(1), instances.get(0), att) == 1);
+		assertFalse(mc.matches(instances.get(0), instances.get(0), att));
+		assertFalse(mc.matches(instances.get(0), instances.get(1), att));
+		assertFalse(mc.matches(instances.get(1), instances.get(0), att));
 	}
 
 	@Test
 	public void testVariable() {
 		MissingDataCompare mc = MissingDataCompare.VARIABLE;
-		assertTrue(mc.outcome(instances.get(0), instances.get(0), att) == 0);
-		assertTrue(mc.outcome(instances.get(0), instances.get(1), att) == 1);
-		assertTrue(mc.outcome(instances.get(1), instances.get(0), att) == 1);
+		assertTrue(mc.matches(instances.get(0), instances.get(0), att));
+		assertFalse(mc.matches(instances.get(0), instances.get(1), att));
+		assertFalse(mc.matches(instances.get(1), instances.get(0), att));
 	}
 
 }
