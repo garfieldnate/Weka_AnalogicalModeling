@@ -130,10 +130,17 @@ public class Supracontext {
 	}
 
 	/**
-	 * Decreases the count by one; if this reaches 0, then this supracontext
-	 * should be destroyed, as nothing in the lattice points to it anymore.
+	 * Decreases the count by one; if this reaches 0, then this Supracontext
+	 * should be destroyed (by the caller), as nothing in the lattice points to
+	 * it anymore.
+	 * 
+	 * @throws IllegalStateException
+	 *             if the count is already zero.
 	 */
 	public void decrementCount() {
+		if (count.equals(BigInteger.ZERO))
+			throw new IllegalStateException(
+					"Can't decrement the count of a Supracontext with zero pointers");
 		count = count.subtract(BigInteger.ONE);
 	}
 
@@ -177,9 +184,9 @@ public class Supracontext {
 	public String toString() {
 		if (data == null)
 			return "[NULL]";
-		if(data.isEmpty())
+		if (data.isEmpty())
 			return "[EMPTY]";
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		sb.append(count);

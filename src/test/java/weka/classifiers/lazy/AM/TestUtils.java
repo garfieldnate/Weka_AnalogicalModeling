@@ -51,23 +51,31 @@ public class TestUtils {
 		return instances;
 	}
 
+	/**
+	 * Read a dataset from the given file and remove the specified attributes,
+	 * then return it.
+	 * 
+	 * @param fileInDataFolder
+	 *            name of file in the project data folder
+	 * @param ignoreAtts
+	 *            A string like "5-10, 12" specififying which attributes should
+	 *            be removed. These numbers should be 1-indexed (required by
+	 *            Weka API here).
+	 * @return The altered dataset
+	 * @throws Exception
+	 */
 	public static Instances getReducedDataSet(String fileInDataFolder,
-			int numAtts) throws Exception {
+			String ignoreAtts) throws Exception {
 
 		Instances data = getDataSet(fileInDataFolder);
-		
-		// string needs to be "X-Y", specifying that attributes X-Y should be
-		// removed. -1 is used to prevent ignoring the class attribute, which is
-		// assumed to be last. Oddly, the atts are 1-indexed for this, whereas
-		// the get() methods are always 0-indexed.
-		String ignoreAtts = (numAtts + 1) + "-" + (data.numAttributes() - 1);
+
 		Remove remove = new Remove(); // new instance of filter
 		remove.setOptions(new String[] { "-R", ignoreAtts });
 		remove.setInputFormat(data);
-		
+
 		Instances newData = Filter.useFilter(data, remove); // apply filter
 		newData.setClassIndex(newData.numAttributes() - 1);
-		
+
 		return newData;
 	}
 

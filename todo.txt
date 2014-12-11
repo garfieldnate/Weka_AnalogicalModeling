@@ -1,5 +1,5 @@
 Next:
-- find bugs preventing finnverb from giving correct results
+- move recent new classification tests into LatticeTest so that all implementations can be checked.
 
 Later TODO:
 - refactor supracontext a little so that it does more of its own work

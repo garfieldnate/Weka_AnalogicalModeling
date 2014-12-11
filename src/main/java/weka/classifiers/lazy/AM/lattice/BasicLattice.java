@@ -120,9 +120,9 @@ public class BasicLattice implements ILattice {
 		Iterator<Label> si = sub.getLabel().subsetIterator();
 		while (si.hasNext()) {
 			addToContext(sub, si.next());
-			// remove supracontexts with count = 0 after every pass
-			cleanSupra();
 		}
+		// remove supracontexts with count = 0 after every pass
+		cleanSupra();
 	}
 
 	/**
@@ -143,11 +143,11 @@ public class BasicLattice implements ILattice {
 			return;
 		}
 		// if the following supracontext matches the current index, just
-		// re-point
-		// to that one.
+		// re-point to that one.
 		else if (lattice[labelBits].getNext().getIndex() == index) {
+			assert(lattice[labelBits].getNext().getData().containsAll(lattice[labelBits].getData()));
 			// don't decrement count on emptySupracontext!
-			if (lattice[labelBits] != emptySupracontext)
+			if (!lattice[labelBits].getCount().equals(BigInteger.ZERO))
 				lattice[labelBits].decrementCount();
 			lattice[labelBits] = lattice[labelBits].getNext();
 			// if the context has been emptied, then it was found to be
@@ -168,14 +168,14 @@ public class BasicLattice implements ILattice {
 		// heterogeneous
 		else if (!lattice[labelBits].isDeterministic() || lattice[labelBits].hasData()
 				&& lattice[labelBits].getOutcome() != sub.getOutcome()) {
-			lattice[labelBits].decrementCount();// removePointers();
+			lattice[labelBits].decrementCount();
 			lattice[labelBits] = heteroSupra;
 			return;
 		}
 		// otherwise make a new Supracontext and add it
 		else {
 			// don't decrement the count for the emptySupracontext!
-			if (lattice[labelBits] != emptySupracontext)
+			if (!lattice[labelBits].getCount().equals(BigInteger.ZERO))
 				lattice[labelBits].decrementCount();
 			lattice[labelBits] = new Supracontext(lattice[labelBits], sub, index);
 			lattice[labelBits].incrementCount();

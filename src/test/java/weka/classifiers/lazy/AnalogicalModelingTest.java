@@ -84,17 +84,19 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	@Test
 	@SuppressWarnings("serial")
 	public void testReducedFinnverb() throws Exception {
-		Instances train = TestUtils
-				.getReducedDataSet(TestUtils.FINNVERB_MIN, 5);
-		AnalogicalSet set = leaveOneOut(train, 0);
+		// these two test correct labeling/classification with unknown
+		// attributes, as well as that supracontexts are properly marked
+		// heterogeneous
+		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
+				"6-10");
 		assertEquals(new HashMap<String, BigInteger>() {
 			{
 				put("A", BigInteger.valueOf(17));
 				put("B", BigInteger.valueOf(2));
 				put("C", BigInteger.valueOf(2));
 			}
-		}, set.getClassPointers());
-		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, 5);
+		}, leaveOneOut(train, 0).getClassPointers());
+		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
 		assertEquals(new HashMap<String, BigInteger>() {
 			{
 				put("A", BigInteger.valueOf(652));
@@ -102,6 +104,15 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 				put("C", BigInteger.valueOf(2));
 			}
 		}, leaveOneOut(train, 15).getClassPointers());
+
+		// this tests that cleanSupra is only run after a subcontext is inserted
+		// completely, not after each single insertion
+		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "1,7-10");
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("A", BigInteger.valueOf(45));
+			}
+		}, leaveOneOut(train, 0).getClassPointers());
 	}
 
 	private AnalogicalSet leaveOneOut(Instances data, int index)
