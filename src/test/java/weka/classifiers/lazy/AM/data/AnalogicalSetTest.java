@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -50,13 +51,17 @@ public class AnalogicalSetTest {
 		for (Entry<Instance, BigDecimal> entry : effects.entrySet()) {
 			Instance i = entry.getKey();
 			if (i.equals(train.get(0)))
-				assertEquals(entry.getValue(), new BigDecimal("0.3076923077923077"));
+				assertEquals(entry.getValue(), new BigDecimal(
+						"0.3076923077923077"));
 			if (i.equals(train.get(2)))
-				assertEquals(entry.getValue(), new BigDecimal("0.15384615384615385"));
+				assertEquals(entry.getValue(), new BigDecimal(
+						"0.15384615384615385"));
 			if (i.equals(train.get(3)))
-				assertEquals(entry.getValue(), new BigDecimal("0.23076923076923078"));
+				assertEquals(entry.getValue(), new BigDecimal(
+						"0.23076923076923078"));
 			if (i.equals(train.get(4)))
-				assertEquals(entry.getValue(), new BigDecimal("0.307692307692307"));
+				assertEquals(entry.getValue(), new BigDecimal(
+						"0.307692307692307"));
 		}
 	}
 
@@ -88,22 +93,27 @@ public class AnalogicalSetTest {
 	}
 
 	@Test
+	@SuppressWarnings("serial")
 	public void classDistributionTest() {
 		Map<String, BigDecimal> distribution = as.getClassLikelihood();
-		
+
 		assertEquals(distribution.size(), 2);
-		//test to 10 decimal places, the number used by AMUtils.mathContext
+		// test to 10 decimal places, the number used by AMUtils.mathContext
 		assertEquals(distribution.get("r"), new BigDecimal("0.6923076923"));
 		assertEquals(distribution.get("e"), new BigDecimal("0.3076923077"));
 
-		assertEquals(as.getPredictedClass(), "r");
+		assertEquals(as.getPredictedClasses(), new HashSet<String>() {
+			{
+				add("r");
+			}
+		});
 		assertEquals(as.getClassProbability(), new BigDecimal("0.6923076923"));
 	}
-	
+
 	@Test
 	public void classifiedExTest() {
 		assertEquals(as.getClassifiedEx(), test);
 	}
-	//TODO: test toString
+	// TODO: test toString
 
 }

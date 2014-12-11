@@ -145,12 +145,39 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		}, leaveOneOut(train, 16).getClassPointers());
 	}
 
+	/**
+	 * Test accuracy with the finnverb dataset, a real data set with 10 features
+	 * and lots of unknowns.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@SuppressWarnings("serial")
+	public void testFinnverb() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("A", BigInteger.valueOf(5094));
+				put("C", BigInteger.valueOf(50));
+			}
+		}, leaveOneOut(train, 15).getClassPointers());
+
+		int correct = 0;
+		for(int i = 0; i < train.numInstances(); i++){
+			AnalogicalSet set = leaveOneOut(train, i);
+			if(set.getPredictedClasses().contains(train.get(i).stringValue(train.classIndex())))
+				correct++;
+		}
+		assertEquals("Leave-one-out accuracy when classifying of finnverb dataset", correct, 160);
+	}
+
 	private AnalogicalSet leaveOneOut(Instances data, int index)
 			throws Exception {
-		Instance test = data.get(index);
-		data.remove(index);
+		Instances train = new Instances(data);
+		Instance test = train.get(index);
+		train.remove(index);
 		AnalogicalModeling am = getClassifier();
-		am.buildClassifier(data);
+		am.buildClassifier(train);
 		am.distributionForInstance(test);
 		return am.getAnalogicalSet();
 	}

@@ -21,11 +21,12 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
@@ -54,12 +55,12 @@ public class AnalogicalSet {
 	private Map<String, BigInteger> classPointerMap = new HashMap<>();
 
 	private Map<String, BigDecimal> classLikelihoodMap = new HashMap<>();
-	
+
 	private List<Supracontext> supraList;
 
 	private BigInteger totalPointers = BigInteger.ZERO;
 
-	private String predictedClass = null;
+	private Set<String> predictedClasses = null;
 	private BigDecimal classProbability = BigDecimal.valueOf(-1);
 
 	/**
@@ -123,9 +124,8 @@ public class AnalogicalSet {
 		// find the analogical effect of an exemplar by dividing its pointer
 		// count by the total pointer count
 		for (Instance e : exPointerMap.keySet())
-			exEffectMap.put(e, new BigDecimal(exPointerMap.get(e))
-					.divide(new BigDecimal(getTotalPointers()),
-							AMUtils.matchContext));
+			exEffectMap.put(e, new BigDecimal(exPointerMap.get(e)).divide(
+					new BigDecimal(getTotalPointers()), AMUtils.matchContext));
 
 		// find the likelihood for a given outcome based on the pointers
 		for (Instance e : exPointerMap.keySet()) {
@@ -144,13 +144,17 @@ public class AnalogicalSet {
 					new BigDecimal(classPointerMap.get(className))
 							.divide(new BigDecimal(totalPointers),
 									AMUtils.matchContext));
-		// Set the class index to that with the highest likelihood
+		// Find the classes with the highest likelihood (there may be a tie)
 		BigDecimal temp;
 		for (String className : classLikelihoodMap.keySet()) {
 			temp = classLikelihoodMap.get(className);
-			if (temp.compareTo(getClassProbability()) > 0) {
+			int comp = temp.compareTo(getClassProbability());
+			if (comp > 0) {
 				classProbability = temp;
-				predictedClass = className;
+				predictedClasses = new HashSet<>();
+				predictedClasses.add(className);
+			} else if (comp == 0) {
+				predictedClasses.add(className);
 			}
 		}
 	}
@@ -217,7 +221,7 @@ public class AnalogicalSet {
 		sb.append(newline);
 
 		sb.append("outcome: ");
-		sb.append(predictedClass);
+		sb.append(predictedClasses);
 		sb.append(" (");
 		sb.append(classProbability);
 		sb.append(")");
@@ -327,15 +331,15 @@ public class AnalogicalSet {
 	 * @return Index of the predicted class attribute value
 	 */
 	// TODO: this could actually be a tie, so it should return multiple
-	public String getPredictedClass() {
-		return predictedClass;
+	public Set<String> getPredictedClasses() {
+		return predictedClasses;
 	}
-	
+
 	/**
 	 * 
 	 * @return The Supracontexts that comprise the analogical set.
 	 */
-	public List<Supracontext> getSupraList(){
+	public List<Supracontext> getSupraList() {
 		return Collections.unmodifiableList(supraList);
 	}
 }
