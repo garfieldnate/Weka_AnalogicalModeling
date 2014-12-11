@@ -187,18 +187,14 @@ public class BasicLattice implements ILattice {
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {
-		Supracontext supra = emptySupracontext.getNext();
-		Supracontext supraPrev = emptySupracontext;
-		while (supra != emptySupracontext) {
-			if (supra.getCount().equals(BigInteger.ZERO)) {
-				// linking supraPrev and supra.next() removes supra from the
-				// linked list
-				supraPrev.setNext(supra.getNext());
+		for(Supracontext supra = emptySupracontext; supra.getNext() != emptySupracontext;){
+			if(supra.getNext().getCount().equals(BigInteger.ZERO)){
+				supra.setNext(supra.getNext().getNext());
 			}
-			supraPrev = supra;
-			supra = supra.getNext();
-
+			else
+				supra = supra.getNext();
 		}
+		assert(noZeroSupras());
 	}
 
 	/*
@@ -217,6 +213,10 @@ public class BasicLattice implements ILattice {
 		return supList;
 	}
 	
+	/*
+	 * Below methods are for private debugging and asserting
+	 */
+	
 	//useful for private debugging on occasion
 	@SuppressWarnings("unused")
 	private String dumpLattice(){
@@ -233,5 +233,13 @@ public class BasicLattice implements ILattice {
 			sb.append(AMUtils.LINE_SEPARATOR);
 		}
 		return sb.toString();
+	}
+	
+	private boolean noZeroSupras(){
+		for(Supracontext supra : getSupracontextList()){
+			if(supra.getCount().equals(BigInteger.ZERO))
+				return false;
+		}
+		return true;
 	}
 }

@@ -26,6 +26,7 @@ import org.junit.Test;
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
+import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -81,12 +82,14 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		assertEquals(0.3076923076923077, prediction[1], DELTA);
 	}
 
+	/**
+	 * Test that supracontexts are properly marked heterogeneous.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	@SuppressWarnings("serial")
-	public void testReducedFinnverb() throws Exception {
-		// these two test correct labeling/classification with unknown
-		// attributes, as well as that supracontexts are properly marked
-		// heterogeneous
+	public void testHeterogeneousMarking() throws Exception {
 		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"6-10");
 		assertEquals(new HashMap<String, BigInteger>() {
@@ -105,14 +108,41 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 			}
 		}, leaveOneOut(train, 15).getClassPointers());
 
-		// this tests that cleanSupra is only run after a subcontext is inserted
-		// completely, not after each single insertion
-		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "1,7-10");
+	}
+
+	/**
+	 * Test that {@link BasicLattice#cleanSupra()} is only run after a
+	 * subcontext is inserted completely, not after each single insertion
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@SuppressWarnings("serial")
+	public void testCleanSupraTiming() throws Exception {
+		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
+				"1,7-10");
 		assertEquals(new HashMap<String, BigInteger>() {
 			{
 				put("A", BigInteger.valueOf(45));
 			}
 		}, leaveOneOut(train, 0).getClassPointers());
+	}
+
+	/**
+	 * This exposes an error where {@link BasicLattice#cleanSupra()} doesn't
+	 * clean all of the zero supras out.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@SuppressWarnings("serial")
+	public void testCleanSupraCorrect() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("A", BigInteger.valueOf(24941));
+			}
+		}, leaveOneOut(train, 16).getClassPointers());
 	}
 
 	private AnalogicalSet leaveOneOut(Instances data, int index)
