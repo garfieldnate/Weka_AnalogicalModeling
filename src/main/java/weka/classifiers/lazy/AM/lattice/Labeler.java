@@ -53,6 +53,9 @@ public class Labeler {
 	 *            Specifies how to compare missing attributes
 	 * @param instance
 	 *            Instance being classified
+	 * @param ignroeUnknowns
+	 *            true if attributes with undefined values in the test item
+	 *            should be ignored; false if not.
 	 */
 	public Labeler(MissingDataCompare mdc, Instance instance,
 			boolean ignoreUnknowns) {
