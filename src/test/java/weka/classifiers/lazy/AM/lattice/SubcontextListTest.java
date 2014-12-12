@@ -17,10 +17,10 @@ public class SubcontextListTest {
 	@Test
 	public void testChapter3Data() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
+				0);
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
-				test, false);
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals(subs.getCardinality(), 3);
@@ -48,11 +48,28 @@ public class SubcontextListTest {
 
 	private List<Subcontext> getSubList(final SubcontextList subcontextList) {
 		@SuppressWarnings("serial")
-		List<Subcontext> subs = new ArrayList<Subcontext>(){{
-			for(Subcontext s : subcontextList)
-				add(s);
-		}};
+		List<Subcontext> subs = new ArrayList<Subcontext>() {
+			{
+				for (Subcontext s : subcontextList)
+					add(s);
+			}
+		};
 		return subs;
+	}
+
+	@Test
+	public void testAccessors() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
+		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
+				0);
+
+		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
+
+		SubcontextList subs = new SubcontextList(labeler, train);
+		assertEquals("getLabeler returns the labeler used in the constructor",
+				subs.getLabeler(), labeler);
+		assertEquals("getCardinality returns the cardinality of the test item",
+				subs.getCardinality(), 3);
 	}
 
 }

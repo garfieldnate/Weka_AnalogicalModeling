@@ -38,7 +38,7 @@ public class DistributedLatticeTest {
 		
 	    exception.expect(IllegalArgumentException.class);
 	    exception.expectMessage("numLattices should be greater than 1");
-		new DistributedLattice(subList, labeler, 1);
+		new DistributedLattice(subList, 1);
 	}
 
 }

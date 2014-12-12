@@ -65,8 +65,8 @@ public class DistributedLattice implements ILattice {
 	 *            subcontexts in subList (TODO: maybe that could just be
 	 *            retrieved from subList instead).
 	 */
-	public DistributedLattice(SubcontextList subList, Labeler labeler) {
-		this(subList, labeler, NUM_LATTICES);
+	public DistributedLattice(SubcontextList subList) {
+		this(subList, NUM_LATTICES);
 	}
 
 	/**
@@ -84,13 +84,14 @@ public class DistributedLattice implements ILattice {
 	 * @throws IllegalArgumentException
 	 *             of numLattices is less than 2
 	 */
-	public DistributedLattice(SubcontextList subList, Labeler labeler,
+	public DistributedLattice(SubcontextList subList,
 			int numLattices) {
 		// it would be possible to work with 1 lattice, but pointless, since
 		// BasicLattice is used for that and would be much more efficient.
 		if (numLattices < 2)
 			throw new IllegalArgumentException(
 					"numLattices should be greater than 1");
+		Labeler labeler = subList.getLabeler();
 		// create masks for splitting labels
 		LabelMask[] masks = LabelMask.getMasks(labeler.getCardinality(), numLattices);
 

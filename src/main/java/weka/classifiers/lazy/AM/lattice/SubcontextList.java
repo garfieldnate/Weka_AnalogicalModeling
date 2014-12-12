@@ -160,4 +160,11 @@ public class SubcontextList implements Iterable<Subcontext> {
 			}
 		};
 	}
+
+	/**
+	 * @return The labeler object used to assign incoming data to subcontexts.
+	 */
+	public Labeler getLabeler() {
+		return labeler;
+	}
 }

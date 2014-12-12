@@ -46,17 +46,17 @@ public class LatticeTest {
 		Collection<Object[]> parameters = new ArrayList<>(3);
 		parameters.add(new Object[] { new BasicLattice(subList),
 				BasicLattice.class.getSimpleName() });
-		parameters.add(new Object[] { new DistributedLattice(subList, labeler),
+		parameters.add(new Object[] { new DistributedLattice(subList),
 				DistributedLattice.class.getSimpleName() });
 		parameters
 				.add(new Object[] {
-						new DistributedLattice(subList, labeler, 2),
+						new DistributedLattice(subList, 2),
 						DistributedLattice.class.getSimpleName()
 								+ ": 2 sub-lattices" });
 		// 10 should be reduced to 3, since there are only three attributes.
 		parameters
 				.add(new Object[] {
-						new DistributedLattice(subList, labeler, 10),
+						new DistributedLattice(subList, 10),
 						DistributedLattice.class.getSimpleName()
 								+ ": 10 sub-lattices" });
 
