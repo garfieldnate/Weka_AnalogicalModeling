@@ -1,10 +1,18 @@
 package weka.classifiers.lazy.AM;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.junit.Test;
+
+import weka.classifiers.lazy.AM.lattice.Label;
+import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -87,7 +95,7 @@ public class TestUtils {
 	 * @param fileInDataFolder
 	 *            Name of arff file in located in the project data folder
 	 * @param index
-	 *            TODO
+	 *            Index of instance to return
 	 * @return The instance at the specified index of the dataset contained in
 	 *         the file
 	 * @throws Exception
@@ -149,5 +157,146 @@ public class TestUtils {
 			return false;
 
 		return s1.getData().equals(s2.getData());
+	}
+
+	/**
+	 * Create the {@link Supracontext} object specified by the input string.
+	 * 
+	 * This method is somewhat slow due to restrictions of {@link Instance}, so
+	 * use it only in testing, and only with small datasets if possible.. Also,
+	 * this method will not work if multiple {@link Instance Instances} have the
+	 * same string representation (have the exact same attribute values).
+	 * 
+	 * @param supraString
+	 *            A string representing the supracontext to be created. This
+	 *            should be in the same form as that produced by
+	 *            {@link Supracontext#toString()}.
+	 * @param data
+	 *            The dataset containing the instances specified in the
+	 *            Supracontext string. For example:
+	 *            <code>[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]</code>
+	 *            .
+	 * @return
+	 */
+	public static Supracontext getSupraFromString(String supraString,
+			Instances data) {
+		String tempString;
+		int loc;
+		// get the count, between '[' and the first 'x'
+		loc = supraString.indexOf('x');
+		tempString = supraString.substring(1, loc);
+		BigInteger count = BigInteger.valueOf(Integer.parseInt(tempString));
+		if (count.compareTo(BigInteger.ZERO) < 0)
+			throw new IllegalArgumentException(
+					"count must be greater than zero");
+		loc++;// skip x
+
+		// parse subcontexts, which are each contained in parentheses
+		Set<Subcontext> subs = new HashSet<Subcontext>();
+		String subsString = supraString
+				.substring(loc, supraString.indexOf(']'));
+		for (String subString : subsString.split("\\),\\(")) {
+			// remove extra parentheses
+			subString = subString.replace(")", "");
+			subString = subString.replace("(", "");
+			// split into label, outcome, and instances
+			String[] subComponents = subString.split("\\|");
+			if (subComponents.length != 3)
+				throw new IllegalArgumentException(
+						"Incomplete subcontext specified: " + subString);
+
+			// parse label
+			Label label = new Label(Integer.parseInt(subComponents[0], 2),
+					subComponents[0].length());
+			Subcontext sub = new Subcontext(label);
+
+			// parse outcome
+			int outcome;
+			if (subComponents[1].equals(AMUtils.NONDETERMINISTIC_STRING))
+				outcome = AMUtils.NONDETERMINISTIC;
+			else
+				outcome = data.classAttribute().indexOfValue(subComponents[1]);
+
+			// parse instances
+			for (String instanceString : subComponents[2].split("/")) {
+				// we can't just create a new Instance from the given
+				// attributes;
+				// since there is no Instance.equals() method, the only way to
+				// achieve Supra equality is by having the exact same Instance
+				// instances, i.e. grep the set for the matching object :(
+				boolean added = false;
+				for (int i = 0; i < data.size(); i++) {
+					if (data.get(i).toString().equals(instanceString)) {
+						sub.add(data.get(i));
+						added = true;
+						break;
+					}
+				}
+				if (!added) {
+					throw new IllegalArgumentException(
+							instanceString
+									+ " does not specify any instance in the given data set");
+				}
+			}
+			if (sub.getOutcome() != outcome)
+				throw new IllegalArgumentException(
+						"Specified instances give an outcome of "
+								+ sub.getOutcome() + ", not " + outcome);
+			subs.add(sub);
+		}
+
+		Supracontext supra = new Supracontext(subs, count, subs.iterator()
+				.next().getOutcome());
+		return supra;
+	}
+
+	/**
+	 * Test that the getSupraFromString utility function above works as desired.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@SuppressWarnings("serial")
+	public void getSupraFromStringTest() throws Exception {
+		Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
+				"6-10");
+
+		final Subcontext sub1 = new Subcontext(new Label(0b10110, 5));
+		sub1.add(data.get(3)); // P,U,0,?,0,A
+		final Subcontext sub2 = new Subcontext(new Label(0b10000, 5));
+		sub2.add(data.get(2));// K,U,V,U,0,A
+		final Subcontext sub3 = new Subcontext(new Label(0b10010, 5));
+		sub3.add(data.get(1));// U,U,V,I,0,A
+		Supracontext expectedSupra = new Supracontext(
+				new HashSet<Subcontext>() {
+					{
+						add(sub1);
+						add(sub2);
+						add(sub3);
+					}
+				}, BigInteger.ONE, 1);// A
+
+		Supracontext actualSupra = getSupraFromString(
+				"[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]",
+				data);
+		assertTrue("create supra from string with multiple subs",
+				supraDeepEquals(expectedSupra, actualSupra));
+
+		actualSupra = getSupraFromString(
+				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]", data);
+		final Subcontext sub4 = new Subcontext(new Label(0b01010, 5));
+		sub4.add(data.get(4)); // H,A,V,I,0,A
+		sub4.add(data.get(5)); // H,A,V,A,0,B
+		expectedSupra = new Supracontext(new HashSet<Subcontext>() {
+			{
+				add(sub4);
+			}
+		}, BigInteger.ONE, AMUtils.NONDETERMINISTIC);// A
+
+		System.out.println(expectedSupra);
+		assertTrue("create supra from string with sub with multiple instances",
+				supraDeepEquals(expectedSupra, actualSupra));
+		
+		//TODO: test error conditions
 	}
 }
