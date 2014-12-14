@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class LatticeTest {
 	@Parameter(0)
 	public String testName;
 	@Parameter(1)
-	public Constructor<ILattice> constructor;
+	public Constructor<ILattice> latticeConstructor;
 	@Parameter(2)
 	public Object[] ctorArgs;
 
@@ -84,8 +85,8 @@ public class LatticeTest {
 		return parameters;
 	}
 
-	@SuppressWarnings("serial")
 	@Test
+	@SuppressWarnings("serial")
 	public void testChapter3Data() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
 		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
@@ -96,7 +97,7 @@ public class LatticeTest {
 		SubcontextList subList = new SubcontextList(labeler, train);
 
 		ctorArgs[0] = subList;
-		ILattice testLattice = constructor.newInstance(ctorArgs);
+		ILattice testLattice = latticeConstructor.newInstance(ctorArgs);
 
 		List<Supracontext> supras = testLattice.getSupracontextList();
 		assertEquals(3, supras.size());
@@ -131,5 +132,71 @@ public class LatticeTest {
 			}
 		}, BigInteger.valueOf(2), AMUtils.NONDETERMINISTIC);
 		TestUtils.assertContainsSupra(supras, expected);
+	}
+	
+	/**
+	 * Test that supracontexts are properly marked heterogeneous.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testHeterogeneousMarking() throws Exception {
+		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
+				"6-10");
+		Instance test = train.get(0);
+		train.remove(0);
+		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
+		SubcontextList subList = new SubcontextList(labeler, train);
+		ctorArgs[0] = subList;
+		ILattice testLattice = latticeConstructor.newInstance(ctorArgs);
+
+		List<Supracontext> actualSupras = testLattice.getSupracontextList();
+		assertEquals(5, actualSupras.size());
+
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[2x(10000|A|K,U,V,U,0,A)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[2x(10000|A|K,U,V,U,0,A)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]", train));
+		
+		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
+		test = train.get(0);
+		train.remove(0);
+		labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
+		subList = new SubcontextList(labeler, train);
+		ctorArgs[0] = subList;
+		testLattice = latticeConstructor.newInstance(ctorArgs);
+		actualSupras = testLattice.getSupracontextList();
+		System.out.println(testLattice.getSupracontextList());
+		assertEquals(4, actualSupras.size());
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[2x(00110|B|A,A,V,U,0,B)]", train));
+		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[2x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B),(00110|B|A,A,V,U,0,B)]", train));
+//		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]", train));
+//		TestUtils.assertContainsSupra(actualSupras, TestUtils.getSupraFromString("[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]", train));
+		System.out.println();
+	}
+	
+	/**
+	 * Test that {@link BasicLattice#cleanSupra()} is only run after a
+	 * subcontext is inserted completely, not after each single insertion
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCleanSupraTiming() throws Exception {
+		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
+				"1,7-10");
+		Instance test = train.get(0);
+		train.remove(0);
+		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
+		SubcontextList subList = new SubcontextList(labeler, train);
+		ctorArgs[0] = subList;
+		ILattice testLattice = latticeConstructor.newInstance(ctorArgs);
+		
+		List<Supracontext> actualSupras = testLattice.getSupracontextList();
+		assertEquals(actualSupras.size(), 1);
+//		System.out.println(actualSupras);
 	}
 }
