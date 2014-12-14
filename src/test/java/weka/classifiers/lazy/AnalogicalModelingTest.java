@@ -83,69 +83,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 	}
 
 	/**
-	 * Test that supracontexts are properly marked heterogeneous.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	@SuppressWarnings("serial")
-	public void testHeterogeneousMarking() throws Exception {
-		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
-				"6-10");
-		assertEquals(new HashMap<String, BigInteger>() {
-			{
-				put("A", BigInteger.valueOf(17));
-				put("B", BigInteger.valueOf(2));
-				put("C", BigInteger.valueOf(2));
-			}
-		}, leaveOneOut(train, 0).getClassPointers());
-		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-		assertEquals(new HashMap<String, BigInteger>() {
-			{
-				put("A", BigInteger.valueOf(652));
-				put("B", BigInteger.valueOf(12));
-				put("C", BigInteger.valueOf(2));
-			}
-		}, leaveOneOut(train, 15).getClassPointers());
-
-	}
-
-	/**
-	 * Test that {@link BasicLattice#cleanSupra()} is only run after a
-	 * subcontext is inserted completely, not after each single insertion
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	@SuppressWarnings("serial")
-	public void testCleanSupraTiming() throws Exception {
-		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
-				"1,7-10");
-		assertEquals(new HashMap<String, BigInteger>() {
-			{
-				put("A", BigInteger.valueOf(45));
-			}
-		}, leaveOneOut(train, 0).getClassPointers());
-	}
-
-	/**
-	 * This exposes an error where {@link BasicLattice#cleanSupra()} doesn't
-	 * clean all of the zero supras out.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	@SuppressWarnings("serial")
-	public void testCleanSupraCorrect() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
-		assertEquals(new HashMap<String, BigInteger>() {
-			{
-				put("A", BigInteger.valueOf(24941));
-			}
-		}, leaveOneOut(train, 16).getClassPointers());
-	}
-
-	/**
 	 * Test accuracy with the finnverb dataset, a real data set with 10 features
 	 * and lots of unknowns.
 	 * 
