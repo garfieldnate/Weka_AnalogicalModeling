@@ -163,9 +163,7 @@ public class TestUtils {
 	 * Create the {@link Supracontext} object specified by the input string.
 	 * 
 	 * This method is somewhat slow due to restrictions of {@link Instance}, so
-	 * use it only in testing, and only with small datasets if possible.. Also,
-	 * this method will not work if multiple {@link Instance Instances} have the
-	 * same string representation (have the exact same attribute values).
+	 * use it only in testing, and only with small datasets if possible.
 	 * 
 	 * @param supraString
 	 *            A string representing the supracontext to be created. This
@@ -217,7 +215,10 @@ public class TestUtils {
 			else
 				outcome = data.classAttribute().indexOfValue(subComponents[1]);
 
-			// parse instances
+			// parse instances; use this set to keep track of previous
+			// instances,
+			// in case there are several with the same string representation
+			Set<Instance> seenInstances = new HashSet<>();
 			for (String instanceString : subComponents[2].split("/")) {
 				// we can't just create a new Instance from the given
 				// attributes;
@@ -227,8 +228,11 @@ public class TestUtils {
 				boolean added = false;
 				for (int i = 0; i < data.size(); i++) {
 					if (data.get(i).toString().equals(instanceString)) {
+						if (seenInstances.contains(data.get(i)))
+							continue;
 						sub.add(data.get(i));
 						added = true;
+						seenInstances.add(data.get(i));
 						break;
 					}
 				}
@@ -279,7 +283,7 @@ public class TestUtils {
 		Supracontext actualSupra = getSupraFromString(
 				"[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]",
 				data);
-		assertTrue("create supra from string with multiple subs",
+		assertTrue("supra with multiple subs",
 				supraDeepEquals(expectedSupra, actualSupra));
 
 		actualSupra = getSupraFromString(
@@ -291,12 +295,28 @@ public class TestUtils {
 			{
 				add(sub4);
 			}
-		}, BigInteger.ONE, AMUtils.NONDETERMINISTIC);// A
+		}, BigInteger.ONE, AMUtils.NONDETERMINISTIC);
 
-		System.out.println(expectedSupra);
-		assertTrue("create supra from string with sub with multiple instances",
+		assertTrue("sub with multiple instances",
 				supraDeepEquals(expectedSupra, actualSupra));
-		
-		//TODO: test error conditions
+
+		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
+		final Subcontext sub5 = new Subcontext(new Label(0b00001, 5));
+		sub5.add(data.get(1));// A,A,0,?,S,B
+		sub5.add(data.get(2));// also A,A,0,?,S,B
+		expectedSupra = new Supracontext(new HashSet<Subcontext>() {
+			{
+				add(sub5);
+			}
+		}, BigInteger.valueOf(6), 0);// B
+
+		actualSupra = getSupraFromString(
+				"[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]", data);
+		System.out.println(expectedSupra);
+		assertTrue(
+				"multiple instances with same string representation",
+				supraDeepEquals(expectedSupra, actualSupra));
+
+		// TODO: test error conditions
 	}
 }
