@@ -1,6 +1,5 @@
 Next:
-- move recent new classification tests into LatticeTest so that all implementations can be checked.
-
+- fix distributed lattice (see failing tests)
 Later TODO:
 - test specifically the case where there is a tie for class outcome
 - refactor supracontext a little so that it does more of its own work
@@ -8,7 +7,6 @@ Later TODO:
 - test the SupracontextCombiner class.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
-- test complete classification with ignored unknowns
 - use BitSets for unlimited-size labels
 	- use will probably require changing Lattice to a Map instead of an array
 	- or perhaps give multiple implementations: short, int, long, bitset

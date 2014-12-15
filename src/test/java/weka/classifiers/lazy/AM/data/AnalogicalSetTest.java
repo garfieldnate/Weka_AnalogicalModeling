@@ -32,8 +32,9 @@ public class AnalogicalSetTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		test = train.get(0);
+		train.remove(0);
 
 		AnalogicalModeling am = new AnalogicalModeling();
 		am.buildClassifier(train);

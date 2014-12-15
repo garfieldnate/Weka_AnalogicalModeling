@@ -3,7 +3,6 @@ package weka.classifiers.lazy.AM.lattice;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +17,6 @@ import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
 import weka.core.Instance;
 import weka.core.Instances;
 
-//TODO: change chapter 3 data to be in one file so that a leaveOneOut method can be factored out here.
 @RunWith(Parameterized.class)
 public class LatticeTest {
 
@@ -99,19 +97,12 @@ public class LatticeTest {
 
 	@Test
 	public void testChapter3Data() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
-				0);
-		List<Supracontext> actualSupras = generateSupras(train, test);
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
 
 		String[] expectedSupras = new String[] {
 				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]",
 				"[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]" };
-		assertEquals(expectedSupras.length, actualSupras.size());
-		for (String expected : expectedSupras) {
-			Supracontext supra = TestUtils.getSupraFromString(expected, train);
-			TestUtils.assertContainsSupra(actualSupras, supra);
-		}
+		testSupras(train, 0, expectedSupras);
 	}
 
 	/**
@@ -123,36 +114,20 @@ public class LatticeTest {
 	public void testHeterogeneousMarking() throws Exception {
 		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"6-10");
-		Instance test = train.get(0);
-		train.remove(0);
-		List<Supracontext> actualSupras = generateSupras(train, test);
-
 		String[] expectedSupras = new String[] {
 				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]",
 				"[2x(10000|A|K,U,V,U,0,A)]", "[2x(10000|A|K,U,V,U,0,A)]",
 				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]",
 				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]" };
-		assertEquals(expectedSupras.length, actualSupras.size());
-		for (String expected : expectedSupras) {
-			Supracontext supra = TestUtils.getSupraFromString(expected, train);
-			TestUtils.assertContainsSupra(actualSupras, supra);
-		}
+		testSupras(train, 0, expectedSupras);
 
 		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-		test = train.get(0);
-		train.remove(0);
-		actualSupras = generateSupras(train, test);
-
 		expectedSupras = new String[] {
 				"[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]",
-				"[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]",
 				"[2x(00110|B|A,A,V,U,0,B)]",
-				"[2x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B),(00110|B|A,A,V,U,0,B)]" };
-		assertEquals(expectedSupras.length, actualSupras.size());
-		for (String expected : expectedSupras) {
-			Supracontext supra = TestUtils.getSupraFromString(expected, train);
-			TestUtils.assertContainsSupra(actualSupras, supra);
-		}
+				"[2x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B),(00110|B|A,A,V,U,0,B)]",
+				"[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]" };
+		testSupras(train, 0, expectedSupras);
 	}
 
 	/**
@@ -165,26 +140,38 @@ public class LatticeTest {
 	public void testCleanSupraTiming() throws Exception {
 		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"1,7-10");
-		Instance test = train.get(0);
-		train.remove(0);
-		List<Supracontext> actualSupras = generateSupras(train, test);
 
 		String[] expectedSupras = new String[] { "[6x(00000|A|U,V,U,0,?,A)]",
 				"[3x(00000|A|U,V,U,0,?,A),(00100|A|U,V,I,0,?,A)]",
 				"[3x(00000|A|U,V,U,0,?,A),(01100|A|U,0,?,0,?,A),(00100|A|U,V,I,0,?,A)]" };
+		testSupras(train, 0, expectedSupras);
+	}
+
+	/**
+	 * Test that the given test/train combination yields the given list of
+	 * supracontexts.
+	 * 
+	 * @param train
+	 *            Dataset to train with
+	 * @param testIndex
+	 *            Index of item in dataset to remove and use as a test item
+	 * @param expectedSupras
+	 *            String representations of the supracontexts that should be
+	 *            created from the train/test combo
+	 */
+	private void testSupras(Instances train, int testIndex,
+			String[] expectedSupras) {
+		Instance test = train.get(testIndex);
+		train.remove(testIndex);
+		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
+		SubcontextList subList = new SubcontextList(labeler, train);
+		ILattice testLattice = latticeFactory.getLattice(subList);
+		List<Supracontext> actualSupras = testLattice.getSupracontextList();
+
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {
 			Supracontext supra = TestUtils.getSupraFromString(expected, train);
 			TestUtils.assertContainsSupra(actualSupras, supra);
 		}
-	}
-
-	private List<Supracontext> generateSupras(Instances data, Instance test)
-			throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
-		SubcontextList subList = new SubcontextList(labeler, data);
-		ILattice testLattice = latticeFactory.getLattice(subList);
-		return testLattice.getSupracontextList();
 	}
 }

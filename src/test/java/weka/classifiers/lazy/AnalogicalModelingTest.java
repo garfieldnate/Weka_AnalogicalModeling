@@ -26,7 +26,6 @@ import org.junit.Test;
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
-import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -35,6 +34,7 @@ import weka.core.Instances;
  * 
  * @author <a href="mailto:garfieldnate@gmail.com">Nate Glenn</a>
  */
+//TODO: see if this can be parameterized for parallel/non-parallel
 public class AnalogicalModelingTest extends AbstractClassifierTest {
 	public AnalogicalModelingTest(String name) {
 		super(name);
@@ -51,13 +51,12 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	@Test
 	public void testChapter3dataSerial() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
-				0);
-
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Instance test = train.get(0);
+		train.remove(0);
 		AnalogicalModeling am = getClassifier();
-
 		am.buildClassifier(train);
+		
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		// test to 10 decimals places, the number used by AMUtils.matchContext
@@ -67,14 +66,13 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	@Test
 	public void testChapter3dataParallel() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST,
-				0);
-
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Instance test = train.get(0);
+		train.remove(0);
 		AnalogicalModeling am = getClassifier();
 		am.setParallel(true);
-
 		am.buildClassifier(train);
+		
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		// test to 10 decimals places, the number used by AMUtils.matchContext

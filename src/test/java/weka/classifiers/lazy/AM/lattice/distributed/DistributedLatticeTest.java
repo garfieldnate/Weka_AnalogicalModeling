@@ -28,8 +28,9 @@ public class DistributedLatticeTest {
 	
 	@Test
 	public void worksWithOnlyOneMask() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Instance test = train.get(0);
+		train.remove(0);
 
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
 				test, false);

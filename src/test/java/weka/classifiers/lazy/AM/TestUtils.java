@@ -27,11 +27,7 @@ public class TestUtils {
 	/**
 	 * The name of the chapter 3 training data file.
 	 */
-	public static final String CHAPTER_3_TRAIN = "ch3example.arff";
-	/**
-	 * The name of the chapter 3 test data file.
-	 */
-	public static final String CHAPTER_3_TEST = "ch3exampleTest.arff";
+	public static final String CHAPTER_3_DATA = "ch3example.arff";
 	/**
 	 * The name of the finnverb data file.
 	 */

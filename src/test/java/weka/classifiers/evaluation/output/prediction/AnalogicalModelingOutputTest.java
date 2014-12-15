@@ -29,8 +29,9 @@ public class AnalogicalModelingOutputTest {
 	// TODO: test with normalized whitespace
 	@Test
 	public void testChapter3basic() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_TRAIN);
-		Instance test = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_TEST, 0);
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Instance test = train.get(0);
+		train.remove(0);
 
 		output.setHeader(train);
 		am.buildClassifier(train);
