@@ -7,7 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import weka.classifiers.lazy.AM.lattice.Label;
+import weka.classifiers.lazy.AM.lattice.IntLabel;
 
 public class LabelMaskTest {
 	@Rule
@@ -35,12 +35,12 @@ public class LabelMaskTest {
 
 	@Test
 	public void testMask() {
-		Label label = new Label(0b1101101, 7);
+		IntLabel label = new IntLabel(0b1101101, 7);
 		LabelMask mask = new LabelMask(0, 1);
-		assertEquals(mask.mask(label), new Label(0b1, 1));
+		assertEquals(mask.mask(label), new IntLabel(0b1, 1));
 
 		mask = new LabelMask(2, 4);
-		assertEquals(mask.mask(label), new Label(0b1011, 4));
+		assertEquals(mask.mask(label), new IntLabel(0b1011, 4));
 	}
 
 	@Test

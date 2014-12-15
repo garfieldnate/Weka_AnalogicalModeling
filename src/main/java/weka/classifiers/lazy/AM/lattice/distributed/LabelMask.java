@@ -1,6 +1,6 @@
 package weka.classifiers.lazy.AM.lattice.distributed;
 
-import weka.classifiers.lazy.AM.lattice.Label;
+import weka.classifiers.lazy.AM.lattice.IntLabel;
 
 /**
  * A class for masking binary labels.
@@ -43,8 +43,8 @@ public class LabelMask {
 			mask |= (1 << i);
 	}
 
-	public Label mask(Label label) {
-		return new Label((mask & label.intLabel()) >> start, getCardinality());
+	public IntLabel mask(IntLabel label) {
+		return new IntLabel((mask & label.intLabel()) >> start, getCardinality());
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class SubcontextTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void test() throws Exception {
-		Label label = new Label(0, 1);
+		IntLabel label = new IntLabel(0, 1);
 		Subcontext s = new Subcontext(label);
 		s.add(dataset.get(0));
 		assertEquals(s.getExemplars(), new HashSet<Instance>() {
@@ -49,7 +49,7 @@ public class SubcontextTest {
 				add(dataset.get(0));
 			}
 		});
-		assertEquals(s.getLabel(), new Label(0, 1));
+		assertEquals(s.getLabel(), new IntLabel(0, 1));
 		assertEquals(s.getOutcome(), 1.0, DELTA);
 		assertEquals("(0|r|1,r,{2})", s.toString());
 

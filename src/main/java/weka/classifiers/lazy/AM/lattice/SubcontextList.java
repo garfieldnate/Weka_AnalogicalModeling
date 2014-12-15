@@ -37,7 +37,7 @@ import weka.core.Instance;
 // TODO: why use an iterator, instead of just returning a list?
 public class SubcontextList implements Iterable<Subcontext> {
 
-	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
+	private HashMap<IntLabel, Subcontext> labelToSubcontext = new HashMap<>();
 
 	private Labeler labeler;
 
@@ -85,7 +85,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 */
 	void add(Instance data) {
-		Label label = labeler.getContextLabel(data);
+		IntLabel label = labeler.getContextLabel(data);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
@@ -108,11 +108,11 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 */
 	@Override
 	public String toString() {
-		List<Label> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
+		List<IntLabel> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
 		Collections.sort(sortedLabels);
 
 		StringBuilder s = new StringBuilder();
-		for (Label label : sortedLabels) {
+		for (IntLabel label : sortedLabels) {
 			s.append(labelToSubcontext.get(label));
 			s.append(',');
 		}
@@ -142,7 +142,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 		return new Iterator<Subcontext>() {
 
-			Iterator<Label> keyIterator = labelToSubcontext.keySet().iterator();
+			Iterator<IntLabel> keyIterator = labelToSubcontext.keySet().iterator();
 
 			@Override
 			public boolean hasNext() {

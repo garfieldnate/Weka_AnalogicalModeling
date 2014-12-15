@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.lattice.Label;
+import weka.classifiers.lazy.AM.lattice.IntLabel;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 import weka.core.Attribute;
@@ -200,7 +200,7 @@ public class TestUtils {
 						"Incomplete subcontext specified: " + subString);
 
 			// parse label
-			Label label = new Label(Integer.parseInt(subComponents[0], 2),
+			IntLabel label = new IntLabel(Integer.parseInt(subComponents[0], 2),
 					subComponents[0].length());
 			Subcontext sub = new Subcontext(label);
 
@@ -261,11 +261,11 @@ public class TestUtils {
 		Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"6-10");
 
-		final Subcontext sub1 = new Subcontext(new Label(0b10110, 5));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5));
 		sub1.add(data.get(3)); // P,U,0,?,0,A
-		final Subcontext sub2 = new Subcontext(new Label(0b10000, 5));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5));
 		sub2.add(data.get(2));// K,U,V,U,0,A
-		final Subcontext sub3 = new Subcontext(new Label(0b10010, 5));
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
 		sub3.add(data.get(1));// U,U,V,I,0,A
 		Supracontext expectedSupra = new Supracontext(
 				new HashSet<Subcontext>() {
@@ -288,7 +288,7 @@ public class TestUtils {
 
 		supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
 		actualSupra = getSupraFromString(supraString, data);
-		final Subcontext sub4 = new Subcontext(new Label(0b01010, 5));
+		final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
 		sub4.add(data.get(4)); // H,A,V,I,0,A
 		sub4.add(data.get(5)); // H,A,V,A,0,B
 		expectedSupra = new Supracontext(new HashSet<Subcontext>() {
@@ -306,7 +306,7 @@ public class TestUtils {
 						actualSupra));
 
 		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-		final Subcontext sub5 = new Subcontext(new Label(0b00001, 5));
+		final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
 		sub5.add(data.get(1));// A,A,0,?,S,B
 		sub5.add(data.get(2));// also A,A,0,?,S,B
 		expectedSupra = new Supracontext(new HashSet<Subcontext>() {

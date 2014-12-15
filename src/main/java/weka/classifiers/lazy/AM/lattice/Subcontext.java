@@ -23,7 +23,7 @@ import weka.core.Instance;
 
 /**
  * Represents a subcontext, containing a list of {@link Instance Instances}
- * which belong to it, along with their shared {@link Label} and common outcome.
+ * which belong to it, along with their shared {@link IntLabel} and common outcome.
  * If the contained instances do not have the same outcome, then the outcome is
  * set to {@link AMUtils#NONDETERMINISTIC}.
  * 
@@ -32,7 +32,7 @@ import weka.core.Instance;
 public class Subcontext {
 	private Set<Instance> data;
 	private double outcome;
-	private Label label;
+	private IntLabel label;
 
 	/**
 	 * The location of this instance in {@link #index}
@@ -45,7 +45,7 @@ public class Subcontext {
 	 * @param l
 	 *            Binary label of the subcontext
 	 */
-	public Subcontext(Label l) {
+	public Subcontext(IntLabel l) {
 		data = new HashSet<>();
 		label = l;
 	}
@@ -74,7 +74,7 @@ public class Subcontext {
 	/**
 	 * @return Binary label of of this subcontext
 	 */
-	public Label getLabel() {
+	public IntLabel getLabel() {
 		return label;
 	}
 

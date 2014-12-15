@@ -94,7 +94,7 @@ public class Labeler {
 	 *         exemplar are the same at index i, then the i'th bit will be 1;
 	 *         otherwise it will be 0.
 	 */
-	public Label getContextLabel(Instance data) {
+	public IntLabel getContextLabel(Instance data) {
 		int label = 0;
 		int length = getCardinality();
 		Attribute att;
@@ -118,6 +118,6 @@ public class Labeler {
 			}
 			index++;
 		}
-		return new Label(label, getCardinality());
+		return new IntLabel(label, getCardinality());
 	}
 }

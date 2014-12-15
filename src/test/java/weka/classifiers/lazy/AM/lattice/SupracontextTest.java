@@ -76,7 +76,7 @@ public class SupracontextTest {
 	@Test
 	public void testData() {
 		assertEquals(empty.getData(), new HashSet<Subcontext>());
-		Label label = new Label(0b001, 3);
+		IntLabel label = new IntLabel(0b001, 3);
 		final Subcontext sub1 = new Subcontext(label);
 		final Subcontext sub2 = new Subcontext(label);
 		final Subcontext sub3 = new Subcontext(label);
@@ -100,9 +100,9 @@ public class SupracontextTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void testEquals() {
-		final Subcontext sub1 = new Subcontext(new Label(0b0, 1));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
 		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new Label(0b1, 1));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
 		sub2.add(dataset.get(1));
 
 		// equality depends only on the exact subcontexts contained
@@ -133,12 +133,12 @@ public class SupracontextTest {
 	// I called it generational because it creates a new supra from an old one
 	@SuppressWarnings("serial")
 	public void testGenerationalConstructor() {
-		final Subcontext sub1 = new Subcontext(new Label(0b0, 1));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
 		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new Label(0b1, 1));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
 		sub2.add(dataset.get(1));
 		sub2.add(dataset.get(2));
-		final Subcontext sub3 = new Subcontext(new Label(0b0, 1));
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
 
 		Supracontext testSupra1 = new Supracontext(empty, sub1, 99);
 		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {

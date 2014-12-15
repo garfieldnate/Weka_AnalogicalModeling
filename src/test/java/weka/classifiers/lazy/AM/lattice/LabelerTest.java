@@ -31,25 +31,25 @@ public class LabelerTest {
 	public void testGetContextLabel() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
 				false);
-		assertEquals(new Label(0b00000, 5),
+		assertEquals(new IntLabel(0b00000, 5),
 				labeler.getContextLabel(dataset.get(1)));
-		assertEquals(new Label(0b10110, 5),
+		assertEquals(new IntLabel(0b10110, 5),
 				labeler.getContextLabel(dataset.get(2)));
-		assertEquals(new Label(0b00011, 5),
+		assertEquals(new IntLabel(0b00011, 5),
 				labeler.getContextLabel(dataset.get(3)));
-		assertEquals(new Label(0b10011, 5),
+		assertEquals(new IntLabel(0b10011, 5),
 				labeler.getContextLabel(dataset.get(4)));
-		assertEquals(new Label(0b11111, 5),
+		assertEquals(new IntLabel(0b11111, 5),
 				labeler.getContextLabel(dataset.get(5)));
 		
 		// now test with a different class index, to make sure it's not hard coded
 		dataset.setClassIndex(2);
 		labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
 				false);
-		assertEquals(new Label(0b10100, 5), labeler.getContextLabel(dataset.get(2)));
-		assertEquals(new Label(0b00110, 5), labeler.getContextLabel(dataset.get(3)));
-		assertEquals(new Label(0b10110, 5), labeler.getContextLabel(dataset.get(4)));
-		assertEquals(new Label(0b11110, 5), labeler.getContextLabel(dataset.get(5)));
+		assertEquals(new IntLabel(0b10100, 5), labeler.getContextLabel(dataset.get(2)));
+		assertEquals(new IntLabel(0b00110, 5), labeler.getContextLabel(dataset.get(3)));
+		assertEquals(new IntLabel(0b10110, 5), labeler.getContextLabel(dataset.get(4)));
+		assertEquals(new IntLabel(0b11110, 5), labeler.getContextLabel(dataset.get(5)));
 		dataset.setClassIndex(dataset.numAttributes() - 1);
 	}
 
@@ -57,20 +57,20 @@ public class LabelerTest {
 	public void testGetContextLabelMissingDataCompares() {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(6),
 				false);
-		assertEquals("MATCH: always matches", new Label(0b00100, 5),
+		assertEquals("MATCH: always matches", new IntLabel(0b00100, 5),
 				labeler.getContextLabel(dataset.get(0)));
 
 		labeler = new Labeler(MissingDataCompare.MISMATCH, dataset.get(6),
 				false);
-		assertEquals("MISMATCH: always mismatches", new Label(0b00101, 5),
+		assertEquals("MISMATCH: always mismatches", new IntLabel(0b00101, 5),
 				labeler.getContextLabel(dataset.get(0)));
 
 		labeler = new Labeler(MissingDataCompare.VARIABLE, dataset.get(6),
 				false);
-		assertEquals("VARIABLE: matches other unknowns", new Label(0b00100, 5),
+		assertEquals("VARIABLE: matches other unknowns", new IntLabel(0b00100, 5),
 				labeler.getContextLabel(dataset.get(7)));
 		assertEquals("VARIABLE: mismatches non-unknowns",
-				new Label(0b00111, 5), labeler.getContextLabel(dataset.get(8)));
+				new IntLabel(0b00111, 5), labeler.getContextLabel(dataset.get(8)));
 	}
 
 	@Test
@@ -78,9 +78,9 @@ public class LabelerTest {
 		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(6),
 				true);
 		assertEquals("IGNORE: unknown attributes removed from label",
-				labeler.getContextLabel(dataset.get(5)), new Label(0b1101, 4));
+				labeler.getContextLabel(dataset.get(5)), new IntLabel(0b1101, 4));
 		assertEquals("IGNORE: mdc used for data unknowns",
-				labeler.getContextLabel(dataset.get(8)), new Label(0b0010, 4));
+				labeler.getContextLabel(dataset.get(8)), new IntLabel(0b0010, 4));
 	}
 	
 	@Test

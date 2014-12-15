@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.lattice.Label;
+import weka.classifiers.lazy.AM.lattice.IntLabel;
 import weka.classifiers.lazy.AM.lattice.Labeler;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
@@ -35,14 +35,14 @@ public class HeterogeneousLatticeTest {
 				mask);
 		List<Supracontext> supras = heteroLattice.getSupracontextList();
 
-		final Subcontext sub1 = new Subcontext(new Label(0b001, 3));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b001, 3));
 		sub1.add(train.get(0));// 310e
 		sub1.add(train.get(4));// 311r
-		final Subcontext sub2 = new Subcontext(new Label(0b100, 3));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b100, 3));
 		sub2.add(train.get(3));// 212r
-		final Subcontext sub3 = new Subcontext(new Label(0b101, 3));
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b101, 3));
 		sub3.add(train.get(1));// 210r
-		final Subcontext sub4 = new Subcontext(new Label(0b110, 3));
+		final Subcontext sub4 = new Subcontext(new IntLabel(0b110, 3));
 		sub4.add(train.get(2));// 032r
 
 		// TODO: the heterolattice does not set outcomes in a meaningful way, so

@@ -118,7 +118,7 @@ public class BasicLattice implements ILattice {
 		// add the sub to its label position
 		addToContext(sub, sub.getLabel());
 		// then add the sub to all of the children of its label position
-		Iterator<Label> si = sub.getLabel().subsetIterator();
+		Iterator<IntLabel> si = sub.getLabel().subsetIterator();
 		while (si.hasNext()) {
 			addToContext(sub, si.next());
 		}
@@ -131,7 +131,7 @@ public class BasicLattice implements ILattice {
 	 * @param sub
 	 * @param label
 	 */
-	private void addToContext(Subcontext sub, Label label) {
+	private void addToContext(Subcontext sub, IntLabel label) {
 		int labelBits = label.intLabel();
 		// the default value is the empty supracontext (leave null until now to
 		// save time/space)
@@ -217,7 +217,7 @@ public class BasicLattice implements ILattice {
 	private String dumpLattice() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < Math.pow(2, cardinality); i++) {
-			sb.append(new Label(i, cardinality));
+			sb.append(new IntLabel(i, cardinality));
 			sb.append(':');
 			if (lattice[i] == heteroSupra)
 				sb.append("[hetero]");
