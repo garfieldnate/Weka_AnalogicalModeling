@@ -119,13 +119,12 @@ public class HeterogeneousLattice {
 	 */
 	public void insert(Subcontext sub, Label label) {
 		addToContext(sub, label.intLabel());
-		cleanSupra();
 		Iterator<Label> si = label.subsetIterator();
 		while (si.hasNext()) {
 			addToContext(sub, si.next().intLabel());
-			// remove supracontexts with count = 0 after every pass
-			cleanSupra();
 		}
+		// remove supracontexts with count = 0 after every pass
+		cleanSupra();
 	}
 
 	/**
