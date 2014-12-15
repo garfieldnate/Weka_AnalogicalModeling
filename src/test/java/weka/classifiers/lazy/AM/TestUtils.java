@@ -280,14 +280,18 @@ public class TestUtils {
 					}
 				}, BigInteger.ONE, 1);// A
 
-		Supracontext actualSupra = getSupraFromString(
-				"[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]",
-				data);
+		String supraString = "[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]";
+		Supracontext actualSupra = getSupraFromString(supraString, data);
 		assertTrue("supra with multiple subs",
 				supraDeepEquals(expectedSupra, actualSupra));
+		assertTrue(
+				"fromString mirrors toString",
+				supraDeepEquals(
+						getSupraFromString(expectedSupra.toString(), data),
+						actualSupra));
 
-		actualSupra = getSupraFromString(
-				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]", data);
+		supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
+		actualSupra = getSupraFromString(supraString, data);
 		final Subcontext sub4 = new Subcontext(new Label(0b01010, 5));
 		sub4.add(data.get(4)); // H,A,V,I,0,A
 		sub4.add(data.get(5)); // H,A,V,A,0,B
@@ -299,6 +303,11 @@ public class TestUtils {
 
 		assertTrue("sub with multiple instances",
 				supraDeepEquals(expectedSupra, actualSupra));
+		assertTrue(
+				"fromString mirrors toString",
+				supraDeepEquals(
+						getSupraFromString(expectedSupra.toString(), data),
+						actualSupra));
 
 		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
 		final Subcontext sub5 = new Subcontext(new Label(0b00001, 5));
@@ -309,13 +318,15 @@ public class TestUtils {
 				add(sub5);
 			}
 		}, BigInteger.valueOf(6), 0);// B
-
-		actualSupra = getSupraFromString(
-				"[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]", data);
-		System.out.println(expectedSupra);
-		assertTrue(
-				"multiple instances with same string representation",
+		supraString = "[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]";
+		actualSupra = getSupraFromString(supraString, data);
+		assertTrue("multiple instances with same string representation",
 				supraDeepEquals(expectedSupra, actualSupra));
+		assertTrue(
+				"fromString mirrors toString",
+				supraDeepEquals(
+						getSupraFromString(expectedSupra.toString(), data),
+						actualSupra));
 
 		// TODO: test error conditions
 	}
