@@ -6,7 +6,7 @@ import org.junit.rules.ExpectedException;
 
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.lattice.ILattice;
-import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.IntLabeler;
 import weka.classifiers.lazy.AM.lattice.LatticeTest;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
@@ -32,7 +32,7 @@ public class DistributedLatticeTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH,
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH,
 				test, false);
 
 		SubcontextList subList = new SubcontextList(labeler, train);

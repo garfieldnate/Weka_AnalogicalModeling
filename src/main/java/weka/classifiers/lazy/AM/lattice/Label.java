@@ -22,7 +22,7 @@ public abstract class Label {
 	/**
 	 * @return The number of attributes represented in this label.
 	 */
-	public abstract int cardinality();
+	public abstract int getCardinality();
 
 	/**
 	 * Determine if the given index is marked as a match or a mismatch.

@@ -20,7 +20,7 @@ public class SubcontextListTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals(subs.getCardinality(), 3);
@@ -63,7 +63,7 @@ public class SubcontextListTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals("getLabeler returns the labeler used in the constructor",

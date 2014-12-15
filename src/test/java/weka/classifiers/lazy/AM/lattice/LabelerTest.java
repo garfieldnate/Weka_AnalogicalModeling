@@ -22,14 +22,14 @@ public class LabelerTest {
 
 	@Test
 	public void testGetCardinality() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, dataset.get(0),
 				false);
 		assertEquals(labeler.getCardinality(), 5);
 	}
 
 	@Test
 	public void testGetContextLabel() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, dataset.get(0),
 				false);
 		assertEquals(new IntLabel(0b00000, 5),
 				labeler.getContextLabel(dataset.get(1)));
@@ -44,7 +44,7 @@ public class LabelerTest {
 		
 		// now test with a different class index, to make sure it's not hard coded
 		dataset.setClassIndex(2);
-		labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(0),
+		labeler = new IntLabeler(MissingDataCompare.MATCH, dataset.get(0),
 				false);
 		assertEquals(new IntLabel(0b10100, 5), labeler.getContextLabel(dataset.get(2)));
 		assertEquals(new IntLabel(0b00110, 5), labeler.getContextLabel(dataset.get(3)));
@@ -55,17 +55,17 @@ public class LabelerTest {
 
 	@Test
 	public void testGetContextLabelMissingDataCompares() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(6),
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, dataset.get(6),
 				false);
 		assertEquals("MATCH: always matches", new IntLabel(0b00100, 5),
 				labeler.getContextLabel(dataset.get(0)));
 
-		labeler = new Labeler(MissingDataCompare.MISMATCH, dataset.get(6),
+		labeler = new IntLabeler(MissingDataCompare.MISMATCH, dataset.get(6),
 				false);
 		assertEquals("MISMATCH: always mismatches", new IntLabel(0b00101, 5),
 				labeler.getContextLabel(dataset.get(0)));
 
-		labeler = new Labeler(MissingDataCompare.VARIABLE, dataset.get(6),
+		labeler = new IntLabeler(MissingDataCompare.VARIABLE, dataset.get(6),
 				false);
 		assertEquals("VARIABLE: matches other unknowns", new IntLabel(0b00100, 5),
 				labeler.getContextLabel(dataset.get(7)));
@@ -75,7 +75,7 @@ public class LabelerTest {
 
 	@Test
 	public void testIgnoreUnknowns() {
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, dataset.get(6),
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, dataset.get(6),
 				true);
 		assertEquals("IGNORE: unknown attributes removed from label",
 				labeler.getContextLabel(dataset.get(5)), new IntLabel(0b1101, 4));

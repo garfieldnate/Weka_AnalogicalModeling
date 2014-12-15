@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import weka.classifiers.lazy.AM.lattice.ILattice;
-import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.IntLabeler;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.Supracontext;
 
@@ -91,7 +91,7 @@ public class DistributedLattice implements ILattice {
 		if (numLattices < 2)
 			throw new IllegalArgumentException(
 					"numLattices should be greater than 1");
-		Labeler labeler = subList.getLabeler();
+		IntLabeler labeler = subList.getLabeler();
 		// create masks for splitting labels
 		LabelMask[] masks = LabelMask.getMasks(labeler.getCardinality(), numLattices);
 

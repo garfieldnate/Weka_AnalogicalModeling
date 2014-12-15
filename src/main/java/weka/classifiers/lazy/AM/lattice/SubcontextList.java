@@ -39,7 +39,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 	private HashMap<IntLabel, Subcontext> labelToSubcontext = new HashMap<>();
 
-	private Labeler labeler;
+	private IntLabeler labeler;
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param the
 	 *            number of attributes being used to classify the instance
 	 */
-	SubcontextList(Labeler labeler) {
+	SubcontextList(IntLabeler labeler) {
 		this.labeler = labeler;
 	}
 
@@ -73,7 +73,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Labeler labeler, List<Instance> data) {
+	public SubcontextList(IntLabeler labeler, List<Instance> data) {
 		this.labeler = labeler;
 		for (Instance se : data)
 			add(se);
@@ -164,7 +164,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	/**
 	 * @return The labeler object used to assign incoming data to subcontexts.
 	 */
-	public Labeler getLabeler() {
+	public IntLabeler getLabeler() {
 		return labeler;
 	}
 }

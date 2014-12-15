@@ -29,7 +29,7 @@ import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.classifiers.lazy.AM.lattice.ILattice;
-import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.IntLabeler;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
 import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
@@ -166,7 +166,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		Labeler labeler = new Labeler(mdc, testItem, m_ignoreUnknowns);
+		IntLabeler labeler = new IntLabeler(mdc, testItem, m_ignoreUnknowns);
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext

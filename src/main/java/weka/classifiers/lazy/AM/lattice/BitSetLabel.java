@@ -22,14 +22,14 @@ public class BitSetLabel extends Label {
 	}
 
 	@Override
-	public int cardinality() {
+	public int getCardinality() {
 		return card;
 	}
 
 	@Override
 	public boolean matches(int index) {
-		if(index > cardinality())
-			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + cardinality());
+		if(index > getCardinality())
+			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + getCardinality());
 		return label.get(index);
 	}
 
@@ -38,7 +38,7 @@ public class BitSetLabel extends Label {
 		StringBuilder sb = new StringBuilder();
 		String binary = label.toString();
 
-		int diff = cardinality() - binary.length();
+		int diff = getCardinality() - binary.length();
 		for (int i = 0; i < diff; i++)
 			sb.append('0');
 
@@ -51,14 +51,14 @@ public class BitSetLabel extends Label {
 		// quick comparison if the other label is of the same class
 		if (other instanceof BitSetLabel){
 			BitSetLabel otherLabel = (BitSetLabel) other;
-			return otherLabel.cardinality() == cardinality()
+			return otherLabel.getCardinality() == getCardinality()
 					&& otherLabel.label.equals(label);
 		} else {
 			if(!(other instanceof Label))
 				return false;
 			// otherwise a slow comparison of each individual bit
 			Label otherLabel = (Label) other;
-			if(cardinality() != otherLabel.cardinality())
+			if(getCardinality() != otherLabel.getCardinality())
 				return false;
 			for(int i = 0; i < card; i++)
 				if(label.get(i) ^ otherLabel.matches(i))
@@ -71,7 +71,7 @@ public class BitSetLabel extends Label {
 
 	@Override
 	public int hashCode() {
-		return SEED * cardinality() + label.hashCode();
+		return SEED * getCardinality() + label.hashCode();
 	}
 
 	public Iterator<Label> descendantIterator() {
@@ -95,7 +95,7 @@ public class BitSetLabel extends Label {
 		 */
 		public SubsetIterator() {
 			BitSet supraContext = BitSetLabel.this.label;
-			card = BitSetLabel.this.cardinality();
+			card = BitSetLabel.this.getCardinality();
 			current = supraContext;
 			gaps = new ArrayList<>();
 

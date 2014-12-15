@@ -9,7 +9,7 @@ import org.junit.Test;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.lattice.IntLabel;
-import weka.classifiers.lazy.AM.lattice.Labeler;
+import weka.classifiers.lazy.AM.lattice.IntLabeler;
 import weka.classifiers.lazy.AM.lattice.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.Subcontext;
 import weka.classifiers.lazy.AM.lattice.SubcontextList;
@@ -26,7 +26,7 @@ public class HeterogeneousLatticeTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		Labeler labeler = new Labeler(MissingDataCompare.MATCH, test, false);
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
 		// normally a single mask which gives the whole label would not be
 		// created, but for testing purposes we use it here.

@@ -163,7 +163,7 @@ public class LatticeTest {
 			String[] expectedSupras) {
 		Instance test = train.get(testIndex);
 		train.remove(testIndex);
-		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false);
+		IntLabeler labeler = new IntLabeler(MissingDataCompare.VARIABLE, test, false);
 		SubcontextList subList = new SubcontextList(labeler, train);
 		ILattice testLattice = latticeFactory.getLattice(subList);
 		List<Supracontext> actualSupras = testLattice.getSupracontextList();
