@@ -141,8 +141,11 @@ public class HeterogeneousLattice {
 		}
 
 		// if the following supracontext matches the current index, just repoint
-		// to that one.
+		// to that one; this is a supracontext that was made in the final else
+		// statement below this one.
 		if (lattice[label].getNext().getIndex() == index) {
+			assert (lattice[label].getNext().getData()
+					.containsAll(lattice[label].getData()));
 			// don't decrement count on emptySupracontext!
 			if (lattice[label] != emptySupracontext)
 				lattice[label].decrementCount();
@@ -175,7 +178,6 @@ public class HeterogeneousLattice {
 			}
 			supraPrev = supra;
 			supra = supra.getNext();
-
 		}
 	}
 

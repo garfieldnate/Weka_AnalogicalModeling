@@ -164,7 +164,6 @@ public class DistributedLattice implements ILattice {
 					Supracontext existing = finalSupras.get(supra);
 					supra = new Supracontext(existing.getData(), supra.getCount().add(existing.getCount()), supra.getOutcome());
 					finalSupras.put(supra, supra);
-//					existing.setCount(supra.getCount().add(existing.getCount()));
 				} else {
 					finalSupras.put(supra, supra);
 				}

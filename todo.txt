@@ -1,7 +1,7 @@
 Next:
-- fix distributed lattice (see failing tests)
 Later TODO:
 - test specifically the case where there is a tie for class outcome
+- clean up tests; give them better names, etc.
 - refactor supracontext a little so that it does more of its own work
 	- the copy(ish) constructor doesn't check for heterogeneity; it shouldn't for the distributed implementation, but it should for the BasicLattice implementation.
 - test the SupracontextCombiner class.

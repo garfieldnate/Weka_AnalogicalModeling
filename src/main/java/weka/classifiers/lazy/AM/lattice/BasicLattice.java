@@ -110,9 +110,10 @@ public class BasicLattice implements ILattice {
 	 *            Subcontext to be inserted
 	 */
 	private void insert(Subcontext sub) {
-		// skip this if the supracontext to be added to is already heterogeneous;
+		// skip this if the supracontext to be added to is already
+		// heterogeneous;
 		// it would not be possible to make any non-heterogeneous supracontexts.
-		if(lattice[sub.getLabel().intLabel()] == heteroSupra)
+		if (lattice[sub.getLabel().intLabel()] == heteroSupra)
 			return;
 		// add the sub to its label position
 		addToContext(sub, sub.getLabel());
@@ -143,30 +144,24 @@ public class BasicLattice implements ILattice {
 			return;
 		}
 		// if the following supracontext matches the current index, just
-		// re-point to that one.
+		// re-point to that one; this is a supracontext that was made in
+		// the final else statement below this one.
 		else if (lattice[labelBits].getNext().getIndex() == index) {
-			assert(lattice[labelBits].getNext().getData().containsAll(lattice[labelBits].getData()));
+			assert (lattice[labelBits].getNext().getData()
+					.containsAll(lattice[labelBits].getData()));
 			// don't decrement count on emptySupracontext!
 			if (!lattice[labelBits].getCount().equals(BigInteger.ZERO))
 				lattice[labelBits].decrementCount();
 			lattice[labelBits] = lattice[labelBits].getNext();
-			// if the context has been emptied, then it was found to be
-			// heterogeneous;
-			// mark this as heterogeneous, too
-			// [do not worry about this being emptySupracontext; it's index is
-			// -1]
-			// if(lattice[label].hasData()){
 			lattice[labelBits].incrementCount();
-			// }
-			// else
-			// lattice[label] = heteroSupra;
 		}
 		// we now know that we will have to make a new Supracontext for this
 		// item;
 		// if outcomes don't match, then this supracontext is now heterogeneous.
 		// if lattice[label]'s outcome is nondeterministic, it will be
 		// heterogeneous
-		else if (!lattice[labelBits].isDeterministic() || lattice[labelBits].hasData()
+		else if (!lattice[labelBits].isDeterministic()
+				|| lattice[labelBits].hasData()
 				&& lattice[labelBits].getOutcome() != sub.getOutcome()) {
 			lattice[labelBits].decrementCount();
 			lattice[labelBits] = heteroSupra;
@@ -177,7 +172,8 @@ public class BasicLattice implements ILattice {
 			// don't decrement the count for the emptySupracontext!
 			if (!lattice[labelBits].getCount().equals(BigInteger.ZERO))
 				lattice[labelBits].decrementCount();
-			lattice[labelBits] = new Supracontext(lattice[labelBits], sub, index);
+			lattice[labelBits] = new Supracontext(lattice[labelBits], sub,
+					index);
 			lattice[labelBits].incrementCount();
 		}
 		return;
@@ -187,14 +183,13 @@ public class BasicLattice implements ILattice {
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {
-		for(Supracontext supra = emptySupracontext; supra.getNext() != emptySupracontext;){
-			if(supra.getNext().getCount().equals(BigInteger.ZERO)){
+		for (Supracontext supra = emptySupracontext; supra.getNext() != emptySupracontext;) {
+			if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
 				supra.setNext(supra.getNext().getNext());
-			}
-			else
+			} else
 				supra = supra.getNext();
 		}
-		assert(noZeroSupras());
+		assert (noZeroSupras());
 	}
 
 	/*
@@ -212,21 +207,21 @@ public class BasicLattice implements ILattice {
 		}
 		return supList;
 	}
-	
+
 	/*
 	 * Below methods are for private debugging and asserting
 	 */
-	
-	//useful for private debugging on occasion
+
+	// useful for private debugging on occasion
 	@SuppressWarnings("unused")
-	private String dumpLattice(){
+	private String dumpLattice() {
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < Math.pow(2, cardinality); i++){
+		for (int i = 0; i < Math.pow(2, cardinality); i++) {
 			sb.append(new Label(i, cardinality));
 			sb.append(':');
-			if(lattice[i] == heteroSupra)
+			if (lattice[i] == heteroSupra)
 				sb.append("[hetero]");
-			else if(lattice[i] == null)
+			else if (lattice[i] == null)
 				sb.append("[empty]");
 			else
 				sb.append(lattice[i]);
@@ -234,10 +229,10 @@ public class BasicLattice implements ILattice {
 		}
 		return sb.toString();
 	}
-	
-	private boolean noZeroSupras(){
-		for(Supracontext supra : getSupracontextList()){
-			if(supra.getCount().equals(BigInteger.ZERO))
+
+	private boolean noZeroSupras() {
+		for (Supracontext supra : getSupracontextList()) {
+			if (supra.getCount().equals(BigInteger.ZERO))
 				return false;
 		}
 		return true;
