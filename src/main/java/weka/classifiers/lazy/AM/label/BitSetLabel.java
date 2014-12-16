@@ -30,20 +30,12 @@ public class BitSetLabel extends Label {
 	public boolean matches(int index) {
 		if(index > getCardinality())
 			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + getCardinality());
-		return label.get(index);
+		return !label.get(index);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		String binary = label.toString();
-
-		int diff = getCardinality() - binary.length();
-		for (int i = 0; i < diff; i++)
-			sb.append('0');
-
-		sb.append(binary);
-		return sb.toString();
+		return label.toString();
 	}
 
 	@Override
@@ -61,7 +53,7 @@ public class BitSetLabel extends Label {
 			if(getCardinality() != otherLabel.getCardinality())
 				return false;
 			for(int i = 0; i < card; i++)
-				if(label.get(i) ^ otherLabel.matches(i))
+				if(label.get(i) == otherLabel.matches(i))
 					return false;
 			return true;
 		}

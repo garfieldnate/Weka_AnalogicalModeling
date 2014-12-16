@@ -20,26 +20,32 @@ public class IntLabel extends Label {
 		card = c;
 	}
 
-	public int intLabel() {
+	/**
+	 * @return An integer whose 1 bits represent the mismatches and 0 bits
+	 *         represent the matches in this label.
+	 */
+	public int labelBits() {
 		return label;
 	}
 
+	@Override
 	public int getCardinality() {
 		return card;
 	}
 
 	@Override
 	public boolean matches(int index) {
-		if(index > getCardinality())
-			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + getCardinality());
+		if (index > getCardinality())
+			throw new IllegalArgumentException("was given " + index
+					+ " but cardinality is only " + getCardinality());
 		int mask = (int) Math.pow(2, index);
-		return (mask & label) != 0;
+		return (mask & label) == 0;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		String binary = Integer.toBinaryString(intLabel());
+		String binary = Integer.toBinaryString(labelBits());
 
 		int diff = getCardinality() - binary.length();
 		for (int i = 0; i < diff; i++)
@@ -51,20 +57,29 @@ public class IntLabel extends Label {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof IntLabel))
-			return false;
-		IntLabel otherLabel = (IntLabel) other;
-		if (otherLabel.intLabel() == intLabel()
-				&& otherLabel.getCardinality() == getCardinality())
+		// quick comparison if it's another IntLabel
+		if (other instanceof IntLabel) {
+			IntLabel otherLabel = (IntLabel) other;
+			return otherLabel.labelBits() == labelBits()
+					&& otherLabel.getCardinality() == getCardinality();
+		} else {
+			// slow comparison if it's another kind of label
+			Label otherLabel = (Label) other;
+			if (otherLabel.getCardinality() != getCardinality())
+				return false;
+			for (int i = 0; i < getCardinality(); i++) {
+				if (matches(i) != otherLabel.matches(i))
+					return false;
+			}
 			return true;
-		return false;
+		}
 	}
 
 	private static final int SEED = 37;
 
 	@Override
 	public int hashCode() {
-		return SEED * intLabel() + getCardinality();
+		return SEED * labelBits() + getCardinality();
 	}
 
 	public Iterator<Label> descendantIterator() {
@@ -89,7 +104,7 @@ public class IntLabel extends Label {
 		 * @return Iterator over all subsets of the given label
 		 */
 		public SubsetIterator() {
-			int supraContext = IntLabel.this.intLabel();
+			int supraContext = IntLabel.this.labelBits();
 			card = IntLabel.this.getCardinality();
 			current = supraContext;
 			gaps = new int[card];

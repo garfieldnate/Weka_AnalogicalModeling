@@ -117,7 +117,7 @@ public class IntLabeler extends Labeler {
 		// masks are cached
 		if (masks == null) {
 			masks = new BitMask[numPartitions()];
-			Span[] spans = partitions();
+			Partition[] spans = partitions();
 			for (int i = 0; i < numPartitions(); i++) {
 				masks[i] = new BitMask(spans[i]);
 			}
@@ -137,8 +137,8 @@ public class IntLabeler extends Labeler {
 		 */
 		int maskBits;
 
-		public BitMask(Span s) {
-			startIndex = s.getStart();
+		public BitMask(Partition s) {
+			startIndex = s.getStartIndex();
 			cardinality = s.getCardinality();
 			maskBits = 0;
 			for (int i = startIndex; i < startIndex + cardinality; i++)
@@ -146,7 +146,7 @@ public class IntLabeler extends Labeler {
 		}
 
 		public IntLabel mask(IntLabel label) {
-			return new IntLabel((maskBits & label.intLabel()) >> startIndex,
+			return new IntLabel((maskBits & label.labelBits()) >> startIndex,
 					cardinality);
 		}
 

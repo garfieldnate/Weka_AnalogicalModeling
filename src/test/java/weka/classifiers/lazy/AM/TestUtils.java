@@ -49,6 +49,7 @@ public class TestUtils {
 	 * @return The dataset contained in the given file.
 	 * @throws Exception
 	 */
+	// TODO: rename this for consistency with getInstanceFromFile
 	public static Instances getDataSet(String fileInDataFolder)
 			throws Exception {
 		DataSource source = new DataSource("data/" + fileInDataFolder);

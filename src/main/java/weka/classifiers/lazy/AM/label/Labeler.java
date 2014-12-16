@@ -78,6 +78,10 @@ public abstract class Labeler {
 	}
 
 	/**
+	 * Find if the attribute at the given index is ignored during labeling. The
+	 * default behavior is to ignore the attributes with unknown values in the
+	 * test instance if {@link #getIgnoreUnknowns()} is true.
+	 * 
 	 * @param index
 	 *            Index of the attribute being queried
 	 * @return True if the given attribute is ignored during labeling; false
@@ -138,13 +142,14 @@ public abstract class Labeler {
 	}
 
 	/**
+	 * This provides a default partitioning implementation which is overridable
+	 * by child classes.
 	 * 
-	 * @return An array of partitions providing the feature boundaries where
-	 *         labels should be partitioned.
+	 * @return An array of partitions indicating how labels can be split into
+	 *         partitions.
 	 */
-	// TODO: rename to spans
-	protected Span[] partitions() {
-		Span[] spans = new Span[numPartitions()];
+	protected Partition[] partitions() {
+		Partition[] spans = new Partition[numPartitions()];
 
 		int spanSize = (int) Math.floor((double) getCardinality()
 				/ numPartitions());
@@ -154,7 +159,7 @@ public abstract class Labeler {
 		int index = 0;
 		for (int i = 0; i < numPartitions(); i++) {
 			int inc = (i < remainder) ? spanSize + 1 : spanSize;
-			spans[i] = new Span(index, inc);
+			spans[i] = new Partition(index, inc);
 			index += inc;
 		}
 		return spans;
@@ -164,11 +169,11 @@ public abstract class Labeler {
 	 * Simple class for storing index spans.
 	 * 
 	 */
-	protected class Span {
+	protected class Partition {
 		private int startIndex;
 		private int cardinality;
 
-		protected Span(int s, int l) {
+		protected Partition(int s, int l) {
 			startIndex = s;
 			cardinality = l;
 		}
@@ -176,19 +181,20 @@ public abstract class Labeler {
 		/**
 		 * @return The beginning of the span
 		 */
-		protected int getStart() {
+		protected int getStartIndex() {
 			return startIndex;
 		}
 
 		/**
-		 * @return The length of the partition
+		 * @return The cardinality of the partition, or number of represented
+		 *         features.
 		 */
 		protected int getCardinality() {
 			return cardinality;
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return "[" + startIndex + "," + cardinality + "]";
 		}
 	}

@@ -12,7 +12,7 @@ public class BitSetLabeler extends Labeler {
 		super(mdc, test, ignoreUnknowns);
 	}
 
-	private Partition[] partitions;
+	private Partitioner[] partitions;
 
 	@Override
 	public Label label(Instance data) {
@@ -63,7 +63,7 @@ public class BitSetLabeler extends Labeler {
 					+ label.getClass().getCanonicalName());
 
 		// create and cache the masks if they have not be created yet
-		Partition[] partitions = getPartitions();
+		Partitioner[] partitions = getPartitions();
 
 		// TODO: would it be possible/worth while to create an IntLabel if
 		// the cardinality were small enough?
@@ -73,13 +73,13 @@ public class BitSetLabeler extends Labeler {
 	/**
 	 * @return The partition objects used to partition labels from this labeler.
 	 */
-	private Partition[] getPartitions() {
+	private Partitioner[] getPartitions() {
 		//partitions are cached
 		if (partitions == null) {
-			partitions = new Partition[numPartitions()];
-			Span[] spans = partitions();
+			partitions = new Partitioner[numPartitions()];
+			Partition[] spans = partitions();
 			for (int i = 0; i < numPartitions(); i++) {
-				partitions[i] = new Partition(spans[i]);
+				partitions[i] = new Partitioner(spans[i]);
 			}
 		}
 		return partitions;
@@ -88,20 +88,20 @@ public class BitSetLabeler extends Labeler {
 	/**
 	 * Private class for storing label paritions
 	 */
-	private class Partition {
+	private class Partitioner {
 		private int startIndex;
 		private int cardinality;
 
-		public Partition(Span s) {
-			startIndex = s.getStart();
+		public Partitioner(Partition s) {
+			startIndex = s.getStartIndex();
 			cardinality = s.getCardinality();
 		}
 
 		public BitSetLabel extract(BitSetLabel label){
 			BitSet newLabel = new BitSet(cardinality);
 			// loop through the bits and set the unmatched ones
-			for (int i = startIndex; i < startIndex + cardinality; i++) {
-				if (!label.matches(i))
+			for (int i = 0; i < cardinality; i++) {
+				if (!label.matches(i + startIndex))
 					newLabel.set(i);
 			}
 			return new BitSetLabel(newLabel, cardinality);
