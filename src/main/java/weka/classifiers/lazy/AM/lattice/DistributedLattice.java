@@ -33,7 +33,7 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * @author Nathan Glenn
  * 
  */
-public class DistributedLattice implements ILattice {
+public class DistributedLattice implements Lattice {
 
 	private List<HeterogeneousLattice> hlattices;
 

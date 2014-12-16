@@ -11,7 +11,7 @@ import weka.classifiers.lazy.AM.data.Supracontext;
  * @author Nathan Glenn
  * 
  */
-public interface ILattice {
+public interface Lattice {
 	/**
 	 * 
 	 * @return The list of supracontexts that were created by filling the

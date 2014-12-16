@@ -41,7 +41,7 @@ import weka.classifiers.lazy.AM.label.Label;
  * @author Nate Glenn
  * 
  */
-public class BasicLattice implements ILattice {
+public class BasicLattice implements Lattice {
 
 	/**
 	 * Lattice is a 2^n array of Supracontexts

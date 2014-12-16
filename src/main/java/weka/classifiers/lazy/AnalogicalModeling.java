@@ -32,7 +32,7 @@ import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.classifiers.lazy.AM.lattice.DistributedLattice;
-import weka.classifiers.lazy.AM.lattice.ILattice;
+import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -173,7 +173,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		SubcontextList subList = new SubcontextList(labeler,
 				trainingExemplars);
 		// 2. Place subcontexts into a supracontextual lattice
-		ILattice lattice;
+		Lattice lattice;
 		if (m_parallel) {
 			lattice = new DistributedLattice(subList);
 		} else {

@@ -3,6 +3,7 @@ package weka.classifiers.lazy.AM.lattice;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,31 +17,31 @@ import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabeler;
+import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Instance;
 import weka.core.Instances;
 
+/**
+ * Test the lattices that can be used for item classification. These are
+ * implementations of the {@link Lattice} interface.
+ * 
+ * @author Nathan Glenn
+ */
 @RunWith(Parameterized.class)
 public class LatticeTest {
-
-	private interface LatticeFactory {
-		public ILattice getLattice(SubcontextList subList);
-	}
-
 	@Parameter(0)
 	public String testName;
 	@Parameter(1)
-	public LatticeFactory latticeFactory;
+	public Constructor<Lattice> latticeConstructor;
 
 	/**
 	 * 
-	 * @return A collections of argument lists for running tests
+	 * @return A collection of argument arrays for running tests. In each array:
 	 *         <ol>
-	 *         <li>arg[0] is the test name;</li>
-	 *         <li>arg[1] is an {@link ILattice} {@link Constructor} object</li>
-	 *         <li>arg[2] is another Object[] containing the arguments to be
-	 *         passed to the constructor; element 0 is left null so that it can
-	 *         be set to the desired {@link SubcontextList}.</li>
+	 *         <li>arg[0] is the test name.</li>
+	 *         <li>arg[1] is the {@link Constructor} for the {@link Lattice} to
+	 *         be tested.</li>
 	 *         </ol>
 	 * @throws Exception
 	 */
@@ -48,29 +49,15 @@ public class LatticeTest {
 	public static Collection<Object[]> instancesToTest() throws Exception {
 		Collection<Object[]> parameters = new ArrayList<>();
 
-		String testName;
-		LatticeFactory latticeFactory;
-
 		// basic, non-distributed lattice
-		testName = BasicLattice.class.getSimpleName();
-		latticeFactory = new LatticeFactory() {
-			@Override
-			public ILattice getLattice(SubcontextList subList) {
-				return new BasicLattice(subList);
-			}
-		};
-		parameters.add(new Object[] { testName, latticeFactory });
-
-		// distributed lattices
-		// default number of lattices
-		testName = DistributedLattice.class.getSimpleName();
-		latticeFactory = new LatticeFactory() {
-			@Override
-			public ILattice getLattice(SubcontextList subList) {
-				return new DistributedLattice(subList);
-			}
-		};
-		parameters.add(new Object[] { testName, latticeFactory });
+		parameters.add(new Object[] { BasicLattice.class.getSimpleName(),
+				BasicLattice.class.getConstructor(SubcontextList.class) });
+		// distributed lattice
+		parameters
+				.add(new Object[] {
+						DistributedLattice.class.getSimpleName(),
+						DistributedLattice.class
+								.getConstructor(SubcontextList.class) });
 
 		return parameters;
 	}
@@ -78,7 +65,6 @@ public class LatticeTest {
 	@Test
 	public void testChapter3Data() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-
 		String[] expectedSupras = new String[] {
 				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]",
 				"[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]" };
@@ -138,14 +124,23 @@ public class LatticeTest {
 	 * @param expectedSupras
 	 *            String representations of the supracontexts that should be
 	 *            created from the train/test combo
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	private void testSupras(Instances train, int testIndex,
-			String[] expectedSupras) {
+			String[] expectedSupras) throws InstantiationException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		Instance test = train.get(testIndex);
 		train.remove(testIndex);
-		IntLabeler labeler = new IntLabeler(MissingDataCompare.VARIABLE, test, false);
+		Labeler labeler = new IntLabeler(MissingDataCompare.VARIABLE, test,
+				false);
 		SubcontextList subList = new SubcontextList(labeler, train);
-		ILattice testLattice = latticeFactory.getLattice(subList);
+		Lattice testLattice = latticeConstructor.newInstance(subList);
 		List<Supracontext> actualSupras = testLattice.getSupracontextList();
 
 		assertEquals(expectedSupras.length, actualSupras.size());

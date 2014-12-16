@@ -1,28 +1,30 @@
 package weka.classifiers.lazy.AM.lattice;
 
-import java.math.BigInteger;
-import java.util.HashSet;
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
-import weka.classifiers.lazy.AM.lattice.HeterogeneousLattice;
 import weka.core.Instance;
 import weka.core.Instances;
 
+/**
+ * Test the HeterogeneousLattice, which does not remove heterogeneous
+ * supracontexts and therefore cannot be tested with the other {@link Lattice}
+ * implementations in {@link LatticeTest}.
+ * 
+ * @author Nathan Glenn
+ * 
+ */
 public class HeterogeneousLatticeTest {
-
-	@SuppressWarnings("serial")
 	@Test
 	public void testChapter3Data() throws Exception {
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
@@ -54,61 +56,21 @@ public class HeterogeneousLatticeTest {
 		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
 				0);
-		List<Supracontext> supras = heteroLattice.getSupracontextList();
 
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b001, 3));
-		sub1.add(train.get(0));// 310e
-		sub1.add(train.get(4));// 311r
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b100, 3));
-		sub2.add(train.get(3));// 212r
-		final Subcontext sub3 = new Subcontext(new IntLabel(0b101, 3));
-		sub3.add(train.get(1));// 210r
-		final Subcontext sub4 = new Subcontext(new IntLabel(0b110, 3));
-		sub4.add(train.get(2));// 032r
+		List<Supracontext> actualSupras = heteroLattice.getSupracontextList();
 
-		// TODO: the heterolattice does not set outcomes in a meaningful way, so
-		// these should not be tested.
-		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-			}
-		}, BigInteger.valueOf(2), AMUtils.NONDETERMINISTIC);
-		TestUtils.assertContainsSupra(supras, expected);
+		String[] expectedSupras = new String[] {
+				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]",
+				"[1x(100|r|2,1,2,r)]",
+				"[1x(001|&nondeterministic&|3,1,0,e/3,1,1,r),(100|r|2,1,2,r),(101|r|2,1,0,r)]",
+				"[1x(110|r|0,3,2,r),(100|r|2,1,2,r)]",
+				"[1x(001|&nondeterministic&|3,1,0,e/3,1,1,r),(110|r|0,3,2,r),(100|r|2,1,2,r),(101|r|2,1,0,r)]" };
 
-		expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub2);
-			}
-		}, BigInteger.ONE, 0);// r
-		TestUtils.assertContainsSupra(supras, expected);
-
-		expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-				add(sub3);
-			}
-		}, BigInteger.ONE, 0);// r
-		TestUtils.assertContainsSupra(supras, expected);
-
-		expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub2);
-				add(sub4);
-			}
-		}, BigInteger.ONE, 0); // r
-		TestUtils.assertContainsSupra(supras, expected);
-
-		expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-				add(sub3);
-				add(sub4);
-			}
-		}, BigInteger.ONE, 0); // r
-		TestUtils.assertContainsSupra(supras, expected);
-
+		assertEquals(expectedSupras.length, actualSupras.size());
+		for (String expected : expectedSupras) {
+			Supracontext supra = TestUtils.getSupraFromString(expected, train);
+			TestUtils.assertContainsSupra(actualSupras, supra);
+		}
 	}
 
 }
