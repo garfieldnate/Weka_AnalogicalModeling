@@ -106,8 +106,7 @@ public class IntLabeler extends Labeler {
 		// create and cache the masks if they have not be created yet
 		// loop through the bits and set the unmatched ones
 		BitMask[] masks = getMasks();
-		BitMask mask = masks[partitionIndex];
-		return mask.mask(intLabel);
+		return masks[partitionIndex].mask(intLabel);
 	}
 
 	/**
