@@ -11,9 +11,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.lattice.IntLabel;
-import weka.classifiers.lazy.AM.lattice.Subcontext;
-import weka.classifiers.lazy.AM.lattice.Supracontext;
+import weka.classifiers.lazy.AM.data.Subcontext;
+import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.label.IntLabel;
+import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -36,6 +37,7 @@ public class TestUtils {
 	 * A paired-down finnverb for minimal testing.
 	 */
 	public static final String FINNVERB_MIN = "finn_min_gangs.arff";
+	public static final String SOYBEAN = "soybean.arff";
 
 	/**
 	 * Read a dataset from disk and return the Instances object. It is assumed
@@ -200,7 +202,7 @@ public class TestUtils {
 						"Incomplete subcontext specified: " + subString);
 
 			// parse label
-			IntLabel label = new IntLabel(Integer.parseInt(subComponents[0], 2),
+			Label label = new IntLabel(Integer.parseInt(subComponents[0], 2),
 					subComponents[0].length());
 			Subcontext sub = new Subcontext(label);
 

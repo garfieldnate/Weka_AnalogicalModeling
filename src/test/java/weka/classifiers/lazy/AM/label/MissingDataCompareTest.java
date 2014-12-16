@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.label;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;

@@ -1,10 +1,10 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.label;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class IntLabel implements Comparable<IntLabel>{
+public class IntLabel extends Label {
 	private final int label;
 	private final int card;
 
@@ -24,17 +24,16 @@ public class IntLabel implements Comparable<IntLabel>{
 		return label;
 	}
 
-	public int getCard() {
+	public int getCardinality() {
 		return card;
 	}
 
-	/**
-	 * This relies on the underlying representation to sort the labels, so it is
-	 * not guaranteed to sort the same way in the future.
-	 */
 	@Override
-	public int compareTo(IntLabel otherLabel) {
-		return Integer.compare(intLabel(), otherLabel.intLabel());
+	public boolean matches(int index) {
+		if(index > getCardinality())
+			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + getCardinality());
+		int mask = (int) Math.pow(2, index);
+		return (mask & label) != 0;
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class IntLabel implements Comparable<IntLabel>{
 		StringBuilder sb = new StringBuilder();
 		String binary = Integer.toBinaryString(intLabel());
 
-		int diff = getCard() - binary.length();
+		int diff = getCardinality() - binary.length();
 		for (int i = 0; i < diff; i++)
 			sb.append('0');
 
@@ -56,7 +55,7 @@ public class IntLabel implements Comparable<IntLabel>{
 			return false;
 		IntLabel otherLabel = (IntLabel) other;
 		if (otherLabel.intLabel() == intLabel()
-				&& otherLabel.getCard() == getCard())
+				&& otherLabel.getCardinality() == getCardinality())
 			return true;
 		return false;
 	}
@@ -65,14 +64,14 @@ public class IntLabel implements Comparable<IntLabel>{
 
 	@Override
 	public int hashCode() {
-		return SEED * intLabel() + getCard();
+		return SEED * intLabel() + getCardinality();
 	}
 
-	public Iterator<IntLabel> subsetIterator() {
+	public Iterator<Label> descendantIterator() {
 		return new SubsetIterator();
 	}
 
-	private class SubsetIterator implements Iterator<IntLabel> {
+	private class SubsetIterator implements Iterator<Label> {
 
 		// each will be all zeros except where one of the zeros in the tested
 		// item is.
@@ -85,13 +84,13 @@ public class IntLabel implements Comparable<IntLabel>{
 		/**
 		 * @param supracontext
 		 *            integer representing a label for a supracontext
-		 * @param card
+		 * @param cardinality
 		 *            number of bits needed to represent the vector
 		 * @return Iterator over all subsets of the given label
 		 */
 		public SubsetIterator() {
 			int supraContext = IntLabel.this.intLabel();
-			card = IntLabel.this.getCard();
+			card = IntLabel.this.getCardinality();
 			current = supraContext;
 			gaps = new int[card];
 			List<Integer> gapsTemp = new ArrayList<Integer>();
@@ -130,7 +129,7 @@ public class IntLabel implements Comparable<IntLabel>{
 		}
 
 		@Override
-		public IntLabel next() {
+		public Label next() {
 			// choose gap to choose bit to flip; it's whichever is the rightmost
 			// 1 in binCounter
 			// first find the rightmost 1 in t; from HAKMEM, I believe

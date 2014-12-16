@@ -14,15 +14,13 @@
  * limitations under the License.                                           *
  ****************************************************************************/
 
-package weka.classifiers.lazy.AM.lattice.distributed;
+package weka.classifiers.lazy.AM.data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
-import weka.classifiers.lazy.AM.lattice.Subcontext;
-import weka.classifiers.lazy.AM.lattice.Supracontext;
 
 /**
  * The methods in this class are designed to combine supracontexts created by

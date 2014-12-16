@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.label;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -89,7 +89,7 @@ public class BitSetLabel extends Label {
 		/**
 		 * @param supracontext
 		 *            integer representing a label for a supracontext
-		 * @param card
+		 * @param cardinality
 		 *            number of bits needed to represent the vector
 		 * @return Iterator over all subsets of the given label
 		 */

@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,6 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.label.IntLabel;
+import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -41,7 +43,7 @@ public class SubcontextTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void test() throws Exception {
-		IntLabel label = new IntLabel(0, 1);
+		Label label = new IntLabel(0, 1);
 		Subcontext s = new Subcontext(label);
 		s.add(dataset.get(0));
 		assertEquals(s.getExemplars(), new HashSet<Instance>() {

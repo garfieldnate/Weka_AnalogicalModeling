@@ -1,8 +1,11 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.label;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import weka.core.Instance;
 
-//TODO: next, unify with IntLabler and IntLabel, and add tests.
 /**
  * This class is used to assign context labels to training instances by
  * comparison with the instance being classified.
@@ -10,19 +13,47 @@ import weka.core.Instance;
  * @author Nathan Glenn
  */
 public abstract class Labeler {
-	protected boolean ignoreUnknowns;
-	protected MissingDataCompare mdc = null;
-	protected Instance testInstance = null;
+	private final boolean ignoreUnknowns;
+	private final MissingDataCompare mdc;
+	private final Instance testInstance;
+	private final Set<Integer> ignoreSet;
 	/**
-	 * The default number of lattices to use during distributional processing.
+	 * The default (max) number of partitions to split labels into
 	 */
-	private static final int NUM_LATTICES = 4;
+	private static final int NUM_PARTITIONS = 4;
+
+	/**
+	 * 
+	 * @param mdc
+	 *            Specifies how to compare missing attributes
+	 * @param instance
+	 *            Instance being classified
+	 * @param ignroeUnknowns
+	 *            true if attributes with undefined values in the test item
+	 *            should be ignored; false if not.
+	 */
+	public Labeler(MissingDataCompare mdc, Instance test, boolean ignoreUnknowns) {
+		this.mdc = mdc;
+		this.testInstance = test;
+		this.ignoreUnknowns = ignoreUnknowns;
+		Set<Integer> ignoreSet = new HashSet<>();
+		if (ignoreUnknowns) {
+			int length = testInstance.numAttributes() - 1;
+			for (int i = 0; i < length; i++) {
+				if (testInstance.isMissing(i))
+					ignoreSet.add(i);
+			}
+		}
+		this.ignoreSet = Collections.unmodifiableSet(ignoreSet);
+	}
 
 	/**
 	 * @return The cardinality of the generated labels, or how many instance
 	 *         attributes are considered during labeling.
 	 */
-	public abstract int getCardinality();
+	public int getCardinality() {
+		return testInstance.numAttributes() - ignoreSet.size() - 1;
+	}
 
 	/**
 	 * @return true if attributes with undefined values in the test item are
@@ -35,16 +66,25 @@ public abstract class Labeler {
 	/**
 	 * @return the MissingDataCompare strategy in use by this labeler
 	 */
-	public MissingDataCompare missingDataCompare() {
+	public MissingDataCompare getMissingDataCompare() {
 		return mdc;
 	}
 
 	/**
-	 * 
 	 * @return the test instance being used to label other instances
 	 */
-	public Instance testInstance() {
+	public Instance getTestInstance() {
 		return testInstance;
+	}
+
+	/**
+	 * @param index
+	 *            Index of the attribute being queried
+	 * @return True if the given attribute is ignored during labeling; false
+	 *         otherwise.
+	 */
+	public boolean isIgnored(int index) {
+		return ignoreSet.contains(index);
 	}
 
 	/**
@@ -91,12 +131,18 @@ public abstract class Labeler {
 	 */
 	public int numPartitions() {
 		// just for now, we use a maximum of 4 partitions
-		if (getCardinality() < NUM_LATTICES)
+		if (getCardinality() < NUM_PARTITIONS)
 			return getCardinality();
 		else
-			return NUM_LATTICES;
+			return NUM_PARTITIONS;
 	}
 
+	/**
+	 * 
+	 * @return An array of partitions providing the feature boundaries where
+	 *         labels should be partitioned.
+	 */
+	// TODO: rename to spans
 	protected Span[] partitions() {
 		Span[] spans = new Span[numPartitions()];
 
@@ -119,26 +165,31 @@ public abstract class Labeler {
 	 * 
 	 */
 	protected class Span {
-		private int start;
-		private int end;
+		private int startIndex;
+		private int cardinality;
 
-		protected Span(int s, int e) {
-			start = s;
-			end = e;
+		protected Span(int s, int l) {
+			startIndex = s;
+			cardinality = l;
 		}
 
 		/**
 		 * @return The beginning of the span
 		 */
 		protected int getStart() {
-			return start;
+			return startIndex;
 		}
 
 		/**
-		 * @return The end of the span
+		 * @return The length of the partition
 		 */
-		protected int getEnd() {
-			return end;
+		protected int getCardinality() {
+			return cardinality;
+		}
+		
+		@Override
+		public String toString(){
+			return "[" + startIndex + "," + cardinality + "]";
 		}
 	}
 

@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,6 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.label.IntLabel;
+import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -76,7 +78,7 @@ public class SupracontextTest {
 	@Test
 	public void testData() {
 		assertEquals(empty.getData(), new HashSet<Subcontext>());
-		IntLabel label = new IntLabel(0b001, 3);
+		Label label = new IntLabel(0b001, 3);
 		final Subcontext sub1 = new Subcontext(label);
 		final Subcontext sub2 = new Subcontext(label);
 		final Subcontext sub3 = new Subcontext(label);

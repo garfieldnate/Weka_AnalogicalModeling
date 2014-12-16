@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and      *
  * limitations under the License.                                           *
  ****************************************************************************/
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AM.label.Labeler;
 import weka.core.Instance;
 
 /**
@@ -37,9 +40,9 @@ import weka.core.Instance;
 // TODO: why use an iterator, instead of just returning a list?
 public class SubcontextList implements Iterable<Subcontext> {
 
-	private HashMap<IntLabel, Subcontext> labelToSubcontext = new HashMap<>();
+	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
 
-	private IntLabeler labeler;
+	private Labeler labeler;
 
 	/**
 	 * 
@@ -58,7 +61,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param the
 	 *            number of attributes being used to classify the instance
 	 */
-	SubcontextList(IntLabeler labeler) {
+	SubcontextList(Labeler labeler) {
 		this.labeler = labeler;
 	}
 
@@ -73,7 +76,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(IntLabeler labeler, List<Instance> data) {
+	public SubcontextList(Labeler labeler, List<Instance> data) {
 		this.labeler = labeler;
 		for (Instance se : data)
 			add(se);
@@ -85,7 +88,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 */
 	void add(Instance data) {
-		IntLabel label = labeler.getContextLabel(data);
+		Label label = labeler.label(data);
 		if (!labelToSubcontext.containsKey(label))
 			labelToSubcontext.put(label, new Subcontext(label));
 		labelToSubcontext.get(label).add(data);
@@ -104,15 +107,25 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 	/**
 	 * This method is not particularly speedy, since it sorts the contained
-	 * subcontexts by label.
+	 * subcontexts by label. It is meant for test purposes only; do not rely on
+	 * exact output being the same in the future.
 	 */
 	@Override
 	public String toString() {
-		List<IntLabel> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
-		Collections.sort(sortedLabels);
+		List<Label> sortedLabels = new ArrayList<>(
+				labelToSubcontext.keySet());
+		// sort the labels by hashcode so that output is consistent for testing
+		// purposes
+		Collections.sort(sortedLabels, new Comparator<Label>() {
+			@Override
+			public int compare(Label firstLabel, Label secondLabel) {
+				return Integer.compare(firstLabel.hashCode(),
+						secondLabel.hashCode());
+			}
+		});
 
 		StringBuilder s = new StringBuilder();
-		for (IntLabel label : sortedLabels) {
+		for (Label label : sortedLabels) {
 			s.append(labelToSubcontext.get(label));
 			s.append(',');
 		}
@@ -142,7 +155,8 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 		return new Iterator<Subcontext>() {
 
-			Iterator<IntLabel> keyIterator = labelToSubcontext.keySet().iterator();
+			Iterator<Label> keyIterator = labelToSubcontext.keySet()
+					.iterator();
 
 			@Override
 			public boolean hasNext() {
@@ -164,7 +178,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	/**
 	 * @return The labeler object used to assign incoming data to subcontexts.
 	 */
-	public IntLabeler getLabeler() {
+	public Labeler getLabeler() {
 		return labeler;
 	}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and      *
  * limitations under the License.                                           *
  ****************************************************************************/
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import java.math.BigInteger;
 import java.util.Collections;

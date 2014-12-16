@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and      *
  * limitations under the License.                                           *
  ****************************************************************************/
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Instance;
 
 /**
  * Represents a subcontext, containing a list of {@link Instance Instances}
- * which belong to it, along with their shared {@link IntLabel} and common outcome.
+ * which belong to it, along with their shared {@link Label} and common outcome.
  * If the contained instances do not have the same outcome, then the outcome is
  * set to {@link AMUtils#NONDETERMINISTIC}.
  * 
@@ -32,7 +33,7 @@ import weka.core.Instance;
 public class Subcontext {
 	private Set<Instance> data;
 	private double outcome;
-	private IntLabel label;
+	private Label label;
 
 	/**
 	 * The location of this instance in {@link #index}
@@ -42,12 +43,12 @@ public class Subcontext {
 	/**
 	 * Initializes the subcontext by creating a list to hold the data
 	 * 
-	 * @param l
+	 * @param label
 	 *            Binary label of the subcontext
 	 */
-	public Subcontext(IntLabel l) {
+	public Subcontext(Label label) {
 		data = new HashSet<>();
-		label = l;
+		this.label = label;
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class Subcontext {
 	/**
 	 * @return Binary label of of this subcontext
 	 */
-	public IntLabel getLabel() {
+	public Label getLabel() {
 		return label;
 	}
 

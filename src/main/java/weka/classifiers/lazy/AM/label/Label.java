@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.label;
 
 import java.util.Iterator;
 

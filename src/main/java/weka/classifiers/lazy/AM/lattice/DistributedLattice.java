@@ -14,7 +14,7 @@
  * limitations under the License.                                           *
  ****************************************************************************/
 
-package weka.classifiers.lazy.AM.lattice.distributed;
+package weka.classifiers.lazy.AM.lattice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import weka.classifiers.lazy.AM.lattice.ILattice;
-import weka.classifiers.lazy.AM.lattice.IntLabeler;
-import weka.classifiers.lazy.AM.lattice.SubcontextList;
-import weka.classifiers.lazy.AM.lattice.Supracontext;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.data.SupracontextCombiner;
+import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
  * This lass manages several smaller, heterogeneous lattices.
@@ -34,11 +34,6 @@ import weka.classifiers.lazy.AM.lattice.Supracontext;
  * 
  */
 public class DistributedLattice implements ILattice {
-
-	/**
-	 * The default number of lattices to use during distributional processing.
-	 */
-	private static final int NUM_LATTICES = 4;
 
 	private List<HeterogeneousLattice> hlattices;
 
@@ -56,50 +51,20 @@ public class DistributedLattice implements ILattice {
 	/**
 	 * Creates a distributed lattice for creating Supracontexts. The
 	 * supracontexts of smaller lattices are combined to create the final
-	 * Supracontexts. The number of lattices used will be {@link NUM_LATTICES}.
+	 * Supracontexts. The number of lattices is determined by
+	 * {@link Labeler#numPartitions()}.
 	 * 
 	 * @param subList
 	 *            list of Subcontexts to add to the lattice
-	 * @param labeler
-	 *            The Labeler object that was used to assign labels to the
-	 *            subcontexts in subList (TODO: maybe that could just be
-	 *            retrieved from subList instead).
 	 */
 	public DistributedLattice(SubcontextList subList) {
-		this(subList, NUM_LATTICES);
-	}
+		Labeler labeler = subList.getLabeler();
 
-	/**
-	 * Creates a distributed lattice for creating Supracontexts. The
-	 * supracontexts of smaller lattices are combined to create the final
-	 * Supracontexts.
-	 * 
-	 * @param subList
-	 *            list of Subcontexts to add to the lattice
-	 * @param labeler
-	 *            The Labeler object that was used to assign labels to the
-	 *            subcontexts in subList (TODO: maybe that could just be
-	 *            retrieved from subList instead).
-	 * @numLattices The number of sub-lattices to use.
-	 * @throws IllegalArgumentException
-	 *             of numLattices is less than 2
-	 */
-	public DistributedLattice(SubcontextList subList,
-			int numLattices) {
-		// it would be possible to work with 1 lattice, but pointless, since
-		// BasicLattice is used for that and would be much more efficient.
-		if (numLattices < 2)
-			throw new IllegalArgumentException(
-					"numLattices should be greater than 1");
-		IntLabeler labeler = subList.getLabeler();
-		// create masks for splitting labels
-		LabelMask[] masks = LabelMask.getMasks(labeler.getCardinality(), numLattices);
-
-		// fill heterogeneous lattices
-		hlattices = new ArrayList<HeterogeneousLattice>(masks.length);
-		for (int i = 0; i < masks.length; i++) {
+		// fill each heterogeneous lattice with a given label partition
+		hlattices = new ArrayList<HeterogeneousLattice>(labeler.numPartitions());
+		for (int i = 0; i < labeler.numPartitions(); i++) {
 			// TODO: spawn task for simultaneous filling
-			hlattices.add(new HeterogeneousLattice(subList, masks[i]));
+			hlattices.add(new HeterogeneousLattice(subList, i));
 		}
 
 		// then combine them into one non-heterogeneous lattice; all but the
@@ -113,7 +78,7 @@ public class DistributedLattice implements ILattice {
 		supras = combineFinal(supras, hlattices.get(hlattices.size() - 1)
 				.getSupracontextList());
 	}
-	
+
 	/**
 	 * Combines two lists of {@link Supracontext Supracontexts} to make a new
 	 * List representing the intersection of two lattices
@@ -130,13 +95,13 @@ public class DistributedLattice implements ILattice {
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
 				supra = SupracontextCombiner.combine(supra1, supra2);
-				if(supra != null)
+				if (supra != null)
 					combinedList.add(supra);
 			}
 		}
 		return combinedList;
 	}
-	
+
 	/**
 	 * Combines two lists of {@link Supracontext Supracontexts} to make a new
 	 * List representing the intersection of two lattices; heterogeneous
@@ -156,13 +121,15 @@ public class DistributedLattice implements ILattice {
 		for (Supracontext supra1 : supraList1) {
 			for (Supracontext supra2 : supraList2) {
 				supra = SupracontextCombiner.combineFinal(supra1, supra2);
-				if(supra == null)
+				if (supra == null)
 					continue;
 				// add to the existing count if the same supra was formed from a
 				// previous combination
 				if (finalSupras.containsKey(supra)) {
 					Supracontext existing = finalSupras.get(supra);
-					supra = new Supracontext(existing.getData(), supra.getCount().add(existing.getCount()), supra.getOutcome());
+					supra = new Supracontext(existing.getData(), supra
+							.getCount().add(existing.getCount()),
+							supra.getOutcome());
 					finalSupras.put(supra, supra);
 				} else {
 					finalSupras.put(supra, supra);

@@ -2,6 +2,8 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.util.List;
 
+import weka.classifiers.lazy.AM.data.Supracontext;
+
 /**
  * Given a list of subcontexts, a lattice creates a collection of supracontexts,
  * which are then used to create analogical sets and classify data.

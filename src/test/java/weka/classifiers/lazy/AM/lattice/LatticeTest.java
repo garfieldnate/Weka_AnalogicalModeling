@@ -13,7 +13,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.lattice.distributed.DistributedLattice;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.label.IntLabeler;
+import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -65,29 +68,6 @@ public class LatticeTest {
 			@Override
 			public ILattice getLattice(SubcontextList subList) {
 				return new DistributedLattice(subList);
-			}
-		};
-		parameters.add(new Object[] { testName, latticeFactory });
-
-		// specify 2 sub-lattices
-		testName = DistributedLattice.class.getSimpleName()
-				+ ": 2 sub-lattices";
-		latticeFactory = new LatticeFactory() {
-			@Override
-			public ILattice getLattice(SubcontextList subList) {
-				return new DistributedLattice(subList, 2);
-			}
-		};
-		parameters.add(new Object[] { testName, latticeFactory });
-
-		// specify 10 sub-lattices, which will have to be reduced in some cases
-		// to match smaller cardinality data sets
-		testName = DistributedLattice.class.getSimpleName()
-				+ ": 10 sub-lattices";
-		latticeFactory = new LatticeFactory() {
-			@Override
-			public ILattice getLattice(SubcontextList subList) {
-				return new DistributedLattice(subList, 10);
 			}
 		};
 		parameters.add(new Object[] { testName, latticeFactory });

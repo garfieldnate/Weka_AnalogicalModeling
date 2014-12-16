@@ -29,8 +29,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import weka.classifiers.lazy.AM.AMUtils;
-import weka.classifiers.lazy.AM.lattice.Subcontext;
-import weka.classifiers.lazy.AM.lattice.Supracontext;
 import weka.core.Instance;
 
 /**

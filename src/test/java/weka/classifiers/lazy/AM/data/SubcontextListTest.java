@@ -1,4 +1,4 @@
-package weka.classifiers.lazy.AM.lattice;
+package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +9,12 @@ import java.util.List;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.data.Subcontext;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.label.IntLabel;
+import weka.classifiers.lazy.AM.label.IntLabeler;
+import weka.classifiers.lazy.AM.label.Labeler;
+import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -20,7 +26,7 @@ public class SubcontextListTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
+		Labeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals(subs.getCardinality(), 3);
@@ -63,7 +69,7 @@ public class SubcontextListTest {
 		Instance test = train.get(0);
 		train.remove(0);
 
-		IntLabeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
+		Labeler labeler = new IntLabeler(MissingDataCompare.MATCH, test, false);
 
 		SubcontextList subs = new SubcontextList(labeler, train);
 		assertEquals("getLabeler returns the labeler used in the constructor",

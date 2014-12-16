@@ -14,17 +14,20 @@
  * limitations under the License.                                           *
  ****************************************************************************/
 
-package weka.classifiers.lazy.AM.lattice.distributed;
+package weka.classifiers.lazy.AM.lattice;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import weka.classifiers.lazy.AM.lattice.IntLabel;
-import weka.classifiers.lazy.AM.lattice.Subcontext;
-import weka.classifiers.lazy.AM.lattice.SubcontextList;
-import weka.classifiers.lazy.AM.lattice.Supracontext;
+import weka.classifiers.lazy.AM.data.Subcontext;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
  * Same as a normal lattice, except no supracontext is deemed heterogeneous and
@@ -57,7 +60,7 @@ public class HeterogeneousLattice {
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
-	private Supracontext[] lattice;
+	private Map<Label, Supracontext> lattice;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -74,13 +77,13 @@ public class HeterogeneousLattice {
 	 * @param card
 	 *            the size of the exemplars
 	 */
-	private void init(int card) {
+	private void init() {
 		emptySupracontext = new Supracontext();
 		emptySupracontext.setNext(emptySupracontext);
 		// set count to 1 so that cleanSupra doesn't destroy it
 		emptySupracontext.incrementCount();
 
-		lattice = new Supracontext[(int) (Math.pow(2, card))];
+		lattice = new HashMap<>();
 	}
 
 	/**
@@ -94,18 +97,17 @@ public class HeterogeneousLattice {
 	 * @param subList
 	 *            List of subcontexts
 	 * 
-	 * @param labelMask
-	 *            to use in assigning labels
+	 * @param i
+	 *            label partition index
 	 */
-	public HeterogeneousLattice(SubcontextList subList, LabelMask labelMask) {
-		if (labelMask == null)
-			throw new IllegalArgumentException("labelMask can't be null!");
-		init(labelMask.getCardinality());
+	public HeterogeneousLattice(SubcontextList subList, int i) {
+		Labeler labeler = subList.getLabeler();
+		init();
 
 		// Fill the lattice with all of the subcontexts, masking labels
 		for (Subcontext sub : subList) {
 			index++;
-			insert(sub, labelMask.mask(sub.getLabel()));
+			insert(sub, labeler.partition(sub.getLabel(), i));
 		}
 	}
 
@@ -117,11 +119,11 @@ public class HeterogeneousLattice {
 	 * @param label
 	 *            label to be assigned to the subcontext
 	 */
-	public void insert(Subcontext sub, IntLabel label) {
-		addToContext(sub, label.intLabel());
-		Iterator<IntLabel> si = label.subsetIterator();
+	public void insert(Subcontext sub, Label label) {
+		addToContext(sub, label);
+		Iterator<Label> si = label.descendantIterator();
 		while (si.hasNext()) {
-			addToContext(sub, si.next().intLabel());
+			addToContext(sub, si.next());
 		}
 		// remove supracontexts with count = 0 after every pass
 		cleanSupra();
@@ -133,32 +135,32 @@ public class HeterogeneousLattice {
 	 * @param sub
 	 * @param label
 	 */
-	private void addToContext(Subcontext sub, int label) {
+	private void addToContext(Subcontext sub, Label label) {
 		// the default value is the empty supracontext (leave null until now to
 		// save time/space)
-		if (lattice[label] == null) {
-			lattice[label] = emptySupracontext;
+		if (!lattice.containsKey(label)) {
+			lattice.put(label, emptySupracontext);
 		}
 
 		// if the following supracontext matches the current index, just repoint
 		// to that one; this is a supracontext that was made in the final else
 		// statement below this one.
-		if (lattice[label].getNext().getIndex() == index) {
-			assert (lattice[label].getNext().getData()
-					.containsAll(lattice[label].getData()));
+		if (lattice.get(label).getNext().getIndex() == index) {
+			assert (lattice.get(label).getNext().getData()
+					.containsAll(lattice.get(label).getData()));
 			// don't decrement count on emptySupracontext!
-			if (lattice[label] != emptySupracontext)
-				lattice[label].decrementCount();
-			lattice[label] = lattice[label].getNext();
-			lattice[label].incrementCount();
+			if (lattice.get(label) != emptySupracontext)
+				lattice.get(label).decrementCount();
+			lattice.put(label, lattice.get(label).getNext());
+			lattice.get(label).incrementCount();
 		}
 		// otherwise make a new Supracontext and add it
 		else {
 			// don't decrement the count for the emptySupracontext!
-			if (lattice[label] != emptySupracontext)
-				lattice[label].decrementCount();
-			lattice[label] = new Supracontext(lattice[label], sub, index);
-			lattice[label].incrementCount();
+			if (lattice.get(label) != emptySupracontext)
+				lattice.get(label).decrementCount();
+			lattice.put(label, new Supracontext(lattice.get(label), sub, index));
+			lattice.get(label).incrementCount();
 		}
 	}
 
@@ -173,7 +175,7 @@ public class HeterogeneousLattice {
 				// linking supraPrev and supra.next() removes supra from the
 				// linked list
 				// TODO: it will loiter, however, if there are references to it
-				// in the lattice array
+				// in the lattice
 				supraPrev.setNext(supra.getNext());
 			}
 			supraPrev = supra;
