@@ -34,8 +34,8 @@ public class Supracontext {
 	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
 	private int index = -1;
-	// Zero means nondeterministic; any other number is the class attribute
-	// index given by Weka
+	// AMUtils.NON_DETERMINISTIC means nondeterministic; any other number is the
+	// class attribute index given by Weka
 	private double outcome;
 	// the contained subcontexts
 	private Set<Subcontext> data;

@@ -13,10 +13,9 @@ import weka.classifiers.lazy.AM.label.Label;
 public class IntLabelTest {
 
 	@Test
-	public void testAccessors(){
+	public void testLabelBits(){
 		IntLabel label = new IntLabel(0b0011, 4);
-		assertEquals(label.getCardinality(), 4);
-		assertEquals(label.intLabel(), 0b0011);
+		assertEquals(label.labelBits(), 0b0011);
 	}
 	
 	@Test

@@ -4,6 +4,7 @@ Later TODO:
 - clean up tests; give them better names, etc.
 - refactor supracontext a little so that it does more of its own work
 	- the copy(ish) constructor doesn't check for heterogeneity; it shouldn't for the distributed implementation, but it should for the BasicLattice implementation.
+	- fix the way HeterogeneousLattice makes Supras with non-sensical outcomes; this is an issue for testing, where the outcomes are different. It also just doesn't make sense to have an object where a method means nothing and returns garbage. The compareOutcomes flag in TestUtils is a workaround bandaid.
 - test the SupracontextCombiner class.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
