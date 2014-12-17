@@ -1,22 +1,13 @@
 Next: 
 Later TODO:
-- fix up and encapsulate the testing for HETERO or NONDETERMINISTIC
-- look at zero supra checking in basic lattice
 - use a linkedhashmap instead of having supras store pointers
+	- this would be a lattice, and the current lattice would be a lattice filler
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
-- refactor supracontext a little so that it does more of its own work
-	- the copy(ish) constructor doesn't check for heterogeneity; it shouldn't for the distributed implementation, but it should for the BasicLattice implementation.
-	- fix the way HeterogeneousLattice makes Supras with non-sensical outcomes; this is an issue for testing, where the outcomes are different. It also just doesn't make sense to have an object where a method means nothing and returns garbage. The compareOutcomes flag in TestUtils is a workaround bandaid.
-		- how about Supracontext simply keeps track of its outcome? If it turns heterogeneous, then BasicLattice would trash it, but HeterogeneousLattice wouldn't.
-		- add an add(sub) method and check there. Doesn't look like there will be a performance it.
+- possibly create another class like Supracontext except it doesn't track heterogeneity; for use in the distributed implementation. This would save a little bit of time and might make it clearer that there is no outcome for a partial supracontext.
 - test the SupracontextCombiner class.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
-- use BitSets for unlimited-size labels
-	- use will probably require changing Lattice to a Map instead of an array
-	- or perhaps give multiple implementations: short, int, long, bitset
-	- change intLabel() to bits()
 - parallelize creation and combination of hetero lattices
 - make splitting smarter so that the lattice array can't get too big
 	- if we want each lattice to be cardinality 4, then divide by 4 and that's the number of Hetero's to make.

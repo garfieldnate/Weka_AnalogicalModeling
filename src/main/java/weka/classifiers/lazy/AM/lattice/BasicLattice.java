@@ -153,7 +153,7 @@ public class BasicLattice implements Lattice {
 			assert (lattice.get(label).getNext().getData().containsAll(lattice
 					.get(label).getData()));
 			// don't decrement count on emptySupracontext!
-			if (!lattice.get(label).getCount().equals(BigInteger.ZERO))
+			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
 			lattice.put(label, lattice.get(label).getNext());
 			lattice.get(label).incrementCount();
@@ -168,7 +168,7 @@ public class BasicLattice implements Lattice {
 		// otherwise make a new Supracontext and add it
 		else {
 			// don't decrement the count for the emptySupracontext!
-			if (!lattice.get(label).getCount().equals(BigInteger.ZERO))
+			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
 			lattice.put(label, new Supracontext(lattice.get(label), sub, index));
 			lattice.get(label).incrementCount();
