@@ -139,16 +139,15 @@ public class TestUtils {
 	}
 
 	public static void assertContainsSupra(List<Supracontext> supras,
-			Supracontext expected, boolean compareOutcomes) {
+			Supracontext expected) {
 		for (Supracontext supra : supras)
-			if (supraDeepEquals(supra, expected, compareOutcomes))
+			if (supraDeepEquals(supra, expected))
 				return;
 		fail("Could not find " + expected + " in " + supras);
 	}
 
-	public static boolean supraDeepEquals(Supracontext s1, Supracontext s2,
-			boolean compareOutcomes) {
-		if (compareOutcomes && s1.getOutcome() != s2.getOutcome())
+	public static boolean supraDeepEquals(Supracontext s1, Supracontext s2) {
+		if (s1.getOutcome() != s2.getOutcome())
 			return false;
 
 		if (s1.hasData() != s2.hasData())
@@ -254,8 +253,7 @@ public class TestUtils {
 			subs.add(sub);
 		}
 
-		Supracontext supra = new Supracontext(subs, count, subs.iterator()
-				.next().getOutcome());
+		Supracontext supra = new Supracontext(subs, count);
 		return supra;
 	}
 
@@ -283,17 +281,17 @@ public class TestUtils {
 						add(sub2);
 						add(sub3);
 					}
-				}, BigInteger.ONE, 1);// A
+				}, BigInteger.ONE);
 
 		String supraString = "[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]";
 		Supracontext actualSupra = getSupraFromString(supraString, data);
 		assertTrue("supra with multiple subs",
-				supraDeepEquals(expectedSupra, actualSupra, true));
+				supraDeepEquals(expectedSupra, actualSupra));
 		assertTrue(
 				"fromString mirrors toString",
 				supraDeepEquals(
 						getSupraFromString(expectedSupra.toString(), data),
-						actualSupra, true));
+						actualSupra));
 
 		supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
 		actualSupra = getSupraFromString(supraString, data);
@@ -304,15 +302,15 @@ public class TestUtils {
 			{
 				add(sub4);
 			}
-		}, BigInteger.ONE, AMUtils.NONDETERMINISTIC);
+		}, BigInteger.ONE);
 
 		assertTrue("sub with multiple instances",
-				supraDeepEquals(expectedSupra, actualSupra, true));
+				supraDeepEquals(expectedSupra, actualSupra));
 		assertTrue(
 				"fromString mirrors toString",
 				supraDeepEquals(
 						getSupraFromString(expectedSupra.toString(), data),
-						actualSupra, true));
+						actualSupra));
 
 		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
 		final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
@@ -322,16 +320,16 @@ public class TestUtils {
 			{
 				add(sub5);
 			}
-		}, BigInteger.valueOf(6), 0);// B
+		}, BigInteger.valueOf(6));
 		supraString = "[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]";
 		actualSupra = getSupraFromString(supraString, data);
 		assertTrue("multiple instances with same string representation",
-				supraDeepEquals(expectedSupra, actualSupra, true));
+				supraDeepEquals(expectedSupra, actualSupra));
 		assertTrue(
 				"fromString mirrors toString",
 				supraDeepEquals(
 						getSupraFromString(expectedSupra.toString(), data),
-						actualSupra, true));
+						actualSupra));
 
 		// TODO: test error conditions
 	}

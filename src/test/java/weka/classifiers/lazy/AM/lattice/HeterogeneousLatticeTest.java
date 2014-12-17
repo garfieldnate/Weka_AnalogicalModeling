@@ -69,7 +69,7 @@ public class HeterogeneousLatticeTest {
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {
 			Supracontext supra = TestUtils.getSupraFromString(expected, train);
-			TestUtils.assertContainsSupra(actualSupras, supra, false);
+			TestUtils.assertContainsSupra(actualSupras, supra);
 		}
 	}
 

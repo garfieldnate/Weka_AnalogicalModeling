@@ -150,4 +150,8 @@ public class Subcontext {
 
 		return sb.toString();
 	}
+
+	public boolean isNondeterministic() {
+		return outcome == AMUtils.NONDETERMINISTIC;
+	}
 }

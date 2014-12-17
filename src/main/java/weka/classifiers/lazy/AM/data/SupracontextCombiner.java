@@ -19,7 +19,6 @@ package weka.classifiers.lazy.AM.data;
 import java.util.HashSet;
 import java.util.Set;
 
-import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 
 /**
@@ -32,10 +31,9 @@ import weka.classifiers.lazy.AM.lattice.BasicLattice;
  */
 public class SupracontextCombiner {
 	/**
-	 * Combine two incremental supracontexts into one. The new one contains the
-	 * subcontexts found in both, and the pointer count is set to the product of
-	 * the two pointer counts.
-	 * 
+	 * Combine two supracontexts into one. The new one contains the subcontexts
+	 * found in both, and the pointer count is set to the product of the two
+	 * pointer counts.
 	 * 
 	 * @param supra1
 	 * @param supra2
@@ -43,103 +41,58 @@ public class SupracontextCombiner {
 	 *         subcontexts in common.
 	 */
 	public static Supracontext combine(Supracontext supra1, Supracontext supra2) {
-		Set<Subcontext> subIndeces;
-		subIndeces = intersectionOfSubs(supra1.getData(), supra2.getData());
-		if (subIndeces.isEmpty())
+		Set<Subcontext> smaller;
+		Set<Subcontext> larger;
+		if (supra1.getData().size() > supra2.getData().size()) {
+			larger = supra1.getData();
+			smaller = supra2.getData();
+		} else {
+			smaller = supra1.getData();
+			larger = supra2.getData();
+		}
+		Set<Subcontext> combinedSubs = new HashSet<>(smaller);
+		combinedSubs.retainAll(larger);
+		
+		if (combinedSubs.isEmpty())
 			return null;
-		Supracontext supra = new Supracontext(subIndeces, supra1.getCount()
-				.multiply(supra2.getCount()), 0);
+		Supracontext supra = new Supracontext(combinedSubs, supra1.getCount()
+				.multiply(supra2.getCount()));
 		return supra;
 	}
 
 	/**
-	 * Computes the intersection of 2 arrays of integers (which represent
-	 * subcontext indices).
+	 * Combine two supracontexts into one. The new one contains the subcontexts
+	 * found in both, and the pointer count is set to the product of the two
+	 * pointer counts. This method will not return a heterogeneous supracontext.
 	 * 
-	 * @param set1
-	 * @param set2
-	 * @return intersection of the two integer arrays
+	 * @param supra1
+	 * @param supra2
+	 * @return a combined supracontext, or null if supra1 and supra2 had no data
+	 *         in common or if the new supracontext is heterogeneous
 	 */
-	// TODO: is the smaller/larger optimization really necessary here?
-	private static Set<Subcontext> intersectionOfSubs(Set<Subcontext> set1,
-			Set<Subcontext> set2) {
-		Set<Subcontext> smaller;
-		Set<Subcontext> larger;
-		if (set1.size() > set2.size()) {
-			smaller = set2;
-			larger = set1;
-		} else {
-			smaller = set1;
-			larger = set2;
-		}
-
-		Set<Subcontext> set = new HashSet<>(smaller);
-		set.retainAll(larger);
-		return set;
-	}
-
 	public static Supracontext combineFinal(Supracontext supra1,
 			Supracontext supra2) {
-		Set<Subcontext> intersectedSubs;
-		// find the intersection of subcontexts
-		intersectedSubs = intersectionOfSubsRemoveHeterogeneous(
-				supra1.getData(), supra2.getData());
-		// continue if no non-heterogeneous supracontext could be formed
-		if (intersectedSubs.isEmpty())
-			return null;
-		double outcome = intersectedSubs.iterator().next().getOutcome();
-		// make a new supracontext containing the combined data and a
-		// combined count
-		Supracontext supra = new Supracontext(intersectedSubs, supra1
-				.getCount().multiply(supra2.getCount()), outcome);
-		return supra;
-	}
-
-	/**
-	 * 
-	 * Computes the intersection of 2 given arrays of integers representing
-	 * subcontext indices. This method returns an empty array if the
-	 * intersection contains indices of subcontexts which would create a
-	 * heterogeneous supracontext.
-	 * 
-	 * @param set1
-	 * @param set2
-	 * @return intersection of the two integer arrays
-	 */
-	private static Set<Subcontext> intersectionOfSubsRemoveHeterogeneous(
-			Set<Subcontext> set1, Set<Subcontext> set2) {
 		Set<Subcontext> smaller;
 		Set<Subcontext> larger;
-		if (set1.size() > set2.size()) {
-			smaller = set2;
-			larger = set1;
+		if (supra1.getData().size() > supra2.getData().size()) {
+			larger = supra1.getData();
+			smaller = supra2.getData();
 		} else {
-			smaller = set1;
-			larger = set2;
+			larger = supra2.getData();
+			smaller = supra1.getData();
 		}
-		Set<Subcontext> set = new HashSet<>(smaller);
 
-		Set<Subcontext> intersection = new HashSet<>();
-		// TODO: magic number?
-		double outcome = 0;
-		for (Subcontext sub : larger)
-			// determine heterogeneity whenever we add a new subcontext
-			if (set.contains(sub)) {
-				// the first time we add a Subcontext, we set the current
-				// outcome to its outcome, and add the Subcontext to the list
-				if (intersection.size() == 0) {
-					intersection.add(sub);
-					outcome = sub.getOutcome();
-				}
-				// subsequent times, we detect heterogeneity through
-				// non-determinism and outcome disagreement among Subcontexts
-				else if (outcome == AMUtils.NONDETERMINISTIC
-						|| outcome != sub.getOutcome()) {
-					return new HashSet<Subcontext>();
-				} else {
-					intersection.add(sub);
-				}
+		Supracontext supra = new Supracontext();
+		for (Subcontext sub : smaller)
+			if (larger.contains(sub)) {
+				supra.add(sub);
+				if (supra.isHeterogeneous())
+					return null;
 			}
-		return intersection;
+		if (!supra.hasData())
+			return null;
+
+		supra.setCount(supra1.getCount().multiply(supra2.getCount()));
+		return supra;
 	}
 }

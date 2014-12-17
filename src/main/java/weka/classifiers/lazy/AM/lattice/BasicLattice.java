@@ -150,22 +150,17 @@ public class BasicLattice implements Lattice {
 		// re-point to that one; this is a supracontext that was made in
 		// the final else statement below this one.
 		else if (lattice.get(label).getNext().getIndex() == index) {
-			assert (lattice.get(label).getNext().getData()
-					.containsAll(lattice.get(label).getData()));
+			assert (lattice.get(label).getNext().getData().containsAll(lattice
+					.get(label).getData()));
 			// don't decrement count on emptySupracontext!
 			if (!lattice.get(label).getCount().equals(BigInteger.ZERO))
 				lattice.get(label).decrementCount();
 			lattice.put(label, lattice.get(label).getNext());
 			lattice.get(label).incrementCount();
 		}
-		// we now know that we will have to make a new Supracontext for this
-		// item;
-		// if outcomes don't match, then this supracontext is now heterogeneous.
-		// if lattice[label]'s outcome is nondeterministic, it will be
-		// heterogeneous
-		else if (!lattice.get(label).isDeterministic()
-				|| lattice.get(label).hasData()
-				&& lattice.get(label).getOutcome() != sub.getOutcome()) {
+		// we now know that we will have to make a new Supracontext to contain
+		// this subcontext; don't bother making heterogeneous supracontexts
+		else if (lattice.get(label).wouldBeHetero(sub)) {
 			lattice.get(label).decrementCount();
 			lattice.put(label, heteroSupra);
 			return;
@@ -175,8 +170,7 @@ public class BasicLattice implements Lattice {
 			// don't decrement the count for the emptySupracontext!
 			if (!lattice.get(label).getCount().equals(BigInteger.ZERO))
 				lattice.get(label).decrementCount();
-			lattice.put(label, new Supracontext(lattice.get(label), sub,
-					index));
+			lattice.put(label, new Supracontext(lattice.get(label), sub, index));
 			lattice.get(label).incrementCount();
 		}
 		return;
@@ -217,18 +211,18 @@ public class BasicLattice implements Lattice {
 
 	// useful for private debugging on occasion
 	@SuppressWarnings("unused")
- 	private String dumpLattice() {
-  		StringBuilder sb = new StringBuilder();
+	private String dumpLattice() {
+		StringBuilder sb = new StringBuilder();
 		for (Map.Entry<Label, Supracontext> e : lattice.entrySet()) {
 			sb.append(e.getKey());
-  			sb.append(':');
+			sb.append(':');
 			if (e.getValue() == heteroSupra)
-  				sb.append("[hetero]");
-  			else
+				sb.append("[hetero]");
+			else
 				sb.append(e.getValue());
-  			sb.append(AMUtils.LINE_SEPARATOR);
-  		}
-  		return sb.toString();
+			sb.append(AMUtils.LINE_SEPARATOR);
+		}
+		return sb.toString();
 	}
 
 	private boolean noZeroSupras() {

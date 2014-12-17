@@ -31,9 +31,8 @@ public class AMUtils {
 	// public static int LATTICE_SIZE_MAX = 4;
 
 	/**
-	 * NONDETERMINISTIC will be mapped to "&nondeterministic&", and is used by
-	 * {@link weka.classifiers.lazy.AnalogicalModeling.lattice.Supracontext
-	 * Supracontext} (this is '*' in the red book paper).
+	 * The following three constants are used to indicate special outcomes.
+	 * This one is '*' in the red book paper.
 	 * 
 	 */
 	public static final int NONDETERMINISTIC = -1;
@@ -41,12 +40,15 @@ public class AMUtils {
 	public static final String NONDETERMINISTIC_STRING = "&nondeterministic&";
 
 	/**
-	 * EMPTY will be mapped to "&empty&", and is used by
-	 * {@link weka.classifiers.lazy.AnalogicalModeling.lattice.Supracontext
-	 * Supracontext} (this is *supralist in the red book paper).
+	 * This is *supralist in the red book paper.
 	 * 
 	 */
 	public static final int EMPTY = -2;
+	
+	/**
+	 * TODO: what is this in the red book paper?
+	 */
+	public static final double HETEROGENEOUS = -3;
 
 	public static final String LINE_SEPARATOR = System
 			.getProperty("line.separator");
@@ -64,4 +66,5 @@ public class AMUtils {
 	 */
 	public static final MathContext matchContext = new MathContext(10,
 			RoundingMode.HALF_EVEN);
+
 }

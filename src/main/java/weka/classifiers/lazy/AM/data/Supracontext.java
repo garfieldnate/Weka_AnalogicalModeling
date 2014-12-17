@@ -38,7 +38,7 @@ public class Supracontext {
 	// class attribute index given by Weka
 	private double outcome;
 	// the contained subcontexts
-	private Set<Subcontext> data;
+	private Set<Subcontext> data = new HashSet<>();
 	// the number of supracontexts sharing this list of subcontexts, or the
 	// number of arrows pointing to it from the supracontextual lattice
 	private BigInteger count = BigInteger.ZERO;
@@ -61,13 +61,20 @@ public class Supracontext {
 	 * Creates a new supracontext with the given parameters as the contents.
 	 * 
 	 * @param data
-	 * @param outcome
+	 *            The subcontexts contained in the supracontext
 	 * @param count
+	 *            The count of this supracontext
+	 * @throws IllegalArgumentException
+	 *             if data or count are null
 	 */
-	public Supracontext(Set<Subcontext> data, BigInteger count, double outcome) {
-		this.data = data;
-		this.outcome = outcome;
+	public Supracontext(Set<Subcontext> data, BigInteger count) {
+		if (data == null)
+			throw new IllegalArgumentException("data must not be null");
+		if (count == null)
+			throw new IllegalArgumentException("count must not be null");
 		this.count = count;
+		for (Subcontext sub : data)
+			add(sub);
 	}
 
 	/**
@@ -84,27 +91,35 @@ public class Supracontext {
 	 */
 	public Supracontext(Supracontext other, Subcontext sub, int ind) {
 		index = ind;
-		// if we are creating a Supracontext out of an empty one and a
-		// subcontext
-		if (!other.hasData()) {
-			outcome = sub.getOutcome();
-			data = new HashSet<Subcontext>(1);
-			data.add(sub);
-			setNext(other.getNext());
-			other.setNext(this);
-			return;
-		}
-		outcome = other.outcome;
-		// count will equal 0
-
-		data = new HashSet<Subcontext>(other.getData().size() + 1);
-		data.addAll(other.getData());
-		data.add(sub);
-
+		data = new HashSet<>(other.getData());
+		outcome = other.getOutcome();
+		add(sub);
 		setNext(other.getNext());
 		other.setNext(this);
 	}
 
+	/**
+	 * Add a subcontext to the supracontext and determine the outcome.
+	 * 
+	 * @param sub
+	 *            Subcontext to add to the supracontext.
+	 */
+	public void add(Subcontext sub) {
+		if(wouldBeHetero(sub))
+			outcome = AMUtils.HETEROGENEOUS;
+		else
+			//technically only needs to be done for the first item added.
+			outcome = sub.getOutcome();
+		data.add(sub);
+	}
+
+	/**
+	 * Get the outcome of this supracontext. This is either a double
+	 * corresponding to the class value index given by Weka, or it is
+	 * {@link AMUtils#HETEROGENEOUS} or {@link AMUtils#NONDETERMINISTIC}
+	 * 
+	 * @return
+	 */
 	public double getOutcome() {
 		return outcome;
 	}
@@ -119,6 +134,30 @@ public class Supracontext {
 
 	public int getIndex() {
 		return index;
+	}
+
+	/**
+	 * 
+	 * @return the number of supracontexts sharing this list of subcontexts, or
+	 *         the number of arrows pointing to it from the supracontextual
+	 *         lattice
+	 */
+	public BigInteger getCount() {
+		return count;
+	}
+
+	/**
+	 * Set the count of the supra.
+	 * 
+	 * @param c
+	 *            the count
+	 * @throws IllegalArgumentException
+	 *             if c is null
+	 */
+	public void setCount(BigInteger c) {
+		if (c == null)
+			throw new IllegalArgumentException("c must not be null");
+		count = c;
 	}
 
 	/**
@@ -153,28 +192,42 @@ public class Supracontext {
 	}
 
 	public boolean hasData() {
-		return data.size() != 0;
+		return !data.isEmpty();
 	}
 
 	/**
+	 * Determine if the supracontext is heterogeneous
 	 * 
-	 * @return the number of supracontexts sharing this list of subcontexts, or
-	 *         the number of arrows pointing to it from the supracontextual
-	 *         lattice
+	 * @return true if the supracontext is heterogeneous, false if it is
+	 *         homogeneous.
 	 */
-	public BigInteger getCount() {
-		return count;
+	public boolean isHeterogeneous() {
+		return outcome == AMUtils.HETEROGENEOUS;
 	}
 
 	/**
-	 * @return True if the outcome is deterministic (the subcontext consists of
-	 *         data with all the same outcome)
+	 * Test if adding a subcontext would cause the supracontext to become
+	 * heterogeneous.
+	 * 
+	 * @param sub
+	 *            subcontext to hypothetically add
+	 * @return true if adding the given subcontext would cause this supracontext
+	 *         to become heterogeneous.
 	 */
-	public boolean isDeterministic() {
-		// empty is still deterministic
-		if (data == null)
+	// TODO: I don't really like this
+	public boolean wouldBeHetero(Subcontext sub) {
+		// Heterogeneous if:
+		// there are subcontexts with different outcomes
+		// there are more than one sub which are non-deterministic
+		if (data.size() == 0) {
+			return false;
+		}
+		if (sub.getOutcome() != outcome) {
 			return true;
-		return outcome != AMUtils.NONDETERMINISTIC;
+		} else if (sub.getOutcome() == AMUtils.NONDETERMINISTIC) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -182,9 +235,7 @@ public class Supracontext {
 	 */
 	@Override
 	public String toString() {
-		if (data == null)
-			return "[NULL]";
-		if (data.isEmpty())
+		if (!hasData())
 			return "[EMPTY]";
 
 		StringBuilder sb = new StringBuilder();
@@ -218,5 +269,4 @@ public class Supracontext {
 		Supracontext otherSupra = (Supracontext) other;
 		return data.equals(otherSupra.data);
 	}
-
 }
