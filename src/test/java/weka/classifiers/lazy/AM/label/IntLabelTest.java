@@ -2,30 +2,39 @@ package weka.classifiers.lazy.AM.label;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
+import java.util.BitSet;
 
 import org.junit.Test;
-
-import weka.classifiers.lazy.AM.label.IntLabel;
-import weka.classifiers.lazy.AM.label.Label;
 
 public class IntLabelTest {
 
 	@Test
-	public void testLabelBits(){
+	public void testConstructor() {
+		IntLabel label = new IntLabel(0b101, 3);
+		assertEquals(3, label.getCardinality());
+		assertFalse(label.matches(0));
+		assertTrue(label.matches(1));
+		assertFalse(label.matches(2));
+	}
+
+	@Test
+	public void testLabelBits() {
 		IntLabel label = new IntLabel(0b0011, 4);
 		assertEquals(label.labelBits(), 0b0011);
 	}
-	
-	@Test
-	public void testIterator() {
-		IntLabel label = new IntLabel(0b100, 3);
-		Iterator<Label> si = label.descendantIterator();
-		assertEquals(si.next(), new IntLabel(0b101, 3));
-		assertEquals(si.next(), new IntLabel(0b111, 3));
-		assertEquals(si.next(), new IntLabel(0b110, 3));
-		assertFalse(si.hasNext());
-	}
 
+	@Test
+	public void testCopyConstructor() {
+		IntLabel firstLabel = new IntLabel(0b100, 3);
+		IntLabel secondLabel = new IntLabel(firstLabel);
+		assertEquals(secondLabel, firstLabel);
+
+		BitSet bitset = new BitSet();
+		bitset.set(0);
+		bitset.set(5);
+		IntLabel thirdLabel = new IntLabel(new BitSetLabel(bitset, 6));
+		assertEquals(new IntLabel(0b100001, 6), thirdLabel);
+	}
 }

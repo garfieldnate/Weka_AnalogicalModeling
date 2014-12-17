@@ -5,8 +5,15 @@ import java.util.BitSet;
 import weka.core.Attribute;
 import weka.core.Instance;
 
+/**
+ * A {@link Labeler} implementation that creates {@link BitSetLabel
+ * BitSetLabels}.
+ * 
+ * @author Nathan Glenn
+ * 
+ */
 public class BitSetLabeler extends Labeler {
-	
+
 	public BitSetLabeler(MissingDataCompare mdc, Instance test,
 			boolean ignoreUnknowns) {
 		super(mdc, test, ignoreUnknowns);
@@ -32,7 +39,8 @@ public class BitSetLabeler extends Labeler {
 			att = getTestInstance().attribute(i);
 			// use mdc if were are comparing a missing attribute
 			if (getTestInstance().isMissing(att) || data.isMissing(att)) {
-				if (!getMissingDataCompare().matches(getTestInstance(), data, att))
+				if (!getMissingDataCompare().matches(getTestInstance(), data,
+						att))
 					// use length-1-index instead of index so that in binary the
 					// labels show left to right, first to last feature.
 					label.set(length - 1 - index);
@@ -67,14 +75,14 @@ public class BitSetLabeler extends Labeler {
 
 		// TODO: would it be possible/worth while to create an IntLabel if
 		// the cardinality were small enough?
-		return partitions[partitionIndex].extract((BitSetLabel) label) ;
+		return partitions[partitionIndex].extract((BitSetLabel) label);
 	}
 
 	/**
 	 * @return The partition objects used to partition labels from this labeler.
 	 */
 	private Partitioner[] getPartitions() {
-		//partitions are cached
+		// partitions are cached
 		if (partitions == null) {
 			partitions = new Partitioner[numPartitions()];
 			Partition[] spans = partitions();
@@ -86,18 +94,18 @@ public class BitSetLabeler extends Labeler {
 	}
 
 	/**
-	 * Private class for storing label paritions
+	 * Private class for storing label partitions
 	 */
 	private class Partitioner {
-		private int startIndex;
-		private int cardinality;
+		private final int startIndex;
+		private final int cardinality;
 
 		public Partitioner(Partition s) {
 			startIndex = s.getStartIndex();
 			cardinality = s.getCardinality();
 		}
 
-		public BitSetLabel extract(BitSetLabel label){
+		public BitSetLabel extract(BitSetLabel label) {
 			BitSet newLabel = new BitSet(cardinality);
 			// loop through the bits and set the unmatched ones
 			for (int i = 0; i < cardinality; i++) {
@@ -106,9 +114,9 @@ public class BitSetLabeler extends Labeler {
 			}
 			return new BitSetLabel(newLabel, cardinality);
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return startIndex + "," + cardinality;
 		}
 	}

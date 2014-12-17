@@ -5,19 +5,29 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This {@link Label} implementations sores match and mismatch data in a
+ * {@link BitSet}, so there is no limit on the cardinality.
+ * 
+ * @author Nathan Glenn
+ * 
+ */
 public class BitSetLabel extends Label {
-	private final BitSet label;
+	private final BitSet labelBits;
 	private final int card;
 
 	/**
+	 * Create a new label by storing match/mismatch information in the given
+	 * bitset.
 	 * 
 	 * @param l
-	 *            binary label represented by integer
+	 *            {@link BitSet} whose set bits represent mismatches and clear
+	 *            bits represent matches.
 	 * @param c
 	 *            cardinality of the label
 	 */
 	public BitSetLabel(BitSet l, int c) {
-		label = l;
+		labelBits = l;
 		card = c;
 	}
 
@@ -28,44 +38,34 @@ public class BitSetLabel extends Label {
 
 	@Override
 	public boolean matches(int index) {
-		if(index > getCardinality())
-			throw new IllegalArgumentException("was given " + index + " but cardinality is only " + getCardinality());
-		return !label.get(index);
+		if (index > getCardinality() - 1 || index < 0)
+			throw new IllegalArgumentException("Illegal index: " + index);
+		return !labelBits.get(index);
 	}
 
 	@Override
 	public String toString() {
-		return label.toString();
+		return labelBits.toString();
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		// quick comparison if the other label is of the same class
-		if (other instanceof BitSetLabel){
-			BitSetLabel otherLabel = (BitSetLabel) other;
-			return otherLabel.getCardinality() == getCardinality()
-					&& otherLabel.label.equals(label);
-		} else {
-			if(!(other instanceof Label))
-				return false;
-			// otherwise a slow comparison of each individual bit
-			Label otherLabel = (Label) other;
-			if(getCardinality() != otherLabel.getCardinality())
-				return false;
-			for(int i = 0; i < card; i++)
-				if(label.get(i) == otherLabel.matches(i))
-					return false;
-			return true;
+		if (!(other instanceof BitSetLabel)) {
+			return false;
 		}
+		BitSetLabel otherLabel = (BitSetLabel) other;
+		return otherLabel.getCardinality() == getCardinality()
+				&& otherLabel.labelBits.equals(labelBits);
 	}
 
 	private static final int SEED = 37;
 
 	@Override
 	public int hashCode() {
-		return SEED * getCardinality() + label.hashCode();
+		return SEED * getCardinality() + labelBits.hashCode();
 	}
 
+	@Override
 	public Iterator<Label> descendantIterator() {
 		return new SubsetIterator();
 	}
@@ -86,13 +86,13 @@ public class BitSetLabel extends Label {
 		 * @return Iterator over all subsets of the given label
 		 */
 		public SubsetIterator() {
-			BitSet supraContext = BitSetLabel.this.label;
+			BitSet supraContext = BitSetLabel.this.labelBits;
 			card = BitSetLabel.this.getCardinality();
 			current = supraContext;
 			gaps = new ArrayList<>();
 
 			// iterate over the clear bits and record their locations
-			for (int i = label.nextClearBit(0); i < card; i = label
+			for (int i = labelBits.nextClearBit(0); i < card; i = labelBits
 					.nextClearBit(i + 1))
 				gaps.add(i);
 

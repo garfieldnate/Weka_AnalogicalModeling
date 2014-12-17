@@ -8,17 +8,12 @@ import java.util.Iterator;
  * attribute values with a training instance attribute values and assigning a
  * boolean "match" or "mismatch" value for each one.
  * 
+ * Labels should also implement equals() and hashCode() for use in hashed
+ * collections; however, Labels of two different classes do not have to be
+ * equals(), even if the information they contain is equivalent.
+ * 
  */
 public abstract class Label {
-
-	// The lattice implementations use hashmaps to store labels and
-	// supracontexts
-	@Override
-	public abstract int hashCode();
-
-	@Override
-	public abstract boolean equals(Object other);
-
 	/**
 	 * @return The number of attributes represented in this label.
 	 */
@@ -31,7 +26,8 @@ public abstract class Label {
 	 *            Index of the attribute being represented
 	 * @return True if the index is a match, false otherwise.
 	 * @throws IllegalArgumentException
-	 *             if index is greater than the cardinality.
+	 *             if the index is less than 0 or greater than
+	 *             {@link #getCardinality} - 1.
 	 */
 	public abstract boolean matches(int index);
 

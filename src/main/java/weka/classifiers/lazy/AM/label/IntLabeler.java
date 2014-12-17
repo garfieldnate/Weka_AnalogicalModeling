@@ -32,16 +32,12 @@ import weka.core.Instance;
  * n, y>, and <y, y, n>.
  * 
  * The current implementation takes advantage of binary arithmetic by
- * representing mismatches as a 1 bit and matches as a 0 bit, all packed into 
- * a 32-bit integer.
+ * representing mismatches as a 1 bit and matches as a 0 bit, all packed into a
+ * 32-bit integer.
  * 
  * @author Nathan Glenn
  */
 public class IntLabeler extends Labeler {
-
-	// Java integers are 32 bits, so that is the maximum size of the produced
-	// labels.
-	private static final int MAX_CARDINALITY = 32;
 	private BitMask[] masks;
 
 	/**
@@ -55,12 +51,14 @@ public class IntLabeler extends Labeler {
 	public IntLabeler(MissingDataCompare mdc, Instance instance,
 			boolean ignoreUnknowns) {
 		super(mdc, instance, ignoreUnknowns);
-		if (getCardinality() > MAX_CARDINALITY)
+		if (getCardinality() > IntLabel.MAX_CARDINALITY)
 			throw new IllegalArgumentException(
-					"max cardinality for this labeler is " + MAX_CARDINALITY
-							+ "; input was " + getCardinality());
+					"Cardinality of instance too high (" + getCardinality()
+							+ "); max cardinality for this labeler is "
+							+ IntLabel.MAX_CARDINALITY);
 	}
 
+	@Override
 	public IntLabel label(Instance data) {
 		int label = 0;
 		int length = getCardinality();
@@ -75,7 +73,8 @@ public class IntLabeler extends Labeler {
 			att = getTestInstance().attribute(i);
 			// use mdc if were are comparing a missing attribute
 			if (getTestInstance().isMissing(i) || data.isMissing(i)) {
-				if (!getMissingDataCompare().matches(getTestInstance(), data, att))
+				if (!getMissingDataCompare().matches(getTestInstance(), data,
+						att))
 					// use length-1-index instead of index so that in binary the
 					// labels show left to right, first to last feature.
 					label |= (1 << (length - 1 - index));
@@ -88,6 +87,7 @@ public class IntLabeler extends Labeler {
 		return new IntLabel(label, getCardinality());
 	}
 
+	@Override
 	public Label partition(Label label, int partitionIndex) {
 		if (partitionIndex > numPartitions() || partitionIndex < 0)
 			throw new IllegalArgumentException("Illegal partition index: "

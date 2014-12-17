@@ -4,8 +4,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A {@link Label} implementation that stores match/mismatch data in a single
+ * integer for compactness and speed. The use of an integer as storage, however,
+ * creates a limit to the size of the label. See {@link #MAX_CARDINALITY}.
+ * 
+ * @author Nathan Glenn
+ * 
+ */
 public class IntLabel extends Label {
-	private final int label;
+	/**
+	 * The maximum cardinality of an integer label, which is limited by the
+	 * number of bits in an integer in Java.
+	 */
+	public static final int MAX_CARDINALITY = 32;
+	private final int labelBits;
 	private final int card;
 
 	/**
@@ -16,8 +29,34 @@ public class IntLabel extends Label {
 	 *            cardinality of the label
 	 */
 	public IntLabel(int l, int c) {
-		label = l;
+		labelBits = l;
 		card = c;
+	}
+
+	/**
+	 * Create an IntLabel by copying the contents of another {@link Label}.
+	 * 
+	 * @param other
+	 */
+	public IntLabel(Label other) {
+		// fast copy if the other label is an IntLabel
+		if (other instanceof IntLabel) {
+			IntLabel otherIntLabel = (IntLabel) other;
+			labelBits = otherIntLabel.labelBits;
+			card = otherIntLabel.card;
+			return;
+		}
+		if (other.getCardinality() > MAX_CARDINALITY)
+			throw new IllegalArgumentException(
+					"Cardinality of label too high (" + other.getCardinality()
+							+ "); max cardinality for this type of label is "
+							+ MAX_CARDINALITY);
+		card = other.getCardinality();
+		int labelBits = 0;
+		for (int i = 0; i < other.getCardinality(); i++)
+			if (!other.matches(i))
+				labelBits |= (1 << i);
+		this.labelBits = labelBits;
 	}
 
 	/**
@@ -25,7 +64,7 @@ public class IntLabel extends Label {
 	 *         represent the matches in this label.
 	 */
 	public int labelBits() {
-		return label;
+		return labelBits;
 	}
 
 	@Override
@@ -35,11 +74,10 @@ public class IntLabel extends Label {
 
 	@Override
 	public boolean matches(int index) {
-		if (index > getCardinality())
-			throw new IllegalArgumentException("was given " + index
-					+ " but cardinality is only " + getCardinality());
-		int mask = (int) Math.pow(2, index);
-		return (mask & label) == 0;
+		if (index > getCardinality() - 1 || index < 0)
+			throw new IllegalArgumentException("Illegal index: " + index);
+		int mask = 1 << index;
+		return (mask & labelBits) == 0;
 	}
 
 	@Override
@@ -57,22 +95,12 @@ public class IntLabel extends Label {
 
 	@Override
 	public boolean equals(Object other) {
-		// quick comparison if it's another IntLabel
-		if (other instanceof IntLabel) {
-			IntLabel otherLabel = (IntLabel) other;
-			return otherLabel.labelBits() == labelBits()
-					&& otherLabel.getCardinality() == getCardinality();
-		} else {
-			// slow comparison if it's another kind of label
-			Label otherLabel = (Label) other;
-			if (otherLabel.getCardinality() != getCardinality())
-				return false;
-			for (int i = 0; i < getCardinality(); i++) {
-				if (matches(i) != otherLabel.matches(i))
-					return false;
-			}
-			return true;
+		if (!(other instanceof IntLabel)) {
+			return false;
 		}
+		IntLabel otherLabel = (IntLabel) other;
+		return otherLabel.labelBits() == labelBits()
+				&& otherLabel.getCardinality() == getCardinality();
 	}
 
 	private static final int SEED = 37;
@@ -82,6 +110,7 @@ public class IntLabel extends Label {
 		return SEED * labelBits() + getCardinality();
 	}
 
+	@Override
 	public Iterator<Label> descendantIterator() {
 		return new SubsetIterator();
 	}

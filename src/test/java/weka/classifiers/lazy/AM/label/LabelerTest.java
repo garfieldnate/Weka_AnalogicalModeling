@@ -32,7 +32,6 @@ public class LabelerTest {
 	public Constructor<Labeler> labelerConstructor;
 
 	/**
-	 * 
 	 * @return A collection of parameter arrays for running tests:
 	 *         <ol>
 	 *         <li>arg[0] is the test name;</li>
@@ -101,11 +100,16 @@ public class LabelerTest {
 		Instances dataset = TestUtils.sixCardinalityData();
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.MATCH, dataset.get(0), false);
-		assertEquals(new IntLabel(0b00000, 5), labeler.label(dataset.get(1)));
-		assertEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(2)));
-		assertEquals(new IntLabel(0b00011, 5), labeler.label(dataset.get(3)));
-		assertEquals(new IntLabel(0b10011, 5), labeler.label(dataset.get(4)));
-		assertEquals(new IntLabel(0b11111, 5), labeler.label(dataset.get(5)));
+		assertLabelEquals(new IntLabel(0b00000, 5),
+				labeler.label(dataset.get(1)));
+		assertLabelEquals(new IntLabel(0b10110, 5),
+				labeler.label(dataset.get(2)));
+		assertLabelEquals(new IntLabel(0b00011, 5),
+				labeler.label(dataset.get(3)));
+		assertLabelEquals(new IntLabel(0b10011, 5),
+				labeler.label(dataset.get(4)));
+		assertLabelEquals(new IntLabel(0b11111, 5),
+				labeler.label(dataset.get(5)));
 	}
 
 	/**
@@ -120,10 +124,14 @@ public class LabelerTest {
 		dataset.setClassIndex(2);
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.MATCH, dataset.get(0), false);
-		assertEquals(new IntLabel(0b10100, 5), labeler.label(dataset.get(2)));
-		assertEquals(new IntLabel(0b00110, 5), labeler.label(dataset.get(3)));
-		assertEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(4)));
-		assertEquals(new IntLabel(0b11110, 5), labeler.label(dataset.get(5)));
+		assertLabelEquals(new IntLabel(0b10100, 5),
+				labeler.label(dataset.get(2)));
+		assertLabelEquals(new IntLabel(0b00110, 5),
+				labeler.label(dataset.get(3)));
+		assertLabelEquals(new IntLabel(0b10110, 5),
+				labeler.label(dataset.get(4)));
+		assertLabelEquals(new IntLabel(0b11110, 5),
+				labeler.label(dataset.get(5)));
 		dataset.setClassIndex(dataset.numAttributes() - 1);
 
 	}
@@ -139,20 +147,20 @@ public class LabelerTest {
 		Instances dataset = TestUtils.sixCardinalityData();
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.MATCH, dataset.get(6), false);
-		assertEquals("MATCH: always matches", new IntLabel(0b00100, 5),
+		assertLabelEquals("MATCH: always matches", new IntLabel(0b00100, 5),
 				labeler.label(dataset.get(0)));
 
 		labeler = labelerConstructor.newInstance(MissingDataCompare.MISMATCH,
 				dataset.get(6), false);
-		assertEquals("MISMATCH: always mismatches", new IntLabel(0b00101, 5),
-				labeler.label(dataset.get(0)));
+		assertLabelEquals("MISMATCH: always mismatches", new IntLabel(0b00101,
+				5), labeler.label(dataset.get(0)));
 
 		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE,
 				dataset.get(6), false);
-		assertEquals("VARIABLE: matches other unknowns", new IntLabel(0b00100,
-				5), labeler.label(dataset.get(7)));
-		assertEquals("VARIABLE: mismatches non-unknowns", new IntLabel(0b00111,
-				5), labeler.label(dataset.get(8)));
+		assertLabelEquals("VARIABLE: matches other unknowns", new IntLabel(
+				0b00100, 5), labeler.label(dataset.get(7)));
+		assertLabelEquals("VARIABLE: mismatches non-unknowns", new IntLabel(
+				0b00111, 5), labeler.label(dataset.get(8)));
 	}
 
 	@Test
@@ -163,15 +171,16 @@ public class LabelerTest {
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.VARIABLE, data.get(0), false);
 		assertEquals(labeler.numPartitions(), 4);
-		
+
 		data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-		labeler = labelerConstructor.newInstance(
-				MissingDataCompare.VARIABLE, data.get(0), false);
+		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE,
+				data.get(0), false);
 		assertEquals(labeler.numPartitions(), 3);
 	}
 
 	/**
 	 * Tests the protected default partitioning scheme.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -187,13 +196,15 @@ public class LabelerTest {
 		assertPartitionEquals(partitions[3], 8, 2);
 	}
 
-	private void assertPartitionEquals(Partition partition, int startIndex, int cardinality) {
+	private void assertPartitionEquals(Partition partition, int startIndex,
+			int cardinality) {
 		assertEquals(partition.getStartIndex(), startIndex);
 		assertEquals(partition.getCardinality(), cardinality);
 	}
 
 	/**
 	 * Tests the default partitioning functionality.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -202,12 +213,21 @@ public class LabelerTest {
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.VARIABLE, data.get(0), false);
 		Label label = labeler.label(data.get(1));
-		assertEquals(label, new IntLabel(0b0000110010, 10));
+		assertLabelEquals(label, new IntLabel(0b0000110010, 10));
 		assertEquals(labeler.numPartitions(), 4);
 
-		assertEquals(labeler.partition(label, 0), new IntLabel(0b010, 3));
-		assertEquals(labeler.partition(label, 1), new IntLabel(0b110, 3));
-		assertEquals(labeler.partition(label, 2), new IntLabel(0b00, 2));
-		assertEquals(labeler.partition(label, 3), new IntLabel(0b00, 2));
+		assertLabelEquals(labeler.partition(label, 0), new IntLabel(0b010, 3));
+		assertLabelEquals(labeler.partition(label, 1), new IntLabel(0b110, 3));
+		assertLabelEquals(labeler.partition(label, 2), new IntLabel(0b00, 2));
+		assertLabelEquals(labeler.partition(label, 3), new IntLabel(0b00, 2));
+	}
+
+	private void assertLabelEquals(String message, Label firstLabel,
+			Label secondLabel) {
+		assertTrue(message, TestUtils.labelEquivalent(firstLabel, secondLabel));
+	}
+
+	private void assertLabelEquals(Label firstLabel, Label secondLabel) {
+		assertTrue(TestUtils.labelEquivalent(firstLabel, secondLabel));
 	}
 }

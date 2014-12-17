@@ -1,11 +1,10 @@
-Next: - Test Labels
-	- change equals(); labels should not equal any other old label. They should only equal others of the same class. If we supported equal across classes, we would also tie together their hashCode() implementations, which would not be good.
+Next: 
 Later TODO:
 - fix up and encapsulate the testing for HETERO or NONDETERMINISTIC
 - look at zero supra checking in basic lattice
 - use a linkedhashmap instead of having supras store pointers
 - test specifically the case where there is a tie for class outcome
-- clean up tests; give them better names, etc.
+- clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
 - refactor supracontext a little so that it does more of its own work
 	- the copy(ish) constructor doesn't check for heterogeneity; it shouldn't for the distributed implementation, but it should for the BasicLattice implementation.
 	- fix the way HeterogeneousLattice makes Supras with non-sensical outcomes; this is an issue for testing, where the outcomes are different. It also just doesn't make sense to have an object where a method means nothing and returns garbage. The compareOutcomes flag in TestUtils is a workaround bandaid.

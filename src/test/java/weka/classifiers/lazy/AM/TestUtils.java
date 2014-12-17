@@ -138,6 +138,29 @@ public class TestUtils {
 		return dataset;
 	}
 
+	/**
+	 * An equals function that compares labels of different classes against
+	 * eachother.
+	 * 
+	 * @param firstLabel
+	 * @param secondLabel
+	 * @return true if the labels have the same cardinality and mark the same
+	 *         feature indices as matching or mismatching.
+	 */
+	public static boolean labelEquivalent(Label firstLabel, Label secondLabel) {
+		// fastest possible comparison is the one contained in the
+		// implementation classes
+		if (firstLabel.getClass().equals(secondLabel.getClass()))
+			return firstLabel.equals(secondLabel);
+		// otherwise a slow comparison of each individual bit
+		if (firstLabel.getCardinality() != secondLabel.getCardinality())
+			return false;
+		for (int i = 0; i < firstLabel.getCardinality(); i++)
+			if (firstLabel.matches(i) != secondLabel.matches(i))
+				return false;
+		return true;
+	}
+
 	public static void assertContainsSupra(List<Supracontext> supras,
 			Supracontext expected) {
 		for (Supracontext supra : supras)
