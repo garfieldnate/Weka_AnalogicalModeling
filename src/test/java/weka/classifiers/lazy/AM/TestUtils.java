@@ -231,7 +231,7 @@ public class TestUtils {
 			Subcontext sub = new Subcontext(label);
 
 			// parse outcome
-			int outcome;
+			double outcome;
 			if (subComponents[1].equals(AMUtils.NONDETERMINISTIC_STRING))
 				outcome = AMUtils.NONDETERMINISTIC;
 			else {

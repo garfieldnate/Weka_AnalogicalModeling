@@ -30,13 +30,11 @@ import weka.classifiers.lazy.AM.AMUtils;
  * 
  */
 public class Supracontext {
-
-	// ///DEFINITION ACCORDING TO AM 2.1
 	// number representing when this supracontext was created
 	private int index = -1;
-	// AMUtils.NON_DETERMINISTIC means nondeterministic; any other number is the
-	// class attribute index given by Weka
-	private double outcome;
+	// class attribute value, or nondeterministic, heterogeneous, or
+	// undetermined
+	private double outcome = Double.NaN;
 	// the contained subcontexts
 	private Set<Subcontext> data = new HashSet<>();
 	// the number of supracontexts sharing this list of subcontexts, or the
@@ -53,7 +51,6 @@ public class Supracontext {
 	 */
 	public Supracontext() {
 		data = new HashSet<Subcontext>();
-		outcome = AMUtils.EMPTY;
 		index = -1;
 	}
 
@@ -105,11 +102,10 @@ public class Supracontext {
 	 *            Subcontext to add to the supracontext.
 	 */
 	public void add(Subcontext sub) {
-		if(wouldBeHetero(sub))
-			outcome = AMUtils.HETEROGENEOUS;
-		else
-			//technically only needs to be done for the first item added.
+		if (data.isEmpty())
 			outcome = sub.getOutcome();
+		else if (!isHeterogeneous() && wouldBeHetero(sub))
+			outcome = AMUtils.HETEROGENEOUS;
 		data.add(sub);
 	}
 

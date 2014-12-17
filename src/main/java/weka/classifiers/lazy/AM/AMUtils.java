@@ -25,38 +25,36 @@ import java.math.RoundingMode;
  * 
  */
 public class AMUtils {
-
-	// TODO: perhaps use this to create a dynamic number of lattices of maximum
-	// cardinality 4?
-	// public static int LATTICE_SIZE_MAX = 4;
+	/**
+	 * An unknown class value.
+	 */
+	public static final double UNKNOWN = Double.NaN;
 
 	/**
-	 * The following three constants are used to indicate special outcomes.
-	 * This one is '*' in the red book paper.
+	 * A non-deterministic outcome, meaning that there is more than one
+	 * possibility.
 	 * 
 	 */
-	public static final int NONDETERMINISTIC = -1;
-
+	public static final double NONDETERMINISTIC = -1;
 	public static final String NONDETERMINISTIC_STRING = "&nondeterministic&";
 
 	/**
-	 * This is *supralist in the red book paper.
-	 * 
+	 * A heterogeneous outcome, which means we don't bother with it.
 	 */
-	public static final int EMPTY = -2;
-	
-	/**
-	 * TODO: what is this in the red book paper?
-	 */
-	public static final double HETEROGENEOUS = -3;
+	public static final double HETEROGENEOUS = -2;
 
 	public static final String LINE_SEPARATOR = System
 			.getProperty("line.separator");
 
 	// used for printing all decimal numbers
-	// TODO: is this really necessary now that we use BigDecimals?
 	private static final String DECIMAL_FORMAT = "%.5f";
 
+	/**
+	 * Format a double into a string using {@link #DECIMAL_FORMAT}.
+	 * 
+	 * @param d
+	 * @return
+	 */
 	public static String formatDouble(double d) {
 		return String.format(DECIMAL_FORMAT, d);
 	}

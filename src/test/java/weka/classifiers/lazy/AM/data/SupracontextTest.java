@@ -69,8 +69,8 @@ public class SupracontextTest {
 		sub.add(dataset.get(2));
 		subs.add(sub);
 	}
-	
-	private double DELTA = 1e-10;
+
+	private final double DELTA = 1e-10;
 
 	@Test
 	public void testEmpty() {
@@ -79,7 +79,8 @@ public class SupracontextTest {
 		assertTrue(testSupra.getData().isEmpty());
 		assertFalse(testSupra.hasData());
 		assertEquals(testSupra.getNext(), null);
-		assertEquals(testSupra.getOutcome(), AMUtils.EMPTY, DELTA);
+		// AMUtils.UNKNOWN is Double.NaN
+		assertTrue(Double.isNaN(testSupra.getOutcome()));
 		assertFalse(testSupra.isHeterogeneous());
 		assertTrue(testSupra.equals(testSupra));
 	}
@@ -122,10 +123,10 @@ public class SupracontextTest {
 			}
 		});
 	}
-	
-	//make sure that the subs used for testing are set up properly
+
+	// make sure that the subs used for testing are set up properly
 	@Test
-	public void testSetup(){
+	public void testSetup() {
 		assertTrue(subs.get(0).isNondeterministic());
 		assertTrue(subs.get(1).isNondeterministic());
 		assertFalse(subs.get(2).isNondeterministic());
@@ -135,11 +136,11 @@ public class SupracontextTest {
 
 	@Test
 	public void testWouldBeHeterogeneous() {
-		//one sub, even nondeterministic, does not make a supra heterogeneous
+		// one sub, even nondeterministic, does not make a supra heterogeneous
 		assertCausesHeterogeneity(new Supracontext(), subs.get(0), false);
 		assertCausesHeterogeneity(new Supracontext(), subs.get(2), false);
 
-		//two subs of same outcome do not make it heterogeneous
+		// two subs of same outcome do not make it heterogeneous
 		Supracontext testSupra = new Supracontext();
 		testSupra.add(subs.get(3));
 		assertCausesHeterogeneity(testSupra, subs.get(4), false);
@@ -158,9 +159,19 @@ public class SupracontextTest {
 		testSupra = new Supracontext();
 		testSupra.add(subs.get(2));
 		assertCausesHeterogeneity(testSupra, subs.get(3), true);
+
+		// supra is already heterogeneous
+		testSupra = new Supracontext();
+		testSupra.add(subs.get(2));
+		testSupra.add(subs.get(3));
+		assertTrue(testSupra.isHeterogeneous());
+		assertTrue(testSupra.wouldBeHetero(subs.get(4)));
+		testSupra.add(subs.get(4));
+		assertTrue(testSupra.isHeterogeneous());
 	}
-	
-	private void assertCausesHeterogeneity(Supracontext supra, Subcontext sub, boolean causes){
+
+	private void assertCausesHeterogeneity(Supracontext supra, Subcontext sub,
+			boolean causes) {
 		assertFalse(supra.isHeterogeneous());
 		assertEquals(supra.wouldBeHetero(sub), causes);
 		supra.add(sub);
@@ -168,14 +179,14 @@ public class SupracontextTest {
 	}
 
 	@Test
-	public void testIsHeterogeneousConstructor() {
+	public void testIsHeterogeneous() {
 		BigInteger count = BigInteger.ZERO;
 		Set<Subcontext> subSet = new HashSet<>();
-		
-		//empty supra is never heterogeneous
+
+		// empty supra is never heterogeneous
 		assertFalse(new Supracontext(subSet, count).isHeterogeneous());
-		
-		//supra with two subs of the same outcome is not heterogeneous
+
+		// supra with two subs of the same outcome is not heterogeneous
 		subSet = new HashSet<>();
 		subSet.add(subs.get(3));
 		subSet.add(subs.get(4));
