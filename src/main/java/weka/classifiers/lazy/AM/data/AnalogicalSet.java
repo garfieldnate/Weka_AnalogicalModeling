@@ -54,7 +54,7 @@ public class AnalogicalSet {
 
 	private Map<String, BigDecimal> classLikelihoodMap = new HashMap<>();
 
-	private List<Supracontext> supraList;
+	private List<ClassifiedSupra> supraList;
 
 	private BigInteger totalPointers = BigInteger.ZERO;
 
@@ -106,7 +106,7 @@ public class AnalogicalSet {
 	 *            True if counting of pointers should be done linearly; false if
 	 *            quadratically.
 	 */
-	public AnalogicalSet(List<Supracontext> supraList, Instance testItem,
+	public AnalogicalSet(List<ClassifiedSupra> supraList, Instance testItem,
 			boolean linear) {
 
 		this.classifiedExemplar = testItem;
@@ -169,7 +169,7 @@ public class AnalogicalSet {
 	 * @return A mapping of each exemplar to the number of pointers pointing to
 	 *         it.
 	 */
-	private Map<Instance, BigInteger> getPointers(List<Supracontext> supraList,
+	private Map<Instance, BigInteger> getPointers(List<ClassifiedSupra> supraList,
 			boolean linear) {
 		Map<Instance, BigInteger> pointers = new HashMap<>();
 
@@ -178,7 +178,7 @@ public class AnalogicalSet {
 		BigInteger pointersInList = BigInteger.ZERO;
 		BigInteger pointersToSupra = BigInteger.ZERO;
 		// iterate all supracontext
-		for (Supracontext supra : supraList) {
+		for (ClassifiedSupra supra : supraList) {
 			if (!linear) {
 				pointersInList = BigInteger.ZERO;
 				// sum number of exemplars for each subcontext
@@ -337,7 +337,7 @@ public class AnalogicalSet {
 	 * 
 	 * @return The Supracontexts that comprise the analogical set.
 	 */
-	public List<Supracontext> getSupraList() {
+	public List<ClassifiedSupra> getSupraList() {
 		return Collections.unmodifiableList(supraList);
 	}
 }

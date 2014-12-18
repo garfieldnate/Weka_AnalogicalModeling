@@ -22,9 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.data.SupracontextCombiner;
+import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
@@ -35,16 +35,17 @@ import weka.classifiers.lazy.AM.label.Labeler;
  */
 public class DistributedLattice implements Lattice {
 
-	private List<HeterogeneousLattice> hlattices;
+	private final List<HeterogeneousLattice> hlattices;
 
-	private List<Supracontext> supras;
+	private final List<ClassifiedSupra> supras;
 
 	/**
 	 * Get list of Supracontexts that were created with this lattice
 	 * 
 	 * @return
 	 */
-	public List<Supracontext> getSupracontextList() {
+	@Override
+	public List<ClassifiedSupra> getSupracontextList() {
 		return supras;
 	}
 
@@ -71,69 +72,72 @@ public class DistributedLattice implements Lattice {
 		// last combination will create another heterogeneous lattice. The last
 		// combination will remove heterogeneous, non-deterministic
 		// supracontexts.
-		supras = hlattices.get(0).getSupracontextList();
+		List<UnclassifiedSupra> partialSupras = hlattices.get(0)
+				.getSupracontextList();
 		for (int i = 1; i < hlattices.size() - 1; i++) {
-			supras = combine(supras, hlattices.get(i).getSupracontextList());
+			partialSupras = combine(partialSupras, hlattices.get(i)
+					.getSupracontextList());
 		}
-		supras = combineFinal(supras, hlattices.get(hlattices.size() - 1)
-				.getSupracontextList());
+		supras = combineFinal(partialSupras, hlattices
+				.get(hlattices.size() - 1).getSupracontextList());
 	}
 
 	/**
-	 * Combines two lists of {@link Supracontext Supracontexts} to make a new
+	 * Combines two lists of {@link ClassifiedSupra Supracontexts} to make a new
 	 * List representing the intersection of two lattices
 	 * 
-	 * @param supraList1
+	 * @param partialSupras
 	 *            First list of Supracontexts
-	 * @param supraList2
+	 * @param list
 	 * @return
 	 */
-	private List<Supracontext> combine(List<Supracontext> supraList1,
-			List<Supracontext> supraList2) {
-		Supracontext supra;
-		List<Supracontext> combinedList = new LinkedList<Supracontext>();
-		for (Supracontext supra1 : supraList1) {
-			for (Supracontext supra2 : supraList2) {
-				supra = SupracontextCombiner.combine(supra1, supra2);
-				if (supra != null)
-					combinedList.add(supra);
+	private List<UnclassifiedSupra> combine(
+			List<UnclassifiedSupra> partialSupras,
+			List<UnclassifiedSupra> list) {
+		UnclassifiedSupra newSupra;
+		List<UnclassifiedSupra> combinedList = new LinkedList<UnclassifiedSupra>();
+		for (UnclassifiedSupra supra1 : partialSupras) {
+			for (UnclassifiedSupra supra2 : list) {
+				newSupra = supra1.combine(supra2);
+				if (newSupra != null)
+					combinedList.add(newSupra);
 			}
 		}
 		return combinedList;
 	}
 
 	/**
-	 * Combines two lists of {@link Supracontext Supracontexts} to make a new
+	 * Combines two lists of {@link ClassifiedSupra Supracontexts} to make a new
 	 * List representing the intersection of two lattices; heterogeneous
 	 * Supracontexts will be pruned
 	 * 
-	 * @param supraList1
+	 * @param partialSupras
 	 *            First list of Supracontexts
-	 * @param supraList2
+	 * @param list
 	 * @return
 	 */
-	private List<Supracontext> combineFinal(List<Supracontext> supraList1,
-			List<Supracontext> supraList2) {
-		Supracontext supra;
+	private List<ClassifiedSupra> combineFinal(
+			List<UnclassifiedSupra> partialSupras,
+			List<UnclassifiedSupra> list) {
+		ClassifiedSupra supra;
 		// the same supracontext may be formed via different combinations, so we
 		// use this as a set (Set doesn't provide a get(Object) method);
-		Map<Supracontext, Supracontext> finalSupras = new HashMap<Supracontext, Supracontext>();
-		for (Supracontext supra1 : supraList1) {
-			for (Supracontext supra2 : supraList2) {
-				supra = SupracontextCombiner.combineFinal(supra1, supra2);
+		Map<ClassifiedSupra, ClassifiedSupra> finalSupras = new HashMap<ClassifiedSupra, ClassifiedSupra>();
+		for (UnclassifiedSupra supra1 : partialSupras) {
+			for (UnclassifiedSupra supra2 : list) {
+				supra = supra1.combineFinalize(supra2);
 				if (supra == null)
 					continue;
 				// add to the existing count if the same supra was formed from a
 				// previous combination
 				if (finalSupras.containsKey(supra)) {
-					Supracontext existing = finalSupras.get(supra);
-					existing.setCount(supra
-							.getCount().add(existing.getCount()));
+					ClassifiedSupra existing = finalSupras.get(supra);
+					existing.setCount(supra.getCount().add(existing.getCount()));
 				} else {
 					finalSupras.put(supra, supra);
 				}
 			}
 		}
-		return new ArrayList<Supracontext>(finalSupras.values());
+		return new ArrayList<ClassifiedSupra>(finalSupras.values());
 	}
 }

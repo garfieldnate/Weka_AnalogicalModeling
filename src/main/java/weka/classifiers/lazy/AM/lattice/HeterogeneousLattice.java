@@ -23,9 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 
@@ -60,7 +60,7 @@ public class HeterogeneousLattice {
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
-	private Map<Label, Supracontext> lattice;
+	private Map<Label, UnclassifiedSupra> lattice;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -68,7 +68,7 @@ public class HeterogeneousLattice {
 	/**
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
-	private Supracontext emptySupracontext;
+	private UnclassifiedSupra emptySupracontext;
 
 	/**
 	 * Initializes the empty and the heterogeneous supracontexts as well as the
@@ -78,10 +78,8 @@ public class HeterogeneousLattice {
 	 *            the size of the exemplars
 	 */
 	private void init() {
-		emptySupracontext = new Supracontext();
+		emptySupracontext = new UnclassifiedSupra();
 		emptySupracontext.setNext(emptySupracontext);
-		// set count to 1 so that cleanSupra doesn't destroy it
-		emptySupracontext.incrementCount();
 
 		lattice = new HashMap<>();
 	}
@@ -146,8 +144,9 @@ public class HeterogeneousLattice {
 		// to that one; this is a supracontext that was made in the final else
 		// statement below this one.
 		if (lattice.get(label).getNext().getIndex() == index) {
-			assert (lattice.get(label).getNext().getData()
-					.containsAll(lattice.get(label).getData()));
+			// assert
+			// (lattice.get(label).getNext().getData().containsAll(lattice
+			// .get(label).getData()));
 			// don't decrement count on emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
@@ -159,8 +158,7 @@ public class HeterogeneousLattice {
 			// don't decrement the count for the emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
-			lattice.put(label, new Supracontext(lattice.get(label), sub, index));
-			lattice.get(label).incrementCount();
+			lattice.put(label, new UnclassifiedSupra(lattice.get(label), sub, index));
 		}
 	}
 
@@ -168,8 +166,8 @@ public class HeterogeneousLattice {
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {
-		Supracontext supra = emptySupracontext.getNext();
-		Supracontext supraPrev = emptySupracontext;
+		UnclassifiedSupra supra = emptySupracontext.getNext();
+		UnclassifiedSupra supraPrev = emptySupracontext;
 		while (supra != emptySupracontext) {
 			if (supra.getCount().equals(BigInteger.ZERO)) {
 				// linking supraPrev and supra.next() removes supra from the
@@ -189,9 +187,9 @@ public class HeterogeneousLattice {
 	 *         supracontextual lattice. From this, you can compute the
 	 *         analogical set.
 	 */
-	public List<Supracontext> getSupracontextList() {
-		List<Supracontext> supList = new LinkedList<Supracontext>();
-		Supracontext supra = emptySupracontext.getNext();
+	public List<UnclassifiedSupra> getSupracontextList() {
+		List<UnclassifiedSupra> supList = new LinkedList<UnclassifiedSupra>();
+		UnclassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			assert (!supra.getCount().equals(BigInteger.ZERO));
 			supList.add(supra);
@@ -207,7 +205,7 @@ public class HeterogeneousLattice {
 	 */
 	public String supraListToString() {
 		StringBuilder sb = new StringBuilder();
-		Supracontext supra = emptySupracontext.getNext();
+		UnclassifiedSupra supra = emptySupracontext.getNext();
 		if (supra == emptySupracontext)
 			return "EMPTY";
 		while (supra != emptySupracontext) {

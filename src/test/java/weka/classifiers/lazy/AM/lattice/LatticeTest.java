@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameter;
 
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
@@ -141,11 +141,11 @@ public class LatticeTest {
 				false);
 		SubcontextList subList = new SubcontextList(labeler, train);
 		Lattice testLattice = latticeConstructor.newInstance(subList);
-		List<Supracontext> actualSupras = testLattice.getSupracontextList();
+		List<ClassifiedSupra> actualSupras = testLattice.getSupracontextList();
 
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {
-			Supracontext supra = TestUtils.getSupraFromString(expected, train);
+			ClassifiedSupra supra = TestUtils.getSupraFromString(expected, train);
 			TestUtils.assertContainsSupra(actualSupras, supra);
 		}
 	}

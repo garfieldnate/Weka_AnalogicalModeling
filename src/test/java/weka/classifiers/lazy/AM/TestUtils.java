@@ -11,10 +11,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AM.lattice.LatticeNode;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -161,28 +163,24 @@ public class TestUtils {
 		return true;
 	}
 
-	public static void assertContainsSupra(List<Supracontext> supras,
-			Supracontext expected) {
-		for (Supracontext supra : supras)
+	public static <T extends Supracontext & LatticeNode<T>, S extends Supracontext & LatticeNode<S>> void assertContainsSupra(
+			List<T> supras, S expected) {
+		for (T supra : supras)
 			if (supraDeepEquals(supra, expected))
 				return;
 		fail("Could not find " + expected + " in " + supras);
 	}
 
-	public static boolean supraDeepEquals(Supracontext s1, Supracontext s2) {
-		if (s1.getOutcome() != s2.getOutcome())
+	public static <T extends Supracontext & LatticeNode<T>, S extends Supracontext & LatticeNode<S>> boolean supraDeepEquals(
+			T supra1, S supra2) {
+		if (!supra1.getCount().equals(supra2.getCount()))
 			return false;
 
-		if (s1.hasData() != s2.hasData())
-			return false;
-		if (!s1.getCount().equals(s2.getCount()))
-			return false;
-
-		return s1.getData().equals(s2.getData());
+		return supra1.getData().equals(supra2.getData());
 	}
 
 	/**
-	 * Create the {@link Supracontext} object specified by the input string.
+	 * Create the {@link ClassifiedSupra} object specified by the input string.
 	 * 
 	 * This method is somewhat slow due to restrictions of {@link Instance}, so
 	 * use it only in testing, and only with small datasets if possible.
@@ -190,7 +188,7 @@ public class TestUtils {
 	 * @param supraString
 	 *            A string representing the supracontext to be created. This
 	 *            should be in the same form as that produced by
-	 *            {@link Supracontext#toString()}.
+	 *            {@link ClassifiedSupra#toString()}.
 	 * @param data
 	 *            The dataset containing the instances specified in the
 	 *            Supracontext string. For example:
@@ -198,7 +196,7 @@ public class TestUtils {
 	 *            .
 	 * @return
 	 */
-	public static Supracontext getSupraFromString(String supraString,
+	public static ClassifiedSupra getSupraFromString(String supraString,
 			Instances data) {
 		String tempString;
 		int loc;
@@ -276,7 +274,7 @@ public class TestUtils {
 			subs.add(sub);
 		}
 
-		Supracontext supra = new Supracontext(subs, count);
+		ClassifiedSupra supra = new ClassifiedSupra(subs, count);
 		return supra;
 	}
 
@@ -297,7 +295,7 @@ public class TestUtils {
 		sub2.add(data.get(2));// K,U,V,U,0,A
 		final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
 		sub3.add(data.get(1));// U,U,V,I,0,A
-		Supracontext expectedSupra = new Supracontext(
+		ClassifiedSupra expectedSupra = new ClassifiedSupra(
 				new HashSet<Subcontext>() {
 					{
 						add(sub1);
@@ -307,7 +305,7 @@ public class TestUtils {
 				}, BigInteger.ONE);
 
 		String supraString = "[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]";
-		Supracontext actualSupra = getSupraFromString(supraString, data);
+		ClassifiedSupra actualSupra = getSupraFromString(supraString, data);
 		assertTrue("supra with multiple subs",
 				supraDeepEquals(expectedSupra, actualSupra));
 		assertTrue(
@@ -321,7 +319,7 @@ public class TestUtils {
 		final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
 		sub4.add(data.get(4)); // H,A,V,I,0,A
 		sub4.add(data.get(5)); // H,A,V,A,0,B
-		expectedSupra = new Supracontext(new HashSet<Subcontext>() {
+		expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub4);
 			}
@@ -339,7 +337,7 @@ public class TestUtils {
 		final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
 		sub5.add(data.get(1));// A,A,0,?,S,B
 		sub5.add(data.get(2));// also A,A,0,?,S,B
-		expectedSupra = new Supracontext(new HashSet<Subcontext>() {
+		expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub5);
 			}

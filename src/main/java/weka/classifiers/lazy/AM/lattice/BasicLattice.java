@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
 /**
@@ -46,7 +46,7 @@ public class BasicLattice implements Lattice {
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
-	private Map<Label, Supracontext> lattice;
+	private Map<Label, ClassifiedSupra> lattice;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -54,14 +54,14 @@ public class BasicLattice implements Lattice {
 	/**
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
-	private Supracontext emptySupracontext;
+	private ClassifiedSupra emptySupracontext;
 	// static {
 	// }
 
-	private static Supracontext heteroSupra;
+	private static ClassifiedSupra heteroSupra;
 	static {
 		// points to nothing, has no data or outcome.
-		heteroSupra = new Supracontext();
+		heteroSupra = new ClassifiedSupra();
 	}
 
 	/**
@@ -72,15 +72,10 @@ public class BasicLattice implements Lattice {
 	 *            the size of the exemplars
 	 */
 	private void init() {
-		emptySupracontext = new Supracontext();
+		emptySupracontext = new ClassifiedSupra();
 		emptySupracontext.setNext(emptySupracontext);
-		// set count to 1 so that cleanSupra doesn't destroy it
-		emptySupracontext.incrementCount();
 
-		// points to nothing
-		heteroSupra = new Supracontext();
-
-		lattice = new HashMap<Label, Supracontext>();
+		lattice = new HashMap<Label, ClassifiedSupra>();
 	}
 
 	/**
@@ -170,8 +165,8 @@ public class BasicLattice implements Lattice {
 			// don't decrement the count for the emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
-			lattice.put(label, new Supracontext(lattice.get(label), sub, index));
-			lattice.get(label).incrementCount();
+			lattice.put(label,
+					new ClassifiedSupra(lattice.get(label), sub, index));
 		}
 		return;
 	}
@@ -180,7 +175,7 @@ public class BasicLattice implements Lattice {
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {
-		for (Supracontext supra = emptySupracontext; supra.getNext() != emptySupracontext;) {
+		for (ClassifiedSupra supra = emptySupracontext; supra.getNext() != emptySupracontext;) {
 			if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
 				supra.setNext(supra.getNext().getNext());
 			} else
@@ -195,9 +190,9 @@ public class BasicLattice implements Lattice {
 	 * @see weka.classifiers.lazy.AM.lattice.LatticeImpl#getSupracontextList()
 	 */
 	@Override
-	public List<Supracontext> getSupracontextList() {
-		List<Supracontext> supList = new LinkedList<Supracontext>();
-		Supracontext supra = emptySupracontext.getNext();
+	public List<ClassifiedSupra> getSupracontextList() {
+		List<ClassifiedSupra> supList = new LinkedList<ClassifiedSupra>();
+		ClassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			supList.add(supra);
 			supra = supra.getNext();
@@ -213,7 +208,7 @@ public class BasicLattice implements Lattice {
 	@SuppressWarnings("unused")
 	private String dumpLattice() {
 		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<Label, Supracontext> e : lattice.entrySet()) {
+		for (Map.Entry<Label, ClassifiedSupra> e : lattice.entrySet()) {
 			sb.append(e.getKey());
 			sb.append(':');
 			if (e.getValue() == heteroSupra)
@@ -226,7 +221,7 @@ public class BasicLattice implements Lattice {
 	}
 
 	private boolean noZeroSupras() {
-		for (Supracontext supra : getSupracontextList()) {
+		for (ClassifiedSupra supra : getSupracontextList()) {
 			if (supra.getCount().equals(BigInteger.ZERO))
 				return false;
 		}

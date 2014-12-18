@@ -1,11 +1,10 @@
-Next: 
+Next: Write PartialSupra tests and rewrite ClassifiedSupra tests so that no extra main code is required (that constructor that takes data!).
+- also write supra-combining tests
 Later TODO:
-- use a linkedhashmap instead of having supras store pointers
-	- this would be a lattice, and the current lattice would be a lattice filler
+- change "outcome" to "class" everywhere
+- make sure hashcodes are being cached where it matters (Label!)
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
-- possibly create another class like Supracontext except it doesn't track heterogeneity; for use in the distributed implementation. This would save a little bit of time and might make it clearer that there is no outcome for a partial supracontext.
-- test the SupracontextCombiner class.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
 - parallelize creation and combination of hetero lattices

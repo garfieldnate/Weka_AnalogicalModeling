@@ -22,7 +22,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class SupracontextTest {
+public class ClassifiedSupraTest {
 	private static Instances dataset;
 	// contains subs with these outcomes: nondeterministic, nondeterminstic, 1,
 	// 0, 0
@@ -74,10 +74,9 @@ public class SupracontextTest {
 
 	@Test
 	public void testEmpty() {
-		Supracontext testSupra = new Supracontext();
-		assertEquals(testSupra.getCount(), BigInteger.ZERO);
+		ClassifiedSupra testSupra = new ClassifiedSupra();
 		assertTrue(testSupra.getData().isEmpty());
-		assertFalse(testSupra.hasData());
+		assertTrue(testSupra.isEmpty());
 		assertEquals(testSupra.getNext(), null);
 		// AMUtils.UNKNOWN is Double.NaN
 		assertTrue(Double.isNaN(testSupra.getOutcome()));
@@ -85,36 +84,23 @@ public class SupracontextTest {
 		assertTrue(testSupra.equals(testSupra));
 	}
 
-	@Test
-	public void testCount() {
-		Supracontext testSupra = new Supracontext();
-		testSupra.incrementCount();
-		assertEquals(testSupra.getCount(), BigInteger.ONE);
-		testSupra.decrementCount();
-		assertEquals(testSupra.getCount(), BigInteger.ZERO);
-
-		Supracontext testSupra2 = new Supracontext();
-		testSupra2.setCount(BigInteger.valueOf(5));
-		assertEquals(testSupra2.getCount(), BigInteger.valueOf(5));
-	}
-
 	@SuppressWarnings("serial")
 	@Test
 	public void testData() {
-		Supracontext testSupra = new Supracontext();
+		ClassifiedSupra testSupra = new ClassifiedSupra();
 		assertEquals(testSupra.getData(), new HashSet<Subcontext>());
 		Label label = new IntLabel(0b001, 3);
 		final Subcontext sub1 = new Subcontext(label);
 		final Subcontext sub2 = new Subcontext(label);
 		final Subcontext sub3 = new Subcontext(label);
-		testSupra = new Supracontext(new HashSet<Subcontext>() {
+		testSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 				add(sub3);
 			}
 		}, BigInteger.ZERO);
-		assertTrue(testSupra.hasData());
+		assertFalse(testSupra.isEmpty());
 		assertEquals(testSupra.getData(), new HashSet<Subcontext>() {
 			{
 				add(sub1);
@@ -137,31 +123,31 @@ public class SupracontextTest {
 	@Test
 	public void testWouldBeHeterogeneous() {
 		// one sub, even nondeterministic, does not make a supra heterogeneous
-		assertCausesHeterogeneity(new Supracontext(), subs.get(0), false);
-		assertCausesHeterogeneity(new Supracontext(), subs.get(2), false);
+		assertCausesHeterogeneity(new ClassifiedSupra(), subs.get(0), false);
+		assertCausesHeterogeneity(new ClassifiedSupra(), subs.get(2), false);
 
 		// two subs of same outcome do not make it heterogeneous
-		Supracontext testSupra = new Supracontext();
+		ClassifiedSupra testSupra = new ClassifiedSupra();
 		testSupra.add(subs.get(3));
 		assertCausesHeterogeneity(testSupra, subs.get(4), false);
 
 		// conditions for heterogeneity:
 		// nondeterministic sub with anything else
-		testSupra = new Supracontext();
+		testSupra = new ClassifiedSupra();
 		testSupra.add(subs.get(0));
 		assertCausesHeterogeneity(testSupra, subs.get(1), true);
 
-		testSupra = new Supracontext();
+		testSupra = new ClassifiedSupra();
 		testSupra.add(subs.get(0));
 		assertCausesHeterogeneity(testSupra, subs.get(2), true);
 
 		// subs with differing outcomes
-		testSupra = new Supracontext();
+		testSupra = new ClassifiedSupra();
 		testSupra.add(subs.get(2));
 		assertCausesHeterogeneity(testSupra, subs.get(3), true);
 
 		// supra is already heterogeneous
-		testSupra = new Supracontext();
+		testSupra = new ClassifiedSupra();
 		testSupra.add(subs.get(2));
 		testSupra.add(subs.get(3));
 		assertTrue(testSupra.isHeterogeneous());
@@ -170,8 +156,8 @@ public class SupracontextTest {
 		assertTrue(testSupra.isHeterogeneous());
 	}
 
-	private void assertCausesHeterogeneity(Supracontext supra, Subcontext sub,
-			boolean causes) {
+	private void assertCausesHeterogeneity(ClassifiedSupra supra,
+			Subcontext sub, boolean causes) {
 		assertFalse(supra.isHeterogeneous());
 		assertEquals(supra.wouldBeHetero(sub), causes);
 		supra.add(sub);
@@ -184,59 +170,60 @@ public class SupracontextTest {
 		Set<Subcontext> subSet = new HashSet<>();
 
 		// empty supra is never heterogeneous
-		assertFalse(new Supracontext(subSet, count).isHeterogeneous());
+		assertFalse(new ClassifiedSupra(subSet, count).isHeterogeneous());
 
 		// supra with two subs of the same outcome is not heterogeneous
 		subSet = new HashSet<>();
 		subSet.add(subs.get(3));
 		subSet.add(subs.get(4));
-		assertFalse(new Supracontext(subSet, count).isHeterogeneous());
+		assertFalse(new ClassifiedSupra(subSet, count).isHeterogeneous());
 
 		// conditions for heterogeneity:
 		// nondeterministic sub with anything else
 		subSet = new HashSet<>();
 		subSet.add(subs.get(0));
 		subSet.add(subs.get(1));
-		assertTrue(new Supracontext(subSet, count).isHeterogeneous());
+		assertTrue(new ClassifiedSupra(subSet, count).isHeterogeneous());
 
 		subSet = new HashSet<>();
 		subSet.add(subs.get(0));
 		subSet.add(subs.get(2));
-		assertTrue(new Supracontext(subSet, count).isHeterogeneous());
+		assertTrue(new ClassifiedSupra(subSet, count).isHeterogeneous());
 
 		// subs with differing outcomes
 		subSet = new HashSet<>();
 		subSet.add(subs.get(2));
 		subSet.add(subs.get(3));
-		assertTrue(new Supracontext(subSet, count).isHeterogeneous());
+		assertTrue(new ClassifiedSupra(subSet, count).isHeterogeneous());
 	}
 
 	@SuppressWarnings("serial")
 	@Test
 	public void testEquals() {
-		Supracontext testSupra = new Supracontext();
+		ClassifiedSupra testSupra = new ClassifiedSupra();
 		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
 		sub1.add(dataset.get(0));
 		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
 		sub2.add(dataset.get(1));
 
 		// equality depends only on the exact subcontexts contained
-		Supracontext supra = new Supracontext(new HashSet<Subcontext>() {
+		ClassifiedSupra supra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
 			}
 		}, BigInteger.ZERO);
 		assertNotEquals(supra, testSupra);
-		Supracontext testSupra2 = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-			}
-		}, BigInteger.ZERO);
+		ClassifiedSupra testSupra2 = new ClassifiedSupra(
+				new HashSet<Subcontext>() {
+					{
+						add(sub1);
+						add(sub2);
+					}
+				}, BigInteger.ZERO);
 		assertEquals(testSupra2, supra);
 		// count and outcome are not considered
-		testSupra2 = new Supracontext(new HashSet<Subcontext>() {
+		testSupra2 = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
@@ -248,7 +235,7 @@ public class SupracontextTest {
 	// Test the constructor that creates a new supra from an old one
 	@SuppressWarnings("serial")
 	public void testGenerationalConstructor() {
-		Supracontext testSupra = new Supracontext();
+		ClassifiedSupra testSupra = new ClassifiedSupra();
 		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
 		sub1.add(dataset.get(0));
 		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
@@ -256,12 +243,13 @@ public class SupracontextTest {
 		sub2.add(dataset.get(2));
 		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
 
-		Supracontext testSupra1 = new Supracontext(testSupra, sub1, 99);
-		Supracontext expected = new Supracontext(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-			}
-		}, BigInteger.ZERO);
+		ClassifiedSupra testSupra1 = new ClassifiedSupra(testSupra, sub1, 99);
+		ClassifiedSupra expected = new ClassifiedSupra(
+				new HashSet<Subcontext>() {
+					{
+						add(sub1);
+					}
+				}, BigInteger.ZERO);
 		assertEquals(testSupra1, expected);
 		assertEquals(testSupra1, 99);
 		assertTrue(testSupra.getNext() == testSupra1);
@@ -269,9 +257,9 @@ public class SupracontextTest {
 		assertEquals(testSupra.getOutcome(), sub1.getOutcome(), DELTA);
 
 		testSupra1.incrementCount();
-		Supracontext testSupra2 = new Supracontext(testSupra1, sub2, 88);
-		expected = new Supracontext();
-		expected = new Supracontext(new HashSet<Subcontext>() {
+		ClassifiedSupra testSupra2 = new ClassifiedSupra(testSupra1, sub2, 88);
+		expected = new ClassifiedSupra();
+		expected = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub2);
@@ -283,9 +271,9 @@ public class SupracontextTest {
 		assertTrue(testSupra2.getNext() == null);
 		assertEquals(testSupra2.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
 
-		Supracontext testSupra3 = new Supracontext(testSupra1, sub3, 77);
-		expected = new Supracontext();
-		expected = new Supracontext(new HashSet<Subcontext>() {
+		ClassifiedSupra testSupra3 = new ClassifiedSupra(testSupra1, sub3, 77);
+		expected = new ClassifiedSupra();
+		expected = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
 				add(sub3);
