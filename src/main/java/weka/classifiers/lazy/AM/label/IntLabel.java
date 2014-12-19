@@ -20,6 +20,7 @@ public class IntLabel extends Label {
 	public static final int MAX_CARDINALITY = 32;
 	private final int labelBits;
 	private final int card;
+	private int hashCode = -1;
 
 	/**
 	 * 
@@ -107,7 +108,10 @@ public class IntLabel extends Label {
 
 	@Override
 	public int hashCode() {
-		return SEED * labelBits() + getCardinality();
+		if (hashCode != -1)
+			return hashCode;
+		hashCode = SEED * labelBits() + getCardinality();
+		return hashCode;
 	}
 
 	@Override

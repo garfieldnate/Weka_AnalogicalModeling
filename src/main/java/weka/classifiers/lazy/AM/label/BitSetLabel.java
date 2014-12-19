@@ -15,6 +15,7 @@ import java.util.List;
 public class BitSetLabel extends Label {
 	private final BitSet labelBits;
 	private final int card;
+	private int hashCode = -1;
 
 	/**
 	 * Create a new label by storing match/mismatch information in the given
@@ -62,7 +63,10 @@ public class BitSetLabel extends Label {
 
 	@Override
 	public int hashCode() {
-		return SEED * getCardinality() + labelBits.hashCode();
+		if (hashCode != -1)
+			return hashCode;
+		hashCode = SEED * getCardinality() + labelBits.hashCode();
+		return hashCode;
 	}
 
 	@Override
