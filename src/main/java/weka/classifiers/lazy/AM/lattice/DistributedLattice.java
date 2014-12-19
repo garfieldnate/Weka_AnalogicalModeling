@@ -21,10 +21,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
-import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
@@ -34,9 +40,6 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * 
  */
 public class DistributedLattice implements Lattice {
-
-	private final List<HeterogeneousLattice> hlattices;
-
 	private final List<ClassifiedSupra> supras;
 
 	/**
@@ -57,29 +60,54 @@ public class DistributedLattice implements Lattice {
 	 * 
 	 * @param subList
 	 *            list of Subcontexts to add to the lattice
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
-	public DistributedLattice(SubcontextList subList) {
+	public DistributedLattice(SubcontextList subList)
+			throws InterruptedException, ExecutionException {
 		Labeler labeler = subList.getLabeler();
 
-		// fill each heterogeneous lattice with a given label partition
-		hlattices = new ArrayList<HeterogeneousLattice>(labeler.numPartitions());
-		for (int i = 0; i < labeler.numPartitions(); i++) {
-			// TODO: spawn task for simultaneous filling
-			hlattices.add(new HeterogeneousLattice(subList, i));
+		ExecutorService executor = Executors.newCachedThreadPool();
+		// first, create heterogeneous lattices by splitting the labels
+		// contained in the subcontext list
+		CompletionService<List<UnclassifiedSupra>> taskCompletionService = new ExecutorCompletionService<>(
+				executor);
+		int numLattices = labeler.numPartitions();
+		for (int i = 0; i < numLattices; i++) {
+			// fill each heterogeneous lattice with a given label partition
+			taskCompletionService.submit(new LatticeFiller(subList, i));
 		}
 
-		// then combine them into one non-heterogeneous lattice; all but the
-		// last combination will create another heterogeneous lattice. The last
-		// combination will remove heterogeneous, non-deterministic
-		// supracontexts.
-		List<UnclassifiedSupra> partialSupras = hlattices.get(0)
-				.getSupracontextList();
-		for (int i = 1; i < hlattices.size() - 1; i++) {
-			partialSupras = combine(partialSupras, hlattices.get(i)
-					.getSupracontextList());
+		// then combine the resulting unclassified Supracontexts into classified
+		// ones;
+		List<UnclassifiedSupra> unclassifiedSupras = taskCompletionService
+				.take().get();
+		// the first combinations create more unclassified supras
+		for (int i = 1; i < numLattices - 1; i++) {
+			unclassifiedSupras = combine(unclassifiedSupras,
+					taskCompletionService.take().get());
 		}
-		supras = combineFinal(partialSupras, hlattices
-				.get(hlattices.size() - 1).getSupracontextList());
+		// the final combination creates classified supras
+		supras = combineFinal(unclassifiedSupras, taskCompletionService.take()
+				.get());
+	}
+
+	class LatticeFiller implements Callable<List<UnclassifiedSupra>> {
+		private final SubcontextList subList;
+		private final int partitionIndex;
+
+		LatticeFiller(SubcontextList subList, int partitionIndex) {
+			this.subList = subList;
+			this.partitionIndex = partitionIndex;
+		}
+
+		@Override
+		public List<UnclassifiedSupra> call() throws Exception {
+			HeterogeneousLattice lattice = new HeterogeneousLattice(subList,
+					partitionIndex);
+			return lattice.getSupracontextList();
+		}
+
 	}
 
 	/**
@@ -92,8 +120,7 @@ public class DistributedLattice implements Lattice {
 	 * @return
 	 */
 	private List<UnclassifiedSupra> combine(
-			List<UnclassifiedSupra> partialSupras,
-			List<UnclassifiedSupra> list) {
+			List<UnclassifiedSupra> partialSupras, List<UnclassifiedSupra> list) {
 		UnclassifiedSupra newSupra;
 		List<UnclassifiedSupra> combinedList = new LinkedList<UnclassifiedSupra>();
 		for (UnclassifiedSupra supra1 : partialSupras) {
@@ -117,8 +144,7 @@ public class DistributedLattice implements Lattice {
 	 * @return
 	 */
 	private List<ClassifiedSupra> combineFinal(
-			List<UnclassifiedSupra> partialSupras,
-			List<UnclassifiedSupra> list) {
+			List<UnclassifiedSupra> partialSupras, List<UnclassifiedSupra> list) {
 		ClassifiedSupra supra;
 		// the same supracontext may be formed via different combinations, so we
 		// use this as a set (Set doesn't provide a get(Object) method);

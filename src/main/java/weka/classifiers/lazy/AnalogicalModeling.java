@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
@@ -164,8 +165,11 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *            Item to make context base on
 	 * @return Analogical set which holds results of the classification for the
 	 *         given item
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
-	private AnalogicalSet classify(Instance testItem) {
+	private AnalogicalSet classify(Instance testItem)
+			throws InterruptedException, ExecutionException {
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 

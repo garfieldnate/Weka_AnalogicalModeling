@@ -18,9 +18,10 @@ public class IntLabel extends Label {
 	 * number of bits in an integer in Java.
 	 */
 	public static final int MAX_CARDINALITY = 32;
+
 	private final int labelBits;
 	private final int card;
-	private int hashCode = -1;
+	private final int hashCode;
 
 	/**
 	 * 
@@ -32,6 +33,7 @@ public class IntLabel extends Label {
 	public IntLabel(int l, int c) {
 		labelBits = l;
 		card = c;
+		hashCode = calculateHashCode();
 	}
 
 	/**
@@ -41,10 +43,13 @@ public class IntLabel extends Label {
 	 */
 	public IntLabel(Label other) {
 		// fast copy if the other label is an IntLabel
+		// TODO: since this is immutable, wouldn't it make more sense to return
+		// it (make a factory method instead)?
 		if (other instanceof IntLabel) {
 			IntLabel otherIntLabel = (IntLabel) other;
 			labelBits = otherIntLabel.labelBits;
 			card = otherIntLabel.card;
+			hashCode = otherIntLabel.hashCode;
 			return;
 		}
 		if (other.getCardinality() > MAX_CARDINALITY)
@@ -58,6 +63,12 @@ public class IntLabel extends Label {
 			if (!other.matches(i))
 				labelBits |= (1 << i);
 		this.labelBits = labelBits;
+		hashCode = calculateHashCode();
+	}
+
+	private int calculateHashCode() {
+		int seed = 37;
+		return seed * labelBits() + getCardinality();
 	}
 
 	/**
@@ -104,13 +115,8 @@ public class IntLabel extends Label {
 				&& otherLabel.getCardinality() == getCardinality();
 	}
 
-	private static final int SEED = 37;
-
 	@Override
 	public int hashCode() {
-		if (hashCode != -1)
-			return hashCode;
-		hashCode = SEED * labelBits() + getCardinality();
 		return hashCode;
 	}
 

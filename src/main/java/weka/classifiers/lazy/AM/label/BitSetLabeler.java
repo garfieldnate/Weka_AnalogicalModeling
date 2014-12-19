@@ -13,13 +13,17 @@ import weka.core.Instance;
  * 
  */
 public class BitSetLabeler extends Labeler {
+	private final Partitioner[] partitioners;
 
 	public BitSetLabeler(MissingDataCompare mdc, Instance test,
 			boolean ignoreUnknowns) {
 		super(mdc, test, ignoreUnknowns);
+		partitioners = new Partitioner[numPartitions()];
+		Partition[] spans = partitions();
+		for (int i = 0; i < numPartitions(); i++) {
+			partitioners[i] = new Partitioner(spans[i]);
+		}
 	}
-
-	private Partitioner[] partitions;
 
 	@Override
 	public Label label(Instance data) {
@@ -71,24 +75,7 @@ public class BitSetLabeler extends Labeler {
 					+ label.getClass().getCanonicalName());
 
 		// create and cache the masks if they have not be created yet
-		Partitioner[] partitions = getPartitions();
-
-		return partitions[partitionIndex].extract((BitSetLabel) label);
-	}
-
-	/**
-	 * @return The partition objects used to partition labels from this labeler.
-	 */
-	private Partitioner[] getPartitions() {
-		// partitions are cached
-		if (partitions == null) {
-			partitions = new Partitioner[numPartitions()];
-			Partition[] spans = partitions();
-			for (int i = 0; i < numPartitions(); i++) {
-				partitions[i] = new Partitioner(spans[i]);
-			}
-		}
-		return partitions;
+		return partitioners[partitionIndex].extract((BitSetLabel) label);
 	}
 
 	/**

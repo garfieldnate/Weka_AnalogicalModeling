@@ -38,7 +38,7 @@ import weka.core.Instance;
  * @author Nathan Glenn
  */
 public class IntLabeler extends Labeler {
-	private BitMask[] masks;
+	private final BitMask[] masks;
 
 	/**
 	 * {@inheritDoc}
@@ -56,6 +56,11 @@ public class IntLabeler extends Labeler {
 					"Cardinality of instance too high (" + getCardinality()
 							+ "); max cardinality for this labeler is "
 							+ IntLabel.MAX_CARDINALITY);
+		masks = new BitMask[numPartitions()];
+		Partition[] spans = partitions();
+		for (int i = 0; i < numPartitions(); i++) {
+			masks[i] = new BitMask(spans[i]);
+		}
 	}
 
 	@Override
@@ -105,23 +110,7 @@ public class IntLabeler extends Labeler {
 
 		// create and cache the masks if they have not be created yet
 		// loop through the bits and set the unmatched ones
-		BitMask[] masks = getMasks();
 		return masks[partitionIndex].mask(intLabel);
-	}
-
-	/**
-	 * @return The partition objects used to partition labels from this labeler.
-	 */
-	private BitMask[] getMasks() {
-		// masks are cached
-		if (masks == null) {
-			masks = new BitMask[numPartitions()];
-			Partition[] spans = partitions();
-			for (int i = 0; i < numPartitions(); i++) {
-				masks[i] = new BitMask(spans[i]);
-			}
-		}
-		return masks;
 	}
 
 	/**
