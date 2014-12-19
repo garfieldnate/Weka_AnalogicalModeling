@@ -34,7 +34,7 @@ import weka.core.Instances;
  * 
  * @author <a href="mailto:garfieldnate@gmail.com">Nate Glenn</a>
  */
-//TODO: see if this can be parameterized for parallel/non-parallel
+// TODO: see if this can be parameterized for parallel/non-parallel
 public class AnalogicalModelingTest extends AbstractClassifierTest {
 	public AnalogicalModelingTest(String name) {
 		super(name);
@@ -56,23 +56,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		train.remove(0);
 		AnalogicalModeling am = getClassifier();
 		am.buildClassifier(train);
-		
-		double[] prediction = am.distributionForInstance(test);
-		assertEquals("distribution given for two classes", prediction.length, 2);
-		// test to 10 decimals places, the number used by AMUtils.matchContext
-		assertEquals(0.6923076923076923, prediction[0], DELTA);
-		assertEquals(0.3076923076923077, prediction[1], DELTA);
-	}
 
-	@Test
-	public void testChapter3dataParallel() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-		Instance test = train.get(0);
-		train.remove(0);
-		AnalogicalModeling am = getClassifier();
-		am.setParallel(true);
-		am.buildClassifier(train);
-		
 		double[] prediction = am.distributionForInstance(test);
 		assertEquals("distribution given for two classes", prediction.length, 2);
 		// test to 10 decimals places, the number used by AMUtils.matchContext
@@ -82,7 +66,9 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
 	/**
 	 * Test accuracy with the finnverb dataset, a real data set with 10 features
-	 * and lots of unknowns.
+	 * and lots of unknowns. First check the class pointers on one
+	 * classification, then do a leave-one-out classification for the whole set
+	 * and verify the accuracy.
 	 * 
 	 * @throws Exception
 	 */
@@ -98,12 +84,15 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		}, leaveOneOut(train, 15).getClassPointers());
 
 		int correct = 0;
-		for(int i = 0; i < train.numInstances(); i++){
+		for (int i = 0; i < train.numInstances(); i++) {
 			AnalogicalSet set = leaveOneOut(train, i);
-			if(set.getPredictedClasses().contains(train.get(i).stringValue(train.classIndex())))
+			if (set.getPredictedClasses().contains(
+					train.get(i).stringValue(train.classIndex())))
 				correct++;
 		}
-		assertEquals("Leave-one-out accuracy when classifying of finnverb dataset", correct, 160);
+		assertEquals(
+				"Leave-one-out accuracy when classifying of finnverb dataset",
+				correct, 160);
 	}
 
 	private AnalogicalSet leaveOneOut(Instances data, int index)

@@ -18,9 +18,9 @@ public abstract class Labeler {
 	private final Instance testInstance;
 	private final Set<Integer> ignoreSet;
 	/**
-	 * The default (max) number of partitions to split labels into
+	 * The default (max) size of a label partition
 	 */
-	private static final int NUM_PARTITIONS = 4;
+	public static final int PARTITION_SIZE = 5;
 
 	/**
 	 * 
@@ -134,11 +134,10 @@ public abstract class Labeler {
 	 * @return The number of label partitions available via {@link #partition}
 	 */
 	public int numPartitions() {
-		// just for now, we use a maximum of 4 partitions
-		if (getCardinality() < NUM_PARTITIONS)
-			return getCardinality();
+		if (getCardinality() < PARTITION_SIZE)
+			return 1;
 		else
-			return NUM_PARTITIONS;
+			return (int) Math.ceil(getCardinality() / (double) PARTITION_SIZE);
 	}
 
 	/**
@@ -170,8 +169,8 @@ public abstract class Labeler {
 	 * 
 	 */
 	protected class Partition {
-		private int startIndex;
-		private int cardinality;
+		private final int startIndex;
+		private final int cardinality;
 
 		protected Partition(int s, int l) {
 			startIndex = s;

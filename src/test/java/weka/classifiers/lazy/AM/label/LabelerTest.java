@@ -165,17 +165,24 @@ public class LabelerTest {
 
 	@Test
 	public void testNumPartitions() throws Exception {
-		// current behavior is to always use 4 partitions unless cardinality is
-		// too low
-		Instances data = TestUtils.getDataSet(TestUtils.FINNVERB);
+		// current behavior is to always limit the size of a label to 5
+		// 3 features, 1 partition
+		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.VARIABLE, data.get(0), false);
-		assertEquals(labeler.numPartitions(), 4);
+		assertEquals(1, labeler.numPartitions());
 
-		data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		// 8 features, 2 partitions
+		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "1-2");
 		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE,
 				data.get(0), false);
-		assertEquals(labeler.numPartitions(), 3);
+		assertEquals(2, labeler.numPartitions());
+
+		// 10 features, 2 partitions
+		data = TestUtils.getDataSet(TestUtils.FINNVERB);
+		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE,
+				data.get(0), false);
+		assertEquals(2, labeler.numPartitions());
 	}
 
 	/**
@@ -189,11 +196,17 @@ public class LabelerTest {
 		Labeler labeler = labelerConstructor.newInstance(
 				MissingDataCompare.VARIABLE, data.get(0), false);
 		Partition[] partitions = labeler.partitions();
-		assertEquals(partitions.length, 4);
-		assertPartitionEquals(partitions[0], 0, 3);
-		assertPartitionEquals(partitions[1], 3, 3);
-		assertPartitionEquals(partitions[2], 6, 2);
-		assertPartitionEquals(partitions[3], 8, 2);
+		assertEquals(partitions.length, 2);
+		assertPartitionEquals(partitions[0], 0, 5);
+		assertPartitionEquals(partitions[1], 5, 5);
+
+		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "1-2");
+		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE,
+				data.get(0), false);
+		partitions = labeler.partitions();
+		assertEquals(2, partitions.length);
+		assertPartitionEquals(partitions[0], 0, 4);
+		assertPartitionEquals(partitions[1], 4, 4);
 	}
 
 	private void assertPartitionEquals(Partition partition, int startIndex,
@@ -214,12 +227,10 @@ public class LabelerTest {
 				MissingDataCompare.VARIABLE, data.get(0), false);
 		Label label = labeler.label(data.get(1));
 		assertLabelEquals(label, new IntLabel(0b0000110010, 10));
-		assertEquals(labeler.numPartitions(), 4);
+		assertEquals(labeler.numPartitions(), 2);
 
-		assertLabelEquals(labeler.partition(label, 0), new IntLabel(0b010, 3));
-		assertLabelEquals(labeler.partition(label, 1), new IntLabel(0b110, 3));
-		assertLabelEquals(labeler.partition(label, 2), new IntLabel(0b00, 2));
-		assertLabelEquals(labeler.partition(label, 3), new IntLabel(0b00, 2));
+		assertLabelEquals(labeler.partition(label, 0), new IntLabel(0b10010, 5));
+		assertLabelEquals(labeler.partition(label, 1), new IntLabel(0b00001, 5));
 	}
 
 	private void assertLabelEquals(String message, Label firstLabel,

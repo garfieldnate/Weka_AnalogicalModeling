@@ -14,9 +14,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.IntLabeler;
+import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Instance;
@@ -135,18 +137,43 @@ public class LatticeTest {
 			String[] expectedSupras) throws InstantiationException,
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException, SecurityException {
-		Instance test = train.get(testIndex);
+		final Instance test = train.get(testIndex);
 		train.remove(testIndex);
-		Labeler labeler = new IntLabeler(MissingDataCompare.VARIABLE, test,
-				false);
-		SubcontextList subList = new SubcontextList(labeler, train);
+		SubcontextList subList = new SubcontextList(getFullSplitLabeler(test),
+				train);
 		Lattice testLattice = latticeConstructor.newInstance(subList);
 		List<ClassifiedSupra> actualSupras = testLattice.getSupracontextList();
 
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {
-			ClassifiedSupra supra = TestUtils.getSupraFromString(expected, train);
+			ClassifiedSupra supra = TestUtils.getSupraFromString(expected,
+					train);
 			TestUtils.assertContainsSupra(actualSupras, supra);
 		}
+	}
+
+	// create a labeler which splits labels into labels of cardinality 1
+	private Labeler getFullSplitLabeler(final Instance test) {
+		Labeler labeler = new Labeler(MissingDataCompare.VARIABLE, test, false) {
+			Labeler internal = new IntLabeler(MissingDataCompare.VARIABLE,
+					test, false);
+
+			@Override
+			public Label label(Instance data) {
+				return internal.label(data);
+			}
+
+			@Override
+			public Label partition(Label label, int partitionIndex) {
+				int labelBit = label.matches(partitionIndex) ? 0 : 1;
+				return new IntLabel(labelBit, 1);
+			}
+
+			@Override
+			public int numPartitions() {
+				return getCardinality();
+			}
+		};
+		return labeler;
 	}
 }

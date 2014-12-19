@@ -180,7 +180,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
 		// 2. Place subcontexts into a supracontextual lattice
 		Lattice lattice;
-		if (m_parallel) {
+		if (labeler.numPartitions() > 1) {
 			lattice = new DistributedLattice(subList);
 		} else {
 			if (getDebug())
@@ -202,8 +202,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * By default, we use quadratic calculation of pointer values.
 	 */
 	private boolean m_linearCount = false;
-
-	private boolean m_parallel = false;
 
 	private boolean m_ignoreUnknowns = false;
 
@@ -232,14 +230,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	public String linearCountTipText() {
 		return "Set this to true if counting of pointers within homogeneous supracontexts should be "
 				+ "done linearly instead of quadratically.";
-	}
-
-	public boolean getParallel() {
-		return m_parallel;
-	}
-
-	public void setParallel(boolean parallel) {
-		m_parallel = parallel;
 	}
 
 	public String parallelTipText() {
