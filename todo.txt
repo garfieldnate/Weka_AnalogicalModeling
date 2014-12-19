@@ -1,15 +1,17 @@
-Next: Write PartialSupra tests and rewrite ClassifiedSupra tests so that no extra main code is required (that constructor that takes data!).
-- also write supra-combining tests
+Next: Write PartialSupra tests and rewrite ClassifiedSupra tests 
+	- so that no extra main code is required
+	- maybe write a help for creating them from sub sets?
+	- don't forget supra-combining tests
 Later TODO:
 - change "outcome" to "class" everywhere
 - make sure hashcodes are being cached where it matters (Label!)
+- make splitting smarter so that the lattice array can't get too big
+	- if we want each lattice to be cardinality 4, then divide by 4 and that's the number of Hetero's to make.
+- parallelize creation and combination of hetero lattices
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
-- parallelize creation and combination of hetero lattices
-- make splitting smarter so that the lattice array can't get too big
-	- if we want each lattice to be cardinality 4, then divide by 4 and that's the number of Hetero's to make.
 
 Engineering Tasks
 - profile with big data sets

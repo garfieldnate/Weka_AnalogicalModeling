@@ -28,7 +28,10 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.label.BitSetLabeler;
+import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.IntLabeler;
+import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.classifiers.lazy.AM.lattice.DistributedLattice;
@@ -166,12 +169,15 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		IntLabeler labeler = new IntLabeler(mdc, testItem, m_ignoreUnknowns);
+		// int labels are faster and smaller, so use them if the cardinality
+		// turns out to be small enough
+		Labeler labeler = new BitSetLabeler(mdc, testItem, m_ignoreUnknowns);
+		if (labeler.getCardinality() <= IntLabel.MAX_CARDINALITY)
+			labeler = new IntLabeler(mdc, testItem, m_ignoreUnknowns);
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(labeler,
-				trainingExemplars);
+		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
 		// 2. Place subcontexts into a supracontextual lattice
 		Lattice lattice;
 		if (m_parallel) {
@@ -191,8 +197,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	// ////OPTION STORAGE VARIABLES
-	
-	
+
 	/**
 	 * By default, we use quadratic calculation of pointer values.
 	 */
@@ -228,25 +233,27 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		return "Set this to true if counting of pointers within homogeneous supracontexts should be "
 				+ "done linearly instead of quadratically.";
 	}
-	
-	public boolean getParallel(){
+
+	public boolean getParallel() {
 		return m_parallel;
 	}
-	public void setParallel(boolean parallel){
+
+	public void setParallel(boolean parallel) {
 		m_parallel = parallel;
 	}
-	
+
 	public String parallelTipText() {
 		return "set to true if the distributed lattice algorithm should be used.";
 	}
-	
-	public boolean getIgnoreUnknowns(){
-		return m_ignoreUnknowns ;
+
+	public boolean getIgnoreUnknowns() {
+		return m_ignoreUnknowns;
 	}
-	public void setIgnoreUnknowns(boolean parallel){
+
+	public void setIgnoreUnknowns(boolean parallel) {
 		m_ignoreUnknowns = parallel;
 	}
-	
+
 	public String ignoreUnknownsTipText() {
 		return "set to true attributes with unknown values in the test item should be ignored";
 	}
@@ -635,7 +642,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 		double[] classProbability = new double[trainingInstances.numClasses()];
 		int index = 0;
-		for (Entry<String, BigDecimal> entry : as.getClassLikelihood().entrySet())
+		for (Entry<String, BigDecimal> entry : as.getClassLikelihood()
+				.entrySet())
 			classProbability[index++] = entry.getValue().doubleValue();
 
 		return classProbability;

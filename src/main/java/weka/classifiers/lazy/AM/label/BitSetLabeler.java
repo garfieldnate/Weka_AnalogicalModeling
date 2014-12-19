@@ -73,8 +73,6 @@ public class BitSetLabeler extends Labeler {
 		// create and cache the masks if they have not be created yet
 		Partitioner[] partitions = getPartitions();
 
-		// TODO: would it be possible/worth while to create an IntLabel if
-		// the cardinality were small enough?
 		return partitions[partitionIndex].extract((BitSetLabel) label);
 	}
 
@@ -105,13 +103,17 @@ public class BitSetLabeler extends Labeler {
 			cardinality = s.getCardinality();
 		}
 
-		public BitSetLabel extract(BitSetLabel label) {
+		public Label extract(BitSetLabel label) {
 			BitSet newLabel = new BitSet(cardinality);
 			// loop through the bits and set the unmatched ones
 			for (int i = 0; i < cardinality; i++) {
 				if (!label.matches(i + startIndex))
 					newLabel.set(i);
 			}
+			// int labels are faster and smaller, so use them if the cardinality
+			// turns out to be small enough
+			if (cardinality <= IntLabel.MAX_CARDINALITY)
+				return new IntLabel(new BitSetLabel(newLabel, cardinality));
 			return new BitSetLabel(newLabel, cardinality);
 		}
 
