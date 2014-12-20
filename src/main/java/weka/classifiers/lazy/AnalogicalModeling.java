@@ -574,9 +574,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		// test data against capabilities
 		getCapabilities().testWithFail(instances);
 
-		if (instances.numAttributes() > 33)
-			throw new IllegalArgumentException(
-					"The AnalogicalModeling classifier can only handle 33 attributes (including the class)!");
 		// remove instances with missing class value,
 		// but don’t modify original data
 		instances = new Instances(instances);
