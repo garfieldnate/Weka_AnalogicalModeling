@@ -27,6 +27,7 @@ import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
 /**
@@ -165,8 +166,8 @@ public class BasicLattice implements Lattice {
 			// don't decrement the count for the emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
-			lattice.put(label,
-					new ClassifiedSupra(lattice.get(label), sub, index));
+			lattice.put(label, new ClassifiedSupra(lattice.get(label), sub,
+					index));
 		}
 		return;
 	}
@@ -184,14 +185,9 @@ public class BasicLattice implements Lattice {
 		assert (noZeroSupras());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see weka.classifiers.lazy.AM.lattice.LatticeImpl#getSupracontextList()
-	 */
 	@Override
-	public List<ClassifiedSupra> getSupracontextList() {
-		List<ClassifiedSupra> supList = new LinkedList<ClassifiedSupra>();
+	public List<Supracontext> getSupracontextList() {
+		List<Supracontext> supList = new LinkedList<Supracontext>();
 		ClassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			supList.add(supra);
@@ -221,7 +217,7 @@ public class BasicLattice implements Lattice {
 	}
 
 	private boolean noZeroSupras() {
-		for (ClassifiedSupra supra : getSupracontextList()) {
+		for (Supracontext supra : getSupracontextList()) {
 			if (supra.getCount().equals(BigInteger.ZERO))
 				return false;
 		}

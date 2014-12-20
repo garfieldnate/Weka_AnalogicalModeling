@@ -42,9 +42,6 @@ public class ClassifiedSupra extends Supracontext implements
 	private double outcome = Double.NaN;
 	// the contained subcontexts
 	private Set<Subcontext> data = new HashSet<>();
-	// the number of supracontexts sharing this list of subcontexts, or the
-	// number of arrows pointing to it from the supracontextual lattice
-	private BigInteger count;
 	// pointer which makes a circular linked list out of the lists of
 	// subcontext. Using a circular linked list allows optimizations that we
 	// will see later.
@@ -57,7 +54,6 @@ public class ClassifiedSupra extends Supracontext implements
 	public ClassifiedSupra() {
 		data = new HashSet<Subcontext>();
 		index = -1;
-		count = BigInteger.ONE;
 	}
 
 	/**
@@ -75,9 +71,9 @@ public class ClassifiedSupra extends Supracontext implements
 			throw new IllegalArgumentException("data must not be null");
 		if (count == null)
 			throw new IllegalArgumentException("count must not be null");
-		this.count = count;
 		for (Subcontext sub : data)
 			add(sub);
+		this.count = count;
 		index = -1;
 	}
 
@@ -97,7 +93,6 @@ public class ClassifiedSupra extends Supracontext implements
 		index = ind;
 		data = new HashSet<>(other.getData());
 		outcome = other.getOutcome();
-		count = BigInteger.ONE;
 		add(sub);
 		setNext(other.getNext());
 		other.setNext(this);
@@ -141,59 +136,6 @@ public class ClassifiedSupra extends Supracontext implements
 	@Override
 	public int getIndex() {
 		return index;
-	}
-
-	/**
-	 * 
-	 * @return the number of supracontexts sharing this list of subcontexts, or
-	 *         the number of arrows pointing to it from the supracontextual
-	 *         lattice
-	 */
-	@Override
-	public BigInteger getCount() {
-		return count;
-	}
-
-	/**
-	 * Set the count of the supra.
-	 * 
-	 * @param count
-	 *            the count
-	 * @throws IllegalArgumentException
-	 *             if c is null
-	 */
-	@Override
-	public void setCount(BigInteger count) {
-		if (count == null)
-			throw new IllegalArgumentException("count must not be null");
-		if (count.compareTo(BigInteger.ZERO) < 0)
-			throw new IllegalArgumentException(
-					"count must not be less than zero");
-		this.count = count;
-	}
-
-	/**
-	 * Increases count by one; uses this when another lattice index is assigned
-	 * to this supracontext.
-	 */
-	@Override
-	public void incrementCount() {
-		count = count.add(BigInteger.ONE);
-	}
-
-	/**
-	 * Decreases the count by one; if this reaches 0, then this Supracontext
-	 * should be destroyed (by the caller), as nothing in the lattice points to
-	 * it anymore.
-	 * 
-	 * @throws IllegalStateException
-	 *             if the count is already zero.
-	 */
-	@Override
-	public void decrementCount() {
-		if (count.equals(BigInteger.ZERO))
-			throw new IllegalStateException("Count cannot be less than zero");
-		count = count.subtract(BigInteger.ONE);
 	}
 
 	/**

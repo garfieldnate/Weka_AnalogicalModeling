@@ -16,7 +16,6 @@ import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.Label;
-import weka.classifiers.lazy.AM.lattice.LatticeNode;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -163,16 +162,16 @@ public class TestUtils {
 		return true;
 	}
 
-	public static <T extends Supracontext & LatticeNode<T>, S extends Supracontext & LatticeNode<S>> void assertContainsSupra(
-			List<T> supras, S expected) {
-		for (T supra : supras)
+	public static void assertContainsSupra(List<Supracontext> supras,
+			Supracontext expected) {
+		for (Supracontext supra : supras)
 			if (supraDeepEquals(supra, expected))
 				return;
 		fail("Could not find " + expected + " in " + supras);
 	}
 
-	public static <T extends Supracontext & LatticeNode<T>, S extends Supracontext & LatticeNode<S>> boolean supraDeepEquals(
-			T supra1, S supra2) {
+	public static boolean supraDeepEquals(Supracontext supra1,
+			Supracontext supra2) {
 		if (!supra1.getCount().equals(supra2.getCount()))
 			return false;
 

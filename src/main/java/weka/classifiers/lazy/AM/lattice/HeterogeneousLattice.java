@@ -23,9 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 
@@ -55,7 +56,7 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * @author Nathan Glenn
  * 
  */
-public class HeterogeneousLattice {
+public class HeterogeneousLattice implements Lattice {
 
 	/**
 	 * Lattice is a 2^n array of Supracontexts
@@ -158,7 +159,8 @@ public class HeterogeneousLattice {
 			// don't decrement the count for the emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
-			lattice.put(label, new UnclassifiedSupra(lattice.get(label), sub, index));
+			lattice.put(label, new UnclassifiedSupra(lattice.get(label), sub,
+					index));
 		}
 	}
 
@@ -187,8 +189,9 @@ public class HeterogeneousLattice {
 	 *         supracontextual lattice. From this, you can compute the
 	 *         analogical set.
 	 */
-	public List<UnclassifiedSupra> getSupracontextList() {
-		List<UnclassifiedSupra> supList = new LinkedList<UnclassifiedSupra>();
+	@Override
+	public List<Supracontext> getSupracontextList() {
+		List<Supracontext> supList = new LinkedList<Supracontext>();
 		UnclassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			assert (!supra.getCount().equals(BigInteger.ZERO));

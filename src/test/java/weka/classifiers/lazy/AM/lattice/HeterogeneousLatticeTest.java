@@ -7,9 +7,9 @@ import java.util.List;
 import org.junit.Test;
 
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
-import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
+import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
@@ -58,8 +58,7 @@ public class HeterogeneousLatticeTest {
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
 				0);
 
-		List<UnclassifiedSupra> actualSupras = heteroLattice
-				.getSupracontextList();
+		List<Supracontext> actualSupras = heteroLattice.getSupracontextList();
 
 		String[] expectedSupras = new String[] {
 				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]",
@@ -70,7 +69,8 @@ public class HeterogeneousLatticeTest {
 
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {
-			ClassifiedSupra supra = TestUtils.getSupraFromString(expected, train);
+			ClassifiedSupra supra = TestUtils.getSupraFromString(expected,
+					train);
 			TestUtils.assertContainsSupra(actualSupras, supra);
 		}
 	}

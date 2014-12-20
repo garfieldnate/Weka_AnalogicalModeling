@@ -2,7 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.util.List;
 
-import weka.classifiers.lazy.AM.data.ClassifiedSupra;
+import weka.classifiers.lazy.AM.data.Supracontext;
 
 /**
  * Given a list of subcontexts, a lattice creates a collection of supracontexts,
@@ -18,6 +18,6 @@ public interface Lattice {
 	 *         supracontextual lattice. From this, you can compute the
 	 *         analogical set.
 	 */
-	public abstract List<ClassifiedSupra> getSupracontextList();
+	public abstract List<Supracontext> getSupracontextList();
 
 }
