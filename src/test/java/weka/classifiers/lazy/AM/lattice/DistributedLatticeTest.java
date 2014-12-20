@@ -3,8 +3,6 @@ package weka.classifiers.lazy.AM.lattice;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
-import weka.classifiers.lazy.AM.lattice.Lattice;
-
 /**
  * Tests functionality/edge cases specific to the distributed lattice. Basic
  * functionality conforming to the {@link Lattice} interface is tested in
