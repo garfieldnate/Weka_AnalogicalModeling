@@ -7,6 +7,12 @@ import java.util.Set;
 import weka.core.Instance;
 
 /**
+ * Analogical Modeling uses labels composed of boolean vectors in order to group
+ * instances into subcontexts and subcontexts in supracontexts. Training set
+ * instances are assigned labels by comparing them with the instance to be
+ * classified and encoding matched attributes and mismatched attributes in a
+ * boolean vector.
+ * 
  * This class is used to assign context labels to training instances by
  * comparison with the instance being classified.
  * 

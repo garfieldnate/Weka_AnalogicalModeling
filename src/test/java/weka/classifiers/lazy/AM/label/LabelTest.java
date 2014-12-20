@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.hamcrest.core.StringContains;
@@ -45,21 +46,25 @@ public class LabelTest {
 	 *         </ol>
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() throws Exception {
 		Collection<Object[]> parameters = new ArrayList<>();
 
-		// basic, non-distributed lattice
-		parameters.add(new Object[] {
-				IntLabeler.class.getSimpleName(),
-				IntLabeler.class.getConstructor(MissingDataCompare.class,
-						Instance.class, boolean.class) });
-
-		// distributed lattice
-		parameters.add(new Object[] {
-				BitSetLabeler.class.getSimpleName(),
-				BitSetLabeler.class.getConstructor(MissingDataCompare.class,
-						Instance.class, boolean.class) });
+		// There are three kinds of labels and associated labelers
+		@SuppressWarnings("serial")
+		List<Class> labelerClasses = new ArrayList<Class>() {
+			{
+				add(IntLabeler.class);
+				add(LongLabeler.class);
+				add(BitSetLabeler.class);
+			}
+		};
+		for (Class c : labelerClasses)
+			parameters.add(new Object[] {
+					c.getSimpleName(),
+					c.getConstructor(MissingDataCompare.class, Instance.class,
+							boolean.class) });
 
 		return parameters;
 	}

@@ -3,14 +3,16 @@ package weka.classifiers.lazy.AM.label;
 import java.util.Iterator;
 
 /**
- * Labels are used to indicate what subcontexts or supracontexts a given
- * instance belongs to, and they are assigned by comparing test instance
- * attribute values with a training instance attribute values and assigning a
- * boolean "match" or "mismatch" value for each one.
+ * Analogical Modeling uses labels composed of boolean vectors in order to group
+ * instances into subcontexts and subcontexts into supracontexts. Training set
+ * instances are assigned labels by comparing them with the instance to be
+ * classified and encoding matched attributes and mismatched attributes in a
+ * boolean vector.
  * 
- * Labels should also implement equals() and hashCode() for use in hashed
+ * Labels should implement equals() and hashCode() for use in hashed
  * collections; however, Labels of two different classes do not have to be
- * equals(), even if the information they contain is equivalent.
+ * equals() or have equal hashCodes, even if the information they contain is
+ * equivalent.
  * 
  */
 public abstract class Label {

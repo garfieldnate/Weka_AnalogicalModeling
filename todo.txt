@@ -4,14 +4,15 @@ Next: Write PartialSupra tests and rewrite ClassifiedSupra tests
 	- don't forget supra-combining tests
 Later TODO:
 - change "outcome" to "class" everywhere
-- parallelize creation and combination of hetero lattices
+- parallelize combination of hetero lattices
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
 - add high-level algorithm explanations for the lattice, etc.
 	- package-info.java?
 
 Engineering Tasks
-- profile with big data sets
+- get it working with big data sets
+	- soybean is too big!
 
 Thoughts:
 - is there a connection between k-d trees and AM's splitting into sub contexts?

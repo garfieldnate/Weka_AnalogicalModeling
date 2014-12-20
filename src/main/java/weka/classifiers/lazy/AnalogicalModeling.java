@@ -33,6 +33,8 @@ import weka.classifiers.lazy.AM.label.BitSetLabeler;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Labeler;
+import weka.classifiers.lazy.AM.label.LongLabel;
+import weka.classifiers.lazy.AM.label.LongLabeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.classifiers.lazy.AM.lattice.BasicLattice;
 import weka.classifiers.lazy.AM.lattice.DistributedLattice;
@@ -173,11 +175,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		// int labels are faster and smaller, so use them if the cardinality
-		// turns out to be small enough
+		// int and long labels are faster and smaller, so use them if the
+		// cardinality turns out to be small enough
 		Labeler labeler = new BitSetLabeler(mdc, testItem, m_ignoreUnknowns);
 		if (labeler.getCardinality() <= IntLabel.MAX_CARDINALITY)
 			labeler = new IntLabeler(mdc, testItem, m_ignoreUnknowns);
+		else if (labeler.getCardinality() <= LongLabel.MAX_CARDINALITY)
+			labeler = new LongLabeler(mdc, testItem, m_ignoreUnknowns);
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext

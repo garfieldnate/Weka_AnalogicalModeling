@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,21 +41,25 @@ public class LabelerTest {
 	 *         </ol>
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() throws Exception {
 		Collection<Object[]> parameters = new ArrayList<>();
 
-		// basic, non-distributed lattice
-		parameters.add(new Object[] {
-				IntLabeler.class.getSimpleName(),
-				IntLabeler.class.getConstructor(MissingDataCompare.class,
-						Instance.class, boolean.class) });
-
-		// distributed lattice
-		parameters.add(new Object[] {
-				BitSetLabeler.class.getSimpleName(),
-				BitSetLabeler.class.getConstructor(MissingDataCompare.class,
-						Instance.class, boolean.class) });
+		// There are three kinds of labelers and associated labels
+		@SuppressWarnings("serial")
+		List<Class> labelerClasses = new ArrayList<Class>() {
+			{
+				add(IntLabeler.class);
+				add(LongLabeler.class);
+				add(BitSetLabeler.class);
+			}
+		};
+		for (Class c : labelerClasses)
+			parameters.add(new Object[] {
+					c.getSimpleName(),
+					c.getConstructor(MissingDataCompare.class, Instance.class,
+							boolean.class) });
 
 		return parameters;
 	}
