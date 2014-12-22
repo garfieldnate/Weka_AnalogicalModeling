@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
-import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.SubcontextAggregator;
 import weka.classifiers.lazy.AM.label.BitSetLabeler;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.IntLabeler;
@@ -185,15 +185,17 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
+		SubcontextAggregator subAggregator = new SubcontextAggregator(labeler,
+				trainingExemplars);
+		subAggregator.finish();
 		// 2. Place subcontexts into a supracontextual lattice
 		Lattice lattice;
 		if (labeler.numPartitions() > 1) {
-			lattice = new DistributedLattice(subList);
+			lattice = new DistributedLattice(subAggregator);
 		} else {
 			if (getDebug())
-				System.out.println("Subcontexts: " + subList);
-			lattice = new BasicLattice(subList);
+				System.out.println("Subcontexts: " + subAggregator);
+			lattice = new BasicLattice(subAggregator);
 			if (getDebug())
 				System.out.println("Lattice: " + lattice);
 		}

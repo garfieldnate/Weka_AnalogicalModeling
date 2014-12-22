@@ -170,12 +170,32 @@ public class TestUtils {
 		fail("Could not find " + expected + " in " + supras);
 	}
 
+	/**
+	 * Very slow check for deep equality.
+	 * 
+	 * @param supra1
+	 * @param supra2
+	 * @return
+	 */
 	public static boolean supraDeepEquals(Supracontext supra1,
 			Supracontext supra2) {
 		if (!supra1.getCount().equals(supra2.getCount()))
 			return false;
 
-		return supra1.getData().equals(supra2.getData());
+		if (supra1.getData().size() != supra2.getData().size())
+			return false;
+		for (Subcontext sub1 : supra1.getData()) {
+			boolean found = false;
+			for (Subcontext sub2 : supra2.getData()) {
+				if (sub1.deepEquals(sub2)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -225,7 +245,6 @@ public class TestUtils {
 			// parse label
 			Label label = new IntLabel(Integer.parseInt(subComponents[0], 2),
 					subComponents[0].length());
-			Subcontext sub = new Subcontext(label);
 
 			// parse outcome
 			double outcome;
@@ -254,7 +273,6 @@ public class TestUtils {
 					if (data.get(i).toString().equals(instanceString)) {
 						if (seenInstances.contains(data.get(i)))
 							continue;
-						sub.add(data.get(i));
 						added = true;
 						seenInstances.add(data.get(i));
 						break;
@@ -266,6 +284,7 @@ public class TestUtils {
 									+ " does not specify any instance in the given data set");
 				}
 			}
+			Subcontext sub = new Subcontext(label, seenInstances);
 			if (sub.getOutcome() != outcome)
 				throw new IllegalArgumentException(
 						"Specified instances give an outcome of "
@@ -288,12 +307,18 @@ public class TestUtils {
 		Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"6-10");
 
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5));
-		sub1.add(data.get(3)); // P,U,0,?,0,A
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5));
-		sub2.add(data.get(2));// K,U,V,U,0,A
-		final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
-		sub3.add(data.get(1));// U,U,V,I,0,A
+		Set<Instance> instances = new HashSet<Instance>();
+		instances.add(data.get(3)); // P,U,0,?,0,A
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5),
+				instances);
+		instances.clear();
+		instances.add(data.get(2)); // K,U,V,U,0,A
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5),
+				instances);
+		instances.clear();
+		instances.add(data.get(1));// U,U,V,I,0,A
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5),
+				instances);
 		ClassifiedSupra expectedSupra = new ClassifiedSupra(
 				new HashSet<Subcontext>() {
 					{
@@ -315,9 +340,11 @@ public class TestUtils {
 
 		supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
 		actualSupra = getSupraFromString(supraString, data);
-		final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
-		sub4.add(data.get(4)); // H,A,V,I,0,A
-		sub4.add(data.get(5)); // H,A,V,A,0,B
+		instances.clear();
+		instances.add(data.get(4)); // H,A,V,I,0,A
+		instances.add(data.get(5)); // H,A,V,A,0,B
+		final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5),
+				instances);
 		expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub4);
@@ -333,9 +360,11 @@ public class TestUtils {
 						actualSupra));
 
 		data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-		final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
-		sub5.add(data.get(1));// A,A,0,?,S,B
-		sub5.add(data.get(2));// also A,A,0,?,S,B
+		instances.clear();
+		instances.add(data.get(1));// A,A,0,?,S,B
+		instances.add(data.get(2));// also A,A,0,?,S,B
+		final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5),
+				instances);
 		expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub5);

@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.SubcontextAggregator;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Labeler;
 
@@ -59,7 +59,7 @@ public class DistributedLattice implements Lattice {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public DistributedLattice(SubcontextList subList)
+	public DistributedLattice(SubcontextAggregator subList)
 			throws InterruptedException, ExecutionException {
 		Labeler labeler = subList.getLabeler();
 
@@ -69,6 +69,10 @@ public class DistributedLattice implements Lattice {
 		CompletionService<List<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(
 				executor);
 		int numLattices = labeler.numPartitions();
+		if (numLattices == 1)
+			throw new IllegalArgumentException("Cannot use "
+					+ getClass().getSimpleName()
+					+ " with a labeler that returns 1 from numPartitions()");
 		for (int i = 0; i < numLattices; i++) {
 			// fill each heterogeneous lattice with a given label partition
 			taskCompletionService.submit(new LatticeFiller(subList, i));
@@ -88,7 +92,7 @@ public class DistributedLattice implements Lattice {
 	 * 
 	 */
 	class LatticeFiller implements Callable<List<Supracontext>> {
-		private final SubcontextList subList;
+		private final SubcontextAggregator subList;
 		private final int partitionIndex;
 
 		/**
@@ -98,7 +102,7 @@ public class DistributedLattice implements Lattice {
 		 * @param partitionIndex
 		 *            index of the label partition to use.
 		 */
-		LatticeFiller(SubcontextList subList, int partitionIndex) {
+		LatticeFiller(SubcontextAggregator subList, int partitionIndex) {
 			this.subList = subList;
 			this.partitionIndex = partitionIndex;
 		}

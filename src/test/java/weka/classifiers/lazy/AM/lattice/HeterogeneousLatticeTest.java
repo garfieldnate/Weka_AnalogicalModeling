@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
-import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.SubcontextAggregator;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Label;
@@ -54,7 +54,9 @@ public class HeterogeneousLatticeTest {
 				return label;
 			}
 		};
-		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
+		SubcontextAggregator subList = new SubcontextAggregator(
+				noPartitionLabeler, train);
+		subList.finish();
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
 				0);
 

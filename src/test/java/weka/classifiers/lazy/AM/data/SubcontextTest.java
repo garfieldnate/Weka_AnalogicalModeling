@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,8 +45,9 @@ public class SubcontextTest {
 	@Test
 	public void test() throws Exception {
 		Label label = new IntLabel(0, 1);
-		Subcontext s = new Subcontext(label);
-		s.add(dataset.get(0));
+		Set<Instance> instances = new HashSet<>();
+		instances.add(dataset.get(0));
+		Subcontext s = new Subcontext(label, instances);
 		assertEquals(s.getExemplars(), new HashSet<Instance>() {
 			{
 				add(dataset.get(0));
@@ -55,7 +57,8 @@ public class SubcontextTest {
 		assertEquals(s.getOutcome(), 1.0, DELTA);
 		assertEquals("(0|r|1,r,{2})", s.toString());
 
-		s.add(dataset.get(1));
+		instances.add(dataset.get(1));
+		s = new Subcontext(label, instances);
 		assertEquals(s.getExemplars(), new HashSet<Instance>() {
 			{
 				add(dataset.get(0));

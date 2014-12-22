@@ -26,7 +26,7 @@ import java.util.Map;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
-import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.SubcontextAggregator;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
@@ -89,15 +89,15 @@ public class BasicLattice implements Lattice {
 	 * 
 	 * @param cardinality
 	 *            Size of the feature vectors; lattice will be 2^card - 1 size.
-	 * @param subList
+	 * @param subAggregator
 	 *            List of subcontexts
 	 */
-	public BasicLattice(SubcontextList subList) {
+	public BasicLattice(SubcontextAggregator subAggregator) {
 
 		init();
 
 		// Fill the lattice with all of the subcontexts
-		for (Subcontext sub : subList) {
+		for (Subcontext sub : subAggregator.subcontextList()) {
 			index++;
 			insert(sub);
 		}

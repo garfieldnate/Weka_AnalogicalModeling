@@ -23,6 +23,9 @@ public class CombiningLattice implements Lattice {
 	private final List<Supracontext> finalSupras = new ArrayList<>();
 	private Map<ClassifiedSupra, ClassifiedSupra> finalSuprasTemp;
 
+	// private BigInteger totalCount = BigInteger.ZERO;
+	// private BigInteger heteroCount = BigInteger.ZERO;
+
 	@Override
 	public List<Supracontext> getSupracontextList() {
 		return finalSupras;
@@ -47,6 +50,8 @@ public class CombiningLattice implements Lattice {
 		}
 		finalSupras.addAll(finalSuprasTemp.values());
 		finalSuprasTemp = null;
+		// System.out.println("Total: " + totalCount + ", hetero: " +
+		// heteroCount);
 	}
 
 	/**
@@ -112,10 +117,13 @@ public class CombiningLattice implements Lattice {
 	 */
 	private void addSupra(Set<Subcontext> subcontexts, BigInteger count) {
 		ClassifiedSupra supra = new ClassifiedSupra();
+		// totalCount = totalCount.add(BigInteger.ONE);
 		for (Subcontext sub : subcontexts) {
 			supra.add(sub);
-			if (supra.isHeterogeneous())
+			if (supra.isHeterogeneous()) {
+				// heteroCount = heteroCount.add(BigInteger.ONE);
 				return;
+			}
 		}
 		supra.setCount(count);
 		if (finalSuprasTemp.containsKey(supra)) {

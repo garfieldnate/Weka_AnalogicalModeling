@@ -95,6 +95,16 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 				correct, 160);
 	}
 
+	// for now I just want to test how long this takes.
+	public void testSoybean() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.SOYBEAN);
+
+		int i = 0;
+		AnalogicalSet set = leaveOneOut(train, i);
+		set.getPredictedClasses().contains(
+				train.get(i).stringValue(train.classIndex()));
+	}
+
 	private AnalogicalSet leaveOneOut(Instances data, int index)
 			throws Exception {
 		Instances train = new Instances(data);

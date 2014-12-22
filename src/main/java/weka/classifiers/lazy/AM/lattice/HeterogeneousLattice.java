@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import weka.classifiers.lazy.AM.data.Subcontext;
-import weka.classifiers.lazy.AM.data.SubcontextList;
+import weka.classifiers.lazy.AM.data.SubcontextAggregator;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
 import weka.classifiers.lazy.AM.label.Label;
@@ -93,18 +93,18 @@ public class HeterogeneousLattice implements Lattice {
 	 * Initializes Supracontextual lattice to a 2^n length array of
 	 * Supracontexts and then fills it with the contents of subList
 	 * 
-	 * @param subList
+	 * @param subAggregator
 	 *            List of subcontexts
 	 * 
 	 * @param i
 	 *            label partition index
 	 */
-	public HeterogeneousLattice(SubcontextList subList, int i) {
-		Labeler labeler = subList.getLabeler();
+	public HeterogeneousLattice(SubcontextAggregator subAggregator, int i) {
+		Labeler labeler = subAggregator.getLabeler();
 		init();
 
 		// Fill the lattice with all of the subcontexts, masking labels
-		for (Subcontext sub : subList) {
+		for (Subcontext sub : subAggregator.subcontextList()) {
 			index++;
 			insert(sub, labeler.partition(sub.getLabel(), i));
 		}

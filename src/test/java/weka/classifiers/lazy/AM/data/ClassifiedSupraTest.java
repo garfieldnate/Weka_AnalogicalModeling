@@ -47,26 +47,31 @@ public class ClassifiedSupraTest {
 		}
 
 		subs = new ArrayList<>();
-		Subcontext sub = new Subcontext(new IntLabel(0b0, 1));
-		sub.add(dataset.get(0));
-		sub.add(dataset.get(1));
+		Set<Instance> instances = new HashSet<>();
+		instances.add(dataset.get(0));
+		instances.add(dataset.get(1));
+		Subcontext sub = new Subcontext(new IntLabel(0b0, 1), instances);
 		subs.add(sub);
 
-		sub = new Subcontext(new IntLabel(0b0, 1));
-		sub.add(dataset.get(0));
-		sub.add(dataset.get(2));
+		instances.clear();
+		instances.add(dataset.get(0));
+		instances.add(dataset.get(2));
+		sub = new Subcontext(new IntLabel(0b0, 1), instances);
 		subs.add(sub);
 
-		sub = new Subcontext(new IntLabel(0b0, 1));
-		sub.add(dataset.get(0));
+		instances.clear();
+		instances.add(dataset.get(0));
+		sub = new Subcontext(new IntLabel(0b0, 1), instances);
 		subs.add(sub);
 
-		sub = new Subcontext(new IntLabel(0b0, 1));
-		sub.add(dataset.get(1));
+		instances.clear();
+		instances.add(dataset.get(1));
+		sub = new Subcontext(new IntLabel(0b0, 1), instances);
 		subs.add(sub);
 
-		sub = new Subcontext(new IntLabel(0b0, 1));
-		sub.add(dataset.get(2));
+		instances.clear();
+		instances.add(dataset.get(2));
+		sub = new Subcontext(new IntLabel(0b0, 1), instances);
 		subs.add(sub);
 	}
 
@@ -90,9 +95,10 @@ public class ClassifiedSupraTest {
 		ClassifiedSupra testSupra = new ClassifiedSupra();
 		assertEquals(testSupra.getData(), new HashSet<Subcontext>());
 		Label label = new IntLabel(0b001, 3);
-		final Subcontext sub1 = new Subcontext(label);
-		final Subcontext sub2 = new Subcontext(label);
-		final Subcontext sub3 = new Subcontext(label);
+		Set<Instance> instances = new HashSet<>();
+		final Subcontext sub1 = new Subcontext(label, instances);
+		final Subcontext sub2 = new Subcontext(label, instances);
+		final Subcontext sub3 = new Subcontext(label, instances);
 		testSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
 			{
 				add(sub1);
@@ -201,10 +207,12 @@ public class ClassifiedSupraTest {
 	@Test
 	public void testEquals() {
 		ClassifiedSupra testSupra = new ClassifiedSupra();
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
-		sub2.add(dataset.get(1));
+		Set<Instance> instances = new HashSet<>();
+		instances.add(dataset.get(0));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), instances);
+		instances.clear();
+		instances.add(dataset.get(1));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1), instances);
 
 		// equality depends only on the exact subcontexts contained
 		ClassifiedSupra supra = new ClassifiedSupra(new HashSet<Subcontext>() {
@@ -236,12 +244,14 @@ public class ClassifiedSupraTest {
 	@SuppressWarnings("serial")
 	public void testGenerationalConstructor() {
 		ClassifiedSupra testSupra = new ClassifiedSupra();
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
-		sub2.add(dataset.get(1));
-		sub2.add(dataset.get(2));
-		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
+		Set<Instance> instances = new HashSet<>();
+		instances.add(dataset.get(0));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), instances);
+		instances.clear();
+		instances.add(dataset.get(1));
+		instances.add(dataset.get(2));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1), instances);
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1), instances);
 
 		ClassifiedSupra testSupra1 = new ClassifiedSupra(testSupra, sub1, 99);
 		ClassifiedSupra expected = new ClassifiedSupra(

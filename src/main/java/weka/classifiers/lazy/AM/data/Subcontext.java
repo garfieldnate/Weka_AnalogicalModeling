@@ -15,6 +15,7 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.data;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,37 +29,33 @@ import weka.core.Instance;
  * If the contained instances do not have the same outcome, then the outcome is
  * set to {@link AMUtils#NONDETERMINISTIC}.
  * 
+ * This class is immutable and does not override {@link Object#equals(Object)}
+ * or {@link Object#hashCode()} to help hashSets be faster. For a test of deep
+ * equality, use {@link #deepEquals(Subcontext)}.
+ * 
  * @author Nathan Glenn
  */
 public class Subcontext {
-	private Set<Instance> data;
+	private final Set<Instance> data;
 	private double outcome;
-	private Label label;
+	private final Label label;
 
 	/**
-	 * The location of this instance in {@link #index}
-	 */
-	private int indexLocation;
-
-	/**
-	 * Initializes the subcontext by creating a list to hold the data
+	 * Initializes the subcontext with the given label and
 	 * 
 	 * @param label
-	 *            Binary label of the subcontext
+	 *            Label shared by the instances in the subcontext.
+	 * @param data
+	 *            Instances in the subcontext.
 	 */
-	public Subcontext(Label label) {
-		data = new HashSet<>();
+	public Subcontext(Label label, Collection<Instance> data) {
+		this.data = new HashSet<>();
+		for (Instance instance : data)
+			add(instance);
 		this.label = label;
 	}
 
-	/**
-	 * Adds an exemplar to the subcontext and sets the outcome accordingly. If
-	 * different outcomes are present in the contained exemplars, the outcome is
-	 * {@link Index#NONDETERMINISTIC}
-	 * 
-	 * @param e
-	 */
-	public void add(Instance e) {
+	private void add(Instance e) {
 		if (data.size() != 0) {
 			if (e.classValue() != data.iterator().next().classValue())
 				outcome = AMUtils.NONDETERMINISTIC;
@@ -68,23 +65,28 @@ public class Subcontext {
 		data.add(e);
 	}
 
+	/**
+	 * @return The index for the outcome shared by the instances in this
+	 *         subcontext, or {@link AMUtils#NONDETERMINISTIC} if they do not
+	 *         share a common outcome.
+	 */
 	public double getOutcome() {
 		return outcome;
 	}
 
 	/**
-	 * @return Binary label of of this subcontext
+	 * @return True if the the subcontext is nondeterministic (has more than one
+	 *         outcome), false otherwise.
 	 */
-	public Label getLabel() {
-		return label;
+	public boolean isNondeterministic() {
+		return outcome == AMUtils.NONDETERMINISTIC;
 	}
 
 	/**
-	 * 
-	 * @return the location of this Subcontext in the static Subcontext index
+	 * @return Label of this subcontext
 	 */
-	public int getIndex() {
-		return indexLocation;
+	public Label getLabel() {
+		return label;
 	}
 
 	/**
@@ -95,29 +97,24 @@ public class Subcontext {
 	}
 
 	/**
-	 * Two Subcontexts are considered equal if they have the same label and
-	 * contain the same instances.
+	 * Performs a deep equality test with another subcontext. This is meant
+	 * primarily for testing purposes.
+	 * 
+	 * @return True if both subcontexts have an identical label and contain the
+	 *         same instances. Note that Weka Instance objects do not override
+	 *         {@link Object#equals(Object)}, so the subs need to contain the
+	 *         exact same instance objects.
 	 */
-	@Override
-	public boolean equals(Object other) {
-		if (!(other instanceof Subcontext))
-			return false;
-		Subcontext otherSub = (Subcontext) other;
+	public boolean deepEquals(Subcontext otherSub) {
 		if (!label.equals(otherSub.label))
 			return false;
 		boolean ret = data.equals(otherSub.data);
 		return ret;
 	}
 
-	private final static int SEED = 37;
-	private int hash = -1;
-
 	@Override
-	public int hashCode() {
-		if (hash != -1)
-			return hash;
-		hash = SEED * label.hashCode() + data.hashCode();
-		return hash;
+	public boolean equals(Object other) {
+		return this == other;
 	}
 
 	@Override
@@ -149,9 +146,5 @@ public class Subcontext {
 		sb.append(')');
 
 		return sb.toString();
-	}
-
-	public boolean isNondeterministic() {
-		return outcome == AMUtils.NONDETERMINISTIC;
 	}
 }

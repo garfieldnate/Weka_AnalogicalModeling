@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
@@ -38,11 +39,12 @@ import weka.core.Instance;
  * 
  */
 // TODO: why use an iterator, instead of just returning a list?
-public class SubcontextList implements Iterable<Subcontext> {
+public class SubcontextAggregator {
 
-	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
-
-	private Labeler labeler;
+	private HashMap<Label, List<Instance>> labelToSubcontext = new HashMap<>();
+	private List<Subcontext> subList;
+	private final Labeler labeler;
+	private boolean finished;
 
 	/**
 	 * 
@@ -61,8 +63,9 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param the
 	 *            number of attributes being used to classify the instance
 	 */
-	SubcontextList(Labeler labeler) {
+	SubcontextAggregator(Labeler labeler) {
 		this.labeler = labeler;
+		finished = false;
 	}
 
 	/**
@@ -76,10 +79,11 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param cardinality
 	 *            the number of attributes used to predict an Instance's class
 	 */
-	public SubcontextList(Labeler labeler, List<Instance> data) {
+	public SubcontextAggregator(Labeler labeler, List<Instance> data) {
 		this.labeler = labeler;
 		for (Instance se : data)
 			add(se);
+		finished = false;
 	}
 
 	/**
@@ -88,9 +92,12 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * @param data
 	 */
 	void add(Instance data) {
+		if (finished)
+			throw new IllegalStateException("Cannot add data to a finished "
+					+ getClass().getSimpleName());
 		Label label = labeler.label(data);
 		if (!labelToSubcontext.containsKey(label))
-			labelToSubcontext.put(label, new Subcontext(label));
+			labelToSubcontext.put(label, new ArrayList<Instance>());
 		labelToSubcontext.get(label).add(data);
 	}
 
@@ -101,8 +108,27 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 *            Exemplars to add
 	 */
 	void addAll(Iterable<Instance> data) {
+		if (finished)
+			throw new IllegalStateException("Cannot add data to a finished "
+					+ getClass().getSimpleName());
 		for (Instance d : data)
 			add(d);
+	}
+
+	public List<Subcontext> subcontextList() {
+		if (!finished)
+			throw new IllegalStateException(
+					"Must call finish() before retrieving data "
+							+ getClass().getSimpleName());
+		return Collections.unmodifiableList(subList);
+	}
+
+	public void finish() {
+		finished = true;
+		subList = new ArrayList<Subcontext>(labelToSubcontext.size());
+		for (Entry<Label, List<Instance>> e : labelToSubcontext.entrySet())
+			subList.add(new Subcontext(e.getKey(), e.getValue()));
+		labelToSubcontext = null;
 	}
 
 	/**
@@ -112,8 +138,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 */
 	@Override
 	public String toString() {
-		List<Label> sortedLabels = new ArrayList<>(
-				labelToSubcontext.keySet());
+		List<Label> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
 		// sort the labels by hashcode so that output is consistent for testing
 		// purposes
 		Collections.sort(sortedLabels, new Comparator<Label>() {
@@ -140,40 +165,41 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 */
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof SubcontextList))
+		if (!(other instanceof SubcontextAggregator))
 			return false;
-		SubcontextList otherList = (SubcontextList) other;
+		SubcontextAggregator otherList = (SubcontextAggregator) other;
 		return labelToSubcontext.equals(otherList.labelToSubcontext);
 	}
 
-	/**
-	 * 
-	 * @return An iterator which returns each of the contained subcontexts.
-	 */
-	@Override
-	public Iterator<Subcontext> iterator() {
-
-		return new Iterator<Subcontext>() {
-
-			Iterator<Label> keyIterator = labelToSubcontext.keySet()
-					.iterator();
-
-			@Override
-			public boolean hasNext() {
-				return keyIterator.hasNext();
-			}
-
-			@Override
-			public Subcontext next() {
-				return labelToSubcontext.get(keyIterator.next());
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
-	}
+	// /**
+	// *
+	// * @return An iterator which returns each of the contained subcontexts.
+	// */
+	// @Override
+	// public Iterator<Subcontext> iterator() {
+	//
+	// return new Iterator<Subcontext>() {
+	//
+	// Iterator<Entry<Label, List<Instance>>> entryIterator = labelToSubcontext
+	// .entrySet().iterator();
+	//
+	// @Override
+	// public boolean hasNext() {
+	// return entryIterator.hasNext();
+	// }
+	//
+	// @Override
+	// public Subcontext next() {
+	// Entry<Label, List<Instance>> e = entryIterator.next();
+	// return new Subcontext(e.getKey(), e.getValue());
+	// }
+	//
+	// @Override
+	// public void remove() {
+	// throw new UnsupportedOperationException();
+	// }
+	// };
+	// }
 
 	/**
 	 * @return The labeler object used to assign incoming data to subcontexts.
