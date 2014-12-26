@@ -26,7 +26,7 @@ public abstract class Labeler {
 	/**
 	 * The default (max) size of a label partition
 	 */
-	public static final int PARTITION_SIZE = 12;
+	public static final int PARTITION_SIZE = 5;
 
 	/**
 	 * 

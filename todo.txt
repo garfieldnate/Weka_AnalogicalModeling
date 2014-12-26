@@ -1,11 +1,23 @@
-Next: Write PartialSupra tests and rewrite ClassifiedSupra tests 
+Next: Write UnclassifiedSupra tests and rewrite ClassifiedSupra tests 
 	- so that no extra main code is required
 	- maybe write a help for creating them from sub sets?
 	- don't forget supra-combining tests
+	- Then do CombiningLattice tests as well
 Later TODO:
+- SparseLattice using AddIntent algorithm
+- distributed lattice should die if labeler says not to split
+- lattice viewer (show supras in a tree)
+- make a "finalized" subcontext class that is immutable and which does not override Object's equals method.
+- toString for Labeler classes would be nice
+- try designing a "sparse lattice" representation
+	- inserted subs trickle down from dummy or real 000 into all children
+	- when one supra is declared heterogeneous, loop through all other unique supras looking for children and declare them hetero; these never get trickled through again.
+	- at the end, iteratively compute common children
+	- then assign counts by binary distance between ancestors and children.
 - label splitting should use the strategy pattern.
 - change "outcome" to "class" everywhere
-- parallelize combination of hetero lattices
+- shield out weka classes!
+- add a "subFromString" method in the test utils class?
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.
 - add high-level algorithm explanations for the lattice, etc.
@@ -14,6 +26,12 @@ Later TODO:
 Engineering Tasks
 - get it working with big data sets
 	- soybean is too big!
+
+
+Later deliverables:
+- lattice viewer (show supras in a tree; GraphViz or Processing or Tikz or something)
+- support other types of features as discussed in http://humanities.byu.edu/am/leipzig_margins.pdf.
+
 
 Thoughts:
 - is there a connection between k-d trees and AM's splitting into sub contexts?
