@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -143,7 +143,7 @@ public class LatticeTest {
 		SubcontextList subList = new SubcontextList(getFullSplitLabeler(test),
 				train);
 		Lattice testLattice = latticeConstructor.newInstance(subList);
-		List<Supracontext> actualSupras = testLattice.getSupracontextList();
+		Set<Supracontext> actualSupras = testLattice.getSupracontexts();
 
 		assertEquals(expectedSupras.length, actualSupras.size());
 		for (String expected : expectedSupras) {

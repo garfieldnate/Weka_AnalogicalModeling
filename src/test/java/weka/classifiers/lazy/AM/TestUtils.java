@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -162,12 +161,12 @@ public class TestUtils {
 		return true;
 	}
 
-	public static void assertContainsSupra(List<Supracontext> supras,
+	public static void assertContainsSupra(Set<Supracontext> actualSupras,
 			Supracontext expected) {
-		for (Supracontext supra : supras)
+		for (Supracontext supra : actualSupras)
 			if (supraDeepEquals(supra, expected))
 				return;
-		fail("Could not find " + expected + " in " + supras);
+		fail("Could not find " + expected + " in " + actualSupras);
 	}
 
 	public static boolean supraDeepEquals(Supracontext supra1,

@@ -18,10 +18,10 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
@@ -190,8 +190,8 @@ public class HeterogeneousLattice implements Lattice {
 	 *         analogical set.
 	 */
 	@Override
-	public List<Supracontext> getSupracontextList() {
-		List<Supracontext> supList = new LinkedList<Supracontext>();
+	public Set<Supracontext> getSupracontexts() {
+		Set<Supracontext> supList = new HashSet<Supracontext>();
 		UnclassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			assert (!supra.getCount().equals(BigInteger.ZERO));

@@ -3,6 +3,7 @@ Next: Write PartialSupra tests and rewrite ClassifiedSupra tests
 	- maybe write a help for creating them from sub sets?
 	- don't forget supra-combining tests
 Later TODO:
+- label splitting should use the strategy pattern.
 - change "outcome" to "class" everywhere
 - parallelize combination of hetero lattices
 - test specifically the case where there is a tie for class outcome

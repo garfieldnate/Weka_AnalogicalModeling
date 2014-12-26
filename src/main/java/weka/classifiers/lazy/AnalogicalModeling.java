@@ -199,7 +199,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		}
 		// 3. pointers in homogeneous supracontexts are used to give the
 		// analogical set and predicted outcome.
-		as = new AnalogicalSet(lattice.getSupracontextList(), testItem,
+		as = new AnalogicalSet(lattice.getSupracontexts(), testItem,
 				m_linearCount);
 		return as;
 	}

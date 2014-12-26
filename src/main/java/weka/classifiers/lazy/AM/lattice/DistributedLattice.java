@@ -16,11 +16,8 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -29,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
@@ -44,7 +42,7 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * 
  */
 public class DistributedLattice implements Lattice {
-	private final List<Supracontext> supras;
+	private final Set<Supracontext> supras;
 
 	/**
 	 * Get list of Supracontexts that were created with this lattice
@@ -52,7 +50,7 @@ public class DistributedLattice implements Lattice {
 	 * @return
 	 */
 	@Override
-	public List<Supracontext> getSupracontextList() {
+	public Set<Supracontext> getSupracontexts() {
 		return supras;
 	}
 
@@ -74,7 +72,7 @@ public class DistributedLattice implements Lattice {
 		ExecutorService executor = Executors.newCachedThreadPool();
 		// first, create heterogeneous lattices by splitting the labels
 		// contained in the subcontext list
-		CompletionService<List<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(
+		CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(
 				executor);
 		int numLattices = labeler.numPartitions();
 		for (int i = 0; i < numLattices; i++) {
@@ -82,21 +80,21 @@ public class DistributedLattice implements Lattice {
 			taskCompletionService.submit(new LatticeFiller(subList, i));
 		}
 
-		// then combine the resulting unclassified Supracontexts into classified
-		// ones;
-		List<Supracontext> unclassifiedSupras = taskCompletionService.take()
-				.get();
-		// the first combinations create more unclassified supras
-		for (int i = 1; i < numLattices - 1; i++) {
-			unclassifiedSupras = combine(unclassifiedSupras,
-					taskCompletionService.take().get());
+		// then combine them 2 at a time, consolidating duplicate supracontexts
+		if (numLattices > 2) {
+			for (int i = 1; i < numLattices - 1; i++) {
+				taskCompletionService.submit(new LatticeCombiner(
+						taskCompletionService.take(), taskCompletionService
+								.take()));
+			}
 		}
-		// the final combination creates classified supras
-		supras = combineFinal(unclassifiedSupras, taskCompletionService.take()
-				.get());
+		// the final combination creates ClassifiedSupras and ignores the
+		// heterogeneous ones.
+		supras = combineFinal(taskCompletionService.take().get(),
+				taskCompletionService.take().get());
 	}
 
-	class LatticeFiller implements Callable<List<Supracontext>> {
+	class LatticeFiller implements Callable<Set<Supracontext>> {
 		private final SubcontextList subList;
 		private final int partitionIndex;
 
@@ -106,35 +104,59 @@ public class DistributedLattice implements Lattice {
 		}
 
 		@Override
-		public List<Supracontext> call() throws Exception {
+		public Set<Supracontext> call() throws Exception {
 			HeterogeneousLattice lattice = new HeterogeneousLattice(subList,
 					partitionIndex);
-			return lattice.getSupracontextList();
+			return lattice.getSupracontexts();
 		}
 
+	}
+
+	/**
+	 * Combines two sets of supracontexts (heterogeneous lattices) into one new
+	 * set of supracontexts for a heterogeneous lattice.
+	 */
+	class LatticeCombiner implements Callable<Set<Supracontext>> {
+		Future<Set<Supracontext>> supras1, supras2;
+
+		LatticeCombiner(Future<Set<Supracontext>> supras1,
+				Future<Set<Supracontext>> supras2) {
+			this.supras1 = supras1;
+			this.supras2 = supras2;
+		}
+
+		@Override
+		public Set<Supracontext> call() throws Exception {
+			Set<Supracontext> supras = combine(supras1.get(), supras2.get());
+			return supras;
+		}
 	}
 
 	/**
 	 * Combines two lists of {@link ClassifiedSupra Supracontexts} to make a new
 	 * List representing the intersection of two lattices
 	 * 
-	 * @param unclassifiedSupras
-	 *            First list of Supracontexts
-	 * @param list
 	 * @return
 	 */
-	private List<Supracontext> combine(List<Supracontext> unclassifiedSupras,
-			List<Supracontext> list) {
+	private Set<Supracontext> combine(Set<Supracontext> supras1,
+			Set<Supracontext> supras2) {
 		UnclassifiedSupra newSupra;
-		List<Supracontext> combinedList = new LinkedList<Supracontext>();
-		for (Supracontext supra1 : unclassifiedSupras) {
-			for (Supracontext supra2 : list) {
+		Map<Supracontext, Supracontext> combinedSupras = new HashMap<Supracontext, Supracontext>();
+		for (Supracontext supra1 : supras1) {
+			for (Supracontext supra2 : supras2) {
 				newSupra = combine(supra1, supra2);
-				if (newSupra != null)
-					combinedList.add(newSupra);
+				if (newSupra != null) {
+					if (combinedSupras.containsKey(newSupra)) {
+						Supracontext oldSupra = combinedSupras.get(newSupra);
+						oldSupra.setCount(oldSupra.getCount().add(
+								newSupra.getCount()));
+					} else {
+						combinedSupras.put(newSupra, newSupra);
+					}
+				}
 			}
 		}
-		return combinedList;
+		return combinedSupras.keySet();
 	}
 
 	/**
@@ -168,37 +190,34 @@ public class DistributedLattice implements Lattice {
 	}
 
 	/**
-	 * Combines two lists of {@link ClassifiedSupra Supracontexts} to make a new
+	 * Combines two sets of {@link Supracontext Supracontexts} to make a new
 	 * List representing the intersection of two lattices; heterogeneous
 	 * Supracontexts will be pruned
 	 * 
-	 * @param unclassifiedSupras
-	 *            First list of Supracontexts
-	 * @param list
 	 * @return
 	 */
-	private List<Supracontext> combineFinal(
-			List<Supracontext> unclassifiedSupras, List<Supracontext> list) {
+	private Set<Supracontext> combineFinal(Set<Supracontext> supras1,
+			Set<Supracontext> supras2) {
 		ClassifiedSupra supra;
 		// the same supracontext may be formed via different combinations, so we
 		// use this as a set (Set doesn't provide a get(Object) method);
-		Map<ClassifiedSupra, ClassifiedSupra> finalSupras = new HashMap<ClassifiedSupra, ClassifiedSupra>();
-		for (Supracontext supra1 : unclassifiedSupras) {
-			for (Supracontext supra2 : list) {
+		Map<Supracontext, Supracontext> finalSupras = new HashMap<Supracontext, Supracontext>();
+		for (Supracontext supra1 : supras1) {
+			for (Supracontext supra2 : supras2) {
 				supra = combineFinal(supra1, supra2);
 				if (supra == null)
 					continue;
 				// add to the existing count if the same supra was formed from a
 				// previous combination
 				if (finalSupras.containsKey(supra)) {
-					ClassifiedSupra existing = finalSupras.get(supra);
+					Supracontext existing = finalSupras.get(supra);
 					existing.setCount(supra.getCount().add(existing.getCount()));
 				} else {
 					finalSupras.put(supra, supra);
 				}
 			}
 		}
-		return new ArrayList<Supracontext>(finalSupras.values());
+		return finalSupras.keySet();
 	}
 
 	/**

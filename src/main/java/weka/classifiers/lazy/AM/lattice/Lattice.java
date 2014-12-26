@@ -1,6 +1,6 @@
 package weka.classifiers.lazy.AM.lattice;
 
-import java.util.List;
+import java.util.Set;
 
 import weka.classifiers.lazy.AM.data.Supracontext;
 
@@ -18,6 +18,6 @@ public interface Lattice {
 	 *         supracontextual lattice. From this, you can compute the
 	 *         analogical set.
 	 */
-	public abstract List<Supracontext> getSupracontextList();
+	public abstract Set<Supracontext> getSupracontexts();
 
 }

@@ -18,10 +18,10 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
@@ -186,8 +186,8 @@ public class BasicLattice implements Lattice {
 	}
 
 	@Override
-	public List<Supracontext> getSupracontextList() {
-		List<Supracontext> supList = new LinkedList<Supracontext>();
+	public Set<Supracontext> getSupracontexts() {
+		Set<Supracontext> supList = new HashSet<Supracontext>();
 		ClassifiedSupra supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			supList.add(supra);
@@ -217,7 +217,7 @@ public class BasicLattice implements Lattice {
 	}
 
 	private boolean noZeroSupras() {
-		for (Supracontext supra : getSupracontextList()) {
+		for (Supracontext supra : getSupracontexts()) {
 			if (supra.getCount().equals(BigInteger.ZERO))
 				return false;
 		}

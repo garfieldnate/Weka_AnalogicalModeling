@@ -95,6 +95,31 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 				correct, 160);
 	}
 
+	@Test
+	@SuppressWarnings("serial")
+	public void testSoybean() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.SOYBEAN);
+		assertEquals(new HashMap<String, BigInteger>() {
+			{
+				put("anthracnose", BigInteger.valueOf(5358272));
+				put("bacterial-blight", BigInteger.valueOf(2880000));
+				put("alternarialeaf-spot", BigInteger.valueOf(3016836));
+				put("powdery-mildew", BigInteger.valueOf(11869024));
+				put("downy-mildew", BigInteger.valueOf(50688));
+				put("charcoal-rot", new BigInteger("337300810464"));
+				put("frog-eye-leaf-spot", BigInteger.valueOf(890880));
+				put("phytophthora-rot", BigInteger.valueOf(2028992));
+				put("brown-spot", BigInteger.valueOf(2134080));
+				put("diaporthe-pod-&-stem-blight", BigInteger.valueOf(140));
+				put("purple-seed-stain", BigInteger.valueOf(1463456));
+				put("diaporthe-stem-canker", BigInteger.valueOf(10013312));
+				put("brown-stem-rot", BigInteger.valueOf(976826156));
+			}
+		}, leaveOneOut(train, 15).getClassPointers());
+		// overall set accuracy should be 628/682, but running the whole thing
+		// would take too long.
+	}
+
 	private AnalogicalSet leaveOneOut(Instances data, int index)
 			throws Exception {
 		Instances train = new Instances(data);

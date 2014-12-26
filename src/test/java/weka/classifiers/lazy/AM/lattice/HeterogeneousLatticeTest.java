@@ -2,7 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class HeterogeneousLatticeTest {
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,
 				0);
 
-		List<Supracontext> actualSupras = heteroLattice.getSupracontextList();
+		Set<Supracontext> actualSupras = heteroLattice.getSupracontexts();
 
 		String[] expectedSupras = new String[] {
 				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]",
