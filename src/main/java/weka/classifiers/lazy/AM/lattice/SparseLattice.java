@@ -18,11 +18,12 @@ public class SparseLattice implements Lattice {
 		for (Subcontext sub : subList) {
 			// TODO next: this should be addIntent(sub, bottom, null). But then
 			// things aren't quite organized correctly. Fix this!
-			addIntent(sub.getLabel(), new Concept(sub), null);
+			addIntent(sub, sub.getLabel(), bottom, null);
 		}
 	}
 
-	Concept addIntent(Label intent, Concept inputConcept, Lattice lattice) {
+	Concept addIntent(Subcontext sub, Label intent, Concept inputConcept,
+			Lattice lattice) {
 		Concept generatorConcept = getMaximalConcept(intent, inputConcept);
 		if (generatorConcept.getIntent().equals(intent)) {
 			// concept with given label is already present, so just add the sub
@@ -36,8 +37,9 @@ public class SparseLattice implements Lattice {
 				// this possible parent turned out not to be a parent, so
 				// generate a parent by intersecting it with the new label, and
 				// save the new parent
-				candidate = addIntent(intent.intersect(candidate.getIntent()),
-						candidate, lattice);
+				candidate = addIntent(sub,
+						intent.intersect(candidate.getIntent()), candidate,
+						lattice);
 			boolean addParent = true;
 			for (Concept parent : newParents) {
 				if (parent.getIntent().isAncestorOf(candidate.getIntent())) {
@@ -106,7 +108,7 @@ public class SparseLattice implements Lattice {
 
 		public Concept(Label intent, Set<Subcontext> extent) {
 			this.intent = intent;
-			this.extent = extent;
+			this.extent = new HashSet<>(extent);
 			parents = new HashSet<Concept>();
 		}
 
