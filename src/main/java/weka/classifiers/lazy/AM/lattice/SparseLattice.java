@@ -2,6 +2,8 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.data.Subcontext;
@@ -16,14 +18,35 @@ public class SparseLattice implements Lattice {
 		Concept bottom = new Concept(subList.getLabeler().getMinimum());
 		// lattice.add(bottom);
 		for (Subcontext sub : subList) {
-			// TODO next: this should be addIntent(sub, bottom, null). But then
-			// things aren't quite organized correctly. Fix this!
-			addIntent(sub, sub.getLabel(), bottom, null);
+			addIntent(sub, sub.getLabel(), bottom);
 		}
+		dumpLattice("lattice", bottom);
 	}
 
-	Concept addIntent(Subcontext sub, Label intent, Concept inputConcept,
-			Lattice lattice) {
+	// TODO: next finish this, making it a dot graph. Then figure out how to
+	// save subs in concepts properly.
+	private static void dumpLattice(String graphName, Concept bottom) {
+		System.out.println("digraph " + graphName + " {");
+		Set<Concept> visited = new HashSet<>();
+		Queue<Concept> queue = new LinkedList<>();
+		queue.add(bottom);
+		while (queue.size() != 0) {
+			Concept current = queue.poll();
+			if (visited.contains(current))
+				continue;
+			visited.add(current);
+
+			System.out.println(current.hashCode() + " [label=\""
+					+ current.getIntent() + ":" + current.getExtent() + "\"];");
+			for (Concept parent : current.getParents())
+				System.out.println(current.hashCode() + " -> "
+						+ parent.hashCode() + ";");
+			queue.addAll(current.getParents());
+		}
+		System.out.println("}");
+	}
+
+	Concept addIntent(Subcontext sub, Label intent, Concept inputConcept) {
 		Concept generatorConcept = getMaximalConcept(intent, inputConcept);
 		if (generatorConcept.getIntent().equals(intent)) {
 			// concept with given label is already present, so just add the sub
@@ -38,8 +61,7 @@ public class SparseLattice implements Lattice {
 				// generate a parent by intersecting it with the new label, and
 				// save the new parent
 				candidate = addIntent(sub,
-						intent.intersect(candidate.getIntent()), candidate,
-						lattice);
+						intent.intersect(candidate.getIntent()), candidate);
 			boolean addParent = true;
 			for (Concept parent : newParents) {
 				if (parent.getIntent().isAncestorOf(candidate.getIntent())) {
