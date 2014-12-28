@@ -47,6 +47,18 @@ public class BitSetLabel extends Label {
 	}
 
 	@Override
+	public Label intersect(Label other) {
+		if (!(other instanceof BitSetLabel))
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ "can only be intersected with other "
+					+ getClass().getSimpleName());
+		BitSetLabel otherLabel = (BitSetLabel) other;
+		BitSet bitSet = (BitSet) labelBits.clone();
+		bitSet.or(otherLabel.labelBits);
+		return new BitSetLabel(bitSet, getCardinality());
+	}
+
+	@Override
 	public String toString() {
 		return labelBits.toString();
 	}
@@ -140,5 +152,21 @@ public class BitSetLabel extends Label {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public boolean isAncestorOf(Label possibleDescendant) {
+		if (!(possibleDescendant instanceof IntLabel)) {
+			return false;
+		}
+		BitSetLabel otherLabel = (BitSetLabel) possibleDescendant;
+		// boolean lattice ancestor/descendants yield the ancestor when ANDed;
+		// this label needs to have all of the same zeroes (and optionally more
+		// zeroes)
+		for (int i = otherLabel.labelBits.nextClearBit(0); i < card; i = otherLabel.labelBits
+				.nextClearBit(i + 1))
+			if (labelBits.get(i))
+				return false;
+		return true;
 	}
 }

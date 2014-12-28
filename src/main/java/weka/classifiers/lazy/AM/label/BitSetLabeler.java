@@ -58,6 +58,14 @@ public class BitSetLabeler extends Labeler {
 	}
 
 	@Override
+	public Label getMinimum() {
+		BitSet bitSet = new BitSet();
+		for (int i = 0; i < getCardinality(); i++)
+			bitSet.set(i);
+		return new BitSetLabel(bitSet, getCardinality());
+	}
+
+	@Override
 	public Label partition(Label label, int partitionIndex) {
 		if (partitionIndex > numPartitions() || partitionIndex < 0)
 			throw new IllegalArgumentException("Illegal partition index: "

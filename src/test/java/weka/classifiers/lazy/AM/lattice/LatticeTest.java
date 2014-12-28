@@ -61,6 +61,9 @@ public class LatticeTest {
 						DistributedLattice.class.getSimpleName(),
 						DistributedLattice.class
 								.getConstructor(SubcontextList.class) });
+		// sparse lattice
+		parameters.add(new Object[] { SparseLattice.class.getSimpleName(),
+				SparseLattice.class.getConstructor(SubcontextList.class) });
 
 		return parameters;
 	}
@@ -173,6 +176,11 @@ public class LatticeTest {
 			@Override
 			public int numPartitions() {
 				return getCardinality();
+			}
+
+			@Override
+			public Label getMinimum() {
+				return internal.getMinimum();
 			}
 		};
 		return labeler;

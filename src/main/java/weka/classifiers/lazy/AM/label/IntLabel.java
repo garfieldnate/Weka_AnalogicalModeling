@@ -97,6 +97,16 @@ public class IntLabel extends Label {
 	}
 
 	@Override
+	public Label intersect(Label other) {
+		if (!(other instanceof IntLabel))
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ "can only be intersected with other "
+					+ getClass().getSimpleName());
+		IntLabel otherLabel = (IntLabel) other;
+		return new IntLabel(labelBits | otherLabel.labelBits, getCardinality());
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		String binary = Integer.toBinaryString(labelBits());
@@ -205,5 +215,15 @@ public class IntLabel extends Label {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public boolean isAncestorOf(Label possibleDescendant) {
+		if (!(possibleDescendant instanceof IntLabel)) {
+			return false;
+		}
+		IntLabel otherLabel = (IntLabel) possibleDescendant;
+		// boolean lattice ancestor/descendants yield the ancestor when ANDed
+		return (otherLabel.labelBits & labelBits) == labelBits;
 	}
 }

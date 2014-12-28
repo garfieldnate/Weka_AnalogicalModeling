@@ -88,6 +88,16 @@ public class LongLabel extends Label {
 	}
 
 	@Override
+	public Label intersect(Label other) {
+		if (!(other instanceof LongLabel))
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ "can only be intersected with other "
+					+ getClass().getSimpleName());
+		LongLabel otherLabel = (LongLabel) other;
+		return new LongLabel(labelBits | otherLabel.labelBits, getCardinality());
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		String binary = Long.toBinaryString(labelBits());
@@ -193,5 +203,15 @@ public class LongLabel extends Label {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public boolean isAncestorOf(Label possibleDescendant) {
+		if (!(possibleDescendant instanceof LongLabel)) {
+			return false;
+		}
+		LongLabel otherLabel = (LongLabel) possibleDescendant;
+		// boolean lattice ancestor/descendants yield the ancestor when ANDed
+		return (otherLabel.labelBits & labelBits) == labelBits;
 	}
 }

@@ -53,6 +53,12 @@ public class HeterogeneousLatticeTest {
 			public Label partition(Label label, int partitionIndex) {
 				return label;
 			}
+
+			@Override
+			public Label getMinimum() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		};
 		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList,

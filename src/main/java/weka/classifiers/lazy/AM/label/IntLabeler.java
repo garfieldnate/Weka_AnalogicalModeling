@@ -93,6 +93,14 @@ public class IntLabeler extends Labeler {
 	}
 
 	@Override
+	public Label getMinimum() {
+		int bits = 0;
+		for (int i = 0; i < getCardinality(); i++)
+			bits |= (1 << i);
+		return new IntLabel(bits, getCardinality());
+	}
+
+	@Override
 	public Label partition(Label label, int partitionIndex) {
 		if (partitionIndex > numPartitions() || partitionIndex < 0)
 			throw new IllegalArgumentException("Illegal partition index: "

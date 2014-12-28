@@ -115,6 +115,14 @@ public abstract class Labeler {
 	public abstract Label label(Instance data);
 
 	/**
+	 * Creates and returns the label which belongs at the bottom of a boolean
+	 * lattice, i.e. one in which every feature is a mismatch.
+	 * 
+	 * @return The lattice minimum label
+	 */
+	public abstract Label getMinimum();
+
+	/**
 	 * In distributed processing, it is necessary to split labels into
 	 * partitions. This method returns a partition for the given label. A full
 	 * label is partitioned into pieces 0 through {@link #numPartitions()}, so

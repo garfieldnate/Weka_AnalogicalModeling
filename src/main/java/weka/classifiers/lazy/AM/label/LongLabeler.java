@@ -65,6 +65,14 @@ public class LongLabeler extends Labeler {
 	}
 
 	@Override
+	public Label getMinimum() {
+		long bits = 0l;
+		for (long i = 0l; i < getCardinality(); i++)
+			bits |= (1l << i);
+		return new LongLabel(bits, getCardinality());
+	}
+
+	@Override
 	public Label partition(Label label, int partitionIndex) {
 		if (partitionIndex > numPartitions() || partitionIndex < 0)
 			throw new IllegalArgumentException("Illegal partition index: "
