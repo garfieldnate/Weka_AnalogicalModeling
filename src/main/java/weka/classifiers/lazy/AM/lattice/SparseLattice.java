@@ -106,7 +106,7 @@ public class SparseLattice implements Lattice {
 				continue;
 			visited.add(current);
 
-			sb.append(current.hashCode() + " [label=\"" + current.getCount()
+			sb.append(current.hashCode() + " [label=\"" + getCount(current)
 					+ "x" + current.getIntent() + ":" + current.getExtent()
 					+ "\"];\n");
 			for (Concept parent : current.getParents())
@@ -132,87 +132,67 @@ public class SparseLattice implements Lattice {
 				if (supra.isHeterogeneous())
 					continue concepts;
 			}
-			supra.setCount(concept.getCount());
+			supra.setCount(getCount(concept));
 			supras.add(supra);
 		}
 		// TODO how should we get the supracontexts?
 		return supras;
 	}
 
-	// private BigInteger getCount(Concept concept) {
-	// // if a supra has N matches, then those matches can be replaced with
-	// // mismatches in 2^N ways (including the possibility of replacing none
-	// // of them). That's the number a supra would have if it had no children.
-	// // However, the matches which any child also has cannot be counted
-	// // because the match/mismatch permutation will occur in the child
-	// // instead, so we must subtract the permutations that happen in the
-	// // children. We also union the children together to see if they have
-	// // overlap, and adjust the count accordingly.
-	// BigInteger two = BigInteger.valueOf(2);
-	// BigInteger possiblePermutations = two.pow(concept.getIntent()
-	// .numMatches());
-	// // simply 2^matches if there are no parents
-	// if (concept.getParents().size() == 0)
-	// return possiblePermutations;
-	//
-	// Iterator<Concept> parentIterator = concept.getParents().iterator();
-	// Label current = parentIterator.next().getIntent();
-	// BigInteger parentPermutations = two.pow(current.numMatches());
-	// // for one parent, subtract 2^(parent matches) from 2^matches
-	// if (!parentIterator.hasNext())
-	// return possiblePermutations.subtract(parentPermutations);
-	//
-	// // for several parents, we need to keep track of their overlapping with
-	// // an intersection
-	// Label intersection = current;
-	// while (parentIterator.hasNext()) {
-	// current = parentIterator.next().getIntent();
-	// parentPermutations = parentPermutations.add(two.pow(current
-	// .numMatches()));
-	// intersection = intersection.intersect(current);
-	// }
-	// // the parents each blocked out parentOverlap of the same intents
-	// BigInteger parentOverlap = two.pow(intersection.numMatches());
-	// // to only count the overlaps once, we need to subtract
-	// // parentOverlap*(numParents - 1) from parentPermutations
-	// BigInteger extraCounts = parentOverlap.multiply(BigInteger
-	// .valueOf(concept.getParents().size() - 1));
-	// parentPermutations = parentPermutations.subtract(extraCounts);
-	//
-	// // finally, return the possible permutations minus the permutations that
-	// // happen in the parents.
-	// return possiblePermutations.subtract(parentPermutations);
-	// }
+	private BigInteger getCount(Concept concept) {
+		// if a supra has N matches, then those matches can be replaced with
+		// mismatches in 2^N ways (including the possibility of replacing none
+		// of them). That's the number a supra would have if it had no children.
+		// However, the matches which any child also has cannot be counted
+		// because the match/mismatch permutation will occur in the child
+		// instead, so we must subtract the permutations that happen in the
+		// children. We also union the children together to see if they have
+		// overlap, and adjust the count accordingly.
+		BigInteger two = BigInteger.valueOf(2);
+		Label intent = concept.getIntent();
+		// simply 2^matches if there are no parents
+		if (concept.getParents().size() == 0)
+			return two.pow(intent.numMatches());
 
-	private static class Concept {
+		// otherwise 2^(matches not found in any children)
+		Set<Integer> freeBits = new HashSet<>();
+		for (int i = 0; i < intent.getCardinality(); i++) {
+			if (intent.matches(i))
+				freeBits.add(i);
+		}
+		for (Concept parent : concept.getParents()) {
+			Label parentIntent = parent.getIntent();
+			Set<Integer> removeFree = new HashSet<>();
+			for (int i : freeBits) {
+				if (!parentIntent.matches(i))
+					removeFree.add(i);
+			}
+			freeBits.removeAll(removeFree);
+		}
+		return two.pow(freeBits.size());
+		// TODO: with this solution, 10001 block 10000 and 00001 permutations!
+	}
+
+	private class Concept {
 		Set<Subcontext> extent;
 		Label intent;
 		Set<Concept> parents;
-		BigInteger count;
-		private static BigInteger two = BigInteger.valueOf(2);
 
 		// TODO: track heterogeneity
 		// boolean isHetero;
 		// double outcome;
 
 		public Concept(Label intent) {
-			this(intent, new HashSet<Subcontext>());
+			this.intent = intent;
+			extent = new HashSet<Subcontext>();
+			parents = new HashSet<Concept>();
 		}
 
 		public Concept(Label intent, Set<Subcontext> extent) {
 			this.intent = intent;
 			this.extent = new HashSet<>(extent);
 			parents = new HashSet<Concept>();
-			count = two.pow(intent.numMatches());
 		}
-
-		public BigInteger getCount() {
-			return count;
-		}
-
-		// public void setCount(BigInteger c) {
-		// count = c;
-		// }
 
 		public Set<Subcontext> getExtent() {
 			return Collections.unmodifiableSet(extent);
@@ -238,14 +218,12 @@ public class SparseLattice implements Lattice {
 
 		public void addParent(Concept newParent) {
 			parents.add(newParent);
-			count = count.subtract(newParent.getCount());
 		}
 
 		public void removeParent(Concept oldParent) {
 			// TODO: this assert fails, but nothing seems to actually be wrong.
 			// assert (parents.contains(oldParent));
 			parents.remove(oldParent);
-			count = count.add(oldParent.getCount());
 		}
 
 		// public boolean isHeterogeneous() {
