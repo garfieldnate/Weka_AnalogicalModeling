@@ -218,12 +218,12 @@ public class IntLabel extends Label {
 	}
 
 	@Override
-	public boolean isAncestorOf(Label possibleDescendant) {
+	public boolean isDescendantOf(Label possibleDescendant) {
 		if (!(possibleDescendant instanceof IntLabel)) {
 			return false;
 		}
 		IntLabel otherLabel = (IntLabel) possibleDescendant;
-		// boolean lattice ancestor/descendants yield the ancestor when ANDed
-		return (otherLabel.labelBits & labelBits) == labelBits;
+		// boolean lattice ancestor/descendants yield the descendant when ORed
+		return (otherLabel.labelBits | labelBits) == labelBits;
 	}
 }

@@ -55,7 +55,7 @@ public class HeterogeneousLatticeTest {
 			}
 
 			@Override
-			public Label getMinimum() {
+			public Label getAllMatchLabel() {
 				// TODO Auto-generated method stub
 				return null;
 			}

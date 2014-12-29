@@ -179,8 +179,8 @@ public class LatticeTest {
 			}
 
 			@Override
-			public Label getMinimum() {
-				return internal.getMinimum();
+			public Label getAllMatchLabel() {
+				return internal.getAllMatchLabel();
 			}
 		};
 		return labeler;

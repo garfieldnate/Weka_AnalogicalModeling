@@ -58,11 +58,8 @@ public class BitSetLabeler extends Labeler {
 	}
 
 	@Override
-	public Label getMinimum() {
-		BitSet bitSet = new BitSet();
-		for (int i = 0; i < getCardinality(); i++)
-			bitSet.set(i);
-		return new BitSetLabel(bitSet, getCardinality());
+	public Label getAllMatchLabel() {
+		return new BitSetLabel(new BitSet(), getCardinality());
 	}
 
 	@Override

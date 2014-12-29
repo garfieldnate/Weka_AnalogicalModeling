@@ -93,11 +93,8 @@ public class IntLabeler extends Labeler {
 	}
 
 	@Override
-	public Label getMinimum() {
-		int bits = 0;
-		for (int i = 0; i < getCardinality(); i++)
-			bits |= (1 << i);
-		return new IntLabel(bits, getCardinality());
+	public Label getAllMatchLabel() {
+		return new IntLabel(0, getCardinality());
 	}
 
 	@Override

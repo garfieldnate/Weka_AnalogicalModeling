@@ -115,12 +115,12 @@ public abstract class Labeler {
 	public abstract Label label(Instance data);
 
 	/**
-	 * Creates and returns the label which belongs at the bottom of a boolean
-	 * lattice, i.e. one in which every feature is a mismatch.
+	 * Creates and returns the label which belongs at the top of a boolean
+	 * lattice, i.e. one in which every feature is a match.
 	 * 
-	 * @return The lattice minimum label
+	 * @return A label with all matches
 	 */
-	public abstract Label getMinimum();
+	public abstract Label getAllMatchLabel();
 
 	/**
 	 * In distributed processing, it is necessary to split labels into

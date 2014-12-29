@@ -50,21 +50,21 @@ public abstract class Label {
 	public abstract Iterator<Label> descendantIterator();
 
 	/**
-	 * Determine if this label is the "ancestor" of, or contains, a given label.
-	 * This label contains the other label if every matching entry in the other
-	 * label is also a matching entry in this label. This method assumes that an
-	 * equivalent label was not given as the argument.
+	 * Determine if this label is the "descendant" of possibleAncestor. This
+	 * label is a descendant of the other label if every mismatching entry in
+	 * the other label is also a mismatching entry in this label. Any label is
+	 * also a descendant of itself.
 	 * 
-	 * @param possibleDescendant
-	 *            possible label descendant
-	 * @return true if possibleDescendant is a descendant of this label; false
+	 * @param possibleAncestor
+	 *            possible label ancestor
+	 * @return true if possibleAncestor is an ancestor of this label; false
 	 *         otherwise.
 	 */
-	public abstract boolean isAncestorOf(Label possibleDescendant);
+	public abstract boolean isDescendantOf(Label possibleAncestor);
 
 	/**
-	 * Create a new label for which each location is marked as a match if this
-	 * label and otherLabel both are marked match, otherwise mismatch.
+	 * Create a new label for which each location is marked as a match if both
+	 * this label and otherLabel are marked match, otherwise mismatch.
 	 * 
 	 * @param otherLabel
 	 *            the label to intersect with this one

@@ -155,17 +155,17 @@ public class BitSetLabel extends Label {
 	}
 
 	@Override
-	public boolean isAncestorOf(Label possibleDescendant) {
+	public boolean isDescendantOf(Label possibleDescendant) {
 		if (!(possibleDescendant instanceof IntLabel)) {
 			return false;
 		}
 		BitSetLabel otherLabel = (BitSetLabel) possibleDescendant;
-		// boolean lattice ancestor/descendants yield the ancestor when ANDed;
-		// this label needs to have all of the same zeroes (and optionally more
-		// zeroes)
-		for (int i = otherLabel.labelBits.nextClearBit(0); i < card; i = otherLabel.labelBits
-				.nextClearBit(i + 1))
-			if (labelBits.get(i))
+		// boolean lattice ancestor/descendants yield the descendant when ORed;
+		// this label needs to have all of the same ones (and optionally more
+		// ones)
+		for (int i = otherLabel.labelBits.nextSetBit(0); i < card; i = otherLabel.labelBits
+				.nextSetBit(i + 1))
+			if (!labelBits.get(i))
 				return false;
 		return true;
 	}

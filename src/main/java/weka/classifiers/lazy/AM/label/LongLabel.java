@@ -206,12 +206,12 @@ public class LongLabel extends Label {
 	}
 
 	@Override
-	public boolean isAncestorOf(Label possibleDescendant) {
+	public boolean isDescendantOf(Label possibleDescendant) {
 		if (!(possibleDescendant instanceof LongLabel)) {
 			return false;
 		}
 		LongLabel otherLabel = (LongLabel) possibleDescendant;
-		// boolean lattice ancestor/descendants yield the ancestor when ANDed
-		return (otherLabel.labelBits & labelBits) == labelBits;
+		// boolean lattice ancestor/descendants yield the descendant when ORed
+		return (otherLabel.labelBits | labelBits) == labelBits;
 	}
 }

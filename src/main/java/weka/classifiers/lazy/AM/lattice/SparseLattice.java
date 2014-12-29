@@ -12,21 +12,19 @@ import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
 public class SparseLattice implements Lattice {
-	// List<Concept> lattice = new ArrayList<>();
-
 	public SparseLattice(SubcontextList subList) {
-		Concept bottom = new Concept(subList.getLabeler().getMinimum());
+		Concept bottom = new Concept(subList.getLabeler().getAllMatchLabel());
 		// lattice.add(bottom);
 		for (Subcontext sub : subList) {
 			addIntent(sub, sub.getLabel(), bottom);
 		}
-		dumpLattice("lattice", bottom);
+		System.out.println(dumpLattice("lattice", bottom));
 	}
 
-	// TODO: next finish this, making it a dot graph. Then figure out how to
-	// save subs in concepts properly.
-	private static void dumpLattice(String graphName, Concept bottom) {
-		System.out.println("digraph " + graphName + " {");
+	// TODO next: union/intersect change was a mistake!
+	private String dumpLattice(String graphName, Concept bottom) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("digraph " + graphName + " {\n");
 		Set<Concept> visited = new HashSet<>();
 		Queue<Concept> queue = new LinkedList<>();
 		queue.add(bottom);
@@ -36,38 +34,39 @@ public class SparseLattice implements Lattice {
 				continue;
 			visited.add(current);
 
-			System.out.println(current.hashCode() + " [label=\""
-					+ current.getIntent() + ":" + current.getExtent() + "\"];");
+			sb.append(current.hashCode() + " [label=\"" + current.getIntent()
+					+ ":" + current.getExtent() + "\"];\n");
 			for (Concept parent : current.getParents())
-				System.out.println(current.hashCode() + " -> "
-						+ parent.hashCode() + ";");
+				sb.append(current.hashCode() + " -> " + parent.hashCode()
+						+ ";\n");
 			queue.addAll(current.getParents());
 		}
-		System.out.println("}");
+		sb.append("}\n");
+		return sb.toString();
 	}
 
-	Concept addIntent(Subcontext sub, Label intent, Concept inputConcept) {
-		Concept generatorConcept = getMaximalConcept(intent, inputConcept);
+	Concept addIntent(Subcontext sub, Label intent, Concept generatorConcept) {
+		generatorConcept = getMaximalConcept(intent, generatorConcept);
 		if (generatorConcept.getIntent().equals(intent)) {
 			// concept with given label is already present, so just add the sub
-			generatorConcept.combineExtent(inputConcept);
+			// generatorConcept.combineExtent(generatorConcept);
 			// markIfHetero(generatorConcept);
 			return generatorConcept;
 		}
 		Set<Concept> newParents = new HashSet<>();
 		for (Concept candidate : generatorConcept.getParents()) {
-			if (!candidate.getIntent().isAncestorOf(intent))
+			if (!candidate.getIntent().isDescendantOf(intent))
 				// this possible parent turned out not to be a parent, so
 				// generate a parent by intersecting it with the new label, and
 				// save the new parent
-				candidate = addIntent(sub,
-						intent.intersect(candidate.getIntent()), candidate);
+				candidate = addIntent(sub, intent.intersect(candidate.getIntent()),
+						candidate);
 			boolean addParent = true;
 			for (Concept parent : newParents) {
-				if (parent.getIntent().isAncestorOf(candidate.getIntent())) {
+				if (parent.getIntent().isDescendantOf(candidate.getIntent())) {
 					addParent = false;
 					break;
-				} else if (candidate.getIntent().isAncestorOf(
+				} else if (candidate.getIntent().isDescendantOf(
 						parent.getIntent()))
 					newParents.remove(parent);// assert(newParents.contains(parent))
 												// may be instructive here
@@ -90,7 +89,7 @@ public class SparseLattice implements Lattice {
 		while (parentIsMaximal) {
 			parentIsMaximal = false;
 			for (Concept parent : generatorConcept.getParents()) {
-				if (parent.getIntent().isAncestorOf(intent)) {
+				if (intent.isDescendantOf(parent.getIntent())) {
 					generatorConcept = parent;
 					parentIsMaximal = true;
 					break;
@@ -177,5 +176,4 @@ public class SparseLattice implements Lattice {
 			return intent + "(" + extent + ")->[" + parents + "]";
 		}
 	}
-
 }

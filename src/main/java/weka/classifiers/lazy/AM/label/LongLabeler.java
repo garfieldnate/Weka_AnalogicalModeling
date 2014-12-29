@@ -65,11 +65,8 @@ public class LongLabeler extends Labeler {
 	}
 
 	@Override
-	public Label getMinimum() {
-		long bits = 0l;
-		for (long i = 0l; i < getCardinality(); i++)
-			bits |= (1l << i);
-		return new LongLabel(bits, getCardinality());
+	public Label getAllMatchLabel() {
+		return new LongLabel(0l, getCardinality());
 	}
 
 	@Override
