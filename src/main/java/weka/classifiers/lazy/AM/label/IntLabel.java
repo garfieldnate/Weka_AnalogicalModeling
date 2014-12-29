@@ -97,6 +97,11 @@ public class IntLabel extends Label {
 	}
 
 	@Override
+	public int numMatches() {
+		return getCardinality() - Integer.bitCount(labelBits);
+	}
+
+	@Override
 	public Label intersect(Label other) {
 		if (!(other instanceof IntLabel))
 			throw new IllegalArgumentException(getClass().getSimpleName()

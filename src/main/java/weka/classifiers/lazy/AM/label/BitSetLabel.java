@@ -47,6 +47,11 @@ public class BitSetLabel extends Label {
 	}
 
 	@Override
+	public int numMatches() {
+		return getCardinality() - labelBits.cardinality();
+	}
+
+	@Override
 	public Label intersect(Label other) {
 		if (!(other instanceof BitSetLabel))
 			throw new IllegalArgumentException(getClass().getSimpleName()

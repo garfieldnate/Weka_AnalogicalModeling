@@ -88,6 +88,11 @@ public class LongLabel extends Label {
 	}
 
 	@Override
+	public int numMatches() {
+		return getCardinality() - Long.bitCount(labelBits);
+	}
+
+	@Override
 	public Label intersect(Label other) {
 		if (!(other instanceof LongLabel))
 			throw new IllegalArgumentException(getClass().getSimpleName()

@@ -34,6 +34,11 @@ public abstract class Label {
 	public abstract boolean matches(int index);
 
 	/**
+	 * @return The total number of matches marked in this label.
+	 */
+	public abstract int numMatches();
+
+	/**
 	 * The "descendants" of a label are the set of labels with the same
 	 * "mismatch" entries, but with one or more of the "match" entries changed
 	 * into a "mismatch" entry. For example, the children of

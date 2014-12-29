@@ -4,6 +4,8 @@ Next: Write UnclassifiedSupra tests and rewrite ClassifiedSupra tests
 	- don't forget supra-combining tests
 	- Then do CombiningLattice tests as well
 Later TODO:
+- replace bit counter in iterators to use Long#bitCount and Integer#bitCount
+- change LatticeNode to LinkedNode decorator for Supras; then we can use supra in SparseLattice as well.
 - SparseLattice using AddIntent algorithm
 - distributed lattice should die if labeler says not to split
 - lattice viewer (show supras in a tree)
