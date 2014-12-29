@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -28,6 +29,9 @@ public class SparseLattice implements Lattice {
 		}
 		System.out.println(dumpLattice("lattice"));
 	}
+
+	// TODO: adding mid-lattice needs to trickle the new piece of extent down
+	// the reset of the lattice.
 
 	Concept addIntent(Set<Subcontext> extent, Label intent,
 			Concept generatorConcept) {
@@ -142,15 +146,43 @@ public class SparseLattice implements Lattice {
 		// of them). That's the number a supra would have if it had no children.
 		// However, the matches which any child also has cannot be counted
 		// because the match/mismatch permutation will occur in the child
-		// instead.
-		Set<Integer> blockedBits = new HashSet<>();
-		for (Concept parent : concept.parents) {
-			for (int i = 0; i < parent.getIntent().getCardinality(); i++)
-				if (parent.getIntent().matches(i))
-					blockedBits.add(i);
+		// instead, so we must subtract the permutations that happen in the
+		// children. We also union the children together to see if they have
+		// overlap, and adjust the count accordingly.
+		BigInteger two = BigInteger.valueOf(2);
+		BigInteger possiblePermutations = two.pow(concept.getIntent()
+				.numMatches());
+		// simply 2^matches if there are no parents
+		if (concept.getParents().size() == 0)
+			return possiblePermutations;
+
+		Iterator<Concept> parentIterator = concept.getParents().iterator();
+		Label current = parentIterator.next().getIntent();
+		BigInteger parentPermutations = two.pow(current.numMatches());
+		// for one parent, subtract 2^(parent matches) from 2^matches
+		if (!parentIterator.hasNext())
+			return possiblePermutations.subtract(parentPermutations);
+
+		// for several parents, we need to keep track of their overlapping with
+		// an intersection
+		Label intersection = current;
+		while (parentIterator.hasNext()) {
+			current = parentIterator.next().getIntent();
+			parentPermutations = parentPermutations.add(two.pow(current
+					.numMatches()));
+			intersection = intersection.intersect(current);
 		}
-		return BigInteger.valueOf(2).pow(
-				concept.getIntent().numMatches() - blockedBits.size());
+		// the parents each blocked out parentOverlap of the same intents
+		BigInteger parentOverlap = two.pow(intersection.numMatches());
+		// to only count the overlaps once, we need to subtract
+		// parentOverlap*(numParents - 1) from parentPermutations
+		BigInteger extraCounts = parentOverlap.multiply(BigInteger
+				.valueOf(concept.getParents().size() - 1));
+		parentPermutations = parentPermutations.subtract(extraCounts);
+
+		// finally, return the possible permutations minus the permutations that
+		// happen in the parents.
+		return possiblePermutations.subtract(parentPermutations);
 	}
 
 	private class Concept {
