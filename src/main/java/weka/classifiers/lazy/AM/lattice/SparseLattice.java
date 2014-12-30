@@ -23,7 +23,9 @@ public class SparseLattice implements Lattice {
 	public SparseLattice(SubcontextList subList) {
 		Concept bottom = new Concept(subList.getLabeler().getAllMatchLabel());
 		lattice.add(bottom);
+		// int i = 0;
 		for (Subcontext sub : subList) {
+			// System.out.println(i++);
 			Set<Subcontext> extent = new HashSet<>();
 			extent.add(sub);
 			addIntent(extent, sub.getLabel(), bottom);
@@ -146,7 +148,6 @@ public class SparseLattice implements Lattice {
 			supra.setCount(getCount(concept));
 			supras.add(supra);
 		}
-		// TODO how should we get the supracontexts?
 		return supras;
 	}
 

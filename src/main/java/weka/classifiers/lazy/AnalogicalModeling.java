@@ -188,6 +188,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
 		// 2. Place subcontexts into a supracontextual lattice
 		Lattice lattice;
+		// lattice = new SparseLattice(subList);
 		if (labeler.numPartitions() > 1) {
 			lattice = new DistributedLattice(subList);
 		} else {
