@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -52,13 +53,15 @@ public class SparseLattice implements Lattice {
 						intent.intersect(candidate.getIntent()), candidate);
 			}
 			boolean addParent = true;
-			for (Concept parent : newParents) {
+			Iterator<Concept> newParentIterator = newParents.iterator();
+			while (newParentIterator.hasNext()) {
+				Concept parent = newParentIterator.next();
 				if (parent.getIntent().isDescendantOf(candidate.getIntent())) {
 					addParent = false;
 					break;
 				} else if (candidate.getIntent().isDescendantOf(
 						parent.getIntent()))
-					newParents.remove(parent);// assert(newParents.contains(parent))
+					newParentIterator.remove();// assert(newParents.contains(parent))
 												// may be instructive here
 			}
 			if (addParent)
