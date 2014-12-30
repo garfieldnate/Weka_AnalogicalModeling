@@ -16,7 +16,8 @@ import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
 public class SparseLattice implements Lattice {
-	List<Concept> lattice = new ArrayList<>();
+	private final List<Concept> lattice = new ArrayList<>();
+	private static BigInteger two = BigInteger.valueOf(2);
 
 	public SparseLattice(SubcontextList subList) {
 		Concept bottom = new Concept(subList.getLabeler().getAllMatchLabel());
@@ -146,31 +147,85 @@ public class SparseLattice implements Lattice {
 		// However, the matches which any child also has cannot be counted
 		// because the match/mismatch permutation will occur in the child
 		// instead, so we must subtract the permutations that happen in the
-		// children. We also union the children together to see if they have
-		// overlap, and adjust the count accordingly.
-		BigInteger two = BigInteger.valueOf(2);
-		Label intent = concept.getIntent();
-		// simply 2^matches if there are no parents
-		if (concept.getParents().size() == 0)
-			return two.pow(intent.numMatches());
+		// children.
 
-		// otherwise 2^(matches not found in any children)
-		Set<Integer> freeBits = new HashSet<>();
-		for (int i = 0; i < intent.getCardinality(); i++) {
-			if (intent.matches(i))
-				freeBits.add(i);
+		// simply 2^matches if there are no parents
+		BigInteger count = labelCount(concept.getIntent());
+		if (concept.getParents().size() == 0)
+			return count;
+
+		// otherwise, we subtract the count headed by the parents
+		List<Label> parentLabels = new ArrayList<>();
+		for (Concept c : concept.getParents())
+			parentLabels.add(c.getIntent());
+		return count.subtract(countOfUnion(parentLabels));
+	}
+
+	/**
+	 * Use the inclusion-exclusion principle to find the total count for the
+	 * union of the given concepts. This principle states that to find the
+	 * cardinality of the union of several sets, you include the cardinalities
+	 * of the individual sets, exclude the cardinalities of the pair-wise
+	 * intersections, include that of the triple-wise intersections, exclude
+	 * quardruple-wise, etc. For example, |A&cup;B&cup;C| = |A| + |B| + |C| -
+	 * |A&cap;B| - |A&cap;C| - |B&cap;C| + |A&cap;B&cap;C|. See <a href=
+	 * "https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle"
+	 * >Wikipedia</a> for more discussion.
+	 * 
+	 * @param parentLabels
+	 *            Compute the count of the union of this set of concepts.
+	 */
+	private BigInteger countOfUnion(List<Label> parentLabels) {
+		BigInteger unionCount = BigInteger.ZERO;
+		boolean add = true;
+		for (int i = 1; i <= parentLabels.size(); i++) {
+			if (add)
+				unionCount = unionCount.add(countOfIntersections(parentLabels,
+						i));
+			else
+				unionCount = unionCount.subtract(countOfIntersections(
+						parentLabels, i));
+			add = !add;
 		}
-		for (Concept parent : concept.getParents()) {
-			Label parentIntent = parent.getIntent();
-			Set<Integer> removeFree = new HashSet<>();
-			for (int i : freeBits) {
-				if (!parentIntent.matches(i))
-					removeFree.add(i);
+		return unionCount;
+	}
+
+	private BigInteger intersectionCount;
+
+	/**
+	 * Find all size-wise intersections of the parentLabels and return their
+	 * total count.
+	 * 
+	 * @param parentLabels
+	 * @param size
+	 * @return count of all size-wise intersections of parentLabels
+	 */
+	private BigInteger countOfIntersections(List<Label> parentLabels, int size) {
+		intersectionCount = BigInteger.ZERO;
+		recursiveCountOfIntesections(parentLabels, new Label[size], 0, 0);
+		return intersectionCount;
+	}
+
+	// this recursively finds all subsets of size labels.length and adds their
+	// intersections to intersectionCount
+	private void recursiveCountOfIntesections(List<Label> parentLabels,
+			Label[] labels, int subsetSize, int nextIndex) {
+		if (subsetSize == labels.length) {
+			Label intersection = labels[0];
+			for (int i = 1; i < labels.length; i++)
+				intersection = intersection.intersect(labels[i]);
+			intersectionCount = intersectionCount.add(labelCount(intersection));
+		} else {
+			for (int j = nextIndex; j < parentLabels.size(); j++) {
+				labels[subsetSize] = parentLabels.get(j);
+				recursiveCountOfIntesections(parentLabels, labels,
+						subsetSize + 1, j + 1);
 			}
-			freeBits.removeAll(removeFree);
 		}
-		return two.pow(freeBits.size());
-		// TODO: with this solution, 10001 block 10000 and 00001 permutations!
+	}
+
+	private BigInteger labelCount(Label label) {
+		return two.pow(label.numMatches());
 	}
 
 	private class Concept {
