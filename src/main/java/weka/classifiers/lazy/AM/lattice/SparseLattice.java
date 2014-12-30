@@ -30,9 +30,6 @@ public class SparseLattice implements Lattice {
 		System.out.println(dumpLattice("lattice"));
 	}
 
-	// TODO: adding mid-lattice needs to trickle the new piece of extent down
-	// the reset of the lattice.
-
 	Concept addIntent(Set<Subcontext> extent, Label intent,
 			Concept generatorConcept) {
 		generatorConcept = getMaximalConcept(intent, generatorConcept);
@@ -106,10 +103,20 @@ public class SparseLattice implements Lattice {
 			if (visited.contains(current))
 				continue;
 			visited.add(current);
+			String color = "\"black\"";
 
-			sb.append(current.hashCode() + " [label=\"" + getCount(current)
-					+ "x" + current.getIntent() + ":" + current.getExtent()
-					+ "\"];\n");
+			ClassifiedSupra supra = new ClassifiedSupra();
+			for (Subcontext sub : current.getExtent()) {
+				supra.add(sub);
+				if (supra.isHeterogeneous()) {
+					color = "\"red\"";
+					break;
+				}
+			}
+
+			sb.append(current.hashCode() + " [color=" + color + ", label=\""
+					+ getCount(current) + "x" + current.getIntent() + ":"
+					+ current.getExtent() + "\"];\n");
 			for (Concept parent : current.getParents())
 				sb.append(current.hashCode() + " -> " + parent.hashCode()
 						+ ";\n");
@@ -253,11 +260,19 @@ public class SparseLattice implements Lattice {
 			return Collections.unmodifiableSet(extent);
 		}
 
+		/**
+		 * Add subcontexts to the extent of this concept as well as to all of
+		 * its ancestors.
+		 * 
+		 * @param newSubs
+		 */
 		public void addToExtent(Set<Subcontext> newSubs) {
 			// TODO: not needed. Is anything needed?
 			// for (Subcontext sub : newSubs)
 			// assert (!extent.contains(sub));
 			extent.addAll(newSubs);
+			for (Concept parent : getParents())
+				parent.addToExtent(newSubs);
 			// markIfHetero
 		}
 
