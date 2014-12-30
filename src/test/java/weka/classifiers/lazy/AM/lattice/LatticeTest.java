@@ -86,12 +86,11 @@ public class LatticeTest {
 	public void testHeterogeneousMarking() throws Exception {
 		Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN,
 				"6-10");
-		// TODO: I'm seeing double here!
 		String[] expectedSupras = new String[] {
-				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]",
-				"[2x(10000|A|K,U,V,U,0,A)]", "[2x(10000|A|K,U,V,U,0,A)]",
-				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]",
-				"[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]" };
+				"[1x(01010|&nondeterministic&|H,A,V,I,0,A/H,A,V,A,0,B)]",
+				"[2x(10000|A|K,U,V,U,0,A)]", "[2x(00011|C|H,U,V,O,S,C)]",
+				"[1x(10010|A|U,U,V,I,0,A),(10000|A|K,U,V,U,0,A)]",
+				"[1x(10010|A|U,U,V,I,0,A),(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A)]" };
 		testSupras(train, 0, expectedSupras);
 
 		train = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
