@@ -14,7 +14,6 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Attribute;
@@ -73,11 +72,10 @@ public class ClassifiedSupraTest {
 	private final double DELTA = 1e-10;
 
 	@Test
-	public void testEmpty() {
+	public void testDefaultContents() {
 		ClassifiedSupra testSupra = new ClassifiedSupra();
 		assertTrue(testSupra.getData().isEmpty());
 		assertTrue(testSupra.isEmpty());
-		assertEquals(testSupra.getNext(), null);
 		// AMUtils.UNKNOWN is Double.NaN
 		assertTrue(Double.isNaN(testSupra.getOutcome()));
 		assertFalse(testSupra.isHeterogeneous());
@@ -230,57 +228,5 @@ public class ClassifiedSupraTest {
 			}
 		}, BigInteger.valueOf(2));
 		assertEquals(testSupra2, supra);
-	}
-
-	// Test the constructor that creates a new supra from an old one
-	@SuppressWarnings("serial")
-	public void testGenerationalConstructor() {
-		ClassifiedSupra testSupra = new ClassifiedSupra();
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
-		sub2.add(dataset.get(1));
-		sub2.add(dataset.get(2));
-		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
-
-		ClassifiedSupra testSupra1 = new ClassifiedSupra(testSupra, sub1, 99);
-		ClassifiedSupra expected = new ClassifiedSupra(
-				new HashSet<Subcontext>() {
-					{
-						add(sub1);
-					}
-				}, BigInteger.ZERO);
-		assertEquals(testSupra1, expected);
-		assertEquals(testSupra1, 99);
-		assertTrue(testSupra.getNext() == testSupra1);
-		assertEquals(testSupra1.getNext(), null);
-		assertEquals(testSupra.getOutcome(), sub1.getOutcome(), DELTA);
-
-		testSupra1.incrementCount();
-		ClassifiedSupra testSupra2 = new ClassifiedSupra(testSupra1, sub2, 88);
-		expected = new ClassifiedSupra();
-		expected = new ClassifiedSupra(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-			}
-		}, BigInteger.ZERO);
-		assertEquals(testSupra2, expected);
-		assertEquals(testSupra2, 88);
-		assertTrue(testSupra1.getNext() == testSupra2);
-		assertTrue(testSupra2.getNext() == null);
-		assertEquals(testSupra2.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
-
-		ClassifiedSupra testSupra3 = new ClassifiedSupra(testSupra1, sub3, 77);
-		expected = new ClassifiedSupra();
-		expected = new ClassifiedSupra(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub3);
-			}
-		}, BigInteger.ZERO);
-		assertEquals(testSupra3, expected);
-		assertTrue(testSupra1.getNext() == testSupra3);
-		assertTrue(testSupra3.getNext() == null);
 	}
 }

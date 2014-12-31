@@ -47,7 +47,7 @@ public class BasicLattice implements Lattice {
 	/**
 	 * Lattice is a 2^n array of Supracontexts
 	 */
-	private Map<Label, ClassifiedSupra> lattice;
+	private Map<Label, LinkedLatticeNode<ClassifiedSupra>> lattice;
 
 	// the current number of the subcontext being added
 	private int index = -1;
@@ -55,14 +55,14 @@ public class BasicLattice implements Lattice {
 	/**
 	 * All points in the lattice point to the empty supracontext by default.
 	 */
-	private ClassifiedSupra emptySupracontext;
+	private LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
 	// static {
 	// }
 
-	private static ClassifiedSupra heteroSupra;
+	private static LinkedLatticeNode<ClassifiedSupra> heteroSupra;
 	static {
 		// points to nothing, has no data or outcome.
-		heteroSupra = new ClassifiedSupra();
+		heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
 	}
 
 	/**
@@ -73,10 +73,12 @@ public class BasicLattice implements Lattice {
 	 *            the size of the exemplars
 	 */
 	private void init() {
-		emptySupracontext = new ClassifiedSupra();
+		// TODO: dangit, now we have to support a blank constructor.
+		emptySupracontext = new LinkedLatticeNode<ClassifiedSupra>(
+				new ClassifiedSupra());
 		emptySupracontext.setNext(emptySupracontext);
 
-		lattice = new HashMap<Label, ClassifiedSupra>();
+		lattice = new HashMap<>();
 	}
 
 	/**
@@ -156,7 +158,7 @@ public class BasicLattice implements Lattice {
 		}
 		// we now know that we will have to make a new Supracontext to contain
 		// this subcontext; don't bother making heterogeneous supracontexts
-		else if (lattice.get(label).wouldBeHetero(sub)) {
+		else if (lattice.get(label).getSupracontext().wouldBeHetero(sub)) {
 			lattice.get(label).decrementCount();
 			lattice.put(label, heteroSupra);
 			return;
@@ -166,8 +168,7 @@ public class BasicLattice implements Lattice {
 			// don't decrement the count for the emptySupracontext!
 			if (lattice.get(label) != emptySupracontext)
 				lattice.get(label).decrementCount();
-			lattice.put(label, new ClassifiedSupra(lattice.get(label), sub,
-					index));
+			lattice.put(label, lattice.get(label).insertAfter(sub, index));
 		}
 		return;
 	}
@@ -176,7 +177,8 @@ public class BasicLattice implements Lattice {
 	 * Cycles through the the supracontexts and deletes ones with count=0
 	 */
 	private void cleanSupra() {
-		for (ClassifiedSupra supra = emptySupracontext; supra.getNext() != emptySupracontext;) {
+		for (LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext; supra
+				.getNext() != emptySupracontext;) {
 			if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
 				supra.setNext(supra.getNext().getNext());
 			} else
@@ -188,7 +190,7 @@ public class BasicLattice implements Lattice {
 	@Override
 	public Set<Supracontext> getSupracontexts() {
 		Set<Supracontext> supList = new HashSet<Supracontext>();
-		ClassifiedSupra supra = emptySupracontext.getNext();
+		LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext.getNext();
 		while (supra != emptySupracontext) {
 			supList.add(supra);
 			supra = supra.getNext();
@@ -204,7 +206,8 @@ public class BasicLattice implements Lattice {
 	@SuppressWarnings("unused")
 	private String dumpLattice() {
 		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<Label, ClassifiedSupra> e : lattice.entrySet()) {
+		for (Map.Entry<Label, LinkedLatticeNode<ClassifiedSupra>> e : lattice
+				.entrySet()) {
 			sb.append(e.getKey());
 			sb.append(':');
 			if (e.getValue() == heteroSupra)

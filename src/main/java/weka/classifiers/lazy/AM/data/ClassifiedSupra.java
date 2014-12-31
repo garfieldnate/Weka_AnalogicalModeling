@@ -16,12 +16,9 @@
 package weka.classifiers.lazy.AM.data;
 
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.AMUtils;
-import weka.classifiers.lazy.AM.lattice.LatticeNode;
 
 /**
  * This supracontext is called "classified" because it keeps track of its
@@ -33,27 +30,18 @@ import weka.classifiers.lazy.AM.lattice.LatticeNode;
  * @author Nathan Glenn
  * 
  */
-public class ClassifiedSupra extends Supracontext implements
-		LatticeNode<ClassifiedSupra> {
-	// number representing when this supracontext was created
-	private final int index;
+public class ClassifiedSupra implements Supracontext {
+	Supracontext supra;
 	// class attribute value, or nondeterministic, heterogeneous, or
 	// undetermined
 	private double outcome = Double.NaN;
-	// the contained subcontexts
-	private Set<Subcontext> data = new HashSet<>();
-	// pointer which makes a circular linked list out of the lists of
-	// subcontext. Using a circular linked list allows optimizations that we
-	// will see later.
-	private ClassifiedSupra next;
 
 	/**
 	 * Creates a supracontext with no data and an index of -1; Note that outcome
 	 * will be {@link AMUtils#EMPTY} by default
 	 */
 	public ClassifiedSupra() {
-		data = new HashSet<Subcontext>();
-		index = -1;
+		supra = new BasicSupra();
 	}
 
 	/**
@@ -71,31 +59,10 @@ public class ClassifiedSupra extends Supracontext implements
 			throw new IllegalArgumentException("data must not be null");
 		if (count == null)
 			throw new IllegalArgumentException("count must not be null");
+		supra = new BasicSupra();
 		for (Subcontext sub : data)
 			add(sub);
-		this.count = count;
-		index = -1;
-	}
-
-	/**
-	 * Creates a new supracontext from an old one and another exemplar,
-	 * inserting the new after the old. Assumes that the addition of the new
-	 * subcontext does not make the supracontext heterogeneous.
-	 * 
-	 * @param other
-	 *            Supracontext to place this one after
-	 * @param sub
-	 *            Subcontext to insert in the new Supracontext
-	 * @param ind
-	 *            index of new Supracontext
-	 */
-	public ClassifiedSupra(ClassifiedSupra other, Subcontext sub, int ind) {
-		index = ind;
-		data = new HashSet<>(other.getData());
-		outcome = other.getOutcome();
-		add(sub);
-		setNext(other.getNext());
-		other.setNext(this);
+		supra.setCount(count);
 	}
 
 	/**
@@ -104,12 +71,13 @@ public class ClassifiedSupra extends Supracontext implements
 	 * @param sub
 	 *            Subcontext to add to the supracontext.
 	 */
+	@Override
 	public void add(Subcontext sub) {
-		if (data.isEmpty())
+		if (supra.isEmpty())
 			outcome = sub.getOutcome();
 		else if (!isHeterogeneous() && wouldBeHetero(sub))
 			outcome = AMUtils.HETEROGENEOUS;
-		data.add(sub);
+		supra.add(sub);
 	}
 
 	/**
@@ -121,30 +89,6 @@ public class ClassifiedSupra extends Supracontext implements
 	 */
 	public double getOutcome() {
 		return outcome;
-	}
-
-	@Override
-	public ClassifiedSupra getNext() {
-		return next;
-	}
-
-	@Override
-	public void setNext(ClassifiedSupra next) {
-		this.next = next;
-	}
-
-	@Override
-	public int getIndex() {
-		return index;
-	}
-
-	/**
-	 * @return An unmodifiable view of the set of {@link Subcontext Subcontexts}
-	 *         contained in this supracontext.
-	 */
-	@Override
-	public Set<Subcontext> getData() {
-		return Collections.unmodifiableSet(data);
 	}
 
 	/**
@@ -171,7 +115,7 @@ public class ClassifiedSupra extends Supracontext implements
 		// Heterogeneous if:
 		// there are subcontexts with different outcomes
 		// there are more than one sub which are non-deterministic
-		if (data.size() == 0) {
+		if (supra.isEmpty()) {
 			return false;
 		}
 		if (sub.getOutcome() != outcome) {
@@ -182,26 +126,48 @@ public class ClassifiedSupra extends Supracontext implements
 		return false;
 	}
 
-	/**
-	 * @return String representation of this supracontext in this form: "["
-	 *         count "x" sub1.toString() "," sub2.toString() ... "]"
-	 */
+	@Override
+	public ClassifiedSupra copy() {
+		ClassifiedSupra newSupra = new ClassifiedSupra();
+		newSupra.supra = supra.copy();
+		newSupra.outcome = outcome;
+		return newSupra;
+	}
+
+	// methods below are simply forwarded to the wrapped supracontext
+
+	@Override
+	public Set<Subcontext> getData() {
+		return supra.getData();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return supra.isEmpty();
+	}
+
+	@Override
+	public BigInteger getCount() {
+		return supra.getCount();
+	}
+
+	@Override
+	public void setCount(BigInteger count) {
+		supra.setCount(count);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		return supra.equals(other);
+	}
+
+	@Override
+	public int hashCode() {
+		return supra.hashCode();
+	}
+
 	@Override
 	public String toString() {
-		if (isEmpty())
-			return "[EMPTY]";
-
-		StringBuilder sb = new StringBuilder();
-		sb.append('[');
-		sb.append(count);
-		sb.append('x');
-		for (Subcontext sub : data) {
-			sb.append(sub);
-			sb.append(',');
-		}
-		// remove last commas
-		sb.deleteCharAt(sb.length() - 1);
-		sb.append(']');
-		return sb.toString();
+		return supra.toString();
 	}
 }

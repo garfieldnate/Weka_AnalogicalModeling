@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import weka.classifiers.lazy.AM.lattice.LatticeNode;
-
 /**
  * This is a supracontext which does not keep track of its outcome in any way.
  * 
@@ -19,49 +17,65 @@ import weka.classifiers.lazy.AM.lattice.LatticeNode;
  * @author Nathan Glenn
  * 
  */
-public class UnclassifiedSupra extends Supracontext implements
-		LatticeNode<UnclassifiedSupra> {
-	private UnclassifiedSupra next;
-	private final int index;
+public class BasicSupra implements Supracontext {
+	private BigInteger count = BigInteger.ONE;
 	private final Set<Subcontext> data;
 
-	public UnclassifiedSupra() {
-		index = -1;
+	public BasicSupra() {
 		data = new HashSet<>();
 	}
 
-	public UnclassifiedSupra(Set<Subcontext> data, BigInteger count) {
-		index = -1;
-		this.data = data;
+	public BasicSupra(Set<Subcontext> data, BigInteger count) {
+		this.data = new HashSet<>(data);
 		this.count = count;
 	}
 
-	public UnclassifiedSupra(UnclassifiedSupra other, Subcontext sub, int index) {
-		data = new HashSet<>(other.data);
+	@Override
+	public void add(Subcontext sub) {
 		data.add(sub);
-		this.index = index;
-		setNext(other.getNext());
-		other.setNext(this);
-	}
-
-	@Override
-	public UnclassifiedSupra getNext() {
-		return next;
-	}
-
-	@Override
-	public void setNext(UnclassifiedSupra next) {
-		this.next = next;
-	}
-
-	@Override
-	public int getIndex() {
-		return index;
 	}
 
 	@Override
 	public Set<Subcontext> getData() {
 		return Collections.unmodifiableSet(data);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return getData().isEmpty();
+	}
+
+	@Override
+	public BigInteger getCount() {
+		return count;
+	}
+
+	@Override
+	public void setCount(BigInteger count) {
+		if (count == null)
+			throw new IllegalArgumentException("count must not be null");
+		if (count.compareTo(BigInteger.ZERO) < 0)
+			throw new IllegalArgumentException(
+					"count must not be less than zero");
+		this.count = count;
+	}
+
+	@Override
+	public BasicSupra copy() {
+		return new BasicSupra(data, count);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Supracontext))
+			return false;
+		Supracontext otherSupra = (Supracontext) other;
+		return getData().equals(otherSupra.getData());
+	}
+
+	@Override
+	public int hashCode() {
+		return getData().hashCode();
 	}
 
 	/**

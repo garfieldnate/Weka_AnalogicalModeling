@@ -32,7 +32,7 @@ import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.data.UnclassifiedSupra;
+import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
@@ -140,7 +140,7 @@ public class DistributedLattice implements Lattice {
 	 */
 	private Set<Supracontext> combine(Set<Supracontext> supras1,
 			Set<Supracontext> supras2) {
-		UnclassifiedSupra newSupra;
+		BasicSupra newSupra;
 		Map<Supracontext, Supracontext> combinedSupras = new HashMap<Supracontext, Supracontext>();
 		for (Supracontext supra1 : supras1) {
 			for (Supracontext supra2 : supras2) {
@@ -169,7 +169,7 @@ public class DistributedLattice implements Lattice {
 	 *            other partial supracontext to combine with
 	 * @return A new partial supracontext, or null if it would have been empty.
 	 */
-	public UnclassifiedSupra combine(Supracontext supra1, Supracontext supra2) {
+	public BasicSupra combine(Supracontext supra1, Supracontext supra2) {
 		Set<Subcontext> smaller;
 		Set<Subcontext> larger;
 		if (supra1.getData().size() > supra2.getData().size()) {
@@ -184,7 +184,7 @@ public class DistributedLattice implements Lattice {
 
 		if (combinedSubs.isEmpty())
 			return null;
-		UnclassifiedSupra supra = new UnclassifiedSupra(combinedSubs, supra1
+		BasicSupra supra = new BasicSupra(combinedSubs, supra1
 				.getCount().multiply(supra2.getCount()));
 		return supra;
 	}

@@ -20,31 +20,35 @@ import weka.classifiers.lazy.AM.label.Label;
  * @author Nathan Glenn
  * 
  */
-public abstract class Supracontext {
+public abstract interface Supracontext {
 
-	protected BigInteger count = BigInteger.ONE;
+	public Supracontext copy();
 
 	/**
 	 * @return an unmodifiable view of the set of subcontexts contained in this
 	 *         supracontext.
 	 */
-	public abstract Set<Subcontext> getData();
+	public Set<Subcontext> getData();
+
+	/**
+	 * Add a subcontext to the supracontext.
+	 * 
+	 * @param sub
+	 *            Subcontext to add to the supracontext.
+	 */
+	public void add(Subcontext sub);
 
 	/**
 	 * @return true if this supracontext contains no subcontexts; false
 	 *         otherwise.
 	 */
-	public boolean isEmpty() {
-		return getData().isEmpty();
-	}
+	public boolean isEmpty();
 
 	/**
 	 * 
 	 * @return the count, or number of instances, of this supracontext
 	 */
-	public BigInteger getCount() {
-		return count;
-	}
+	public BigInteger getCount();
 
 	/**
 	 * Set the count of the supracontext.
@@ -54,49 +58,15 @@ public abstract class Supracontext {
 	 * @throws IllegalArgumentException
 	 *             if c is null
 	 */
-	public void setCount(BigInteger count) {
-		if (count == null)
-			throw new IllegalArgumentException("count must not be null");
-		if (count.compareTo(BigInteger.ZERO) < 0)
-			throw new IllegalArgumentException(
-					"count must not be less than zero");
-		this.count = count;
-	}
-
-	/**
-	 * Increases count by one.
-	 */
-	public void incrementCount() {
-		count = count.add(BigInteger.ONE);
-	}
-
-	/**
-	 * Decreases the count by one; if this reaches 0, then this Supracontext
-	 * should be destroyed (by the caller).
-	 * 
-	 * @throws IllegalStateException
-	 *             if the count is already zero.
-	 */
-	public void decrementCount() {
-		if (count.equals(BigInteger.ZERO))
-			throw new IllegalStateException("Count cannot be less than zero");
-		count = count.subtract(BigInteger.ONE);
-	}
+	public void setCount(BigInteger count);
 
 	/**
 	 * {@inheritDoc} Two Supracontexts are equal if they contain the same
 	 * subcontexts.
 	 */
 	@Override
-	public boolean equals(Object other) {
-		if (!(other instanceof Supracontext))
-			return false;
-		Supracontext otherSupra = (Supracontext) other;
-		return getData().equals(otherSupra.getData());
-	}
+	public boolean equals(Object other);
 
 	@Override
-	public int hashCode() {
-		return getData().hashCode();
-	}
+	public int hashCode();
 }
