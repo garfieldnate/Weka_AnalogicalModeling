@@ -1,6 +1,8 @@
 package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 
+import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.lattice.LinkedLatticeNode;
 
 @RunWith(Parameterized.class)
@@ -96,6 +100,65 @@ public class SupracontextTest {
 		testSupra.setCount(BigInteger.valueOf(-1));
 	}
 
-	// TODO: isEmpty(), data(), add(), and copy()
-	// TODO: equals() and hashCode()
+	@Test
+	public void testIsEmpty() {
+		Supracontext testSupra = supraFactory.getSupra();
+		assertTrue(testSupra.isEmpty());
+		testSupra.add(new Subcontext(new IntLabel(0b0, 1)));
+		assertFalse(testSupra.isEmpty());
+	}
+
+	@Test
+	public void testData() {
+		Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
+		Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+
+		Supracontext testSupra = supraFactory.getSupra();
+
+		testSupra.add(sub1);
+		testSupra.add(sub2);
+		assertTrue(testSupra.getData().contains(sub1));
+		assertTrue(testSupra.getData().contains(sub2));
+	}
+
+	@Test
+	public void testCopy() {
+		Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
+		Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+
+		Supracontext testSupra1 = supraFactory.getSupra();
+
+		testSupra1.add(sub1);
+		testSupra1.add(sub2);
+
+		Supracontext testSupra2 = testSupra1.copy();
+		assertEquals(testSupra1.getClass(), testSupra2.getClass());
+		TestUtils.supraDeepEquals(testSupra1, testSupra2);
+		assertFalse(testSupra1 == testSupra2);
+	}
+
+	@Test
+	public void testEqualsAndHashCode() {
+		Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
+		Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+
+		Supracontext testSupra1 = supraFactory.getSupra();
+		Supracontext testSupra2 = supraFactory.getSupra();
+
+		testSupra1.add(sub1);
+		testSupra1.add(sub2);
+		assertFalse(testSupra1.equals(testSupra2));
+		assertFalse(testSupra1.hashCode() == testSupra2.hashCode());
+
+		testSupra2.add(sub1);
+		testSupra2.add(sub2);
+		assertTrue(testSupra1.equals(testSupra2));
+		assertTrue(testSupra1.hashCode() == testSupra2.hashCode());
+
+		testSupra1.setCount(BigInteger.valueOf(29));
+		assertTrue("count is not compared for equality",
+				testSupra1.equals(testSupra2));
+		assertTrue("count does not affect hashCode",
+				testSupra1.hashCode() == testSupra2.hashCode());
+	}
 }

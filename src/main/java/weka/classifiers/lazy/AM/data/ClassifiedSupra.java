@@ -22,10 +22,10 @@ import weka.classifiers.lazy.AM.AMUtils;
 
 /**
  * This supracontext is called "classified" because it keeps track of its
- * outcome at all times by inspecting the outcomes of the subcontexts added to
- * it. It also provides special methods for determining it's heterogeneity, and
- * for determining if the addition of certain subcontext would lead to
- * heterogeneity.
+ * outcome (or "class") at all times by inspecting the outcomes of the
+ * subcontexts added to it. It also provides special methods for determining
+ * it's heterogeneity, and for determining if the addition of a subcontext would
+ * lead to heterogeneity.
  * 
  * @author Nathan Glenn
  * 
@@ -37,8 +37,8 @@ public class ClassifiedSupra implements Supracontext {
 	private double outcome = Double.NaN;
 
 	/**
-	 * Creates a supracontext with no data and an index of -1; Note that outcome
-	 * will be {@link AMUtils#EMPTY} by default
+	 * Creates a supracontext with no data. The outcome will be
+	 * {@link AMUtils#UNKNOWN} until data is added.
 	 */
 	public ClassifiedSupra() {
 		supra = new BasicSupra();
@@ -52,25 +52,18 @@ public class ClassifiedSupra implements Supracontext {
 	 * @param count
 	 *            The count of this supracontext
 	 * @throws IllegalArgumentException
-	 *             if data or count are null
+	 *             if data or count are null, or count is less than
+	 *             {@link BigInteger#ZERO}
 	 */
 	public ClassifiedSupra(Set<Subcontext> data, BigInteger count) {
 		if (data == null)
 			throw new IllegalArgumentException("data must not be null");
-		if (count == null)
-			throw new IllegalArgumentException("count must not be null");
 		supra = new BasicSupra();
 		for (Subcontext sub : data)
 			add(sub);
 		supra.setCount(count);
 	}
 
-	/**
-	 * Add a subcontext to the supracontext and determine the outcome.
-	 * 
-	 * @param sub
-	 *            Subcontext to add to the supracontext.
-	 */
 	@Override
 	public void add(Subcontext sub) {
 		if (supra.isEmpty())
@@ -81,18 +74,24 @@ public class ClassifiedSupra implements Supracontext {
 	}
 
 	/**
-	 * Get the outcome of this supracontext. This is either a double
-	 * corresponding to the class value index given by Weka, or it is
-	 * {@link AMUtils#HETEROGENEOUS} or {@link AMUtils#NONDETERMINISTIC}
+	 * Get the outcome of this supracontext. If all of the contained subcontexts
+	 * have the same outcome, then this value is returned. If there are no
+	 * subcontexts in this supracontext, {@link AMUtils#UNKNOWN} is returned. If
+	 * there are multiple subs with an outcome of
+	 * {@link AMUtils#NONDETERMINISTIC} or the subs with differing outcomes,
+	 * {@link AMUtils#HETEROGENEOUS} is returned.
 	 * 
-	 * @return
+	 * @see Subcontext#getOutcome()
+	 * 
+	 * @return outcome of this supracontext
 	 */
 	public double getOutcome() {
 		return outcome;
 	}
 
 	/**
-	 * Determine if the supracontext is heterogeneous
+	 * Determine if the supracontext is heterogeneous, meaning that
+	 * {@link #getOutcome()} returns {@link AMUtils#HETEROGENEOUS}.
 	 * 
 	 * @return true if the supracontext is heterogeneous, false if it is
 	 *         homogeneous.
@@ -102,7 +101,7 @@ public class ClassifiedSupra implements Supracontext {
 	}
 
 	/**
-	 * Test if adding a subcontext would cause the supracontext to become
+	 * Test if adding a subcontext would cause this supracontext to become
 	 * heterogeneous.
 	 * 
 	 * @param sub
@@ -110,7 +109,6 @@ public class ClassifiedSupra implements Supracontext {
 	 * @return true if adding the given subcontext would cause this supracontext
 	 *         to become heterogeneous.
 	 */
-	// TODO: I don't really like this
 	public boolean wouldBeHetero(Subcontext sub) {
 		// Heterogeneous if:
 		// there are subcontexts with different outcomes

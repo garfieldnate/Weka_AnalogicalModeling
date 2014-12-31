@@ -158,5 +158,6 @@ public class LinkedLatticeNodeTest {
 		assertTrue(testNode2.getNext() == testNode4);
 		assertTrue(testNode4.getNext() == testNode3);
 	}
-
+	// TODO: test copy, equals and hashCode for correctness regarding next
+	// variable
 }

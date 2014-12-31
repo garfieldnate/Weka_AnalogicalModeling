@@ -6,13 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is a supracontext which does not keep track of its outcome in any way.
- * 
- * Partial supracontexts may be combined to create either new PartialSupras or
- * new {@link ClassifiedSupra ClassifiedSupras}. When this is done, the new
- * supracontext contains the intersection of subcontexts contained in both of
- * its parent supracontexts, and the count is set to the product of the two
- * original counts.
+ * Basic implementation of {@link Supracontext} with no extra features.
  * 
  * @author Nathan Glenn
  * 
@@ -21,13 +15,29 @@ public class BasicSupra implements Supracontext {
 	private BigInteger count = BigInteger.ONE;
 	private final Set<Subcontext> data;
 
+	/**
+	 * Create a new supracontext with an empty data set.
+	 */
 	public BasicSupra() {
 		data = new HashSet<>();
 	}
 
+	/**
+	 * Creates a new supracontext with the given parameters as the contents.
+	 * 
+	 * @param data
+	 *            The subcontexts contained in the supracontext
+	 * @param count
+	 *            The count of this supracontext
+	 * @throws IllegalArgumentException
+	 *             if data or count are null, or count is less than
+	 *             {@link BigInteger#ZERO}
+	 */
 	public BasicSupra(Set<Subcontext> data, BigInteger count) {
+		if (data == null)
+			throw new IllegalArgumentException("data must not be null");
+		setCount(count);
 		this.data = new HashSet<>(data);
-		this.count = count;
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package weka.classifiers.lazy.AM.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -14,6 +13,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.core.Attribute;
@@ -82,6 +82,8 @@ public class ClassifiedSupraTest {
 		assertTrue(testSupra.equals(testSupra));
 	}
 
+	// TODO: remove this test, and instead don't have a constructor that takes
+	// data like this (add() is tested in SupracontextTest).
 	@SuppressWarnings("serial")
 	@Test
 	public void testData() {
@@ -195,38 +197,36 @@ public class ClassifiedSupraTest {
 		assertTrue(new ClassifiedSupra(subSet, count).isHeterogeneous());
 	}
 
-	@SuppressWarnings("serial")
 	@Test
-	public void testEquals() {
-		ClassifiedSupra testSupra = new ClassifiedSupra();
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
-		sub2.add(dataset.get(1));
+	public void testOutcome() {
+		BigInteger count = BigInteger.ZERO;
+		Set<Subcontext> subSet = new HashSet<>();
+		ClassifiedSupra testSupra;
 
-		// equality depends only on the exact subcontexts contained
-		ClassifiedSupra supra = new ClassifiedSupra(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-			}
-		}, BigInteger.ZERO);
-		assertNotEquals(supra, testSupra);
-		ClassifiedSupra testSupra2 = new ClassifiedSupra(
-				new HashSet<Subcontext>() {
-					{
-						add(sub1);
-						add(sub2);
-					}
-				}, BigInteger.ZERO);
-		assertEquals(testSupra2, supra);
-		// count and outcome are not considered
-		testSupra2 = new ClassifiedSupra(new HashSet<Subcontext>() {
-			{
-				add(sub1);
-				add(sub2);
-			}
-		}, BigInteger.valueOf(2));
-		assertEquals(testSupra2, supra);
+		subSet = new HashSet<>();
+		subSet.add(subs.get(3));// 0
+		subSet.add(subs.get(4));// 0
+		assertEquals(new ClassifiedSupra(subSet, count).getOutcome(), 0.0,
+				DELTA);
+		testSupra = new ClassifiedSupra();
+		testSupra.add(subs.get(3));// 0
+		testSupra.add(subs.get(4));// 0
+		assertEquals(testSupra.getOutcome(), 0.0, DELTA);
+
+		subSet = new HashSet<>();
+		subSet.add(subs.get(2));// 1
+		assertEquals(new ClassifiedSupra(subSet, count).getOutcome(), 1.0,
+				DELTA);
+		testSupra = new ClassifiedSupra();
+		testSupra.add(subs.get(2));// 1
+		assertEquals(testSupra.getOutcome(), 1.0, DELTA);
+
+		subSet = new HashSet<>();
+		subSet.add(subs.get(0));// non-deterministic
+		assertEquals(new ClassifiedSupra(subSet, count).getOutcome(),
+				AMUtils.NONDETERMINISTIC, DELTA);
+		testSupra = new ClassifiedSupra();
+		testSupra.add(subs.get(0));// non-deterministic
+		assertEquals(testSupra.getOutcome(), AMUtils.NONDETERMINISTIC, DELTA);
 	}
 }

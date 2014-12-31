@@ -8,77 +8,85 @@ import weka.classifiers.lazy.AM.data.Supracontext;
 
 /**
  * This class is a decorator which wraps a {@link Supracontext} and adds the
- * functionality of a linked node.
+ * functionality of a linked node used in certain lattice-filling algorithms. An
+ * index is also provided for use in determining when the node was created.
  * 
  * @author Nathan Glenn
  * 
  * @param <T>
- *            This should be another type that implements LatticeNode so that a
- *            linked list can be created.
+ *            The implementation of Supracontext to be stored in this node.
  */
 public class LinkedLatticeNode<T extends Supracontext> implements Supracontext {
+	// the wrapped supracontext
 	T supra;
-	// number representing when this supracontext was created
-	private int index;
-	// pointer which makes a circular linked list out of the lists of
-	// subcontext. Using a circular linked list allows optimizations that we
-	// will see later.
+	// a number representing when this supracontext was created
+	private final int index;
+	// pointer to the next node; this is used during lattice filling to create a
+	// circular linked list
 	private LinkedLatticeNode<T> next;
 
+	/**
+	 * Create a new node containing the given supracontext. The index is set to
+	 * -1.
+	 * 
+	 * @param supra
+	 *            Supracontext to store in this node.
+	 */
 	public LinkedLatticeNode(T supra) {
 		this.supra = supra;
 		index = -1;
 	}
 
+	// used privately by insertAfter
+	private LinkedLatticeNode(T supra, int ind) {
+		this.supra = supra;
+		index = ind;
+	}
+
 	/**
-	 * Creates a new supracontext from an old one and another exemplar,
-	 * inserting the new after the old. Assumes that the addition of the new
-	 * subcontext does not make the supracontext heterogeneous.
+	 * Create a new node by copying this one, adding the given subcontext and
+	 * setting the index to that provided. Insert the new node between this node
+	 * and its next node by setting the new node to be the next node and seting
+	 * the previous next node to be the new node's next node.
 	 * 
-	 * @param other
-	 *            Supracontext to place this one after
 	 * @param sub
-	 *            Subcontext to insert in the new Supracontext
+	 *            Subcontext to insert into the copied Supracontext
 	 * @param ind
-	 *            index of new Supracontext
+	 *            index of new node
 	 */
-	// it's okay to cast to T here because of the constraint that
-	// Supracontext.copy() return its own type
-	@SuppressWarnings("unchecked")
 	public LinkedLatticeNode<T> insertAfter(Subcontext sub, int ind) {
+		// it's okay to cast to T here because of the contract that
+		// Supracontext.copy() return its own type
+		@SuppressWarnings("unchecked")
 		T newSupra = (T) getSupracontext().copy();
 		newSupra.setCount(BigInteger.ONE);
 		newSupra.add(sub);
-		LinkedLatticeNode<T> newNode = new LinkedLatticeNode<T>(newSupra);
-		newNode.index = ind;
+		LinkedLatticeNode<T> newNode = new LinkedLatticeNode<T>(newSupra, ind);
 		newNode.setNext(getNext());
 		setNext(newNode);
 		return newNode;
 	}
 
 	/**
-	 * @return the next object linked to by this node
+	 * @return the next node linked to by this node
 	 */
 	public LinkedLatticeNode<T> getNext() {
 		return next;
 	}
 
 	/**
-	 * Set the next object linked to by this node
+	 * Set the next node linked to by this node
 	 * 
 	 * @param next
-	 *            the object to link to
+	 *            the node to link to
 	 */
 	public void setNext(LinkedLatticeNode<T> next) {
 		this.next = next;
 	}
 
 	/**
-	 * @return The index of this node. The index of a node should be -1 by
-	 *         default unless set in a constructor, and it should never change
-	 *         after object construction.
+	 * @return The index of this node.
 	 */
-	// should be -1 if not set in a constructor or something
 	public int getIndex() {
 		return index;
 	}
@@ -92,7 +100,7 @@ public class LinkedLatticeNode<T extends Supracontext> implements Supracontext {
 
 	/**
 	 * Decreases the count by one; if this reaches 0, then this Supracontext
-	 * should be destroyed (by the caller).
+	 * should be discarded (by the caller).
 	 * 
 	 * @throws IllegalStateException
 	 *             if the count is already zero.
@@ -103,17 +111,20 @@ public class LinkedLatticeNode<T extends Supracontext> implements Supracontext {
 		supra.setCount(supra.getCount().subtract(BigInteger.ONE));
 	}
 
+	/**
+	 * @return The supracontext contained in this node.
+	 */
 	public T getSupracontext() {
 		return supra;
 	}
 
-	/**
-	 * This method is unimplemented and will throw an
-	 * {@link UnsupportedOperationException} if called. {@inheritDoc}
-	 */
 	@Override
 	public Supracontext copy() {
-		throw new UnsupportedOperationException();
+		@SuppressWarnings("unchecked")
+		T newSupra = (T) getSupracontext().copy();
+		LinkedLatticeNode<T> newNode = new LinkedLatticeNode<T>(newSupra, index);
+		newNode.setNext(next);
+		return newNode;
 	}
 
 	// Below methods are delegated to the contained supracontext
