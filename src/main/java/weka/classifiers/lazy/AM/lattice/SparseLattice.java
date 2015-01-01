@@ -2,7 +2,6 @@ package weka.classifiers.lazy.AM.lattice;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,17 +10,19 @@ import java.util.Queue;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
+import weka.classifiers.lazy.AM.data.Concept;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
 public class SparseLattice implements Lattice {
-	private final List<Concept> lattice = new ArrayList<>();
+	private final List<Concept<ClassifiedSupra>> lattice = new ArrayList<>();
 	private static BigInteger two = BigInteger.valueOf(2);
 
 	public SparseLattice(SubcontextList subList) {
-		Concept bottom = new Concept(subList.getLabeler().getAllMatchLabel());
+		Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler()
+				.getAllMatchLabel(), new ClassifiedSupra());
 		lattice.add(bottom);
 		// int i = 0;
 		for (Subcontext sub : subList) {
@@ -33,8 +34,8 @@ public class SparseLattice implements Lattice {
 		System.out.println(dumpLattice("lattice"));
 	}
 
-	Concept addIntent(Set<Subcontext> extent, Label intent,
-			Concept generatorConcept) {
+	Concept<ClassifiedSupra> addIntent(Set<Subcontext> extent, Label intent,
+			Concept<ClassifiedSupra> generatorConcept) {
 		generatorConcept = getMaximalConcept(intent, generatorConcept);
 		if (generatorConcept.getIntent().equals(intent)) {
 			// concept with given label is already present, so just add the subs
@@ -43,8 +44,8 @@ public class SparseLattice implements Lattice {
 			// markIfHetero(generatorConcept);
 			return generatorConcept;
 		}
-		Set<Concept> newParents = new HashSet<>();
-		for (Concept candidate : generatorConcept.getParents()) {
+		Set<Concept<ClassifiedSupra>> newParents = new HashSet<>();
+		for (Concept<ClassifiedSupra> candidate : generatorConcept.getParents()) {
 			if (!candidate.getIntent().isDescendantOf(intent)) {
 				// this possible parent turned out not to be a parent, so
 				// generate a parent by intersecting it with the new label, and
@@ -55,9 +56,10 @@ public class SparseLattice implements Lattice {
 						intent.intersect(candidate.getIntent()), candidate);
 			}
 			boolean addParent = true;
-			Iterator<Concept> newParentIterator = newParents.iterator();
+			Iterator<Concept<ClassifiedSupra>> newParentIterator = newParents
+					.iterator();
 			while (newParentIterator.hasNext()) {
-				Concept parent = newParentIterator.next();
+				Concept<ClassifiedSupra> parent = newParentIterator.next();
 				if (parent.getIntent().isDescendantOf(candidate.getIntent())) {
 					addParent = false;
 					break;
@@ -71,9 +73,10 @@ public class SparseLattice implements Lattice {
 		}
 		Set<Subcontext> newExtent = new HashSet<>(extent);
 		newExtent.addAll(generatorConcept.getExtent());
-		Concept newConcept = new Concept(intent, newExtent);
+		Concept<ClassifiedSupra> newConcept = new Concept<>(intent,
+				new ClassifiedSupra(newExtent, BigInteger.ONE));
 		lattice.add(newConcept);
-		for (Concept parent : newParents) {
+		for (Concept<ClassifiedSupra> parent : newParents) {
 			generatorConcept.removeParent(parent);
 			newConcept.addParent(parent);
 			parent.addToExtent(extent);
@@ -82,11 +85,13 @@ public class SparseLattice implements Lattice {
 		return newConcept;
 	}
 
-	Concept getMaximalConcept(Label intent, Concept generatorConcept) {
+	Concept<ClassifiedSupra> getMaximalConcept(Label intent,
+			Concept<ClassifiedSupra> generatorConcept) {
 		boolean parentIsMaximal = true;
 		while (parentIsMaximal) {
 			parentIsMaximal = false;
-			for (Concept parent : generatorConcept.getParents()) {
+			for (Concept<ClassifiedSupra> parent : generatorConcept
+					.getParents()) {
 				if (intent.isDescendantOf(parent.getIntent())) {
 					generatorConcept = parent;
 					parentIsMaximal = true;
@@ -100,11 +105,11 @@ public class SparseLattice implements Lattice {
 	private String dumpLattice(String graphName) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("digraph " + graphName + " {\n");
-		Set<Concept> visited = new HashSet<>();
-		Queue<Concept> queue = new LinkedList<>();
+		Set<Concept<ClassifiedSupra>> visited = new HashSet<>();
+		Queue<Concept<ClassifiedSupra>> queue = new LinkedList<>();
 		queue.add(lattice.get(0));
 		while (queue.size() != 0) {
-			Concept current = queue.poll();
+			Concept<ClassifiedSupra> current = queue.poll();
 			if (visited.contains(current))
 				continue;
 			visited.add(current);
@@ -122,7 +127,7 @@ public class SparseLattice implements Lattice {
 			sb.append(current.hashCode() + " [color=" + color + ", label=\""
 					+ getCount(current) + "x" + current.getIntent() + ":"
 					+ current.getExtent() + "\"];\n");
-			for (Concept parent : current.getParents())
+			for (Concept<ClassifiedSupra> parent : current.getParents())
 				sb.append(current.hashCode() + " -> " + parent.hashCode()
 						+ ";\n");
 			queue.addAll(current.getParents());
@@ -138,7 +143,7 @@ public class SparseLattice implements Lattice {
 		// data
 		concepts: for (int i = (lattice.get(0).getExtent().size() == 0) ? 1 : 0; i < lattice
 				.size(); i++) {
-			Concept concept = lattice.get(i);
+			Concept<ClassifiedSupra> concept = lattice.get(i);
 			ClassifiedSupra supra = new ClassifiedSupra();
 			for (Subcontext sub : concept.getExtent()) {
 				supra.add(sub);
@@ -151,7 +156,7 @@ public class SparseLattice implements Lattice {
 		return supras;
 	}
 
-	private BigInteger getCount(Concept concept) {
+	private BigInteger getCount(Concept<ClassifiedSupra> concept) {
 		// if a supra has N matches, then those matches can be replaced with
 		// mismatches in 2^N ways (including the possibility of replacing none
 		// of them). That's the number a supra would have if it had no children.
@@ -167,7 +172,7 @@ public class SparseLattice implements Lattice {
 
 		// otherwise, we subtract the count headed by the parents
 		List<Label> parentLabels = new ArrayList<>();
-		for (Concept c : concept.getParents())
+		for (Concept<ClassifiedSupra> c : concept.getParents())
 			parentLabels.add(c.getIntent());
 		return count.subtract(countOfUnion(parentLabels));
 	}
@@ -239,74 +244,63 @@ public class SparseLattice implements Lattice {
 		return two.pow(label.numMatches());
 	}
 
-	private class Concept {
-		Set<Subcontext> extent;
-		Label intent;
-		Set<Concept> parents;
-
-		// TODO: track heterogeneity
-		// boolean isHetero;
-		// double outcome;
-
-		public Concept(Label intent) {
-			this.intent = intent;
-			extent = new HashSet<Subcontext>();
-			parents = new HashSet<Concept>();
-		}
-
-		public Concept(Label intent, Set<Subcontext> extent) {
-			this.intent = intent;
-			this.extent = new HashSet<>(extent);
-			parents = new HashSet<Concept>();
-		}
-
-		public Set<Subcontext> getExtent() {
-			return Collections.unmodifiableSet(extent);
-		}
-
-		/**
-		 * Add subcontexts to the extent of this concept as well as to all of
-		 * its ancestors.
-		 * 
-		 * @param newSubs
-		 */
-		public void addToExtent(Set<Subcontext> newSubs) {
-			// TODO: not needed. Is anything needed?
-			// for (Subcontext sub : newSubs)
-			// assert (!extent.contains(sub));
-			extent.addAll(newSubs);
-			for (Concept parent : getParents())
-				parent.addToExtent(newSubs);
-			// markIfHetero
-		}
-
-		// public int getOutcome(){}
-
-		public Label getIntent() {
-			return intent;
-		}
-
-		public Set<Concept> getParents() {
-			return Collections.unmodifiableSet(parents);
-		}
-
-		public void addParent(Concept newParent) {
-			parents.add(newParent);
-		}
-
-		public void removeParent(Concept oldParent) {
-			// TODO: this assert fails, but nothing seems to actually be wrong.
-			// assert (parents.contains(oldParent));
-			parents.remove(oldParent);
-		}
-
-		// public boolean isHeterogeneous() {
-		// return isHetero;
-		// }
-
-		@Override
-		public String toString() {
-			return intent + "(" + extent + ")->[" + parents + "]";
-		}
-	}
+	// private class Concept {
+	// Set<Subcontext> extent;
+	// Label intent;
+	// Set<Concept> parents;
+	//
+	// public Concept(Label intent) {
+	// this.intent = intent;
+	// extent = new HashSet<Subcontext>();
+	// parents = new HashSet<Concept>();
+	// }
+	//
+	// public Concept(Label intent, Set<Subcontext> extent) {
+	// this.intent = intent;
+	// this.extent = new HashSet<>(extent);
+	// parents = new HashSet<Concept>();
+	// }
+	//
+	// public Set<Subcontext> getExtent() {
+	// return Collections.unmodifiableSet(extent);
+	// }
+	//
+	// /**
+	// * Add subcontexts to the extent of this concept as well as to all of
+	// * its ancestors.
+	// *
+	// * @param newSubs
+	// */
+	// public void addToExtent(Set<Subcontext> newSubs) {
+	// // TODO: not needed. Is anything needed?
+	// // for (Subcontext sub : newSubs)
+	// // assert (!extent.contains(sub));
+	// extent.addAll(newSubs);
+	// for (Concept parent : getParents())
+	// parent.addToExtent(newSubs);
+	// }
+	//
+	// public Label getIntent() {
+	// return intent;
+	// }
+	//
+	// public Set<Concept> getParents() {
+	// return Collections.unmodifiableSet(parents);
+	// }
+	//
+	// public void addParent(Concept newParent) {
+	// parents.add(newParent);
+	// }
+	//
+	// public void removeParent(Concept oldParent) {
+	// // TODO: this assert fails, but nothing seems to actually be wrong.
+	// // assert (parents.contains(oldParent));
+	// parents.remove(oldParent);
+	// }
+	//
+	// @Override
+	// public String toString() {
+	// return intent + "(" + extent + ")->[" + parents + "]";
+	// }
+	// }
 }

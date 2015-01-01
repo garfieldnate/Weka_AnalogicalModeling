@@ -69,6 +69,14 @@ public class SupracontextTest {
 										new BasicSupra());
 							}
 						} });
+				add(new Object[] { Concept.class.getSimpleName(),
+						new SupraFactory() {
+							@Override
+							public Supracontext getSupra() {
+								return new Concept<BasicSupra>(null,
+										new BasicSupra());
+							}
+						} });
 			}
 		};
 
