@@ -39,19 +39,15 @@ public class Concept<T extends Supracontext> implements Supracontext {
 	}
 
 	/**
-	 * Add subcontexts to the extent of this concept as well as to all of its
-	 * ancestors.
+	 * Add the given subcontext to the extent of this concept.
 	 * 
-	 * @param newSubs
+	 * @param newSub
 	 */
-	public void addToExtent(Set<Subcontext> newSubs) {
+	public void addToExtent(Subcontext newSub) {
 		// TODO: not needed. Is anything needed?
 		// for (Subcontext sub : newSubs)
 		// assert (!extent.contains(sub));
-		for (Subcontext sub : newSubs)
-			extent.add(sub);
-		for (Concept<T> parent : getParents())
-			parent.addToExtent(newSubs);
+		extent.add(newSub);
 	}
 
 	public Label getIntent() {
@@ -67,7 +63,8 @@ public class Concept<T extends Supracontext> implements Supracontext {
 	}
 
 	public void removeParent(Concept<T> oldParent) {
-		// TODO: this assert fails, but nothing seems to actually be wrong.
+		// this won't always be true; recursively grabbed ancestors may not be
+		// the generating concept's parents.
 		// assert (parents.contains(oldParent));
 		parents.remove(oldParent);
 	}
@@ -86,6 +83,34 @@ public class Concept<T extends Supracontext> implements Supracontext {
 		Concept<T> newNode = new Concept<T>(intent, newSupra);
 		newNode.parents = new HashSet<>(parents);
 		return newNode;
+	}
+
+	/**
+	 * This equals method differs from the specification in
+	 * {@link Supracontext#equals(Object)}; it compares the concept intent
+	 * (label), instead of the extent (contained subcontexts). {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (!(other instanceof Concept))
+			return false;
+		// extent equals method will take care of any difference in
+		// parameterized type
+		@SuppressWarnings("rawtypes")
+		Concept otherConcept = (Concept) other;
+		return intent.equals(otherConcept.intent);
+	}
+
+	/**
+	 * This implementation differs from the specification in
+	 * {@link Supracontext#hashCode()}; it returns the hash of the intent
+	 * (label), instead of the extent (contained subcontexts). {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return intent.hashCode();
 	}
 
 	// the following methods forward to the contained Supracontext
@@ -113,15 +138,5 @@ public class Concept<T extends Supracontext> implements Supracontext {
 	@Override
 	public void setCount(BigInteger count) {
 		extent.setCount(count);
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		return extent.equals(other);
-	}
-
-	@Override
-	public int hashCode() {
-		return extent.hashCode();
 	}
 }

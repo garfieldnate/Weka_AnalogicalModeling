@@ -24,24 +24,21 @@ public class SparseLattice implements Lattice {
 		Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler()
 				.getAllMatchLabel(), new ClassifiedSupra());
 		lattice.add(bottom);
-		// int i = 0;
+		int i = 0;
 		for (Subcontext sub : subList) {
-			// System.out.println(i++);
-			Set<Subcontext> extent = new HashSet<>();
-			extent.add(sub);
-			addIntent(extent, sub.getLabel(), bottom);
+			System.out.println(i++);
+			Concept<ClassifiedSupra> newConcept = addIntent(sub.getLabel(),
+					bottom);
+			addExtent(newConcept, sub);
 		}
 		System.out.println(dumpLattice("lattice"));
 	}
 
-	Concept<ClassifiedSupra> addIntent(Set<Subcontext> extent, Label intent,
+	Concept<ClassifiedSupra> addIntent(Label intent,
 			Concept<ClassifiedSupra> generatorConcept) {
 		generatorConcept = getMaximalConcept(intent, generatorConcept);
 		if (generatorConcept.getIntent().equals(intent)) {
-			// concept with given label is already present, so just add the subs
-			generatorConcept.addToExtent(extent);
-			// generatorConcept.combineExtent(generatorConcept);
-			// markIfHetero(generatorConcept);
+			// concept with given label is already present
 			return generatorConcept;
 		}
 		Set<Concept<ClassifiedSupra>> newParents = new HashSet<>();
@@ -50,10 +47,8 @@ public class SparseLattice implements Lattice {
 				// this possible parent turned out not to be a parent, so
 				// generate a parent by intersecting it with the new label, and
 				// save the new parent
-				Set<Subcontext> newExtent = new HashSet<>(extent);
-				newExtent.addAll(candidate.getExtent());
-				candidate = addIntent(newExtent,
-						intent.intersect(candidate.getIntent()), candidate);
+				candidate = addIntent(intent.intersect(candidate.getIntent()),
+						candidate);
 			}
 			boolean addParent = true;
 			Iterator<Concept<ClassifiedSupra>> newParentIterator = newParents
@@ -71,15 +66,15 @@ public class SparseLattice implements Lattice {
 			if (addParent)
 				newParents.add(candidate);
 		}
-		Set<Subcontext> newExtent = new HashSet<>(extent);
-		newExtent.addAll(generatorConcept.getExtent());
 		Concept<ClassifiedSupra> newConcept = new Concept<>(intent,
-				new ClassifiedSupra(newExtent, BigInteger.ONE));
+				new ClassifiedSupra(generatorConcept.getExtent(),
+						BigInteger.ONE));
 		lattice.add(newConcept);
 		for (Concept<ClassifiedSupra> parent : newParents) {
+			// may not actually contain the given parent if it was returned from
+			// a recursive call; remove it if it does, though
 			generatorConcept.removeParent(parent);
 			newConcept.addParent(parent);
-			parent.addToExtent(extent);
 		}
 		generatorConcept.addParent(newConcept);
 		return newConcept;
@@ -102,17 +97,34 @@ public class SparseLattice implements Lattice {
 		return generatorConcept;
 	}
 
-	private String dumpLattice(String graphName) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("digraph " + graphName + " {\n");
+	// add the given subcontext to the extent of concept and all of its
+	// ancestors
+	private void addExtent(Concept<ClassifiedSupra> concept, Subcontext extent) {
 		Set<Concept<ClassifiedSupra>> visited = new HashSet<>();
 		Queue<Concept<ClassifiedSupra>> queue = new LinkedList<>();
-		queue.add(lattice.get(0));
+		queue.add(concept);
 		while (queue.size() != 0) {
 			Concept<ClassifiedSupra> current = queue.poll();
 			if (visited.contains(current))
 				continue;
 			visited.add(current);
+			queue.addAll(current.getParents());
+
+			current.addToExtent(extent);
+		}
+	}
+
+	private String dumpLattice(String graphName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("digraph " + graphName + " {\n");
+		Set<Label> visited = new HashSet<>();
+		Queue<Concept<ClassifiedSupra>> queue = new LinkedList<>();
+		queue.add(lattice.get(0));
+		while (queue.size() != 0) {
+			Concept<ClassifiedSupra> current = queue.poll();
+			if (visited.contains(current.getIntent()))
+				continue;
+			visited.add(current.getIntent());
 			String color = "\"black\"";
 
 			ClassifiedSupra supra = new ClassifiedSupra();
@@ -124,11 +136,11 @@ public class SparseLattice implements Lattice {
 				}
 			}
 
-			sb.append(current.hashCode() + " [color=" + color + ", label=\""
+			sb.append(current.getIntent() + " [color=" + color + ", label=\""
 					+ getCount(current) + "x" + current.getIntent() + ":"
 					+ current.getExtent() + "\"];\n");
 			for (Concept<ClassifiedSupra> parent : current.getParents())
-				sb.append(current.hashCode() + " -> " + parent.hashCode()
+				sb.append(current.getIntent() + " -> " + parent.getIntent()
 						+ ";\n");
 			queue.addAll(current.getParents());
 		}
