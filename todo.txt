@@ -2,11 +2,8 @@ Current: SparseLattice
 	- fix count, which is incorrect currently because we are not considering grandparents, etc.
 		- count needs to consider all ancestors, probably meaning we need to update it dynamically during addIntent.
 		- perhaps we need child and parent nodes; updated count means updating all children.
-	- then move Supracontexts into the concept nodes and track heterogeneity;
-		- use this to eliminate extra work, but somehow keep the count correct.
-		- currently the Soybean set adds up to around 60 items and then is basically frozen. 
+		- flooding algorithm?
 Later TODO:
-- replace bit counter in iterators to use Long#bitCount and Integer#bitCount
 - distributed lattice should die if labeler says not to split
 - toString for Labeler classes would be nice
 - label splitting should use the strategy pattern.
