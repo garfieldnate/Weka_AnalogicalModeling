@@ -24,9 +24,9 @@ public class SparseLattice implements Lattice {
 		Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler()
 				.getAllMatchLabel(), new ClassifiedSupra());
 		lattice.add(bottom);
-		int i = 0;
+		// int i = 0;
 		for (Subcontext sub : subList) {
-			System.out.println(i++);
+			// System.err.println(i++);
 			Concept<ClassifiedSupra> newConcept = addIntent(sub.getLabel(),
 					bottom);
 			addExtent(newConcept, sub);
@@ -55,11 +55,11 @@ public class SparseLattice implements Lattice {
 					.iterator();
 			while (newParentIterator.hasNext()) {
 				Concept<ClassifiedSupra> parent = newParentIterator.next();
-				if (parent.getIntent().isDescendantOf(candidate.getIntent())) {
+				if (candidate.getIntent().isDescendantOf(parent.getIntent())) {
 					addParent = false;
 					break;
-				} else if (candidate.getIntent().isDescendantOf(
-						parent.getIntent()))
+				} else if (parent.getIntent().isDescendantOf(
+						candidate.getIntent()))
 					newParentIterator.remove();// assert(newParents.contains(parent))
 												// may be instructive here
 			}
