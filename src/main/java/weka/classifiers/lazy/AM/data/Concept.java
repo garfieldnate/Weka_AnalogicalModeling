@@ -6,10 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AM.lattice.SparseLattice;
 
 /**
  * This class is a decorator which wraps a {@link Supracontext} and adds the
- * functionality of a node (concept) used in the AddIntent algorithm.
+ * functionality of a node (concept) used in the ImprovedAddIntent algorithm
+ * (see {@link SparseLattice}.
  * 
  * @author Nathan Glenn
  * 
@@ -20,14 +22,18 @@ import weka.classifiers.lazy.AM.label.Label;
 // classifiedSupra?
 public class Concept<T extends Supracontext> implements Supracontext {
 	// the wrapped supracontext
-	T extent;
-	Label intent;
-	Set<Concept<T>> parents;
+	private final T extent;
+	private final Label intent;
+	private Set<Concept<T>> parents;
+	private boolean tag;
+	private Concept<T> candidateParent;
 
 	public Concept(Label intent, T extent) {
 		this.intent = intent;
 		this.extent = extent;
 		parents = new HashSet<>();
+		tag = false;
+		candidateParent = null;
 	}
 
 	public Set<Subcontext> getExtent() {
@@ -138,5 +144,21 @@ public class Concept<T extends Supracontext> implements Supracontext {
 	@Override
 	public void setCount(BigInteger count) {
 		extent.setCount(count);
+	}
+
+	public boolean isTagged() {
+		return tag;
+	}
+
+	public void setTagged(boolean tag) {
+		this.tag = tag;
+	}
+
+	public Concept<T> getCandidateParent() {
+		return candidateParent;
+	}
+
+	public void setCandidateParent(Concept<T> candidateParent) {
+		this.candidateParent = candidateParent;
 	}
 }

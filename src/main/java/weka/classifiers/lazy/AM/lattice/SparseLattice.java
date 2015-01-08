@@ -16,11 +16,27 @@ import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
+/**
+ * 
+ * Warning: this class is currently experimental, slow, and probably broken. Do
+ * not try to use in production.
+ * 
+ * Fill a sparse lattice structure which stores unique references to unique
+ * Supracontexts. The lattice filling algorithm is based on an improved version
+ * of AddIntent, described in
+ * "An Improved AddIntent Algorithm for Building Concept Lattice" by Lv
+ * Lingling, et. al., 2011.
+ * 
+ * @author Nate Glenn
+ * 
+ */
 public class SparseLattice implements Lattice {
 	private final List<Concept<ClassifiedSupra>> lattice = new ArrayList<>();
 	private static BigInteger two = BigInteger.valueOf(2);
+	List<Concept<ClassifiedSupra>> tagList;
 
 	public SparseLattice(SubcontextList subList) {
+		tagList = new LinkedList<>();
 		Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler()
 				.getAllMatchLabel(), new ClassifiedSupra());
 		lattice.add(bottom);
@@ -30,25 +46,51 @@ public class SparseLattice implements Lattice {
 			Concept<ClassifiedSupra> newConcept = addIntent(sub.getLabel(),
 					bottom);
 			addExtent(newConcept, sub);
+			resetTags();
 		}
 		System.out.println(dumpLattice("lattice"));
 	}
 
-	Concept<ClassifiedSupra> addIntent(Label intent,
+	private void resetTags() {
+		Iterator<Concept<ClassifiedSupra>> iter = tagList.iterator();
+		while (iter.hasNext()) {
+			Concept<ClassifiedSupra> concept = iter.next();
+			concept.setTagged(false);
+			concept.setCandidateParent(null);
+			iter.remove();
+		}
+		assert (tagList.isEmpty());
+	}
+
+	private Concept<ClassifiedSupra> addIntent(Label intent,
 			Concept<ClassifiedSupra> generatorConcept) {
-		generatorConcept = getMaximalConcept(intent, generatorConcept);
-		if (generatorConcept.getIntent().equals(intent)) {
+		Label intersection = intent.intersect(generatorConcept.getIntent());
+		generatorConcept = getMaximalConcept(intersection, generatorConcept);
+		if (generatorConcept.getIntent().equals(intersection)) {
+			if (!generatorConcept.isTagged()) {
+				tagList.add(generatorConcept);
+				generatorConcept.setTagged(true);
+				generatorConcept.setCandidateParent(generatorConcept);
+			}
 			// concept with given label is already present
 			return generatorConcept;
 		}
 		Set<Concept<ClassifiedSupra>> newParents = new HashSet<>();
 		for (Concept<ClassifiedSupra> candidate : generatorConcept.getParents()) {
-			if (!candidate.getIntent().isDescendantOf(intent)) {
-				// this possible parent turned out not to be a parent, so
-				// generate a parent by intersecting it with the new label, and
-				// save the new parent
-				candidate = addIntent(intent.intersect(candidate.getIntent()),
-						candidate);
+			if (!candidate.isTagged()) {
+				Concept<ClassifiedSupra> tempConcept = candidate;
+				if (!candidate.getIntent().isDescendantOf(intersection)) {
+					// this possible parent turned out not to be a parent, so
+					// generate a parent by intersecting it with the new label,
+					// and save the new parent
+					candidate = addIntent(intent, candidate);
+					tempConcept.setCandidateParent(candidate);
+				}
+				tagList.add(tempConcept);
+				tempConcept.setTagged(true);
+			} else {
+				if (candidate.getCandidateParent() != null)
+					candidate = candidate.getCandidateParent();
 			}
 			boolean addParent = true;
 			Iterator<Concept<ClassifiedSupra>> newParentIterator = newParents
@@ -60,16 +102,25 @@ public class SparseLattice implements Lattice {
 					break;
 				} else if (parent.getIntent().isDescendantOf(
 						candidate.getIntent()))
-					newParentIterator.remove();// assert(newParents.contains(parent))
-												// may be instructive here
+					newParentIterator.remove();
 			}
 			if (addParent)
 				newParents.add(candidate);
 		}
-		Concept<ClassifiedSupra> newConcept = new Concept<>(intent,
+
+		Concept<ClassifiedSupra> newConcept = new Concept<>(intersection,
 				new ClassifiedSupra(generatorConcept.getExtent(),
 						BigInteger.ONE));
+		newConcept.setTagged(true);
+		tagList.add(newConcept);
+		newConcept.setCandidateParent(newConcept);
+
+		tagList.add(generatorConcept);
+		generatorConcept.setTagged(true);
+		generatorConcept.setCandidateParent(newConcept);
+
 		lattice.add(newConcept);
+
 		for (Concept<ClassifiedSupra> parent : newParents) {
 			// may not actually contain the given parent if it was returned from
 			// a recursive call; remove it if it does, though
@@ -116,7 +167,7 @@ public class SparseLattice implements Lattice {
 
 	private String dumpLattice(String graphName) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("digraph " + graphName + " {\n");
+		sb.append("digraph " + graphName + " {\nnode [shape=box]\n");
 		Set<Label> visited = new HashSet<>();
 		Queue<Concept<ClassifiedSupra>> queue = new LinkedList<>();
 		queue.add(lattice.get(0));
@@ -125,18 +176,18 @@ public class SparseLattice implements Lattice {
 			if (visited.contains(current.getIntent()))
 				continue;
 			visited.add(current.getIntent());
-			String color = "\"black\"";
+			String color = "";
 
 			ClassifiedSupra supra = new ClassifiedSupra();
 			for (Subcontext sub : current.getExtent()) {
 				supra.add(sub);
 				if (supra.isHeterogeneous()) {
-					color = "\"red\"";
+					color = "color=red, ";
 					break;
 				}
 			}
 
-			sb.append(current.getIntent() + " [color=" + color + ", label=\""
+			sb.append(current.getIntent() + " [" + color + "label=\""
 					+ getCount(current) + "x" + current.getIntent() + ":"
 					+ current.getExtent() + "\"];\n");
 			for (Concept<ClassifiedSupra> parent : current.getParents())

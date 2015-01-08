@@ -40,9 +40,9 @@ import weka.core.Instance;
 // TODO: why use an iterator, instead of just returning a list?
 public class SubcontextList implements Iterable<Subcontext> {
 
-	private HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
+	private final HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
 
-	private Labeler labeler;
+	private final Labeler labeler;
 
 	/**
 	 * 
@@ -112,8 +112,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 */
 	@Override
 	public String toString() {
-		List<Label> sortedLabels = new ArrayList<>(
-				labelToSubcontext.keySet());
+		List<Label> sortedLabels = new ArrayList<>(labelToSubcontext.keySet());
 		// sort the labels by hashcode so that output is consistent for testing
 		// purposes
 		Collections.sort(sortedLabels, new Comparator<Label>() {
@@ -155,8 +154,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 
 		return new Iterator<Subcontext>() {
 
-			Iterator<Label> keyIterator = labelToSubcontext.keySet()
-					.iterator();
+			Iterator<Label> keyIterator = labelToSubcontext.keySet().iterator();
 
 			@Override
 			public boolean hasNext() {
