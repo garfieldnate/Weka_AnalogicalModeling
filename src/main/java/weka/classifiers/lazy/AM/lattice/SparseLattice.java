@@ -204,16 +204,12 @@ public class SparseLattice implements Lattice {
 		Set<Supracontext> supras = new HashSet<>();
 		// i is 1 if we skip "bottom", which may just be a dummy root with no
 		// data
-		concepts: for (int i = (lattice.get(0).getExtent().size() == 0) ? 1 : 0; i < lattice
+		for (int i = (lattice.get(0).getExtent().size() == 0) ? 1 : 0; i < lattice
 				.size(); i++) {
-			Concept<ClassifiedSupra> concept = lattice.get(i);
-			ClassifiedSupra supra = new ClassifiedSupra();
-			for (Subcontext sub : concept.getExtent()) {
-				supra.add(sub);
-				if (supra.isHeterogeneous())
-					continue concepts;
-			}
-			supra.setCount(getCount(concept));
+			ClassifiedSupra supra = lattice.get(i).getSupra();
+			if (supra.isHeterogeneous())
+				continue;
+			supra.setCount(getCount(lattice.get(i)));
 			supras.add(supra);
 		}
 		return supras;
