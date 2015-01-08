@@ -30,6 +30,7 @@ import weka.classifiers.lazy.AM.label.Label;
  * @author Nate Glenn
  * 
  */
+// TODO: next: furhter short-circuit processing of heteros, and fix counting
 public class SparseLattice implements Lattice {
 	private final List<Concept<ClassifiedSupra>> lattice = new ArrayList<>();
 	private static BigInteger two = BigInteger.valueOf(2);
@@ -43,8 +44,13 @@ public class SparseLattice implements Lattice {
 		// int i = 0;
 		for (Subcontext sub : subList) {
 			// System.err.println(i++);
+			Concept<ClassifiedSupra> generatorConcept = getMaximalConcept(
+					sub.getLabel(), bottom);
+			// ignore concepts already declared hetero
+			if (generatorConcept.getSupra().isHeterogeneous())
+				continue;
 			Concept<ClassifiedSupra> newConcept = addIntent(sub.getLabel(),
-					bottom);
+					generatorConcept);
 			addExtent(newConcept, sub);
 			resetTags();
 		}
