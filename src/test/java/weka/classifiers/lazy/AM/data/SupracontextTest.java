@@ -147,6 +147,9 @@ public class SupracontextTest {
 
 	@Test
 	public void testEqualsAndHashCode() {
+		// equals and hash code work different for Concept
+		if (testName.equals(Concept.class.getSimpleName()))
+			return;
 		Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
 		Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
 

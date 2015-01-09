@@ -4,6 +4,11 @@ Current: SparseLattice
 		- perhaps we need child and parent nodes; updated count means updating all children.
 		- flooding algorithm?
 Later TODO:
+- Concept probably shouldn't implement Supracontext.
+- write tests for Concept
+- experiment with sorting the subcontext list before lattice filling
+	- most to least mismatches (1's)? Or is random better?
+	- non-deterministic or rare outcomes first should be better everywhere.
 - distributed lattice should die if labeler says not to split
 - toString for Labeler classes would be nice
 - label splitting should use the strategy pattern.
