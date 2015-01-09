@@ -31,9 +31,9 @@ import weka.core.Instance;
  * @author Nathan Glenn
  */
 public class Subcontext {
-	private Set<Instance> data;
+	private final Set<Instance> data;
 	private double outcome;
-	private Label label;
+	private final Label label;
 
 	/**
 	 * The location of this instance in {@link #index}
@@ -100,6 +100,10 @@ public class Subcontext {
 	 */
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (other == null)
+			return false;
 		if (!(other instanceof Subcontext))
 			return false;
 		Subcontext otherSub = (Subcontext) other;

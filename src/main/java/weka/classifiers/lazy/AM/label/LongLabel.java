@@ -117,6 +117,10 @@ public class LongLabel extends Label {
 
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (other == null)
+			return false;
 		if (!(other instanceof LongLabel)) {
 			return false;
 		}

@@ -77,6 +77,10 @@ public class BasicSupra implements Supracontext {
 
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (other == null)
+			return false;
 		if (!(other instanceof Supracontext))
 			return false;
 		Supracontext otherSupra = (Supracontext) other;

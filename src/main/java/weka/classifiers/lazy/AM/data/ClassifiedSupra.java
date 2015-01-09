@@ -156,6 +156,10 @@ public class ClassifiedSupra implements Supracontext {
 
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (other == null)
+			return false;
 		return supra.equals(other);
 	}
 

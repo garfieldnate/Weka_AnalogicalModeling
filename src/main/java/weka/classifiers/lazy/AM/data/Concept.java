@@ -100,6 +100,8 @@ public class Concept<T extends Supracontext> implements Supracontext {
 	public boolean equals(Object other) {
 		if (this == other)
 			return true;
+		if (other == null)
+			return false;
 		if (!(other instanceof Concept))
 			return false;
 		// extent equals method will take care of any difference in
