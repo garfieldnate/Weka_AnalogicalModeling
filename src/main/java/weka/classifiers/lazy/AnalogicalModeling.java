@@ -29,16 +29,11 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
 import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.label.BitSetLabeler;
-import weka.classifiers.lazy.AM.label.IntLabel;
-import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Labeler;
-import weka.classifiers.lazy.AM.label.LongLabel;
-import weka.classifiers.lazy.AM.label.LongLabeler;
+import weka.classifiers.lazy.AM.label.LabelerFactory;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
-import weka.classifiers.lazy.AM.lattice.BasicLattice;
-import weka.classifiers.lazy.AM.lattice.DistributedLattice;
 import weka.classifiers.lazy.AM.lattice.Lattice;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -127,7 +122,7 @@ import weka.core.Utils;
  * *  Remove test exemplar from training set
  * </pre>
  * 
- * * * TODO: actually use user's input for missing comparison
+ * * *
  * 
  * <pre>
  * -M &lt;method&gt;
@@ -138,7 +133,6 @@ import weka.core.Utils;
  * 
  * 
  * @author Nathan Glenn (garfieldnate at gmail dot com)
- * @version $Revision: 8034$
  * 
  */
 public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
@@ -175,33 +169,17 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		if (getDebug())
 			System.out.println("Classifying: " + testItem);
 
-		// int and long labels are faster and smaller, so use them if the
-		// cardinality turns out to be small enough
-		Labeler labeler = new BitSetLabeler(mdc, testItem, m_ignoreUnknowns);
-		if (labeler.getCardinality() <= IntLabel.MAX_CARDINALITY)
-			labeler = new IntLabeler(mdc, testItem, m_ignoreUnknowns);
-		else if (labeler.getCardinality() <= LongLabel.MAX_CARDINALITY)
-			labeler = new LongLabeler(mdc, testItem, m_ignoreUnknowns);
-
+		Labeler labeler = LabelerFactory.createLabeler(testItem,
+				m_ignoreUnknowns, mdc);
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
 		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
 		// 2. Place subcontexts into a supracontextual lattice
-		Lattice lattice;
-		// lattice = new SparseLattice(subList);
-		if (labeler.numPartitions() > 1) {
-			lattice = new DistributedLattice(subList);
-		} else {
-			if (getDebug())
-				System.out.println("Subcontexts: " + subList);
-			lattice = new BasicLattice(subList);
-			if (getDebug())
-				System.out.println("Lattice: " + lattice);
-		}
-		// 3. pointers in homogeneous supracontexts are used to give the
-		// analogical set and predicted outcome.
-		as = new AnalogicalSet(lattice.getSupracontexts(), testItem,
-				m_linearCount);
+		Lattice lattice = LatticeFactory.createLattice(subList);
+		// 3. create analogical set from the pointers in resulting homogeneous
+		// supracontexts
+		// we save the analogical set for use with AnalogicalModelingOutput
+		as = new AnalogicalSet(lattice, testItem, m_linearCount);
 		return as;
 	}
 
@@ -241,10 +219,6 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 				+ "done linearly instead of quadratically.";
 	}
 
-	public String parallelTipText() {
-		return "set to true if the distributed lattice algorithm should be used.";
-	}
-
 	public boolean getIgnoreUnknowns() {
 		return m_ignoreUnknowns;
 	}
@@ -261,7 +235,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * By default, we leave the test exemplar in the training set if it is
 	 * there.
 	 */
-	private boolean removeTestExemplar = false;
+	private boolean m_removeTestExemplar = false;
 
 	/**
 	 * 
@@ -269,7 +243,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *         its outcome
 	 */
 	public boolean getRemoveTestExemplar() {
-		return removeTestExemplar;
+		return m_removeTestExemplar;
 	}
 
 	/**
@@ -278,7 +252,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 *        predicting its outcome
 	 */
 	public void setRemoveTestExemplar(boolean removeTestExemplar) {
-		this.removeTestExemplar = removeTestExemplar;
+		this.m_removeTestExemplar = removeTestExemplar;
 	}
 
 	/**

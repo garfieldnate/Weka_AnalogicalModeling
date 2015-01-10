@@ -6,12 +6,21 @@ Current: SparseLattice
 Later TODO:
 - Concept probably shouldn't implement Supracontext.
 - write tests for Concept
+- write test for LatticeFactory
+- write test for LabelerFactory
+- implement the usage of m_removeTestExemplar in AnalogicalModeling.java
+	- perhaps an option sent to SubcontextList?
 - experiment with sorting the subcontext list before lattice filling
 	- most to least mismatches (1's)? Or is random better?
 	- non-deterministic or rare outcomes first should be better everywhere.
 - distributed lattice should die if labeler says not to split
 - toString for Labeler classes would be nice
-- label splitting should use the strategy pattern.
+- label splitting should use the strategy pattern
+	- always have X number of lattices
+	- lattices are always X size
+	- choose some size combo based on characteristics of the subcontext list?
+- should be able to vary subcontext list implementation
+	- try out different types of sorting
 - change "outcome" to "class" everywhere
 - shield out weka classes!
 - add a "subFromString" method in the test utils class?
