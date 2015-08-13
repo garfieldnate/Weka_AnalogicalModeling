@@ -18,8 +18,8 @@ import weka.classifiers.lazy.AM.label.Label;
 
 /**
  * 
- * Warning: this class is currently experimental, slow, and probably broken. Do
- * not try to use in production.
+ * Warning: this class is currently experimental, slow, and not correct. Do not
+ * try to use in production.
  * 
  * Fill a sparse lattice structure which stores unique references to unique
  * Supracontexts. The lattice filling algorithm is based on an improved version
@@ -30,7 +30,7 @@ import weka.classifiers.lazy.AM.label.Label;
  * @author Nate Glenn
  * 
  */
-// TODO: next: furhter short-circuit processing of heteros, and fix counting
+// TODO: next: further short-circuit processing of heteros, and fix counting
 public class SparseLattice implements Lattice {
 	private final List<Concept<ClassifiedSupra>> lattice = new ArrayList<>();
 	private static BigInteger two = BigInteger.valueOf(2);
