@@ -51,14 +51,14 @@ import weka.core.Utils;
  * <!-- globalinfo-start --> * Implements the Analogical Modeling algorith,
  * invented by Royall Skousen. Analogical modeling is an instance-based
  * algorithm designed to model human behavior.For more information, see the
- * following references:<br/>
- * * <br/>
+ * following references:<br>
+ * * <br>
  * * Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic
- * Publishers.<br/>
- * * <br/>
+ * Publishers.<br>
+ * * <br>
  * * Theron Sanford (2002). Analogical modeling: an exemplar-based approach to
  * language. *
- * <p/>
+ * <p>
  * 
  * <!-- globalinfo-end -->
  * 
@@ -88,18 +88,18 @@ import weka.core.Utils;
  * </pre>
  * 
  * *
- * <p/>
+ * <p>
  * <!-- technical-bibtex-end -->
  * 
  * <!-- technical-plaintext-start --> * Skousen, R. (1989). Analogical Modeling
- * of Language. Kluwer Academic Publishers.<br/>
- * * <br/>
+ * of Language. Kluwer Academic Publishers.<br>
+ * * <br>
  * * Theron Sanford (2002). Analogical modeling: an exemplar-based approach to
  * language. <!-- technical-plaintext-end -->
  * 
  * 
  * <!-- options-start --> * Valid options are:
- * <p/>
+ * <p>
  * * *
  * 
  * <pre>
@@ -248,8 +248,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * 
-	 * @param true if we should remove a test instance from training before
-	 *        predicting its outcome
+	 * @param removeTestExemplar
+	 *            true if we should remove a test instance from training before
+	 *            predicting its outcome
 	 */
 	public void setRemoveTestExemplar(boolean removeTestExemplar) {
 		this.m_removeTestExemplar = removeTestExemplar;
@@ -278,7 +279,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * 
-	 * @param SelectedTag
+	 * @param newMode
 	 *            representing choice for strategy to compare missing data
 	 * @throws IllegalArgumentException
 	 *             if input is something other than variable, match or mismatch.
@@ -390,7 +391,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/**
 	 * <!-- options-start --> * Parses a given list of options. Valid options
 	 * are:
-	 * <p/>
+	 * <p>
 	 * * *
 	 * 
 	 * <pre>
@@ -423,8 +424,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * * <!-- options-end -->
 	 * 
 	 * @param options
-	 *            the new options
-	 * @throws {@inheritDoc}
+	 *            {@inheritDoc}
 	 */
 	@Override
 	public void setOptions(String[] options) {

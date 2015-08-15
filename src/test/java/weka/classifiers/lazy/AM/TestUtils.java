@@ -48,6 +48,7 @@ public class TestUtils {
 	 *            Name of arff file in located in the project data folder
 	 * @return The dataset contained in the given file.
 	 * @throws Exception
+	 *             if there is a problem loading the dataset
 	 */
 	// TODO: rename this for consistency with getInstanceFromFile
 	public static Instances getDataSet(String fileInDataFolder)
@@ -70,6 +71,7 @@ public class TestUtils {
 	 *            Weka API here).
 	 * @return The altered dataset
 	 * @throws Exception
+	 *             if there is a problem loading the dataset
 	 */
 	public static Instances getReducedDataSet(String fileInDataFolder,
 			String ignoreAtts) throws Exception {
@@ -98,6 +100,7 @@ public class TestUtils {
 	 * @return The instance at the specified index of the dataset contained in
 	 *         the file
 	 * @throws Exception
+	 *             if there is a problem loading the instance
 	 */
 	public static Instance getInstanceFromFile(String fileInDataFolder,
 			int index) throws Exception {
@@ -143,7 +146,9 @@ public class TestUtils {
 	 * eachother.
 	 * 
 	 * @param firstLabel
+	 *            first label to compare
 	 * @param secondLabel
+	 *            second label to compare
 	 * @return true if the labels have the same cardinality and mark the same
 	 *         feature indices as matching or mismatching.
 	 */
@@ -190,9 +195,9 @@ public class TestUtils {
 	 * @param data
 	 *            The dataset containing the instances specified in the
 	 *            Supracontext string. For example:
-	 *            <code>[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]</code>
+	 *            <code>[1x(01010|&amp;nondeterministic&amp;|H,A,V,A,0,B/H,A,V,I,0,A)]</code>
 	 *            .
-	 * @return
+	 * @return classified supra created according to string specification
 	 */
 	public static ClassifiedSupra getSupraFromString(String supraString,
 			Instances data) {
@@ -280,6 +285,7 @@ public class TestUtils {
 	 * Test that the getSupraFromString utility function above works as desired.
 	 * 
 	 * @throws Exception
+	 *             if there is a problem loading the finnverb set
 	 */
 	@Test
 	@SuppressWarnings("serial")

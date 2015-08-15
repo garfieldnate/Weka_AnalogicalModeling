@@ -111,7 +111,7 @@ public enum MissingDataCompare {
 
 	/**
 	 * 
-	 * @param Selection
+	 * @param tag
 	 *            specifying which enum element to return. The id of this tag
 	 *            must match the desired element's ordinal() value.
 	 * @return The selected element of this enum

@@ -26,10 +26,10 @@ import weka.core.Instance;
  * classified and encoding matched attributes and mismatched attributes in a
  * boolean vector.
  * 
- * For example, if we were classifying an instance <a, b, c>, and we had three
- * training instances <x, y, c>, <w, m, c> and <a, b, z>, and used 'n' to
- * represent mismatches and 'y' for matches, the labels would be <n, n, y>, <n,
- * n, y>, and <y, y, n>.
+ * For example, if we were classifying an instance &lt;a, b, c&gt;, and we had
+ * three training instances &lt;x, y, c&gt;, &lt;w, m, c&gt; and &lt;a, b,
+ * z&gt;, and used 'n' to represent mismatches and 'y' for matches, the labels
+ * would be &lt;n, n, y&gt;, &lt;n, n, y&gt;, and &lt;y, y, n&gt;.
  * 
  * The current implementation takes advantage of binary arithmetic by
  * representing mismatches as a 1 bit and matches as a 0 bit, all packed into a

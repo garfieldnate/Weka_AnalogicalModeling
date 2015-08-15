@@ -36,10 +36,13 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * 
  * Represents a lattice which is to be combined with other sublattices to
  * determine predictions later on. When a sublattice is filled, there are two
- * main differences: <list> <li>Only a part of a an exemplar's features are used
- * to assign lattice locations; this is taken care of by
- * {@link Subsubcontextlist}.</li> <li>No supracontext is ever determined to be
- * heterogeneous. This is, of course, less efficient in some ways.</li> </list>
+ * main differences:
+ * <ol>
+ * <li>Only a part of a an exemplar's features are used to assign lattice
+ * locations.</li>
+ * <li>No supracontext is ever determined to be heterogeneous. This is, of
+ * course, less efficient in some ways.</li>
+ * </ol>
  * Inefficiencies brought about by not eliminating heterogeneous supracontexts
  * and by having to combine sublattices are a compromise to the alternative,
  * using a single lattice for any size exemplars. Remember that the underlying

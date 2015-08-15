@@ -89,8 +89,6 @@ public class BasicLattice implements Lattice {
 	 * Initializes Supracontextual lattice to a 2^n length array of
 	 * Supracontexts and then fills it with the contents of subList
 	 * 
-	 * @param cardinality
-	 *            Size of the feature vectors; lattice will be 2^card - 1 size.
 	 * @param subList
 	 *            List of subcontexts
 	 */

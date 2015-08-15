@@ -54,7 +54,7 @@ public class Subcontext {
 	/**
 	 * Adds an exemplar to the subcontext and sets the outcome accordingly. If
 	 * different outcomes are present in the contained exemplars, the outcome is
-	 * {@link Index#NONDETERMINISTIC}
+	 * {@link AMUtils#NONDETERMINISTIC}
 	 * 
 	 * @param e
 	 */

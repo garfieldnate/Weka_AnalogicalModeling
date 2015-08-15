@@ -30,9 +30,8 @@ import weka.core.Instance;
  * This class creates and manages a list of {@link Subcontext subcontexts} from
  * a set of previously classified exemplars and an exemplar to be classified.
  * 
- * Create a list of subcontexts by calling
- * {@link #SubcontextList(Exemplar, List, int)}. Iterate through the created
- * subcontexts using the {@link Iterator} returned by {@link #iterator()}.
+ * After creating a list of subcontexts, iterate through the subcontexts using
+ * the {@link Iterator} returned by {@link #iterator()}.
  * 
  * @author Nate Glenn
  * 
@@ -56,10 +55,8 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * If you use this constructor, you will have to call the {@link #add}
 	 * method repeatedly in order to fill the contexts.
 	 * 
-	 * @param testEx
-	 *            Exemplar which is being classified and assigns contexts
-	 * @param the
-	 *            number of attributes being used to classify the instance
+	 * @param labeler
+	 *            Labeler for assigning labels to input training data items
 	 */
 	SubcontextList(Labeler labeler) {
 		this.labeler = labeler;
@@ -69,12 +66,10 @@ public class SubcontextList implements Iterable<Subcontext> {
 	 * This is the easiest to use constructor. It creates and stores a list of
 	 * subcontexts given classified exemplars and an exemplar to be classified.
 	 * 
-	 * @param testEx
-	 *            Exemplar which is being classified
+	 * @param labeler
+	 *            Labeler for assigning labels to items in data
 	 * @param data
-	 *            Exemplars used to classify testEx
-	 * @param cardinality
-	 *            the number of attributes used to predict an Instance's class
+	 *            Training data (exemplars)
 	 */
 	public SubcontextList(Labeler labeler, List<Instance> data) {
 		this.labeler = labeler;

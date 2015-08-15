@@ -46,10 +46,15 @@ public class LatticeTest {
 	 *         <li>arg[1] is the {@link Constructor} for the {@link Lattice} to
 	 *         be tested.</li>
 	 *         </ol>
-	 * @throws Exception
+	 * @throws SecurityException
+	 *             if a lattice constructor can't be run due to security
+	 *             requirements
+	 * @throws NoSuchMethodException
+	 *             if a lattice constructor can't be run
 	 */
 	@Parameterized.Parameters(name = "{0}")
-	public static Collection<Object[]> instancesToTest() throws Exception {
+	public static Collection<Object[]> instancesToTest()
+			throws NoSuchMethodException, SecurityException {
 		Collection<Object[]> parameters = new ArrayList<>();
 
 		// basic, non-distributed lattice
@@ -81,6 +86,7 @@ public class LatticeTest {
 	 * Test that supracontexts are properly marked heterogeneous.
 	 * 
 	 * @throws Exception
+	 *             if the finnverb set can't be loaded
 	 */
 	@Test
 	public void testHeterogeneousMarking() throws Exception {

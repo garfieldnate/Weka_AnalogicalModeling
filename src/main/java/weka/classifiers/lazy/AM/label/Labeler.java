@@ -32,9 +32,9 @@ public abstract class Labeler {
 	 * 
 	 * @param mdc
 	 *            Specifies how to compare missing attributes
-	 * @param instance
+	 * @param test
 	 *            Instance being classified
-	 * @param ignroeUnknowns
+	 * @param ignoreUnknowns
 	 *            true if attributes with undefined values in the test item
 	 *            should be ignored; false if not.
 	 */
@@ -126,11 +126,13 @@ public abstract class Labeler {
 	 * In distributed processing, it is necessary to split labels into
 	 * partitions. This method returns a partition for the given label. A full
 	 * label is partitioned into pieces 0 through {@link #numPartitions()}, so
-	 * code to process labels in pieces should look like this: <code>
+	 * code to process labels in pieces should look like this:
+	 * 
+	 * <pre>
 	 * 	Label myLabel = myLabeler.label(myInstance);
-	 * 	for(int i = 0; i < myLabeler.numPartitions(); i++)
+	 * 	for(int i = 0; i &lt; myLabeler.numPartitions(); i++)
 	 * 		process(myLabeler.partition(myLabel, i);
-	 * </code>
+	 * </pre>
 	 * 
 	 * @param partitionIndex
 	 *            index of the partition to return

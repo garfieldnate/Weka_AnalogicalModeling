@@ -28,11 +28,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.label.Labeler;
 
 /**
@@ -45,9 +45,8 @@ public class DistributedLattice implements Lattice {
 	private final Set<Supracontext> supras;
 
 	/**
-	 * Get list of Supracontexts that were created with this lattice
 	 * 
-	 * @return
+	 * @return the list of homogeneous supracontexts created with this lattice
 	 */
 	@Override
 	public Set<Supracontext> getSupracontexts() {
@@ -165,8 +164,10 @@ public class DistributedLattice implements Lattice {
 	 * set to the product of the two counts. Return null if the resulting object
 	 * would have no subcontexts.
 	 * 
+	 * @param supra1
+	 *            first partial supracontext to combine
 	 * @param supra2
-	 *            other partial supracontext to combine with
+	 *            second partial supracontext to combine
 	 * @return A new partial supracontext, or null if it would have been empty.
 	 */
 	public BasicSupra combine(Supracontext supra1, Supracontext supra2) {
@@ -184,8 +185,8 @@ public class DistributedLattice implements Lattice {
 
 		if (combinedSubs.isEmpty())
 			return null;
-		BasicSupra supra = new BasicSupra(combinedSubs, supra1
-				.getCount().multiply(supra2.getCount()));
+		BasicSupra supra = new BasicSupra(combinedSubs, supra1.getCount()
+				.multiply(supra2.getCount()));
 		return supra;
 	}
 
@@ -227,8 +228,10 @@ public class DistributedLattice implements Lattice {
 	 * pointer counts. If it turns out that the resulting supracontext would be
 	 * heterogeneous or empty, then return null instead.
 	 * 
+	 * @param supra1
+	 *            first partial supracontext to combine
 	 * @param supra2
-	 *            other partial supracontext to combine with
+	 *            second partial supracontext to combine
 	 * @return a combined supracontext, or null if supra1 and supra2 had no data
 	 *         in common or if the new supracontext is heterogeneous
 	 */

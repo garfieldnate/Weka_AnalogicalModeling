@@ -9,7 +9,7 @@ import weka.classifiers.lazy.AM.TestUtils;
 import weka.core.Instances;
 
 /**
- * Test aspects of {@link Intlabeler} that are not applicable to other
+ * Test aspects of {@link IntLabeler} that are not applicable to other
  * {@link Labeler} implementations.
  * 
  * @author Nathan Glenn

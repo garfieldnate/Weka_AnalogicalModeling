@@ -35,7 +35,7 @@ import weka.core.Utils;
  * This class implements a classification output scheme specific to the
  * Analogical Modeling classifier. In particular, it allows the user to print
  * gang effects and analogical sets. <!-- options-start --> * Valid options are:
- * <p/>
+ * <p>
  * * *
  * 
  * <pre>
@@ -103,7 +103,7 @@ import weka.core.Utils;
  * * <!-- options-end --> <!-- globalinfo-start --> * This output module enables
  * detailed reporting on the results of the Analogical Modeling classifier, such
  * as the analogical set and gang effects. *
- * <p/>
+ * <p>
  * <!-- globalinfo-end -->
  * 
  * @author nate
@@ -160,8 +160,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		if (getSummary()) {
 			// StringBuilder sb = new StringBuilder();
 
-			append("Total pointers: "
-					+ as.getTotalPointers()
+			append("Total pointers: " + as.getTotalPointers()
 					+ AMUtils.LINE_SEPARATOR);
 			append("Instances in analogical set: "
 					+ as.getExemplarEffectMap().size());
@@ -169,8 +168,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 		append(AMUtils.LINE_SEPARATOR);
 
 		if (getOutputDistribution()) {
-			append("Class probability distribution:"
-					+ AMUtils.LINE_SEPARATOR);
+			append("Class probability distribution:" + AMUtils.LINE_SEPARATOR);
 			for (int i = 0; i < distribution.length; i++) {
 				append(m_Header.classAttribute().value(i) + ": "
 						+ AMUtils.formatDouble(distribution[i])
@@ -228,7 +226,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 	 * is not possible).
 	 * 
 	 * <!-- options-start --> * Valid options are:
-	 * <p/>
+	 * <p>
 	 * * *
 	 * 
 	 * <pre>
