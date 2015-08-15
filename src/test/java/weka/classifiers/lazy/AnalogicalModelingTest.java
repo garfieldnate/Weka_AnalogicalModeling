@@ -95,6 +95,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 				correct, 160);
 	}
 
+	// larger set that forces use of LongLabel
 	@Test
 	@SuppressWarnings("serial")
 	public void testSoybean() throws Exception {
@@ -118,6 +119,32 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		}, leaveOneOut(train, 15).getClassPointers());
 		// overall set accuracy should be 628/682, but running the whole thing
 		// would take too long.
+	}
+
+	// larger set that forces use of BitSetLabel and JohnsenJohansson lattice
+	@Test
+	public void testAudiology() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.AUDIOLOGY);
+		// TODO: test details once we can specify RNG
+		leaveOneOut(train, 1);
+		// int correct = 0;
+		// int total = 0;
+		// for (int i = 0; i < train.numInstances(); i++) {
+		// total++;
+		// AnalogicalSet set = leaveOneOut(train, i);
+		// if (set.getPredictedClasses().contains(
+		// train.get(i).stringValue(train.classIndex()))) {
+		// correct++;
+		// System.out.print("right: ");
+		// } else {
+		// System.out.println("wrong (expected "
+		// + train.get(i).stringValue(train.classIndex()) + "): ");
+		// }
+		// System.out.println(set.getClassLikelihoodMap());
+		// }
+		// System.out.println(correct + "/" + total);
+
+		// result is 117/226 using 1000 x_s experiments
 	}
 
 	private AnalogicalSet leaveOneOut(Instances data, int index)

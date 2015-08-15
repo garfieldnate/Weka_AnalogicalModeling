@@ -25,13 +25,15 @@ public class LatticeFactory {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	// TODO: it's weird for this to depend on the return value of an object held
-	// *inside* the argument. Just too indirect. Think of something else.
 	public static Lattice createLattice(SubcontextList subList)
 			throws InterruptedException, ExecutionException {
 		Lattice lattice;
-		// lattice = new SparseLattice(subList);
-		if (subList.getLabeler().numPartitions() > 1) {
+		if (subList.getCardinality() > 50) {
+			lattice = new JohnsenJohanssonLattice(subList);
+			// TODO: it's weird for this to depend on the return value of an
+			// object held *inside* the argument. Just too indirect. Think of
+			// something else.
+		} else if (subList.getLabeler().numPartitions() > 1) {
 			lattice = new DistributedLattice(subList);
 		} else {
 			lattice = new BasicLattice(subList);

@@ -1,16 +1,22 @@
-  apply plugin: 'java'
-  apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 //TODO: project version and jar specs
 
-  repositories {
-    mavenCentral()
-  }
+repositories {
+  mavenCentral()
+}
 
-  dependencies {
-    compile 'nz.ac.waikato.cms.weka:weka-dev:3.7.11'
-    testCompile 'junit:junit:4.11',
-    [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.7.11']
-  }
+dependencies {
+  compile 'nz.ac.waikato.cms.weka:weka-dev:3.7.11'
+  testCompile 'junit:junit:4.11',
+  [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.7.11']
+}
+
+task mathJavadoc(type: Javadoc) {
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  options.header = "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"></script>"
+}

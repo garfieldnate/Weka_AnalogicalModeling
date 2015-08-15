@@ -38,6 +38,7 @@ public class TestUtils {
 	 */
 	public static final String FINNVERB_MIN = "finn_min_gangs.arff";
 	public static final String SOYBEAN = "soybean.arff";
+	public static final String AUDIOLOGY = "audiology.arff";
 
 	/**
 	 * Read a dataset from disk and return the Instances object. It is assumed
