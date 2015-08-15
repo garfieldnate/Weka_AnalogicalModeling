@@ -129,6 +129,34 @@ public class LabelTest {
 	}
 
 	@Test
+	public void testIntersect() throws Exception {
+		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Labeler labeler = labelerConstructor.newInstance(
+				MissingDataCompare.MATCH, data.get(0), false);
+
+		Label label1 = labeler.label(data.get(1));// 001
+		Label label2 = labeler.label(data.get(4));// 100
+		boolean[] matches = new boolean[] { false, true, false };
+		Label intersected = label1.intersect(label2);
+		for (int i = 0; i < matches.length; i++)
+			assertEquals(intersected.matches(i), matches[i]);
+	}
+
+	@Test
+	public void testUnion() throws Exception {
+		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Labeler labeler = labelerConstructor.newInstance(
+				MissingDataCompare.MATCH, data.get(0), false);
+
+		Label label1 = labeler.label(data.get(1));// 001
+		Label label2 = labeler.label(data.get(4));// 100
+		boolean[] matches = new boolean[] { true, true, true };
+		Label intersected = label1.union(label2);
+		for (int i = 0; i < matches.length; i++)
+			assertEquals(intersected.matches(i), matches[i]);
+	}
+
+	@Test
 	public void testMatchesThrowsExceptionForIndexTooLow() throws Exception {
 		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
 		Labeler labeler = labelerConstructor.newInstance(

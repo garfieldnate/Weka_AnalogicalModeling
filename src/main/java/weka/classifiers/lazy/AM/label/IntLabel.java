@@ -112,6 +112,16 @@ public class IntLabel extends Label {
 	}
 
 	@Override
+	public Label union(Label other) {
+		if (!(other instanceof IntLabel))
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ "can only be unioned with another "
+					+ getClass().getSimpleName());
+		IntLabel otherLabel = (IntLabel) other;
+		return new IntLabel(labelBits & otherLabel.labelBits, getCardinality());
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		String binary = Integer.toBinaryString(labelBits());

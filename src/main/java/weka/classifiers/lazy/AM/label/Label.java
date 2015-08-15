@@ -69,11 +69,25 @@ public abstract class Label {
 
 	/**
 	 * Create a new label for which each location is marked as a match if both
-	 * this label and otherLabel are marked match, otherwise mismatch.
+	 * this label and otherLabel are marked match, otherwise mismatch. In other
+	 * words, keep all mismatches from both labels.
 	 * 
 	 * @param otherLabel
 	 *            the label to intersect with this one
 	 * @return an intersected label
 	 */
 	public abstract Label intersect(Label otherLabel);
+
+	/**
+	 * Create a new label for which each location is marked as a match if either
+	 * this label or otherLabel is marked match, otherwise mismatch. In other
+	 * words, keep all matches from both labels.
+	 * 
+	 * @param label
+	 * @return
+	 */
+	public Label union(Label label) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

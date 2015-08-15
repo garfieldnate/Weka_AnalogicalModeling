@@ -64,6 +64,18 @@ public class BitSetLabel extends Label {
 	}
 
 	@Override
+	public Label union(Label other) {
+		if (!(other instanceof BitSetLabel))
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ "can only be unioned with another "
+					+ getClass().getSimpleName());
+		BitSetLabel otherLabel = (BitSetLabel) other;
+		BitSet bitSet = (BitSet) labelBits.clone();
+		bitSet.and(otherLabel.labelBits);
+		return new BitSetLabel(bitSet, getCardinality());
+	}
+
+	@Override
 	public String toString() {
 		return labelBits.toString();
 	}
