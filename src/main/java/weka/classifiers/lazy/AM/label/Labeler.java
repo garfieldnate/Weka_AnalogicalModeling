@@ -62,6 +62,27 @@ public abstract class Labeler {
 	}
 
 	/**
+	 * Calculate the label cardinality for a given test instance
+	 * 
+	 * @param testInstance
+	 *            instance to assign labels
+	 * @param ignoreUnknowns
+	 *            true if unknown values are ignored; false otherwise
+	 * @return the cardinality of labels generated from testInstance and
+	 *         ignoreUnknowns
+	 */
+	public static int getCardinality(Instance testInstance,
+			boolean ignoreUnknowns) {
+		int cardinality = 0;
+		for (int i = 0; i < testInstance.numAttributes(); i++) {
+			if (i != testInstance.classIndex()
+					&& !(testInstance.isMissing(i) && ignoreUnknowns))
+				cardinality++;
+		}
+		return cardinality;
+	}
+
+	/**
 	 * @return true if attributes with undefined values in the test item are
 	 *         ignored during labeling; false if not.
 	 */

@@ -27,11 +27,7 @@ public class LabelerFactory {
 	public static Labeler createLabeler(Instance testInstance,
 			boolean ignoreUnknowns, MissingDataCompare mdc) {
 		// cardinality may be significantly reduced if we are ignoring unknowns
-		int cardinality = 0;
-		for (int i = 0; i < testInstance.numAttributes(); i++) {
-			if (i != testInstance.classIndex() && !testInstance.isMissing(i))
-				cardinality++;
-		}
+		int cardinality = Labeler.getCardinality(testInstance, ignoreUnknowns);
 		Labeler labeler;
 		// int and long labels are faster and smaller, so use them if the
 		// cardinality turns out to be small enough
