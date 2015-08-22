@@ -141,6 +141,7 @@ public class JohnsenJohanssonLattice implements Lattice {
 
 		// TODO: for now, just repeat experiment 1000 times
 		for (int i = 0; i < 1000; i++) {
+			totalCount++;
 			// choose x_s, a union of random items from H(p)
 			Label Xs = null;
 			for (Label l : hp) {
@@ -154,7 +155,6 @@ public class JohnsenJohanssonLattice implements Lattice {
 			}
 			// x_s is hetero if it is a child of any element of H(p)
 			for (Label l : hp) {
-				totalCount++;
 				// use union to discover ancestor relationship
 				if (l.union(Xs).equals(l)) {
 					heteroCount++;
