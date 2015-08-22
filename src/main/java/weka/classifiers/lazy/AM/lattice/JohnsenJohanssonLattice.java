@@ -139,6 +139,7 @@ public class JohnsenJohanssonLattice implements Lattice {
 		int totalCount = 0;
 		int heteroCount = 0;
 
+		Map<Label, Boolean> cache = new HashMap<>();
 		// TODO: for now, just repeat experiment 1000 times
 		for (int i = 0; i < 1000; i++) {
 			totalCount++;
@@ -153,14 +154,24 @@ public class JohnsenJohanssonLattice implements Lattice {
 						Xs = Xs.union(l);
 				}
 			}
+			Boolean b = cache.get(Xs);
+			if (b != null) {
+				if (b) {
+					heteroCount++;
+				}
+				continue;
+			}
 			// x_s is hetero if it is a child of any element of H(p)
+			boolean hetero = false;
 			for (Label l : hp) {
 				// use union to discover ancestor relationship
 				if (l.union(Xs).equals(l)) {
 					heteroCount++;
+					hetero = true;
 					break;
 				}
 			}
+			cache.put(Xs, hetero);
 		}
 		return heteroCount / (double) totalCount;
 	}
