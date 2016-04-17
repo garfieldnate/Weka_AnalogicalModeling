@@ -35,7 +35,7 @@ task dist(type:Zip){
     include ([
         'src/**/*',
         'data/**/*',
-        'description.props',
+        'Description.props',
         'build.gradle',
         'LICENSE',
         'NOTICE',
