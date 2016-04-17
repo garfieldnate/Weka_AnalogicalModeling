@@ -25,10 +25,9 @@ public class LatticeFactory {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static Lattice createLattice(SubcontextList subList)
-			throws InterruptedException, ExecutionException {
+	public static Lattice createLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
 		Lattice lattice;
-		if (subList.getCardinality() > 50) {
+		if (subList.getCardinality() >= 50) {
 			lattice = new JohnsenJohanssonLattice(subList);
 			// TODO: it's weird for this to depend on the return value of an
 			// object held *inside* the argument. Just too indirect. Think of
