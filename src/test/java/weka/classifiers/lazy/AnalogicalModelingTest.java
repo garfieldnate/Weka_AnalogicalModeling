@@ -144,7 +144,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 		// }
 		// System.out.println(correct + "/" + total);
 
-		// result is 117/226 using 1000 x_s experiments
+		// result is 148/226 using 1000 x_s experiments
 	}
 
 	private AnalogicalSet leaveOneOut(Instances data, int index)
