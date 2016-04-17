@@ -1,9 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+version = 0.01
+
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-//TODO: project version and jar specs
 
 repositories {
   mavenCentral()
@@ -15,8 +16,30 @@ dependencies {
   [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.7.11']
 }
 
-task mathJavadoc(type: Javadoc) {
+// JavaCoc with MathJax and core Weka docs linked
+task javadoc(type: Javadoc, overwrite:true) {
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
   options.header = "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"></script>"
+  options.links("http://weka.sourceforge.net/doc.dev/")
+}
+
+//TODO: generate description.props (keep name, version, etc. in one place)
+
+task dist(type:Zip){
+    from jar.outputs.files
+    from (javadoc.outputs.files) {
+        into 'doc'
+    }
+    from (projectDir) {
+    include ([
+        'src/**/*',
+        'data/**/*',
+        'description.props',
+        'build.gradle',
+        'LICENSE',
+        'NOTICE',
+        'README.mkdn',
+        'todo.txt'])
+    }
 }
