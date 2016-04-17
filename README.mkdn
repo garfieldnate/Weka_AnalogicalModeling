@@ -1,5 +1,31 @@
 ##Analogical Modeling Weka Plugin
 
+This project is a Weka plugin containing state-of-the-art algorithms for classification using [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling). 
+
+###Analogical Modeling
+Analogical Modeling (or AM) was developed as an exemplar-based approach to modeling language usage, and has also been found useful in modeling other "sticky" phenomena. AM is especially suited to this because it predicts probabilistic occurrences instead of assigning static labels for instances.
+
+AM was not designed to be a classifier, but as a cognitive theory explaining variation in human behavior. As such, though in practice it is often used like any other machine learning classifier, there are fine theoretical points in which it differs. As a theory of human behavior, much of the value in its predictions lies in matching observed human behavior, including non-determinism and degradations in accuracy caused by paucity of data.
+
+The AM algorithm could be called a probabilistic, instance-based classifier. However, the probabilities given for each classification are not degrees of certainty, but actual probabilities of occurring in real usage. AM models "sticky" phenomena as being intrinsically sticky, not as deterministic phenomena that just require more data to be predicted perfectly.
+
+Though it is possible to choose an outcome probabilistically, in practice users are generally interested in either the full predicted probability distribution or the outcome with the highest probability.
+
+AM practitioners use specialized terminology, most of which has equivalent terminology used in machine learning. Examples are 'exemplar' (training instance), 'outcome' (class label), and 'variable' (feature). This software uses the ML terminology internally, but (TODO) user-facing reports use the AM terminology.
+
+The running time for analogical modeling is exponential in nature and practice, and thus it is not suitable for very large datasets; exact calculation becomes impractical after about 50 features.
+
+###Features
+
+As an evolving project, the most important design principle has been modularity and ease of experimentation with core algorithms. As such, the system is able to adapt for data of different cardinalities:
+
+* Contexts labels scale up from `int`s to `long`s and `BigInteger`s
+* Very small vectors are placed in a single lattice
+* Larger vectors are placed in a distributed lattice, with the number of lattices increasing with size
+* Very large vectors (50 or more features) are classified approximately using Monte Carlo simulation
+
+The distributed lattice implemenation utilizes explicit parallelism and intermediate calculations for significantly faster computation (an order of magnititude over the previous system, which was written in C).
+
 ###Building
 
 This project is managed with Gradle. To download the dependencies and build the project:
@@ -10,10 +36,14 @@ To test:
 
     gradle test
     
-To create an Eclipse project to work with:
+To create an Eclipse project:
 
     gradle eclipse
+
+To build the Weka package distribution archive:
     
+    gradle dist
+
 ###Running
 
 Under construction; try testing AnalogicalModeling.java with `-t data/ch3example.arff -x 5`.
@@ -21,3 +51,6 @@ Under construction; try testing AnalogicalModeling.java with `-t data/ch3example
 ### License
 
 Released under the Apache 2.0 license (see the LICENSE file for details). Copyright Nathan Glenn, 2014.
+
+### See Also
+https://metacpan.org/pod/Algorithm::AM
