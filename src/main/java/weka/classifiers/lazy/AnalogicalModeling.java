@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -49,21 +49,21 @@ import weka.core.Utils;
 
 /**
  * <!-- globalinfo-start --> * Implements the Analogical Modeling algorith,
- * invented by Royall Skousen. Analogical modeling is an instance-based
+ * invented by Royal Skousen. Analogical modeling is an instance-based
  * algorithm designed to model human behavior.For more information, see the
  * following references:<br>
  * * <br>
  * * Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic
  * Publishers.<br>
  * * <br>
- * * Theron Sanford (2002). Analogical modeling: an exemplar-based approach to
+ * * Theron Stanford (2002). Analogical modeling: an exemplar-based approach to
  * language. *
  * <p>
- * 
+ *
  * <!-- globalinfo-end -->
- * 
+ *
  * <!-- technical-bibtex-start --> * BibTeX: *
- * 
+ *
  * <pre>
  * * &#64;book{skousen1989analogical,
  * *    author = {Skousen, R.},
@@ -73,10 +73,10 @@ import weka.core.Utils;
  * *    abstract = {Review: 'Skousen develops an analogical approach, which is claimed to handle not merely cases which are problematic for tructuralist approaches, but to be applicable equally to the cases with which structuralism is at its best - in short, to be an Einstein to the common Newton.This is altogether a stimulating and richly suggestive book whose fundamental notions are presented with formal rigour. Other, more psychologically adequate, formal analogical theories may be devised, but Skousen has shown the way forward.' Artificial Intelligence and Stimulation of Behaviour Quarterly, 1990, No. 72},
  * *    ISBN-13 = {9780792305170}
  * * }
- * * 
+ * *
  * * &#64;inbook{skousen2002analogical,
- * *    author = {Theron Sanford},
- * *    editor = {Skousen, Royall and Lonsdale, Deryle and Parkinson, Dilworth},
+ * *    author = {Theron Stanford},
+ * *    editor = {Skousen, Royal and Lonsdale, Deryle and Parkinson, Dilworth},
  * *    pages = {385--409},
  * *    publisher = {John Benjamins Publishing Company},
  * *    title = {Analogical modeling: an exemplar-based approach to language},
@@ -86,54 +86,54 @@ import weka.core.Utils;
  * * }
  * *
  * </pre>
- * 
+ *
  * *
  * <p>
  * <!-- technical-bibtex-end -->
- * 
+ *
  * <!-- technical-plaintext-start --> * Skousen, R. (1989). Analogical Modeling
  * of Language. Kluwer Academic Publishers.<br>
  * * <br>
- * * Theron Sanford (2002). Analogical modeling: an exemplar-based approach to
+ * * Theron Stanford (2002). Analogical modeling: an exemplar-based approach to
  * language. <!-- technical-plaintext-end -->
- * 
- * 
+ *
+ *
  * <!-- options-start --> * Valid options are:
  * <p>
  * * *
- * 
+ *
  * <pre>
  * -D
  * *  If set, classifier is run in debug mode and
  * *  may output additional info to the console
  * </pre>
- * 
+ *
  * * *
- * 
+ *
  * <pre>
  * -L
  * *  Use linear instead of quadratic calculation of pointers (default off)
  * </pre>
- * 
+ *
  * * *
- * 
+ *
  * <pre>
  * -R
  * *  Remove test exemplar from training set
  * </pre>
- * 
+ *
  * * *
- * 
+ *
  * <pre>
  * -M &lt;method&gt;
  * *  Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat missing data as a all one variable, 'match' means that missing data will be considered the same as whatever it is compared with, and 'mismatch' means that missing data will always be unequal to whatever it is compared with. Default is 'variable'
  * </pre>
- * 
+ *
  * * <!-- options-end -->
- * 
- * 
+ *
+ *
  * @author Nathan Glenn (garfieldnate at gmail dot com)
- * 
+ *
  */
 public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		implements TechnicalInformationHandler, UpdateableClassifier,
@@ -156,7 +156,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/**
 	 * This method is where all of the action happens! Given test item, it uses
 	 * existing exemplars to assign outcome probabilities to it.
-	 * 
+	 *
 	 * @param testItem
 	 *            Item to make context base on
 	 * @return Analogical set which holds results of the classification for the
@@ -193,7 +193,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private boolean m_ignoreUnknowns = false;
 
 	/**
-	 * 
+	 *
 	 * @return True if counting of pointers is linear; false if quadratic.
 	 */
 	public boolean getLinearCount() {
@@ -201,7 +201,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @param lc
 	 *            True if counting of pointers should be linear; false if
 	 *            quadratic.
@@ -211,7 +211,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Tooltip text describing the linearCount option
 	 */
 	public String linearCountTipText() {
@@ -238,7 +238,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private boolean m_removeTestExemplar = false;
 
 	/**
-	 * 
+	 *
 	 * @return true if we remove a test instance from training before predicting
 	 *         its outcome
 	 */
@@ -247,7 +247,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @param removeTestExemplar
 	 *            true if we should remove a test instance from training before
 	 *            predicting its outcome
@@ -257,7 +257,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Tooltip text describing the removeTestExemplar option
 	 */
 	public String removeTestExemplarTipText() {
@@ -269,7 +269,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private static final Tag[] TAGS_MISSING = MissingDataCompare.getTags();
 
 	/**
-	 * 
+	 *
 	 * @return String representation of strategy used when comparing missing
 	 *         values with other data
 	 */
@@ -278,7 +278,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @param newMode
 	 *            representing choice for strategy to compare missing data
 	 * @throws IllegalArgumentException
@@ -291,7 +291,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Tooltip text describing the missingDataCompare option
 	 */
 	public String missingDataCompareTipText() {
@@ -302,13 +302,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	/**
 	 * Returns basic human readable information about the classifier, including
 	 * references.
-	 * 
+	 *
 	 * @return General information and references about the Analogical Modeling
 	 *         classifier
 	 */
 	public String globalInfo() {
 		StringBuilder info = new StringBuilder();
-		info.append("Implements the Analogical Modeling algorithm, invented by Royall Skousen. "
+		info.append("Implements the Analogical Modeling algorithm, invented by Royal Skousen. "
 				+ "Analogical modeling is an instance-based algorithm designed to model "
 				+ "human behavior."
 				+ "For more information, see the following references:\n\n");
@@ -328,7 +328,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * Lists the options available for this classifier.
-	 * 
+	 *
 	 * @see weka.classifiers.AbstractClassifier#listOptions()
 	 * @return {@inheritDoc}
 	 */
@@ -354,7 +354,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * Gets the options of super.
-	 * 
+	 *
 	 * @return Vector of all Options given in parent object(s).
 	 */
 	private Vector<Option> getOptionsOfSuper() {
@@ -370,7 +370,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * Returns the options currently set.
-	 * 
+	 *
 	 * @see weka.classifiers.AbstractClassifier#getOptions()
 	 * @return {@inheritDoc}
 	 */
@@ -393,36 +393,36 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * are:
 	 * <p>
 	 * * *
-	 * 
+	 *
 	 * <pre>
 	 * -D
 	 * *  If set, classifier is run in debug mode and
 	 * *  may output additional info to the console
 	 * </pre>
-	 * 
+	 *
 	 * * *
-	 * 
+	 *
 	 * <pre>
 	 * -L
 	 * *  Use linear instead of quadratic calculation of pointers (default off)
 	 * </pre>
-	 * 
+	 *
 	 * * *
-	 * 
+	 *
 	 * <pre>
 	 * -R
 	 * *  Remove test exemplar from training set
 	 * </pre>
-	 * 
+	 *
 	 * * *
-	 * 
+	 *
 	 * <pre>
 	 * -M &lt;method&gt;
 	 * *  Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat missing data as a all one variable, 'match' means that missing data will be considered the same as whatever it is compared with, and 'mismatch' means that missing data will always be unequal to whatever it is compared with. Default is 'variable'
 	 * </pre>
-	 * 
+	 *
 	 * * <!-- options-end -->
-	 * 
+	 *
 	 * @param options
 	 *            {@inheritDoc}
 	 */
@@ -448,7 +448,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * Analogical Modeling can handle only nominal class attributes. Missing
 	 * classes are handled, too, although you must specify how to handle them
 	 * (see {@link #setOptions}).
-	 * 
+	 *
 	 * @return {@inheritDoc}
 	 */
 	@Override
@@ -466,7 +466,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		return result;
 	}
 
-	// cite Royall's green book and the implementation chapter of the red book
+	// cite Royal's green book and the implementation chapter of the red book
 	/**
 	 * @see weka.core.TechnicalInformationHandler#getTechnicalInformation()
 	 * @return {@inheritDoc}
@@ -497,13 +497,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 		TechnicalInformation ti2 = new TechnicalInformation(Type.INBOOK,
 				"skousen2002analogical");
 		ti2.setValue(TechnicalInformation.Field.EDITOR,
-				"Skousen, Royall and Lonsdale, Deryle and Parkinson, Dilworth");
+				"Skousen, Royal and Lonsdale, Deryle and Parkinson, Dilworth");
 		ti2.setValue(TechnicalInformation.Field.YEAR, "2002");
 		ti2.setValue(TechnicalInformation.Field.PUBLISHER,
 				"John Benjamins Publishing Company");
 		ti2.setValue(TechnicalInformation.Field.TITLE,
 				"Analogical modeling: an exemplar-based approach to language");
-		ti2.setValue(TechnicalInformation.Field.AUTHOR, "Theron Sanford");
+		ti2.setValue(TechnicalInformation.Field.AUTHOR, "Theron Stanford");
 		ti2.setValue(
 				TechnicalInformation.Field.ABSTRACT,
 				"Analogical Modeling (AM) is an exemplar-based general theory of description "
@@ -541,7 +541,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	 * This is used to build the classifier; it specifies the capabilities of
 	 * the classifier and loads in examplars to be used for prediction. No
 	 * actual analysis happens here because AM is a lazy classifier.
-	 * 
+	 *
 	 * @see weka.classifiers.Classifier#buildClassifier(weka.core.Instances)
 	 */
 	@Override
@@ -567,7 +567,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * This is used to add more information to the classifier.
-	 * 
+	 *
 	 * @see weka.classifiers.UpdateableClassifier#updateClassifier(weka.core.Instance)
 	 */
 	@Override
@@ -625,7 +625,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	private AnalogicalSet as = null;
 
 	/**
-	 * 
+	 *
 	 * @return The analogical set from the last call to distributionForInstance
 	 * @throws IllegalStateException
 	 *             if you've never called distributionForInstance from this
@@ -658,7 +658,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 
 	/**
 	 * runs the classifier instance with the given options.
-	 * 
+	 *
 	 * @param classifier
 	 *            the classifier to run
 	 * @param options
@@ -681,7 +681,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier
 	// try with -t data/ch3example.arff -x 5
 	/**
 	 * Main method for testing this class.
-	 * 
+	 *
 	 * @param argv
 	 *            should contain command line options (see setOptions)
 	 */

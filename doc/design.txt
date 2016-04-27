@@ -107,5 +107,5 @@ Licensing:
 Important:
 	see AM.html and Lattice.html for original implementation. These are from the
 	original distribution, and need to be removed in the future in case they violate
-	copyright laws (although I doubt Royall or Theron, the original writers, care).
+	copyright laws (although I doubt Royal or Theron, the original writers, care).
 	
