@@ -20,3 +20,6 @@ gradle-app.setting
 .project
 .settings/
 bin/
+
+### IntelliJ ###
+.idea/

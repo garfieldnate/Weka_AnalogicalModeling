@@ -1,6 +1,6 @@
 ##Analogical Modeling Weka Plugin
 
-This project is a Weka plugin containing state-of-the-art algorithms for classification using [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling). 
+This project is a Weka plugin containing state-of-the-art algorithms for classification using [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling).
 
 ###Analogical Modeling
 Analogical Modeling (or AM) was developed as an exemplar-based approach to modeling language usage, and has also been found useful in modeling other "sticky" phenomena. AM is especially suited to this because it predicts probabilistic occurrences instead of assigning static labels for instances.
@@ -24,24 +24,24 @@ As an evolving project, the most important design principle has been modularity 
 * Larger vectors are placed in a distributed lattice, with the number of lattices increasing with size
 * Very large vectors (50 or more features) are classified approximately using Monte Carlo simulation
 
-The distributed lattice implemenation utilizes explicit parallelism and intermediate calculations for significantly faster computation (an order of magnititude over the previous system, which was written in C).
+The distributed lattice implementation utilizes explicit parallelism and better caching of intermediate calculations for significantly faster computation (an order of magnitude over the previous system, which was written in C).
 
 ###Building
 
 This project is managed with Gradle. To download the dependencies and build the project:
 
     gradle build
-    
+
 To test:
 
     gradle test
-    
+
 To create an Eclipse project:
 
     gradle eclipse
 
 To build the Weka package distribution archive:
-    
+
     gradle dist
 
 ###Running
