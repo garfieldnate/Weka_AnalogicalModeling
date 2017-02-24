@@ -20,49 +20,45 @@ import java.math.RoundingMode;
 
 /**
  * This class holds constants and methods used in the AM classifier.
- * 
+ *
  * @author nathan.glenn
- * 
  */
 public class AMUtils {
-	/**
-	 * An unknown class value.
-	 */
-	public static final double UNKNOWN = Double.NaN;
+    /**
+     * An unknown class value.
+     */
+    public static final double UNKNOWN = Double.NaN;
 
-	/**
-	 * A non-deterministic outcome, meaning that there is more than one
-	 * possibility.
-	 * 
-	 */
-	public static final double NONDETERMINISTIC = -1;
-	public static final String NONDETERMINISTIC_STRING = "&nondeterministic&";
+    /**
+     * A non-deterministic outcome, meaning that there is more than one
+     * possibility.
+     */
+    public static final double NONDETERMINISTIC = -1;
+    public static final String NONDETERMINISTIC_STRING = "&nondeterministic&";
 
-	/**
-	 * A heterogeneous outcome, which means we don't bother with it.
-	 */
-	public static final double HETEROGENEOUS = -2;
+    /**
+     * A heterogeneous outcome, which means we don't bother with it.
+     */
+    public static final double HETEROGENEOUS = -2;
 
-	public static final String LINE_SEPARATOR = System
-			.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-	// used for printing all decimal numbers
-	private static final String DECIMAL_FORMAT = "%.5f";
+    // used for printing all decimal numbers
+    private static final String DECIMAL_FORMAT = "%.5f";
 
-	/**
-	 * Format a double into a string using {@link #DECIMAL_FORMAT}.
-	 * 
-	 * @param d
-	 * @return
-	 */
-	public static String formatDouble(double d) {
-		return String.format(DECIMAL_FORMAT, d);
-	}
+    /**
+     * Format a double into a string using {@link #DECIMAL_FORMAT}.
+     *
+     * @param d
+     * @return
+     */
+    public static String formatDouble(double d) {
+        return String.format(DECIMAL_FORMAT, d);
+    }
 
-	/**
-	 * This is used by all of the BigDecimals. Precision is to 10 decimals.
-	 */
-	public static final MathContext matchContext = new MathContext(10,
-			RoundingMode.HALF_EVEN);
+    /**
+     * This is used by all of the BigDecimals. Precision is to 10 decimals.
+     */
+    public static final MathContext matchContext = new MathContext(10, RoundingMode.HALF_EVEN);
 
 }

@@ -16,13 +16,6 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
@@ -30,198 +23,184 @@ import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * This class holds the supracontextual lattice and does the work of filling
  * itself during classification.
- * 
+ *
  * This class represents the supracontextual lattice. The supractontextual
  * lattice is a boolean algebra which models supra- and subcontexts for the AM
  * algorithm. Using boolean algebra allows efficient computation of these as
  * well as traversal of all subcontexts within a supracontext.
- * 
+ *
  * @author Nate Glenn
- * 
  */
 public class BasicLattice implements Lattice {
 
-	/**
-	 * Lattice is a 2^n array of Supracontexts
-	 */
-	private Map<Label, LinkedLatticeNode<ClassifiedSupra>> lattice;
+    /**
+     * Lattice is a 2^n array of Supracontexts
+     */
+    private Map<Label, LinkedLatticeNode<ClassifiedSupra>> lattice;
 
-	// the current number of the subcontext being added
-	private int index = -1;
+    // the current number of the subcontext being added
+    private int index = -1;
 
-	/**
-	 * All points in the lattice point to the empty supracontext by default.
-	 */
-	private LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
-	// static {
-	// }
+    /**
+     * All points in the lattice point to the empty supracontext by default.
+     */
+    private LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
+    // static {
+    // }
 
-	private static LinkedLatticeNode<ClassifiedSupra> heteroSupra;
-	static {
-		// points to nothing, has no data or outcome.
-		heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
-	}
+    private static final LinkedLatticeNode<ClassifiedSupra> heteroSupra;
 
-	/**
-	 * Initializes the empty and the heterogeneous supracontexts as well as the
-	 * lattice
-	 * 
-	 * @param card
-	 *            the size of the exemplars
-	 */
-	private void init() {
-		// TODO: dangit, now we have to support a blank constructor.
-		emptySupracontext = new LinkedLatticeNode<ClassifiedSupra>(
-				new ClassifiedSupra());
-		emptySupracontext.setNext(emptySupracontext);
+    static {
+        // points to nothing, has no data or outcome.
+        heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
+    }
 
-		lattice = new HashMap<>();
-	}
+    /**
+     * Initializes the empty and the heterogeneous supracontexts as well as the
+     * lattice
+     */
+    private void init() {
+        // TODO: dangit, now we have to support a blank constructor.
+        emptySupracontext = new LinkedLatticeNode<>(new ClassifiedSupra());
+        emptySupracontext.setNext(emptySupracontext);
 
-	/**
-	 * List of homogeneous supracontexts
-	 */
+        lattice = new HashMap<>();
+    }
 
-	/**
-	 * Initializes Supracontextual lattice to a 2^n length array of
-	 * Supracontexts and then fills it with the contents of subList
-	 * 
-	 * @param subList
-	 *            List of subcontexts
-	 */
-	public BasicLattice(SubcontextList subList) {
+    /**
+     * Initializes Supracontextual lattice to a 2^n length array of
+     * Supracontexts and then fills it with the contents of subList
+     *
+     * @param subList List of subcontexts
+     */
+    public BasicLattice(SubcontextList subList) {
 
-		init();
+        init();
 
-		// Fill the lattice with all of the subcontexts
-		for (Subcontext sub : subList) {
-			index++;
-			insert(sub);
-		}
-	}
+        // Fill the lattice with all of the subcontexts
+        for (Subcontext sub : subList) {
+            index++;
+            insert(sub);
+        }
+    }
 
-	/**
-	 * Inserts sub into the lattice.
-	 * 
-	 * @param sub
-	 *            Subcontext to be inserted
-	 */
-	private void insert(Subcontext sub) {
-		// skip this if the supracontext to be added to is already
-		// heterogeneous;
-		// it would not be possible to make any non-heterogeneous supracontexts.
-		if (lattice.get(sub.getLabel()) == heteroSupra)
-			return;
-		// add the sub to its label position
-		addToContext(sub, sub.getLabel());
-		// then add the sub to all of the children of its label position
-		Iterator<Label> si = sub.getLabel().descendantIterator();
-		while (si.hasNext()) {
-			addToContext(sub, si.next());
-		}
-		// remove supracontexts with count = 0 after every pass
-		cleanSupra();
-	}
+    /**
+     * Inserts sub into the lattice.
+     *
+     * @param sub Subcontext to be inserted
+     */
+    private void insert(Subcontext sub) {
+        // skip this if the supracontext to be added to is already
+        // heterogeneous;
+        // it would not be possible to make any non-heterogeneous supracontexts.
+        if (lattice.get(sub.getLabel()) == heteroSupra) return;
+        // add the sub to its label position
+        addToContext(sub, sub.getLabel());
+        // then add the sub to all of the children of its label position
+        Iterator<Label> si = sub.getLabel().descendantIterator();
+        while (si.hasNext()) {
+            addToContext(sub, si.next());
+        }
+        // remove supracontexts with count = 0 after every pass
+        cleanSupra();
+    }
 
-	/**
-	 * @return false if the item was added to heteroSupra, true otherwise
-	 * @param sub
-	 * @param label
-	 */
-	private void addToContext(Subcontext sub, Label label) {
-		// the default value is the empty supracontext (leave null until now to
-		// save time/space)
-		if (!lattice.containsKey(label)) {
-			lattice.put(label, emptySupracontext);
-		}
+    /**
+     * @param sub
+     * @param label
+     * @return false if the item was added to heteroSupra, true otherwise
+     */
+    private void addToContext(Subcontext sub, Label label) {
+        // the default value is the empty supracontext (leave null until now to
+        // save time/space)
+        if (!lattice.containsKey(label)) {
+            lattice.put(label, emptySupracontext);
+        }
 
-		// if the Supracontext is heterogeneous, ignore it
-		if (lattice.get(label) == heteroSupra) {
-			return;
-		}
-		// if the following supracontext matches the current index, just
-		// re-point to that one; this is a supracontext that was made in
-		// the final else statement below this one.
-		else if (lattice.get(label).getNext().getIndex() == index) {
-			assert (lattice.get(label).getNext().getData().containsAll(lattice
-					.get(label).getData()));
-			// don't decrement count on emptySupracontext!
-			if (lattice.get(label) != emptySupracontext)
-				lattice.get(label).decrementCount();
-			lattice.put(label, lattice.get(label).getNext());
-			lattice.get(label).incrementCount();
-		}
-		// we now know that we will have to make a new Supracontext to contain
-		// this subcontext; don't bother making heterogeneous supracontexts
-		else if (lattice.get(label).getSupracontext().wouldBeHetero(sub)) {
-			lattice.get(label).decrementCount();
-			lattice.put(label, heteroSupra);
-			return;
-		}
-		// otherwise make a new Supracontext and add it
-		else {
-			// don't decrement the count for the emptySupracontext!
-			if (lattice.get(label) != emptySupracontext)
-				lattice.get(label).decrementCount();
-			lattice.put(label, lattice.get(label).insertAfter(sub, index));
-		}
-		return;
-	}
+        // if the Supracontext is heterogeneous, ignore it
+        if (lattice.get(label) == heteroSupra) {
+            return;
+        }
+        // if the following supracontext matches the current index, just
+        // re-point to that one; this is a supracontext that was made in
+        // the final else statement below this one.
+        else if (lattice.get(label).getNext().getIndex() == index) {
+            assert (lattice.get(label).getNext().getData().containsAll(lattice.get(label).getData()));
+            // don't decrement count on emptySupracontext!
+            if (lattice.get(label) != emptySupracontext) lattice.get(label).decrementCount();
+            lattice.put(label, lattice.get(label).getNext());
+            lattice.get(label).incrementCount();
+        }
+        // we now know that we will have to make a new Supracontext to contain
+        // this subcontext; don't bother making heterogeneous supracontexts
+        else if (lattice.get(label).getSupracontext().wouldBeHetero(sub)) {
+            lattice.get(label).decrementCount();
+            lattice.put(label, heteroSupra);
+            return;
+        }
+        // otherwise make a new Supracontext and add it
+        else {
+            // don't decrement the count for the emptySupracontext!
+            if (lattice.get(label) != emptySupracontext) lattice.get(label).decrementCount();
+            lattice.put(label, lattice.get(label).insertAfter(sub, index));
+        }
+    }
 
-	/**
-	 * Cycles through the the supracontexts and deletes ones with count=0
-	 */
-	private void cleanSupra() {
-		for (LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext; supra
-				.getNext() != emptySupracontext;) {
-			if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
-				supra.setNext(supra.getNext().getNext());
-			} else
-				supra = supra.getNext();
-		}
-		assert (noZeroSupras());
-	}
+    /**
+     * Cycles through the the supracontexts and deletes ones with count=0
+     */
+    private void cleanSupra() {
+        for (LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext; supra.getNext() != emptySupracontext; ) {
+            if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
+                supra.setNext(supra.getNext().getNext());
+            } else supra = supra.getNext();
+        }
+        assert (noZeroSupras());
+    }
 
-	@Override
-	public Set<Supracontext> getSupracontexts() {
-		Set<Supracontext> supList = new HashSet<Supracontext>();
-		LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext.getNext();
-		while (supra != emptySupracontext) {
-			supList.add(supra);
-			supra = supra.getNext();
-		}
-		return supList;
-	}
+    @Override
+    public Set<Supracontext> getSupracontexts() {
+        Set<Supracontext> supList = new HashSet<>();
+        LinkedLatticeNode<ClassifiedSupra> supra = emptySupracontext.getNext();
+        while (supra != emptySupracontext) {
+            supList.add(supra);
+            supra = supra.getNext();
+        }
+        return supList;
+    }
 
 	/*
-	 * Below methods are for private debugging and asserting
+     * Below methods are for private debugging and asserting
 	 */
 
-	// useful for private debugging on occasion
-	@SuppressWarnings("unused")
-	private String dumpLattice() {
-		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<Label, LinkedLatticeNode<ClassifiedSupra>> e : lattice
-				.entrySet()) {
-			sb.append(e.getKey());
-			sb.append(':');
-			if (e.getValue() == heteroSupra)
-				sb.append("[hetero]");
-			else
-				sb.append(e.getValue());
-			sb.append(AMUtils.LINE_SEPARATOR);
-		}
-		return sb.toString();
-	}
+    // useful for private debugging on occasion
+    @SuppressWarnings("unused")
+    private String dumpLattice() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Label, LinkedLatticeNode<ClassifiedSupra>> e : lattice.entrySet()) {
+            sb.append(e.getKey());
+            sb.append(':');
+            if (e.getValue() == heteroSupra) sb.append("[hetero]");
+            else sb.append(e.getValue());
+            sb.append(AMUtils.LINE_SEPARATOR);
+        }
+        return sb.toString();
+    }
 
-	private boolean noZeroSupras() {
-		for (Supracontext supra : getSupracontexts()) {
-			if (supra.getCount().equals(BigInteger.ZERO))
-				return false;
-		}
-		return true;
-	}
+    private boolean noZeroSupras() {
+        for (Supracontext supra : getSupracontexts()) {
+            if (supra.getCount().equals(BigInteger.ZERO)) return false;
+        }
+        return true;
+    }
 }

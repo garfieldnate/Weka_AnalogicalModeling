@@ -1,9 +1,9 @@
-Current: SparseLattice
-	- fix count, which is incorrect currently because we are not considering grandparents, etc.
-		- count needs to consider all ancestors, probably meaning we need to update it dynamically during addIntent.
-		- perhaps we need child and parent nodes; updated count means updating all children.
-		- flooding algorithm?
-Later TODO:
+TODOs of various priorities:
+- parallelize JohnsenJohansson
+- stop JohnsenJohansson experiments confidence level is reached (instead of always running 1000)
+- further parallelize DistributedLattice- divide combinations into groups of 1000
+- progress tracker for large problems; then we can know if what we're trying to do is just too hard.
+- Which lattice implementation to use should be configurable. Soybean was too big for my 2010 HP, but is done in 2 seconds on my i7 laptop.
 - Concept probably shouldn't implement Supracontext.
 - write tests for Concept
 - write test for LatticeFactory
@@ -30,8 +30,13 @@ Later TODO:
 	- package-info.java?
 
 Engineering Tasks
-- get it working with big data sets
-	- soybean is too big!
+- get it working with bigger data sets
+
+SparseLattice:
+	- fix count, which is incorrect currently because we are not considering grandparents, etc.
+		- count needs to consider all ancestors, probably meaning we need to update it dynamically during addIntent.
+		- perhaps we need child and parent nodes; updated count means updating all children.
+		- flooding algorithm?
 
 Later deliverables:
 - lattice viewer (show supras in a tree; GraphViz or Processing or Tikz or something)

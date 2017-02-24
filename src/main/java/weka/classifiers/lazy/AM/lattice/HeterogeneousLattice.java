@@ -16,13 +16,6 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.SubcontextList;
@@ -30,10 +23,17 @@ import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Same as a normal lattice, except no supracontext is deemed heterogeneous and
  * hence everything is kept.
- * 
+ *
  * Represents a lattice which is to be combined with other sublattices to
  * determine predictions later on. When a sublattice is filled, there are two
  * main differences:
@@ -54,173 +54,150 @@ import weka.classifiers.lazy.AM.label.Labeler;
  * <p>
  * In terms of processing power, more is required to use sublattices. However,
  * using threads the processing of each can be done in parallel.
- * 
+ *
  * @author Nate Glenn
  * @author Nathan Glenn
- * 
  */
 public class HeterogeneousLattice implements Lattice {
 
-	/**
-	 * Lattice is a 2^n array of Supracontexts
-	 */
-	private Map<Label, LinkedLatticeNode<BasicSupra>> lattice;
+    /**
+     * Lattice is a 2^n array of Supracontexts
+     */
+    private Map<Label, LinkedLatticeNode<BasicSupra>> lattice;
 
-	// the current number of the subcontext being added
-	private int index = -1;
+    // the current number of the subcontext being added
+    private int index = -1;
 
-	/**
-	 * All points in the lattice point to the empty supracontext by default.
-	 */
-	private LinkedLatticeNode<BasicSupra> emptySupracontext;
+    /**
+     * All points in the lattice point to the empty supracontext by default.
+     */
+    private LinkedLatticeNode<BasicSupra> emptySupracontext;
 
-	/**
-	 * Initializes the empty and the heterogeneous supracontexts as well as the
-	 * lattice
-	 * 
-	 * @param card
-	 *            the size of the exemplars
-	 */
-	private void init() {
-		emptySupracontext = new LinkedLatticeNode<>(new BasicSupra());
-		emptySupracontext.setNext(emptySupracontext);
+    /**
+     * Initializes the empty and the heterogeneous supracontexts as well as the
+     * lattice
+     */
+    private void init() {
+        emptySupracontext = new LinkedLatticeNode<>(new BasicSupra());
+        emptySupracontext.setNext(emptySupracontext);
 
-		lattice = new HashMap<>();
-	}
+        lattice = new HashMap<>();
+    }
 
-	/**
-	 * List of homogeneous supracontexts
-	 */
+    /**
+     * Initializes Supracontextual lattice to a 2^n length array of
+     * Supracontexts and then fills it with the contents of subList
+     *
+     * @param subList List of subcontexts
+     * @param i       label partition index
+     */
+    public HeterogeneousLattice(SubcontextList subList, int i) {
+        Labeler labeler = subList.getLabeler();
+        init();
 
-	/**
-	 * Initializes Supracontextual lattice to a 2^n length array of
-	 * Supracontexts and then fills it with the contents of subList
-	 * 
-	 * @param subList
-	 *            List of subcontexts
-	 * 
-	 * @param i
-	 *            label partition index
-	 */
-	public HeterogeneousLattice(SubcontextList subList, int i) {
-		Labeler labeler = subList.getLabeler();
-		init();
+        // Fill the lattice with all of the subcontexts, masking labels
+        for (Subcontext sub : subList) {
+            index++;
+            insert(sub, labeler.partition(sub.getLabel(), i));
+        }
+    }
 
-		// Fill the lattice with all of the subcontexts, masking labels
-		for (Subcontext sub : subList) {
-			index++;
-			insert(sub, labeler.partition(sub.getLabel(), i));
-		}
-	}
+    /**
+     * Inserts sub into the lattice, into location given by label
+     *
+     * @param sub   Subcontext to be inserted
+     * @param label label to be assigned to the subcontext
+     */
+    public void insert(Subcontext sub, Label label) {
+        addToContext(sub, label);
+        Iterator<Label> si = label.descendantIterator();
+        while (si.hasNext()) {
+            addToContext(sub, si.next());
+        }
+        // remove supracontexts with count = 0 after every pass
+        cleanSupra();
+    }
 
-	/**
-	 * Inserts sub into the lattice, into location given by label
-	 * 
-	 * @param sub
-	 *            Subcontext to be inserted
-	 * @param label
-	 *            label to be assigned to the subcontext
-	 */
-	public void insert(Subcontext sub, Label label) {
-		addToContext(sub, label);
-		Iterator<Label> si = label.descendantIterator();
-		while (si.hasNext()) {
-			addToContext(sub, si.next());
-		}
-		// remove supracontexts with count = 0 after every pass
-		cleanSupra();
-	}
+    /**
+     * Add the given subcontext to the supracontext with the given label
+     *
+     * @param sub
+     * @param label
+     */
+    private void addToContext(Subcontext sub, Label label) {
+        // the default value is the empty supracontext (leave null until now to
+        // save time/space)
+        if (!lattice.containsKey(label)) {
+            lattice.put(label, emptySupracontext);
+        }
 
-	/**
-	 * Add the given subcontext to the supracontext with the given label
-	 * 
-	 * @param sub
-	 * @param label
-	 */
-	private void addToContext(Subcontext sub, Label label) {
-		// the default value is the empty supracontext (leave null until now to
-		// save time/space)
-		if (!lattice.containsKey(label)) {
-			lattice.put(label, emptySupracontext);
-		}
+        // if the following supracontext matches the current index, just repoint
+        // to that one; this is a supracontext that was made in the final else
+        // statement below this one.
+        if (lattice.get(label).getNext().getIndex() == index) {
+            // assert
+            // (lattice.get(label).getNext().getData().containsAll(lattice
+            // .get(label).getData()));
+            // don't decrement count on emptySupracontext!
+            if (lattice.get(label) != emptySupracontext) lattice.get(label).decrementCount();
+            lattice.put(label, lattice.get(label).getNext());
+            lattice.get(label).incrementCount();
+        }
+        // otherwise make a new Supracontext and add it
+        else {
+            // don't decrement the count for the emptySupracontext!
+            if (lattice.get(label) != emptySupracontext) lattice.get(label).decrementCount();
+            lattice.put(label, lattice.get(label).insertAfter(sub, index));
+        }
+    }
 
-		// if the following supracontext matches the current index, just repoint
-		// to that one; this is a supracontext that was made in the final else
-		// statement below this one.
-		if (lattice.get(label).getNext().getIndex() == index) {
-			// assert
-			// (lattice.get(label).getNext().getData().containsAll(lattice
-			// .get(label).getData()));
-			// don't decrement count on emptySupracontext!
-			if (lattice.get(label) != emptySupracontext)
-				lattice.get(label).decrementCount();
-			lattice.put(label, lattice.get(label).getNext());
-			lattice.get(label).incrementCount();
-		}
-		// otherwise make a new Supracontext and add it
-		else {
-			// don't decrement the count for the emptySupracontext!
-			if (lattice.get(label) != emptySupracontext)
-				lattice.get(label).decrementCount();
-			lattice.put(label, lattice.get(label).insertAfter(sub, index));
-		}
-	}
+    /**
+     * Cycles through the the supracontexts and deletes ones with count=0
+     */
+    private void cleanSupra() {
+        for (LinkedLatticeNode<BasicSupra> supra = emptySupracontext; supra.getNext() != emptySupracontext; ) {
+            if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
+                supra.setNext(supra.getNext().getNext());
+            } else supra = supra.getNext();
+        }
+        assert (noZeroSupras());
+    }
 
-	/**
-	 * Cycles through the the supracontexts and deletes ones with count=0
-	 */
-	private void cleanSupra() {
-		for (LinkedLatticeNode<BasicSupra> supra = emptySupracontext; supra
-				.getNext() != emptySupracontext;) {
-			if (supra.getNext().getCount().equals(BigInteger.ZERO)) {
-				supra.setNext(supra.getNext().getNext());
-			} else
-				supra = supra.getNext();
-		}
-		assert (noZeroSupras());
-	}
+    private boolean noZeroSupras() {
+        for (Supracontext supra : getSupracontexts()) {
+            if (supra.getCount().equals(BigInteger.ZERO)) return false;
+        }
+        return true;
+    }
 
-	private boolean noZeroSupras() {
-		for (Supracontext supra : getSupracontexts()) {
-			if (supra.getCount().equals(BigInteger.ZERO))
-				return false;
-		}
-		return true;
-	}
+    /**
+     * @return The list of supracontexts that were created by filling the supracontextual lattice. From this, you can
+     * compute the analogical set.
+     */
+    @Override
+    public Set<Supracontext> getSupracontexts() {
+        Set<Supracontext> supList = new HashSet<>();
+        LinkedLatticeNode<BasicSupra> supra = emptySupracontext.getNext();
+        while (supra != emptySupracontext) {
+            assert (!supra.getCount().equals(BigInteger.ZERO));
+            supList.add(supra);
+            supra = supra.getNext();
+        }
+        return supList;
+    }
 
-	/**
-	 * 
-	 * @return The list of supracontexts that were created by filling the
-	 *         supracontextual lattice. From this, you can compute the
-	 *         analogical set.
-	 */
-	@Override
-	public Set<Supracontext> getSupracontexts() {
-		Set<Supracontext> supList = new HashSet<Supracontext>();
-		LinkedLatticeNode<BasicSupra> supra = emptySupracontext.getNext();
-		while (supra != emptySupracontext) {
-			assert (!supra.getCount().equals(BigInteger.ZERO));
-			supList.add(supra);
-			supra = supra.getNext();
-		}
-		return supList;
-	}
-
-	/**
-	 * 
-	 * @return A string representation of the list of Supracontexts created when
-	 *         the Lattice was filled
-	 */
-	public String supraListToString() {
-		StringBuilder sb = new StringBuilder();
-		LinkedLatticeNode<BasicSupra> supra = emptySupracontext.getNext();
-		if (supra == emptySupracontext)
-			return "EMPTY";
-		while (supra != emptySupracontext) {
-			sb.append(supra);
-			sb.append("->");
-			supra = supra.getNext();
-		}
-		return sb.toString();
-	}
+    /**
+     * @return A string representation of the list of Supracontexts created when the Lattice was filled
+     */
+    public String supraListToString() {
+        StringBuilder sb = new StringBuilder();
+        LinkedLatticeNode<BasicSupra> supra = emptySupracontext.getNext();
+        if (supra == emptySupracontext) return "EMPTY";
+        while (supra != emptySupracontext) {
+            sb.append(supra);
+            sb.append("->");
+            supra = supra.getNext();
+        }
+        return sb.toString();
+    }
 }
