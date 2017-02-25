@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The approximation algorithm from "Efficient Modeling of Analogy", Johnsen and
@@ -70,6 +72,9 @@ import java.util.Set;
  */
 public class JohnsenJohanssonLattice implements Lattice {
 
+    // TODO: should run to convergence, not set number of times
+    public static final int NUM_EXPERIMENTS = 1000;
+    private final Random random = ThreadLocalRandom.current();
     private final Set<Supracontext> supras = new HashSet<>();
 
     public JohnsenJohanssonLattice(SubcontextList sublist) {
@@ -134,14 +139,13 @@ public class JohnsenJohanssonLattice implements Lattice {
         int heteroCount = 0;
 
         Map<Label, Boolean> cache = new HashMap<>();
-        // TODO: for now, just repeat experiment 1000 times
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < NUM_EXPERIMENTS; i++) {
             totalCount++;
             // choose x_s, a union of random items from H(p)
             Label Xs = null;
             for (Label l : hp) {
                 // TODO: factor out RNG
-                if (Math.random() > .5) {
+                if (random.nextDouble() > .5) {
                     if (Xs == null) Xs = l;
                     else Xs = Xs.union(l);
                 }
