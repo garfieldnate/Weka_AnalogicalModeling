@@ -20,7 +20,22 @@ dependencies {
 task javadoc(type: Javadoc, overwrite:true) {
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
-  options.header = "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"></script>"
+
+  // DO NOT use single quotes (') in the strings below, or you will get
+  // weird errors like "Illegal package name" when you run the JavaDoc task
+  options.header = "<script type=\"text/x-mathjax-config\">" +
+  "  MathJax.Hub.Config({" +
+  "     \"HTML-CSS\": {" +
+  "       styles: {" +
+  "         \".MathJax_Display\": {" +
+  "            \"display\": \"inline\"," +
+  "            \"text-align\": \"left\"" +
+  "         }" +
+  "       }" +
+  "     }" +
+  "  });" +
+  "</script>" +
+  "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"></script>"
   options.links("http://weka.sourceforge.net/doc.dev/")
 }
 

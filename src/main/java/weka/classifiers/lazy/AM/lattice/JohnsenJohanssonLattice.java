@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * We estimate the count of each subcontext by randomly unioning sets of
  * subcontexts from $$\{x_s\}$$ and checking for heterogeneity (union means
- * ORing labels). The count of a subcontext $$p$$ is the size of its power set
+ * OR'ing labels). The count of a subcontext $$p$$ is the size of its power set
  * minus the heterogeneous elements in this set (or $$|\wp(p)| -
  * |\mathcal{H}_{limit(p)}|$$). We use these bounds in approximating
  * $$|\mathcal{H}_{limit(p)}|$$:
@@ -60,6 +60,8 @@ import java.util.Set;
  * or
  *
  * $$\hat{h}_p = \frac{ub(p)|x_s\in \mathcal{H}(p)|}{|\{x_s\}|}$$
+ *
+ * <br>
  *
  * TODO: maybe if H(p) is small enough we can do exact counting with
  * include-exclude
