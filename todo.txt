@@ -22,6 +22,7 @@ TODOs of various priorities:
 	- try out different types of sorting
 - change "outcome" to "class" everywhere
 - shield out weka classes!
+    + stop using doubles for outcomes (instead of integers)
 - add a "subFromString" method in the test utils class?
 - test specifically the case where there is a tie for class outcome
 - clean up tests; give them better names, etc. Use Hamcrest matches to make it all more legible.

@@ -35,6 +35,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
+
 /**
  * This lass manages several smaller, heterogeneous lattices.
  *
@@ -64,9 +66,8 @@ public class DistributedLattice implements Lattice {
     public DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
         Labeler labeler = subList.getLabeler();
 
-        ExecutorService executor = Executors.newCachedThreadPool();
-        // first, create heterogeneous lattices by splitting the labels
-        // contained in the subcontext list
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_CORES);
+        // first, create heterogeneous lattices by splitting the labels contained in the subcontext list
         CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
         int numLattices = labeler.numPartitions();
         for (int i = 0; i < numLattices; i++) {
@@ -83,9 +84,9 @@ public class DistributedLattice implements Lattice {
                 ));
             }
         }
-        // the final combination creates ClassifiedSupras and ignores the
-        // heterogeneous ones.
+        // the final combination creates ClassifiedSupras and ignores the heterogeneous ones.
         supras = combineFinal(taskCompletionService.take().get(), taskCompletionService.take().get());
+        executor.shutdownNow();
     }
 
     class LatticeFiller implements Callable<Set<Supracontext>> {
