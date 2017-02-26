@@ -1,6 +1,5 @@
 TODOs of various priorities:
-- parallelize JohnsenJohansson
-- stop JohnsenJohansson experiments confidence level is reached (instead of always running 1000)
+- stop JohnsenJohansson experiments when confidence level is reached (instead of always running 1000)
 - further parallelize DistributedLattice- divide combinations into groups of 1000
 - progress tracker for large problems; then we can know if what we're trying to do is just too hard.
 - Which lattice implementation to use should be configurable.

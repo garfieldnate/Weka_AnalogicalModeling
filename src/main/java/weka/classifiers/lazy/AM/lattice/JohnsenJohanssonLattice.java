@@ -15,9 +15,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
 /**
  * The approximation algorithm from "Efficient Modeling of Analogy", Johnsen and
@@ -71,81 +78,98 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Nate
  */
 public class JohnsenJohanssonLattice implements Lattice {
-
-    // TODO: should run to convergence, not set number of times
-    public static final int NUM_EXPERIMENTS = 1000;
-    private final Random random = ThreadLocalRandom.current();
+    // TODO: should run until convergence, not a constant number of times
+    private static final int NUM_EXPERIMENTS = 1000;
     private final Set<Supracontext> supras = new HashSet<>();
 
-    public JohnsenJohanssonLattice(SubcontextList sublist) {
+    public JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
         // first organize sub labels by outcome for quick H(p) construction
         Map<Double, List<Label>> outcomeSubMap = new HashMap<>();
         for (Subcontext s : sublist) {
             List<Label> l = outcomeSubMap.computeIfAbsent(s.getOutcome(), k -> new ArrayList<>());
             l.add(s.getLabel());
         }
-        // for each p in subcontext
+        // Estimate the counts for each supracontext in parallel
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_CORES);
+        CompletionService<Supracontext> taskCompletionService = new ExecutorCompletionService<>(executor);
         for (Subcontext p : sublist) {
-            Label pLabel = p.getLabel();
+            taskCompletionService.submit(new SupraApproximator(p, outcomeSubMap));
+        }
+        for (int i = 0; i < sublist.size(); i++) {
+            supras.add(taskCompletionService.take().get());
+        }
+        executor.shutdownNow();
+    }
 
-            // H(p) is p intersected with labels of any subcontexts with a
-            // different
-            // class, or all other sub labels if p is non-deterministic
-            // (combination with these would lead to heterogeneity)
-            List<Label> hp = new ArrayList<>();
-            for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
-                if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
-                    for (Label x : e.getValue())
-                        hp.add(pLabel.intersect(x));
-                }
-            }
-            // min(p) is the number of matches in the label in H(p) with the
-            // most matches
-            // max(p) is the number of matches in the union of all labels in
-            // H(p)
-            int minP = 0;
-            Label hpUnion = pLabel;
-            for (Label l : hp) {
-                if (l.numMatches() > minP) {
-                    minP = l.numMatches();
-                }
-                hpUnion = hpUnion.union(l);
-            }
-            int maxP = hpUnion.numMatches();
-            // the upper bound on H_limit(p)
-            BigInteger ubP = BigInteger.ZERO;
-            for (int k = 1; k <= minP; k++) {
-                ubP = ubP.add(binomialCoefficient(maxP, k));
-            }
-            // ratio of |{x_s in H(p)}| to |{x_s}|
-            double heterRatio = estimateHeteroRatio(hp);
-            // final estimation of total count of space subsumed by elements of
-            // H(p); rounds down
-            BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heterRatio)).toBigInteger();
-            // final count is 2^|p| - heteroCountEstimate
-            BigInteger count = BigInteger.valueOf(2).pow(pLabel.numMatches());
-            count = count.subtract(heteroCountEstimate);
+    class SupraApproximator implements Callable<Supracontext> {
+        private final Subcontext p;
+        private final Map<Double, List<Label>> outcomeSubMap;
 
-            // add the approximated sub as its own supra with the given count
-            Supracontext approximatedSupra = new ClassifiedSupra();
-            approximatedSupra.add(p);
-            approximatedSupra.setCount(count);
-            supras.add(approximatedSupra);
+        SupraApproximator(Subcontext p, Map<Double, List<Label>> outcomeSubMap) {
+            this.p = p;
+            this.outcomeSubMap = outcomeSubMap;
+        }
+
+        @Override
+        public Supracontext call() throws Exception {
+            return approximateSupra(p, outcomeSubMap);
         }
     }
 
-    private double estimateHeteroRatio(List<Label> hp) {
-        int totalCount = 0;
+    private Supracontext approximateSupra(Subcontext p, Map<Double, List<Label>> outcomeSubMap) {
+        Label pLabel = p.getLabel();
+        // H(p) is p intersected with labels of any subcontexts with a
+        // different class, or all other sub labels if p is non-deterministic
+        // (combination with these would lead to heterogeneity)
+        List<Label> hp = new ArrayList<>();
+        for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
+            if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
+                for (Label x : e.getValue())
+                    hp.add(pLabel.intersect(x));
+            }
+        }
+        // min(p) is the number of matches in the label in H(p) with the most matches
+        // max(p) is the number of matches in the union of all labels in H(p)
+        int minP = 0;
+        Label hpUnion = pLabel;
+        for (Label l : hp) {
+            if (l.numMatches() > minP) {
+                minP = l.numMatches();
+            }
+            hpUnion = hpUnion.union(l);
+        }
+        int maxP = hpUnion.numMatches();
+        // the upper bound on H_limit(p)
+        BigInteger ubP = BigInteger.ZERO;
+        for (int k = 1; k <= minP; k++) {
+            ubP = ubP.add(binomialCoefficient(maxP, k));
+        }
+        // ratio of |{x_s in H(p)}| to |{x_s}|
+        double heteroRatio = estimateHeteroRatio(hp, NUM_EXPERIMENTS);
+        // final estimation of total count of space subsumed by elements of
+        // H(p); rounds down
+        BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heteroRatio)).toBigInteger();
+        // final count is 2^|p| - heteroCountEstimate
+        BigInteger count = BigInteger.valueOf(2).pow(pLabel.numMatches());
+        count = count.subtract(heteroCountEstimate);
+
+        // add the approximated sub as its own supra with the given count
+        Supracontext approximatedSupra = new ClassifiedSupra();
+        approximatedSupra.add(p);
+        approximatedSupra.setCount(count);
+        return approximatedSupra;
+    }
+
+    private double estimateHeteroRatio(List<Label> hp, int numExperiments) {
         int heteroCount = 0;
 
         Map<Label, Boolean> cache = new HashMap<>();
-        for (int i = 0; i < NUM_EXPERIMENTS; i++) {
-            totalCount++;
+        for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
             Label Xs = null;
             for (Label l : hp) {
-                // TODO: factor out RNG
-                if (random.nextDouble() > .5) {
+                // cannot use Math.random() in parallel code
+                if (ThreadLocalRandom.current().nextDouble() > .5) {
                     if (Xs == null) Xs = l;
                     else Xs = Xs.union(l);
                 }
@@ -169,7 +193,7 @@ public class JohnsenJohanssonLattice implements Lattice {
             }
             cache.put(Xs, hetero);
         }
-        return heteroCount / (double) totalCount;
+        return heteroCount / (double) numExperiments;
     }
 
     // from http://stackoverflow.com/a/9620533/474819
@@ -177,7 +201,9 @@ public class JohnsenJohanssonLattice implements Lattice {
         if (n == 0) return BigInteger.ONE;
         if (k == 0) return BigInteger.ZERO;
         // (n C k) and (n C (n-k)) are the same, so pick the smaller as k:
-        if (k > n - k) k = n - k;
+        if (k > n - k) {
+            k = n - k;
+        }
         BigInteger result = BigInteger.ONE;
         for (int i = 1; i <= k; ++i) {
             result = result.multiply(BigInteger.valueOf(n - k + i));

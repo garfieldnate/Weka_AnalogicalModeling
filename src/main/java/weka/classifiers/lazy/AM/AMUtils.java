@@ -25,6 +25,10 @@ import java.math.RoundingMode;
  */
 public class AMUtils {
     /**
+     * The number of processors available in the current runtime
+     */
+    public static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
+    /**
      * An unknown class value.
      */
     public static final double UNKNOWN = Double.NaN;

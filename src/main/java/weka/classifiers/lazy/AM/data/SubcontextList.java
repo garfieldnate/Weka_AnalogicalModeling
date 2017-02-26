@@ -154,6 +154,10 @@ public class SubcontextList implements Iterable<Subcontext> {
         };
     }
 
+    public int size() {
+        return labelToSubcontext.size();
+    }
+
     /**
      * @return The labeler object used to assign incoming data to subcontexts.
      */
