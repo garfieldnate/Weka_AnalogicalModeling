@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
   compile 'nz.ac.waikato.cms.weka:weka-dev:3.7.11'
+  compile group: 'com.google.guava', name: 'guava', version: '19.0'
   testCompile 'junit:junit:4.11',
   [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.7.11']
 }

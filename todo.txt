@@ -1,4 +1,8 @@
 TODOs of various priorities:
+- Make DistributedLattice more distributed (not nearly 100% core usage!)
+- JohnsenJohannsson lattice performs better on audiology with only 1 experiment. Why?
+- completion service that counts the number of submitted tasks would be useful
+- Why keep count in supracontext instead of storing it elsewhere?
 - stop JohnsenJohansson experiments when confidence level is reached (instead of always running 1000)
 - further parallelize DistributedLattice- divide combinations into groups of 1000
 - progress tracker for large problems; then we can know if what we're trying to do is just too hard.

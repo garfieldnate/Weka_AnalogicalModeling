@@ -118,8 +118,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         }, leaveOneOut(train, 15).getClassPointers());
 //        if (usingNiceComputer) {
 //            int numCorrect = leaveOneOut(train);
-//            assertEquals("Leave-one-out accuracy when classifying of audiology dataset",
-//                         628, numCorrect);
+//            assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 628, numCorrect);
 //        }
     }
 
@@ -158,8 +157,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
             }
         }, leaveOneOut(train, 1).getClassPointers());
         int numCorrect = leaveOneOut(train);
-        assertEquals("Leave-one-out accuracy when classifying of audiology dataset",
-                     148, numCorrect);
+        assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 148, numCorrect);
     }
 
     private int leaveOneOut(Instances data) throws Exception {
