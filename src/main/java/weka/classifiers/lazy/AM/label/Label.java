@@ -79,8 +79,5 @@ public abstract class Label {
      * @param label
      * @return
      */
-    public Label union(Label label) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract Label union(Label label);
 }

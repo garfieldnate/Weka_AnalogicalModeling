@@ -18,11 +18,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 
 import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
@@ -142,7 +144,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         // the upper bound on H_limit(p)
         BigInteger ubP = BigInteger.ZERO;
         for (int k = 1; k <= minP; k++) {
-            ubP = ubP.add(binomialCoefficient(maxP, k));
+            ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
         }
         // ratio of |{x_s in H(p)}| to |{x_s}|
         double heteroRatio = estimateHeteroRatio(hp, NUM_EXPERIMENTS);
@@ -167,13 +169,19 @@ public class JohnsenJohanssonLattice implements Lattice {
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
             Label Xs = null;
+            // TODO: to optimize; union all the labels, then stop the looping through hp if Xs ever becomes that
             for (Label l : hp) {
                 // cannot use Math.random() in parallel code
                 if (ThreadLocalRandom.current().nextDouble() > .5) {
-                    if (Xs == null) Xs = l;
-                    else Xs = Xs.union(l);
+                    if (Xs == null) {
+                        Xs = l;
+                    } else {
+                        Xs = Xs.union(l);
+                    }
                 }
             }
+//            System.out.println(hp);
+//            System.out.println(Xs);
             Boolean b = cache.get(Xs);
             if (b != null) {
                 if (b) {
@@ -196,8 +204,44 @@ public class JohnsenJohanssonLattice implements Lattice {
         return heteroCount / (double) numExperiments;
     }
 
+    private static class Memoizer<T, U> {
+        private final Map<T, U> cache = new ConcurrentHashMap<>();
+
+        private Memoizer() {}
+
+        private Function<T, U> doMemoize(final Function<T, U> function) {
+            return input -> cache.computeIfAbsent(input, function::apply);
+        }
+
+        public static <T, U> Function<T, U> memoize(final Function<T, U> function) {
+            return new Memoizer<T, U>().doMemoize(function);
+        }
+    }
+
+    private static class Pair {
+        int first;
+        int second;
+        private Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+        @Override
+        public int hashCode() {
+            return 37*first + second;
+        }
+        @Override
+        public boolean equals(Object o) {
+            Pair other = (Pair) o;
+            return other.first == first && other.second == second;
+        }
+    }
+
+    private static final Function<Pair, BigInteger> memoizedNcK = Memoizer.memoize(JohnsenJohanssonLattice::binomialCoefficient);
+
     // from http://stackoverflow.com/a/9620533/474819
-    private static BigInteger binomialCoefficient(int n, int k) {
+    private static BigInteger binomialCoefficient(Pair p) {
+        int n = p.first;
+        int k = p.second;
         if (n == 0) return BigInteger.ONE;
         if (k == 0) return BigInteger.ZERO;
         // (n C k) and (n C (n-k)) are the same, so pick the smaller as k:

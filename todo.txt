@@ -1,5 +1,6 @@
 TODOs of various priorities:
-- Make DistributedLattice more distributed (not nearly 100% core usage!)
+- JJLattice#estimateHeteroRatio: to optimize: union all the labels in hp, then stop the looping through hp if Xs ever becomes that
+- Set with a get(Object) implementation would be useful
 - JohnsenJohannsson lattice performs better on audiology with only 1 experiment. Why?
 - completion service that counts the number of submitted tasks would be useful
 - Why keep count in supracontext instead of storing it elsewhere?
