@@ -166,6 +166,10 @@ public class JohnsenJohanssonLattice implements Lattice {
         int heteroCount = 0;
 
         Map<Label, Boolean> cache = new HashMap<>();
+        Label fullUnion = hp.get(0);
+        for (Label l : hp) {
+            fullUnion = fullUnion.union(l);
+        }
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
             Label Xs = null;
@@ -177,6 +181,10 @@ public class JohnsenJohanssonLattice implements Lattice {
                         Xs = l;
                     } else {
                         Xs = Xs.union(l);
+                    }
+                    // further union operations would do nothing
+                    if (Xs.equals(fullUnion)) {
+                        break;
                     }
                 }
             }
