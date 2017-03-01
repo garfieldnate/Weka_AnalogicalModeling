@@ -35,6 +35,12 @@ public abstract class Label {
     public abstract int numMatches();
 
     /**
+     * @return a label representing the top of the lattice (i.e. a label with all matches)
+     */
+    // because you can't do static abstract, or overwrite static variables in Java
+    public abstract Label TOP();
+
+    /**
      * The "descendants" of a label are the set of labels with the same
      * "mismatch" entries, but with one or more of the "match" entries changed
      * into a "mismatch" entry. For example, the children of

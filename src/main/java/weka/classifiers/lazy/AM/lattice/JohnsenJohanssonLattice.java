@@ -170,26 +170,22 @@ public class JohnsenJohanssonLattice implements Lattice {
         for (Label l : hp) {
             fullUnion = fullUnion.union(l);
         }
+        Label TOP = hp.get(0).TOP();
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
-            Label Xs = null;
-            // TODO: to optimize; union all the labels, then stop the looping through hp if Xs ever becomes that
+            Label Xs = TOP;
             for (Label l : hp) {
                 // cannot use Math.random() in parallel code
                 if (ThreadLocalRandom.current().nextDouble() > .5) {
-                    if (Xs == null) {
-                        Xs = l;
-                    } else {
-                        Xs = Xs.union(l);
-                    }
+                    Xs = Xs.union(l);
                     // further union operations would do nothing
                     if (Xs.equals(fullUnion)) {
                         break;
                     }
                 }
             }
-//            System.out.println(hp);
-//            System.out.println(Xs);
+            //            System.out.println(hp);
+            //            System.out.println(Xs);
             Boolean b = cache.get(Xs);
             if (b != null) {
                 if (b) {
@@ -215,7 +211,8 @@ public class JohnsenJohanssonLattice implements Lattice {
     private static class Memoizer<T, U> {
         private final Map<T, U> cache = new ConcurrentHashMap<>();
 
-        private Memoizer() {}
+        private Memoizer() {
+        }
 
         private Function<T, U> doMemoize(final Function<T, U> function) {
             return input -> cache.computeIfAbsent(input, function::apply);
@@ -229,14 +226,17 @@ public class JohnsenJohanssonLattice implements Lattice {
     private static class Pair {
         int first;
         int second;
+
         private Pair(int first, int second) {
             this.first = first;
             this.second = second;
         }
+
         @Override
         public int hashCode() {
-            return 37*first + second;
+            return 37 * first + second;
         }
+
         @Override
         public boolean equals(Object o) {
             Pair other = (Pair) o;

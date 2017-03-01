@@ -67,6 +67,11 @@ public class BitSetLabel extends Label {
     }
 
     @Override
+    public Label TOP() {
+        return new BitSetLabel(new BitSet(), getCardinality());
+    }
+
+    @Override
     public String toString() {
         return labelBits.toString();
     }

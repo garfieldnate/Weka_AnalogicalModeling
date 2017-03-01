@@ -107,6 +107,11 @@ public class IntLabel extends Label {
     }
 
     @Override
+    public Label TOP() {
+        return new IntLabel(0, getCardinality());
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         String binary = Integer.toBinaryString(labelBits());
