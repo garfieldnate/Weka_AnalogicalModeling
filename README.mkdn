@@ -11,7 +11,7 @@ The AM algorithm could be called a probabilistic, instance-based classifier. How
 
 Though it is possible to choose an outcome probabilistically, in practice users are generally interested in either the full predicted probability distribution or the outcome with the highest probability.
 
-AM practitioners use specialized terminology, most of which has equivalent terminology used in machine learning. Examples are 'exemplar' (training instance), 'outcome' (class label), and 'variable' (feature). This software uses the ML terminology internally, but (TODO) user-facing reports use the AM terminology.
+AM practitioners generally use terminology taken from statistics, most of which has equivalent terminology used by computer scientists (and most machine learning frameworks in general). Examples are 'exemplar' (training instance), 'outcome' (class label), and 'variable' (feature). This software uses the CS terminology internally, but (TODO) user-facing reports use the AM terminology.
 
 The running time for analogical modeling is exponential in nature and practice, and thus it is not suitable for very large datasets; exact calculation becomes impractical after about 50 features.
 
@@ -24,7 +24,7 @@ As an evolving project, the most important design principle has been modularity 
 * Larger vectors are placed in a distributed lattice, with the number of lattices increasing with size
 * Very large vectors (50 or more features) are classified approximately using Monte Carlo simulation
 
-The distributed lattice implementation utilizes explicit parallelism and better caching of intermediate calculations for significantly faster computation (an order of magnitude over the previous system, which was written in C).
+Some algorithmic improvements have been made to the distributed lattice and approximate lattice filling algorithms. Concurrency is also used extensively so that 8 CPU cores will fill lattices roughly 8 times faster, etc.
 
 ###Building
 
