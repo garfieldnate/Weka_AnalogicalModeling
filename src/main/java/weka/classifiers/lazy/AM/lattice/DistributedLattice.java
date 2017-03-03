@@ -18,6 +18,8 @@ package weka.classifiers.lazy.AM.lattice;
 
 import com.google.common.collect.Iterables;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
@@ -28,6 +30,7 @@ import weka.classifiers.lazy.AM.label.Labeler;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,9 +95,9 @@ public class DistributedLattice implements Lattice {
         }
         // the final combination creates ClassifiedSupras and ignores the heterogeneous ones.
         supras = combineInParallel(taskCompletionService.take().get(),
-                         taskCompletionService.take().get(),
-                         executor,
-                         (s1, s2) -> new FinalCombiner(s1, s2)
+                                   taskCompletionService.take().get(),
+                                   executor,
+                                   (s1, s2) -> new FinalCombiner(s1, s2)
         );
         executor.shutdownNow();
     }
@@ -136,7 +139,11 @@ public class DistributedLattice implements Lattice {
 
         @Override
         public Set<Supracontext> call() throws Exception {
-            return combineInParallel(supras1.get(), supras2.get(), executor, (s1, s2) -> new IntermediateCombiner(s1, s2));
+            return combineInParallel(supras1.get(),
+                                     supras2.get(),
+                                     executor,
+                                     (s1, s2) -> new IntermediateCombiner(s1, s2)
+            );
         }
     }
 
@@ -166,23 +173,21 @@ public class DistributedLattice implements Lattice {
 
     // combine supracontext sets generated in separate threads into one set
     private Set<Supracontext> reduceSupraCombinations(CompletionService<Set<Supracontext>> taskCompletionService, int numSubmitted) throws InterruptedException, ExecutionException {
-        // the same supracontext may be formed via different combinations, so we
-        // use this as a set (Set doesn't provide a get(Object) method);
-        Map<Supracontext, Supracontext> finalSupras = new HashMap<>();
+        GettableSet<Supracontext> finalSupras = new GettableSet<>();
         for (int i = 0; i < numSubmitted; i++) {
             Set<Supracontext> partialCountSupras = taskCompletionService.take().get();
             for (Supracontext supra : partialCountSupras) {
                 // add to the existing count if the same supra was formed from a
                 // previous combination
-                if (finalSupras.containsKey(supra)) {
+                if (finalSupras.contains(supra)) {
                     Supracontext existing = finalSupras.get(supra);
                     existing.setCount(supra.getCount().add(existing.getCount()));
                 } else {
-                    finalSupras.put(supra, supra);
+                    finalSupras.add(supra);
                 }
             }
         }
-        return finalSupras.keySet();
+        return finalSupras.unwrap();
     }
 
     class IntermediateCombiner implements Callable<Set<Supracontext>> {
@@ -197,21 +202,21 @@ public class DistributedLattice implements Lattice {
         @Override
         public Set<Supracontext> call() throws Exception {
             BasicSupra newSupra;
-            Map<Supracontext, Supracontext> combinedSupras = new HashMap<>();
+            GettableSet<Supracontext> combinedSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
                 for (Supracontext supra2 : supras2) {
                     newSupra = combine(supra1, supra2);
                     if (newSupra != null) {
-                        if (combinedSupras.containsKey(newSupra)) {
+                        if (combinedSupras.contains(newSupra)) {
                             Supracontext oldSupra = combinedSupras.get(newSupra);
                             oldSupra.setCount(oldSupra.getCount().add(newSupra.getCount()));
                         } else {
-                            combinedSupras.put(newSupra, newSupra);
+                            combinedSupras.add(newSupra);
                         }
                     }
                 }
             }
-            return combinedSupras.keySet();
+            return combinedSupras.unwrap();
         }
 
         /**
@@ -254,26 +259,24 @@ public class DistributedLattice implements Lattice {
         @Override
         public Set<Supracontext> call() throws Exception {
             ClassifiedSupra supra;
-            // the same supracontext may be formed via different combinations, so we
-            // use this as a set (Set doesn't provide a get(Object) method);
-            Map<Supracontext, Supracontext> finalSupras = new HashMap<>();
+            GettableSet<Supracontext> finalSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
                 for (Supracontext supra2 : supras2) {
                     supra = combine(supra1, supra2);
                     if (supra == null) continue;
                     // add to the existing count if the same supra was formed from a
                     // previous combination
-                    if (finalSupras.containsKey(supra)) {
+                    if (finalSupras.contains(supra)) {
                         Supracontext existing = finalSupras.get(supra);
                         existing.setCount(supra.getCount().add(existing.getCount()));
                     } else {
-                        finalSupras.put(supra, supra);
+                        finalSupras.add(supra);
                     }
                 }
             }
-            return finalSupras.keySet();
+            return finalSupras.unwrap();
         }
-        
+
         /**
          * Combine this partial supracontext with another to make a
          * {@link ClassifiedSupra} object. The new one contains the subcontexts
@@ -283,8 +286,8 @@ public class DistributedLattice implements Lattice {
          *
          * @param supra1 first partial supracontext to combine
          * @param supra2 second partial supracontext to combine
-         * @return a combined supracontext, or null if supra1 and supra2 had no data in common or if the new supracontext is
-         * heterogeneous
+         * @return a combined supracontext, or null if supra1 and supra2 had no data in common or if the new
+         * supracontext is heterogeneous
          */
         private ClassifiedSupra combine(Supracontext supra1, Supracontext supra2) {
             Set<Subcontext> smaller;
@@ -309,6 +312,96 @@ public class DistributedLattice implements Lattice {
             }
             supra.setCount(supra1.getCount().multiply(supra2.getCount()));
             return supra;
+        }
+    }
+
+    /**
+     * A set implementation that adds a get method (not present in Java's Set interface).
+     * This is required for combining sets of supracontexts, since supracontexts
+     * are equal even if their counts are different.
+     */
+    private static class GettableSet<T> implements Set<T> {
+        private final Map<T, T> backingMap = new HashMap<>();
+
+        /**
+         * @return null if {@code t} is not contained in the set; otherwise the object contained in the set for which
+         * {@code t.equals(theObject} is true.
+         */
+        public T get(T t) {
+            return backingMap.get(t);
+        }
+
+        /**
+         * @return the underlying set
+         */
+        public Set<T> unwrap() {
+            return backingMap.keySet();
+        }
+
+        @Override
+        public int size() {
+            return backingMap.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return backingMap.isEmpty();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return backingMap.containsKey(o);
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return backingMap.keySet().iterator();
+        }
+
+        @Override
+        public Object[] toArray() {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public <T1> T1[] toArray(T1[] a) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean add(T t) {
+            backingMap.put(t, t);
+            return true;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends T> c) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public void clear() {
+            throw new NotImplementedException();
         }
     }
 }

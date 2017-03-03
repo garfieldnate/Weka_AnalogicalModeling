@@ -1,5 +1,4 @@
 TODOs of various priorities:
-- Set with a get(Object) implementation would be useful
 - JohnsenJohannsson lattice performs better on audiology with only 1 experiment. Why?
 - completion service that counts the number of submitted tasks would be useful
 - Why keep count in supracontext instead of storing it elsewhere?
