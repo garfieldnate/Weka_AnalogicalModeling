@@ -20,4 +20,15 @@ public class BitSetLabelTest {
         assertTrue(label.matches(1));
         assertFalse(label.matches(2));
     }
+
+    @Test
+    public void testToString() {
+        BitSet bs = new BitSet(100);
+        bs.set(50, 100);
+        Label label = new BitSetLabel(bs, 100);
+        assertEquals(
+            "1111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000",
+            label.toString()
+        );
+    }
 }

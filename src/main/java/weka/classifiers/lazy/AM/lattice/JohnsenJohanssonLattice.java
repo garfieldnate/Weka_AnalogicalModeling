@@ -147,6 +147,7 @@ public class JohnsenJohanssonLattice implements Lattice {
             ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
         }
         // ratio of |{x_s in H(p)}| to |{x_s}|
+        System.out.println("estimating " + hp);
         double heteroRatio = estimateHeteroRatio(hp, NUM_EXPERIMENTS);
         // final estimation of total count of space subsumed by elements of
         // H(p); rounds down
@@ -203,6 +204,7 @@ public class JohnsenJohanssonLattice implements Lattice {
             }
             cache.put(Xs, hetero);
         }
+        System.out.println(heteroCount + "/" + numExperiments);
         return heteroCount / (double) numExperiments;
     }
 
