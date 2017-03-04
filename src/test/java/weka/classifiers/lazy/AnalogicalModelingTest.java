@@ -116,10 +116,10 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
                 put("brown-stem-rot", BigInteger.valueOf(976826156));
             }
         }, leaveOneOut(train, 15).getClassPointers());
-        if (usingNiceComputer) {
-            int numCorrect = leaveOneOut(train);
-            assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 628, numCorrect);
-        }
+//        if (usingNiceComputer) {
+//            int numCorrect = leaveOneOut(train);
+//            assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 628, numCorrect);
+//        }
     }
 
     // larger set that forces use of BitSetLabel and JohnsenJohansson lattice
@@ -156,17 +156,18 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
                 put("acoustic_neuroma", BigInteger.valueOf(1));
             }
         }, leaveOneOut(train, 1).getClassPointers());
-//        int numCorrect = leaveOneOut(train);
-//        assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 148, numCorrect);
+        int numCorrect = leaveOneOut(train);
+        assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 148, numCorrect);
     }
 
     private int leaveOneOut(Instances data) throws Exception {
         int correct = 0;
         for (int i = 0; i < data.numInstances(); i++) {
-//            System.out.println(i);
+            System.out.print(i + ",");
             AnalogicalSet set = leaveOneOut(data, i);
             if (set.getPredictedClasses().contains(data.get(i).stringValue(data.classIndex()))) correct++;
         }
+        System.out.println();
         return correct;
     }
 

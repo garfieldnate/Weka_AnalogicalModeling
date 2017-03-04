@@ -15,6 +15,7 @@ import weka.core.Instances;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -205,5 +206,23 @@ public class LabelTest {
         si = label.descendantIterator();
         while (si.hasNext()) actualLabels.add(new IntLabel(si.next()));
         assertEquals(expectedLabels, actualLabels);
+    }
+
+    @Test
+    public void testBottom() {
+        Label bottom;
+        if (labelerConstructor.getDeclaringClass().equals(IntLabeler.class)) {
+            bottom = new IntLabel(0,IntLabel.MAX_CARDINALITY).BOTTOM();
+            assertEquals(IntLabel.MAX_CARDINALITY, bottom.getCardinality());
+        } else if (labelerConstructor.getDeclaringClass().equals(LongLabeler.class)) {
+            bottom = new LongLabel(0,LongLabel.MAX_CARDINALITY).BOTTOM();
+            assertEquals(LongLabel.MAX_CARDINALITY, bottom.getCardinality());
+        } else {
+            bottom = new BitSetLabel(new BitSet(), 100).BOTTOM();
+            assertEquals(100, bottom.getCardinality());
+        }
+        for(int i = 0; i < bottom.getCardinality(); i++) {
+            assertFalse("index " + i + " should not be matching", bottom.matches(i));
+        }
     }
 }

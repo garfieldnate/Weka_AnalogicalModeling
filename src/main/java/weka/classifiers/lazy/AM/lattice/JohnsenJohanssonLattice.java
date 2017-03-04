@@ -170,10 +170,10 @@ public class JohnsenJohanssonLattice implements Lattice {
         for (Label l : hp) {
             fullUnion = fullUnion.union(l);
         }
-        Label TOP = hp.get(0).TOP();
+        Label bottom = hp.get(0).BOTTOM();
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
-            Label Xs = TOP;
+            Label Xs = bottom;
             for (Label l : hp) {
                 // cannot use Math.random() in parallel code
                 if (ThreadLocalRandom.current().nextDouble() > .5) {
@@ -184,8 +184,6 @@ public class JohnsenJohanssonLattice implements Lattice {
                     }
                 }
             }
-            //            System.out.println(hp);
-            //            System.out.println(Xs);
             Boolean b = cache.get(Xs);
             if (b != null) {
                 if (b) {

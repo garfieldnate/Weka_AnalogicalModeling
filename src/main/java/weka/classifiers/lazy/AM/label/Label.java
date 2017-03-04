@@ -35,10 +35,10 @@ public abstract class Label {
     public abstract int numMatches();
 
     /**
-     * @return a label representing the top of the lattice (i.e. a label with all matches)
+     * @return a label representing the bottom, or minimum (⊥) of the lattice (i.e. a label with no matches)
      */
     // because you can't do static abstract, or overwrite static variables in Java
-    public abstract Label TOP();
+    public abstract Label BOTTOM();
 
     /**
      * The "descendants" of a label are the set of labels with the same

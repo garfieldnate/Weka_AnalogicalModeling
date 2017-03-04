@@ -20,5 +20,4 @@ public class BitSetLabelTest {
         assertTrue(label.matches(1));
         assertFalse(label.matches(2));
     }
-
 }

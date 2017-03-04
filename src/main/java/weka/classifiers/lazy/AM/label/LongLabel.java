@@ -100,8 +100,8 @@ public class LongLabel extends Label {
     }
 
     @Override
-    public Label TOP() {
-        return new LongLabel(0L, getCardinality());
+    public LongLabel BOTTOM() {
+        return new LongLabel(-1L, getCardinality());
     }
 
     @Override
