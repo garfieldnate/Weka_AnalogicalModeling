@@ -1,5 +1,6 @@
 TODOs of various priorities:
-- JohnsenJohannsson lattice performs better on audiology with only 1 experiment. Why?
+- Hone sampling process for JJLattice
+    - currently get random sample random number of times, which is an improvement
 - Why keep count in supracontext instead of storing it elsewhere?
 - stop JohnsenJohansson experiments when confidence level is reached (instead of always running 1000)
 - further parallelize DistributedLattice- divide combinations into groups of 1000

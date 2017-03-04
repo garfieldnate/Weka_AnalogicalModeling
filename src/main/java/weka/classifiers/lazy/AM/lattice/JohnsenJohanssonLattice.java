@@ -10,6 +10,7 @@ import weka.classifiers.lazy.AM.label.Label;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -81,7 +82,7 @@ import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
  */
 public class JohnsenJohanssonLattice implements Lattice {
     // TODO: should run until convergence, not a constant number of times
-    private static final int NUM_EXPERIMENTS = 1000;
+    private static final int NUM_EXPERIMENTS = 10;
     private final Set<Supracontext> supras = new HashSet<>();
 
     public JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
@@ -122,7 +123,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         Label pLabel = p.getLabel();
         // H(p) is p intersected with labels of any subcontexts with a
         // different class, or all other sub labels if p is non-deterministic
-        // (combination with these would lead to heterogeneity)
+        // (combination with these would lesad to heterogeneity)
         List<Label> hp = new ArrayList<>();
         for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
             if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
@@ -147,8 +148,8 @@ public class JohnsenJohanssonLattice implements Lattice {
             ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
         }
         // ratio of |{x_s in H(p)}| to |{x_s}|
-        System.out.println("estimating " + hp);
-        double heteroRatio = estimateHeteroRatio(hp, NUM_EXPERIMENTS);
+//        System.out.println("estimating " + hp);
+        double heteroRatio = estimateHeteroRatio(hp, hpUnion, NUM_EXPERIMENTS);
         // final estimation of total count of space subsumed by elements of
         // H(p); rounds down
         BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heteroRatio)).toBigInteger();
@@ -163,31 +164,28 @@ public class JohnsenJohanssonLattice implements Lattice {
         return approximatedSupra;
     }
 
-    private double estimateHeteroRatio(List<Label> hp, int numExperiments) {
+    private double estimateHeteroRatio(List<Label> hp, Label hpUnion, int numExperiments) {
         int heteroCount = 0;
 
         Map<Label, Boolean> cache = new HashMap<>();
-        Label fullUnion = hp.get(0);
-        for (Label l : hp) {
-            fullUnion = fullUnion.union(l);
-        }
         Label bottom = hp.get(0).BOTTOM();
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
             Label Xs = bottom;
+            Collections.shuffle(hp);
             for (Label l : hp) {
                 // cannot use Math.random() in parallel code
                 if (ThreadLocalRandom.current().nextDouble() > .5) {
-                    Xs = Xs.union(l);
-                    // further union operations would do nothing
-                    if (Xs.equals(fullUnion)) {
+                    // further union operations would do nothing since we are supposed to compare against hpUnion
+                    Label unioned = Xs.union(l);
+                    if(unioned.equals(hpUnion))
                         break;
-                    }
+                    Xs = unioned;
                 }
             }
-            Boolean b = cache.get(Xs);
-            if (b != null) {
-                if (b) {
+            Boolean wasHetero = cache.get(Xs);
+            if (wasHetero != null) {
+                if (wasHetero) {
                     heteroCount++;
                 }
                 continue;
@@ -204,7 +202,6 @@ public class JohnsenJohanssonLattice implements Lattice {
             }
             cache.put(Xs, hetero);
         }
-        System.out.println(heteroCount + "/" + numExperiments);
         return heteroCount / (double) numExperiments;
     }
 
