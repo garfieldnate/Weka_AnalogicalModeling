@@ -1,8 +1,9 @@
 TODOs of various priorities:
-- Hone sampling process for JJLattice
-    - currently get random sample random number of times, which is an improvement
-- Why keep count in supracontext instead of storing it elsewhere?
-- stop JohnsenJohansson experiments when confidence level is reached (instead of always running 1000)
+- Investigate proper sampling method and experiment convergence for JJLattice
+- Iterables.partition in DistributedLattice is probably a little slow
+- Need to do design review
+    - Why keep count in supracontext instead of storing it elsewhere?
+    - Why save supracontexts in constructor of lattices?
 - further parallelize DistributedLattice- divide combinations into groups of 1000
 - progress tracker for large problems; then we can know if what we're trying to do is just too hard.
 - Which lattice implementation to use should be configurable.
