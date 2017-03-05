@@ -128,36 +128,8 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
     public void testAudiology() throws Exception {
         org.junit.Assume.assumeTrue("Only run this if you have a very nice computer", usingNiceComputer);
         Instances train = TestUtils.getDataSet(TestUtils.AUDIOLOGY);
-//        Assert.assertEquals(new HashMap<String, BigInteger>() {
-//            {
-//                put("possible_menieres", BigInteger.valueOf(10));
-//                put("poss_central", BigInteger.valueOf(1));
-//                put("otitis_media", BigInteger.valueOf(9));
-//                put("mixed_poss_central_om", BigInteger.valueOf(1));
-//                put("cochlear_noise_and_heredity", BigInteger.valueOf(2));
-//                put("cochlear_age", new BigInteger("8038168730118937116672"));
-//                put("retrocochlear_unknown", BigInteger.valueOf(2));
-//                put("mixed_cochlear_unk_fixation", BigInteger.valueOf(23));
-//                put("cochlear_age_and_noise", BigInteger.valueOf(24));
-//                put("mixed_cochlear_age_fixation", BigInteger.valueOf(2));
-//                put("conductive_fixation", BigInteger.valueOf(33));
-//                put("mixed_cochlear_unk_discontinuity", BigInteger.valueOf(2));
-//                put("mixed_poss_noise_om", BigInteger.valueOf(4));
-//                put("normal_ear", BigInteger.valueOf(46));
-//                put("possible_brainstem_disorder", BigInteger.valueOf(8));
-//                put("cochlear_poss_noise", BigInteger.valueOf(24));
-//                put("bells_palsy", BigInteger.valueOf(1));
-//                put("cochlear_age_plus_poss_menieres", BigInteger.valueOf(1));
-//                put("cochlear_unknown", BigInteger.valueOf(66));
-//                put("mixed_cochlear_age_otitis_media", BigInteger.valueOf(4));
-//                put("conductive_discontinuity", BigInteger.valueOf(6));
-//                put("mixed_cochlear_age_s_om", BigInteger.valueOf(2));
-//                put("mixed_cochlear_unk_ser_om", BigInteger.valueOf(5));
-//                put("acoustic_neuroma", BigInteger.valueOf(1));
-//            }
-//        }, leaveOneOut(train, 1).getClassPointers());
         int numCorrect = leaveOneOut(train);
-        assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 157, numCorrect);
+        assertTrue("Leave-one-out accuracy when classifying of audiology dataset", numCorrect >= 155);
     }
 
     private int leaveOneOut(Instances data) throws Exception {

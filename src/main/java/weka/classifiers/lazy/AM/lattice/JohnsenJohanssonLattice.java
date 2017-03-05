@@ -84,6 +84,7 @@ public class JohnsenJohanssonLattice implements Lattice {
     // TODO: should run until convergence, not a constant number of times
     private static final int NUM_EXPERIMENTS = 10;
     private final Set<Supracontext> supras = new HashSet<>();
+    private static final BigInteger TWO = BigInteger.valueOf(2);
 
     public JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
         // first organize sub labels by outcome for quick H(p) construction
@@ -123,7 +124,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         Label pLabel = p.getLabel();
         // H(p) is p intersected with labels of any subcontexts with a
         // different class, or all other sub labels if p is non-deterministic
-        // (combination with these would lesad to heterogeneity)
+        // (combination with these would lead to heterogeneity)
         List<Label> hp = new ArrayList<>();
         for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
             if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
@@ -148,13 +149,12 @@ public class JohnsenJohanssonLattice implements Lattice {
             ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
         }
         // ratio of |{x_s in H(p)}| to |{x_s}|
-//        System.out.println("estimating " + hp);
         double heteroRatio = estimateHeteroRatio(hp, hpUnion, NUM_EXPERIMENTS);
         // final estimation of total count of space subsumed by elements of
         // H(p); rounds down
         BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heteroRatio)).toBigInteger();
         // final count is 2^|p| - heteroCountEstimate
-        BigInteger count = BigInteger.valueOf(2).pow(pLabel.numMatches());
+        BigInteger count = TWO.pow(pLabel.numMatches());
         count = count.subtract(heteroCountEstimate);
 
         // add the approximated sub as its own supra with the given count

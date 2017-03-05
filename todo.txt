@@ -1,3 +1,9 @@
+Current work:
+The JJLattice.
+- Sampling method
+- detect experiment convergence
+    + evaluate accuracy at various numbers of experiments as a start
+
 TODOs of various priorities:
 - Investigate proper sampling method and experiment convergence for JJLattice
 - Iterables.partition in DistributedLattice is probably a little slow
