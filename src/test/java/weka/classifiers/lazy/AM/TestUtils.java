@@ -30,7 +30,7 @@ public class TestUtils {
      */
     public static final String CHAPTER_3_DATA = "ch3example.arff";
     /**
-     * The name of the finnverb data file.
+     * The name of the finnverb data file. 10 attributes, 189 instances
      */
     public static final String FINNVERB = "finnverb.arff";
     /**
@@ -38,11 +38,11 @@ public class TestUtils {
      */
     public static final String FINNVERB_MIN = "finn_min_gangs.arff";
     /**
-     * 35 attributes
+     * 35 attributes, 683 instances
      */
     public static final String SOYBEAN = "soybean.arff";
     /**
-     * 69 attributes
+     * 69 attributes, 226 instances
      */
     public static final String AUDIOLOGY = "audiology.arff";
 

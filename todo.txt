@@ -2,9 +2,12 @@ Current work:
 The JJLattice.
 - Sampling method
 - detect experiment convergence
-    + evaluate accuracy at various numbers of experiments as a start
+- evaluate accuracy at various numbers of experiments as a start
+- evaluate accuracy of full distribution
+- make it easier to specify that JJLattice is to be used; have LatticeFactory take a configuration object.
 
 TODOs of various priorities:
+- Implement centering, via Johnsen/Johansson
 - Investigate proper sampling method and experiment convergence for JJLattice
 - Iterables.partition in DistributedLattice is probably a little slow
 - Need to do design review
