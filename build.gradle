@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version = 0.03
+version = 0.04
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
