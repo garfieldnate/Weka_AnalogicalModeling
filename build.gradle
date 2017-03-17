@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version = 0.04
+version = getVersionFromTag()
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -17,7 +17,7 @@ dependencies {
   [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.7.11']
 }
 
-// JavaCoc with MathJax and core Weka docs linked
+// JavaDoc with MathJax and core Weka docs linked
 task javadoc(type: Javadoc, overwrite:true) {
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
@@ -40,8 +40,6 @@ task javadoc(type: Javadoc, overwrite:true) {
   options.links("http://weka.sourceforge.net/doc.dev/")
 }
 
-//TODO: generate description.props (keep name, version, etc. in one place)
-
 task dist(type:Zip){
     from jar.outputs.files
     from (javadoc.outputs.files) {
@@ -57,5 +55,57 @@ task dist(type:Zip){
         'NOTICE',
         'README.mkdn',
         'todo.txt'])
+    }
+}
+
+// Minor version bump; updates props file, commits, tags, and pushes
+task bumpMinor {
+    def newVersion = bumpVersion(version, 1)
+    ant.input(message: "Bump version from " + version + " to " + newVersion + "?", validargs: 'y,n', addproperty: 'doVersionBump')
+    if(ant.doVersionBump == 'n') {
+        throw new GradleException("User stopped release at version bump step")
+    }
+    ant.replace(file: "Description.props", token: version, value: newVersion)
+    version = newVersion
+    gitAddAndCommit("bump version in Description.props")
+    gitTag(version)
+    gitPush()
+}
+
+// HELPER METHODS
+
+def bumpVersion(version, index) {
+    def parts = version.split("[.]")
+    parts[index] = Integer.toString(Integer.parseInt(parts[index]) + 1)
+    for(int i = index+1; i < parts.length; i++) {
+        parts[i] = "0"
+    }
+    def newVersion = parts.join(".")
+}
+
+def getVersionFromTag() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags', '--abbrev=0'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def gitAddAndCommit(message) {
+    exec {
+        commandLine 'git', 'add', '.'
+    }
+    exec {
+        commandLine 'git', 'commit', '-m', 'message'
+    }
+}
+
+def gitPush(tagName) {
+    exec {
+        commandLine 'git', 'push'
+    }
+    exec {
+        commandLine 'git', 'push', '--tags'
     }
 }

@@ -27,22 +27,29 @@ As an evolving project, the most important design principle has been modularity 
 Some algorithmic improvements have been made to the distributed lattice and approximate lattice filling algorithms. Concurrency is also used extensively so that 8 CPU cores will fill lattices roughly 8 times faster, etc.
 
 ###Building
+This project is managed with [Gradle](https://gradle.org/), which will need to be installed to build from the terminal. The following build commands are then available:
 
-This project is managed with Gradle. To download the dependencies and build the project:
-
+    # compile Java source into a jar
     gradle build
-
-To test:
-
+    # run unit tests
     gradle test
-
-To create an Eclipse project:
-
-    gradle eclipse
-
-To build the Weka package distribution archive:
-
+    # generate HTML documentation
+    gradle javadoc
+    # build the project archive for release as a Weka plugin
     gradle dist
+    # generate an Eclipse project
+    gradle eclipse
+    # bump the minor version number (update Description.props, git commit/tag/push)
+    gradle bumpMinor
+
+### Releasing
+
+To release a new version of the plugin:
+
+* run `gradle bumpMinor`
+* create a new release on GitHub corresponding to the new tag
+* upload the distribution to the release
+* send the new Description.props file to Mark Hall
 
 ###Running
 
