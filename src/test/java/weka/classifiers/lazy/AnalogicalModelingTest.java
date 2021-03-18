@@ -30,6 +30,7 @@ import weka.core.Instances;
 import java.math.BigInteger;
 import java.util.HashMap;
 
+import static org.junit.Assume.assumeTrue;
 import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
 /**
@@ -39,8 +40,6 @@ import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
  */
 // TODO: see if this can be parameterized for parallel/non-parallel
 public class AnalogicalModelingTest extends AbstractClassifierTest {
-    private static final boolean usingNiceComputer = NUM_CORES >= 8;
-
     public AnalogicalModelingTest(String name) {
         super(name);
         // DEBUG = true;
@@ -116,17 +115,12 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
                 put("brown-stem-rot", BigInteger.valueOf(976826156));
             }
         }, leaveOneOut(train, 15).getClassPointers());
-//        if (usingNiceComputer) {
-//            int numCorrect = leaveOneOut(train);
-//            assertEquals("Leave-one-out accuracy when classifying of audiology dataset", 628, numCorrect);
-//        }
     }
 
     // larger set that forces use of BitSetLabel and JohnsenJohansson lattice
     // without JohnsenJohansson, this ends with "java.lang.OutOfMemoryError: GC overhead limit exceeded"
     @Test
     public void testAudiology() throws Exception {
-        org.junit.Assume.assumeTrue("Only run this if you have a very nice computer", usingNiceComputer);
         Instances train = TestUtils.getDataSet(TestUtils.AUDIOLOGY);
         int numCorrect = leaveOneOut(train);
         assertTrue("Leave-one-out accuracy when classifying of audiology dataset", numCorrect >= 155);
@@ -151,8 +145,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         am.distributionForInstance(test);
         return am.getAnalogicalSet();
     }
-
-
+    
     public static junit.framework.Test suite() {
         return new TestSuite(AnalogicalModelingTest.class);
     }
