@@ -1,4 +1,7 @@
-apply plugin: 'java'
+plugins {
+	id 'java'
+	id "com.adarshr.test-logger" version "2.1.1"
+}
 
 version = getVersionFromTag()
 
