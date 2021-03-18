@@ -51,20 +51,20 @@ As an evolving project, the most important design principle has been modularity 
 Some algorithmic improvements have been made to the distributed lattice and approximate lattice filling algorithms. Concurrency is also used extensively so that 8 CPU cores will fill lattices roughly 8 times faster, etc.
 
 ### Building
-This project is managed with [Gradle](https://gradle.org/), which will need to be installed to build from the terminal. The following build commands are then available:
+This project is managed with [Gradle](https://gradle.org/). The following build commands are then available:
 
     # compile Java source into a jar
-    gradle build
+    ./gradlew build
     # run unit tests
-    gradle test
+    ./gradlew test
     # generate HTML documentation
-    gradle javadoc
+    ./gradlew javadoc
     # build the project archive for release as a Weka plugin
-    gradle dist
+    ./gradlew dist
     # generate an Eclipse project
-    gradle eclipse
+    ./gradlew eclipse
     # bump the minor version number (update Description.props, git commit/tag/push)
-    gradle bumpMinor
+    ./gradlew bumpMinor
 
 ### Releasing
 
