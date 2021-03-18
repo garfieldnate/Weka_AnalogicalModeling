@@ -3,7 +3,7 @@ plugins {
 	id "com.adarshr.test-logger" version "2.1.1"
 }
 
-version = getVersionFromTag()
+version = getVersionFromDescriptionProps()
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -87,13 +87,10 @@ def bumpVersion(version, index) {
     def newVersion = parts.join(".")
 }
 
-def getVersionFromTag() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags', '--abbrev=0'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+def getVersionFromDescriptionProps() {
+	def descriptionProps = new Properties()
+	file("Description.props").withInputStream { descriptionProps.load(it) }
+	return descriptionProps.get("Version")
 }
 
 def gitAddAndCommit(message) {
