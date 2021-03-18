@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -144,11 +144,11 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         AnalogicalModeling am = (AnalogicalModeling) classifier;
         Instance withMissing = (Instance) inst.copy();
         withMissing.setDataset(inst.dataset());
-        inst = preProcessInstance(inst, withMissing, classifier);
+        inst = preProcessInstance(withMissing, classifier);
 
         // when you call the AM classifier, it stores the analogical set for
         // later
-        double[] distribution = am.distributionForInstance(withMissing);
+        double[] distribution = am.distributionForInstance(inst);
 
         AnalogicalSet as = am.getAnalogicalSet();
 
