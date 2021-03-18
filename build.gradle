@@ -60,16 +60,18 @@ task dist(type:Zip){
 
 // Minor version bump; updates props file, commits, tags, and pushes
 task bumpMinor {
-    def newVersion = bumpVersion(version, 1)
-    ant.input(message: "Bump version from " + version + " to " + newVersion + "?", validargs: 'y,n', addproperty: 'doVersionBump')
-    if(ant.doVersionBump == 'n') {
-        throw new GradleException("User stopped release at version bump step")
+    doLast {
+        def newVersion = bumpVersion(version, 1)
+        ant.input(message: "Bump version from " + version + " to " + newVersion + "?", validargs: 'y,n', addproperty: 'doVersionBump')
+        if(ant.doVersionBump == 'n') {
+            throw new GradleException("User stopped release at version bump step")
+        }
+        ant.replace(file: "Description.props", token: version, value: newVersion)
+        version = newVersion
+        gitAddAndCommit("bump version in Description.props")
+        gitTag(version)
+        gitPush()
     }
-    ant.replace(file: "Description.props", token: version, value: newVersion)
-    version = newVersion
-    gitAddAndCommit("bump version in Description.props")
-    gitTag(version)
-    gitPush()
 }
 
 // HELPER METHODS
