@@ -64,15 +64,6 @@ public class LatticeTest {
         return parameters;
     }
 
-    @Test
-    public void testChapter3Data() throws Exception {
-        Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        String[] expectedSupras = new String[]{
-            "[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]", "[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]"
-        };
-        testSupras(train, 0, expectedSupras);
-    }
-
     /**
      * Test that supracontexts are properly marked heterogeneous.
      *
@@ -93,23 +84,6 @@ public class LatticeTest {
             "[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]", "[2x(00110|B|A,A,V,U,0,B)]",
             "[2x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B),(00110|B|A,A,V,U,0,B)]",
             "[3x(10000|&nondeterministic&|J,A,0,?,0,B/L,A,0,?,0,A/M,A,0,?,0,B/J,A,0,?,0,B/J,A,0,?,0,B/S,A,0,?,0,B/V,A,0,?,0,B/H,A,0,?,0,A/M,A,0,?,0,B/K,A,0,?,0,B/K,A,0,?,0,B/P,A,0,?,0,B/P,A,0,?,0,A/T,A,0,?,0,B)]"
-        };
-        testSupras(train, 0, expectedSupras);
-    }
-
-    /**
-     * Test that {@link BasicLattice#cleanSupra()} is only run after a
-     * subcontext is inserted completely, not after each single insertion
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCleanSupraTiming() throws Exception {
-        Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "1,7-10");
-
-        String[] expectedSupras = new String[]{
-            "[6x(00000|A|U,V,U,0,?,A)]", "[3x(00000|A|U,V,U,0,?,A),(00100|A|U,V,I,0,?,A)]",
-            "[3x(00000|A|U,V,U,0,?,A),(01100|A|U,0,?,0,?,A),(00100|A|U,V,I,0,?,A)]"
         };
         testSupras(train, 0, expectedSupras);
     }
