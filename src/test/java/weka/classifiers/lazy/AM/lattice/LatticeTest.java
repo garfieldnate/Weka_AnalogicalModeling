@@ -47,20 +47,10 @@ public class LatticeTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> instancesToTest() throws NoSuchMethodException, SecurityException {
         Collection<Object[]> parameters = new ArrayList<>();
-
-        // basic, non-distributed lattice
-        parameters.add(new Object[]{
-            BasicLattice.class.getSimpleName(), BasicLattice.class.getConstructor(SubcontextList.class)
-        });
         // distributed lattice
         parameters.add(new Object[]{
             DistributedLattice.class.getSimpleName(), DistributedLattice.class.getConstructor(SubcontextList.class)
         });
-        // sparse lattice
-        parameters.add(new Object[]{
-            SparseLattice.class.getSimpleName(), SparseLattice.class.getConstructor(SubcontextList.class)
-        });
-
         return parameters;
     }
 

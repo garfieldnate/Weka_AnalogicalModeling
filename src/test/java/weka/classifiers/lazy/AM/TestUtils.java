@@ -1,7 +1,5 @@
 package weka.classifiers.lazy.AM;
 
-import org.junit.Test;
-
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
@@ -242,71 +240,5 @@ public class TestUtils {
         }
 
         return new ClassifiedSupra(subs, count);
-    }
-
-    /**
-     * Test that the getSupraFromString utility function above works as desired.
-     *
-     * @throws Exception if there is a problem loading the finnverb set
-     */
-    @Test
-    @SuppressWarnings("serial")
-    public void getSupraFromStringTest() throws Exception {
-        Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "6-10");
-
-        final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5));
-        sub1.add(data.get(3)); // P,U,0,?,0,A
-        final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5));
-        sub2.add(data.get(2));// K,U,V,U,0,A
-        final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
-        sub3.add(data.get(1));// U,U,V,I,0,A
-        ClassifiedSupra expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-                add(sub2);
-                add(sub3);
-            }
-        }, BigInteger.ONE);
-
-        String supraString = "[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]";
-        ClassifiedSupra actualSupra = getSupraFromString(supraString, data);
-        assertTrue("supra with multiple subs", supraDeepEquals(expectedSupra, actualSupra));
-        assertTrue("fromString mirrors toString",
-                   supraDeepEquals(getSupraFromString(expectedSupra.toString(), data), actualSupra)
-        );
-
-        supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
-        actualSupra = getSupraFromString(supraString, data);
-        final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
-        sub4.add(data.get(4)); // H,A,V,I,0,A
-        sub4.add(data.get(5)); // H,A,V,A,0,B
-        expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub4);
-            }
-        }, BigInteger.ONE);
-
-        assertTrue("sub with multiple instances", supraDeepEquals(expectedSupra, actualSupra));
-        assertTrue("fromString mirrors toString",
-                   supraDeepEquals(getSupraFromString(expectedSupra.toString(), data), actualSupra)
-        );
-
-        data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-        final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
-        sub5.add(data.get(1));// A,A,0,?,S,B
-        sub5.add(data.get(2));// also A,A,0,?,S,B
-        expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub5);
-            }
-        }, BigInteger.valueOf(6));
-        supraString = "[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]";
-        actualSupra = getSupraFromString(supraString, data);
-        assertTrue("multiple instances with same string representation", supraDeepEquals(expectedSupra, actualSupra));
-        assertTrue("fromString mirrors toString",
-                   supraDeepEquals(getSupraFromString(expectedSupra.toString(), data), actualSupra)
-        );
-
-        // TODO: test error conditions
     }
 }
