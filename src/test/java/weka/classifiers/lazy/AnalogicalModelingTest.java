@@ -129,7 +129,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
     private int leaveOneOut(Instances data) throws Exception {
         int correct = 0;
         for (int i = 0; i < data.numInstances(); i++) {
-            System.out.println(i);
             AnalogicalSet set = leaveOneOut(data, i);
             if (set.getPredictedClasses().contains(data.get(i).stringValue(data.classIndex()))) correct++;
         }
@@ -145,7 +144,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         am.distributionForInstance(test);
         return am.getAnalogicalSet();
     }
-    
+
     public static junit.framework.Test suite() {
         return new TestSuite(AnalogicalModelingTest.class);
     }
