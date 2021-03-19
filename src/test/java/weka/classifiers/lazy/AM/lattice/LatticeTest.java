@@ -99,7 +99,8 @@ public class LatticeTest {
         train.remove(testIndex);
         SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train);
         Lattice testLattice = latticeConstructor.newInstance(subList);
-        Set<Supracontext> actualSupras = testLattice.getSupracontexts();
+        System.out.println(testLattice);
+//        Set<Supracontext> actualSupras = testLattice.getSupracontexts();
 
 //        assertEquals(expectedSupras.length, actualSupras.size());
 //        for (String expected : expectedSupras) {
