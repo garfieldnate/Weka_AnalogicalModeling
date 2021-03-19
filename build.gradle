@@ -15,8 +15,21 @@ repositories {
 dependencies {
   compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
   compile group: 'com.google.guava', name: 'guava', version: '19.0'
-  testCompile 'junit:junit:4.11',
+  testImplementation 'junit:junit:4.11',
   [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.9.5']
+}
+
+tasks.withType(Test).configureEach {
+	maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+}
+
+testlogger {
+	theme 'mocha-parallel'
+	// Show stout/stderr for failed tests
+	showStandardStreams true
+	showPassedStandardStreams false
+	showSkippedStandardStreams false
+	showFailedStandardStreams true
 }
 
 // JavaDoc with MathJax and core Weka docs linked
@@ -84,7 +97,7 @@ def bumpVersion(version, index) {
     for(int i = index+1; i < parts.length; i++) {
         parts[i] = "0"
     }
-    def newVersion = parts.join(".")
+    return parts.join(".")
 }
 
 def getVersionFromDescriptionProps() {
