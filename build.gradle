@@ -32,6 +32,10 @@ testlogger {
 	showFailedStandardStreams true
 }
 
+test {
+	beforeTest {desc -> logger.quiet("Executing test ${desc}...")}
+}
+
 // JavaDoc with MathJax and core Weka docs linked
 task javadoc(type: Javadoc, overwrite:true) {
   source = sourceSets.main.allJava
