@@ -8,65 +8,54 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 
-import weka.classifiers.lazy.AM.TestUtils;
-import weka.core.Instance;
-import weka.core.Instances;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static weka.classifiers.lazy.AM.TestUtils.mockInstance;
+import static weka.classifiers.lazy.AM.label.LabelerFactory.*;
 import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
+import static weka.classifiers.lazy.AM.label.MissingDataCompare.VARIABLE;
 
 @RunWith(Parameterized.class)
 public class LabelTest {
     @Parameter()
     public String testName;
     @Parameter(1)
-    public Constructor<Labeler> labelerConstructor;
+    public LabelerFactory labelerFactory;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
-    /**
-     * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
-     * the {@link Constructor} for a {@link Labeler} class to be tested.</li> </ol>
-     * @throws NoSuchMethodException if one of the {@link Labeler} classes doesn't have the expected constructor
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
-        Collection<Object[]> parameters = new ArrayList<>();
-
-        // There are three kinds of labels and associated labelers
-        List<Class> labelerClasses = new ArrayList<>() {
-			{
-				add(IntLabeler.class);
-				add(LongLabeler.class);
-				add(BitSetLabeler.class);
-			}
-		};
-        for (Class c : labelerClasses)
-            parameters.add(new Object[]{
-                c.getSimpleName(), c.getConstructor(MissingDataCompare.class, Instance.class, boolean.class)
-            });
-
-        return parameters;
-    }
+	/**
+	 * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
+	 * the {@link LabelerFactory} for the {@link Label} class to be tested.</li></ol>
+	 */
+	@Parameterized.Parameters(name = "{0}")
+	public static Collection<Object[]> instancesToTest() {
+		return List.of(
+				new Object[]{
+						"IntLabel", new IntLabelerFactory()
+				},
+				new Object[]{
+						"LongLabel", new LongLabelerFactory()
+				},
+				new Object[]{
+						"BitSetLabel", new BitSetLabelerFactory()
+				});
+	}
 
     // test that equals() and hashCode() work correctly and agree
     @Test
-    public void testEquivalence() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testEquivalence() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
         Label firstLabel = labeler.fromBits(0b001);
         Label secondLabel = labeler.fromBits(0b001);
@@ -94,15 +83,15 @@ public class LabelTest {
     }
 
     @Test
-    public void testGetCardinality() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testGetCardinality() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 		Label testLabel = labeler.fromBits(0b001);
         assertEquals(testLabel.getCardinality(), 3);
     }
 
     @Test
-    public void testMatches() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testMatches() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
 		Label testLabel = labeler.fromBits(0b001);
         boolean[] matches = new boolean[]{false, true, true};
@@ -116,8 +105,8 @@ public class LabelTest {
     }
 
     @Test
-    public void testIntersect() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testIntersect() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
 		Label label1 = labeler.fromBits(0b001);
 		Label label2 = labeler.fromBits(0b100);
@@ -128,8 +117,8 @@ public class LabelTest {
     }
 
     @Test
-    public void testUnion() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testUnion() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
 		Label label1 = labeler.fromBits(0b001);
 		Label label2 = labeler.fromBits(0b100);
@@ -139,8 +128,8 @@ public class LabelTest {
     }
 
     @Test
-    public void testMatchesThrowsExceptionForIndexTooLow() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testMatchesThrowsExceptionForIndexTooLow() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
 		Label testLabel = labeler.fromBits(0b001);
         exception.expect(IllegalArgumentException.class);
@@ -149,8 +138,8 @@ public class LabelTest {
     }
 
     @Test
-    public void testMatchesThrowsExceptionForIndexTooHigh() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+    public void testMatchesThrowsExceptionForIndexTooHigh() {
+        Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
         Label testLabel = labeler.fromBits(0b001);
         exception.expect(IllegalArgumentException.class);
@@ -162,8 +151,8 @@ public class LabelTest {
 	// For now, it's fine.
 	// TODO: should use correct Label class instead of always using IntLabel.
 	@Test
-	public void testDescendantIterator() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+	public void testDescendantIterator() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 		Label label = labeler.fromBits(0b100);
 
 		Set<Label> expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b101), labeler.fromBits(0b111), labeler.fromBits(0b110)));
@@ -176,7 +165,7 @@ public class LabelTest {
 		// comparing:
 		// V , O , V , I , 0 , ? , O , T , T , A , A
 		// V , U , V , O , 0 , ? , 0 , ? , L , E , A
-		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, mockInstance(10), false);
+		labeler = labelerFactory.createLabeler(mockInstance(10), false, VARIABLE);
 		label = labeler.fromBits(0b0101001111);
 
 		expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b0101011111), labeler.fromBits(0b0101111111), labeler.fromBits(0b0101101111),
@@ -192,8 +181,8 @@ public class LabelTest {
 	}
 
 	@Test
-	public void testIsDescendantOf() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+	public void testIsDescendantOf() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
 		Label parentLabel = labeler.fromBits(0b100);
 
@@ -203,22 +192,4 @@ public class LabelTest {
 		Label nonDescendantLabel = labeler.fromBits(0b001);
 		assertFalse(nonDescendantLabel.isDescendantOf(parentLabel));
 	}
-
-    @Test
-    public void testBottom() {
-        Label bottom;
-        if (labelerConstructor.getDeclaringClass().equals(IntLabeler.class)) {
-            bottom = new IntLabel(0,IntLabel.MAX_CARDINALITY).BOTTOM();
-            assertEquals(IntLabel.MAX_CARDINALITY, bottom.getCardinality());
-        } else if (labelerConstructor.getDeclaringClass().equals(LongLabeler.class)) {
-            bottom = new LongLabel(0,LongLabel.MAX_CARDINALITY).BOTTOM();
-            assertEquals(LongLabel.MAX_CARDINALITY, bottom.getCardinality());
-        } else {
-            bottom = new BitSetLabel(new BitSet(), 100).BOTTOM();
-            assertEquals(100, bottom.getCardinality());
-        }
-        for(int i = 0; i < bottom.getCardinality(); i++) {
-            assertFalse("index " + i + " should not be matching", bottom.matches(i));
-        }
-    }
 }

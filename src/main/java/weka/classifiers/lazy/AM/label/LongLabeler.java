@@ -19,8 +19,8 @@ public class LongLabeler extends Labeler {
      */
     // TODO: since this throws an exception, perhaps a static factory method
     // would be better?
-    public LongLabeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
-        super(mdc, instance, ignoreUnknowns);
+    public LongLabeler(Instance instance, boolean ignoreUnknowns, MissingDataCompare mdc) {
+        super(instance, ignoreUnknowns, mdc);
         if (getCardinality() > LongLabel.MAX_CARDINALITY) throw new IllegalArgumentException(
             "Cardinality of instance too high (" + getCardinality() + "); max cardinality for this labeler is "
             + LongLabel.MAX_CARDINALITY);
@@ -31,7 +31,7 @@ public class LongLabeler extends Labeler {
         }
     }
 
-    @Override
+	@Override
     public LongLabel label(Instance data) {
         long label = 0;
         int length = getCardinality();
@@ -57,10 +57,15 @@ public class LongLabeler extends Labeler {
         return new LongLabel(label, getCardinality());
     }
 
-    @Override
-    public Label getAllMatchLabel() {
-        return new LongLabel(0L, getCardinality());
-    }
+	@Override
+	public Label getLatticeTop() {
+		return new LongLabel(0L, getCardinality());
+	}
+
+	@Override
+	public Label getLatticeBottom() {
+		return new LongLabel(-1L, getCardinality());
+	}
 
 	@Override
 	public Label fromBits(int labelBits) {

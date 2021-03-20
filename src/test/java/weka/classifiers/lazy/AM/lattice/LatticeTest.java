@@ -134,34 +134,46 @@ public class LatticeTest {
 
     // create a labeler which splits labels into labels of cardinality 1
     private Labeler getFullSplitLabeler(final Instance test) {
-        return new Labeler(MissingDataCompare.VARIABLE, test, false) {
-            final Labeler internal = new IntLabeler(test, false, MissingDataCompare.VARIABLE);
-
-            @Override
-            public Label label(Instance data) {
-                return internal.label(data);
-            }
-
-            @Override
-            public Label partition(Label label, int partitionIndex) {
-                int labelBit = label.matches(partitionIndex) ? 0 : 1;
-                return new IntLabel(labelBit, 1);
-            }
-
-            @Override
-            public int numPartitions() {
-                return getCardinality();
-            }
-
-            @Override
-            public Label getAllMatchLabel() {
-                return internal.getAllMatchLabel();
-            }
-
-			@Override
-			public Label fromBits(int labelBits) {
-				return null;
-			}
-        };
+    	return new FullSplitLabeler(test, false, MissingDataCompare.VARIABLE);
     }
+
+	private static class FullSplitLabeler extends Labeler {
+		final Labeler wrapped;
+
+		public FullSplitLabeler(Instance test, boolean ignoreUnknowns, MissingDataCompare mdc) {
+			super(test, ignoreUnknowns, mdc);
+			wrapped = new IntLabeler(test, false, MissingDataCompare.VARIABLE);
+		}
+
+		@Override
+		public Label label(Instance data) {
+			return wrapped.label(data);
+		}
+
+		@Override
+		public Label partition(Label label, int partitionIndex) {
+			int labelBit = label.matches(partitionIndex) ? 0 : 1;
+			return new IntLabel(labelBit, 1);
+		}
+
+		@Override
+		public int numPartitions() {
+			return getCardinality();
+		}
+
+		@Override
+		public Label getLatticeTop() {
+			return wrapped.getLatticeTop();
+		}
+
+		@Override
+		public Label getLatticeBottom() {
+			return wrapped.getLatticeBottom();
+		}
+
+		@Override
+		public Label fromBits(int labelBits) {
+			return null;
+		}
+	}
 }

@@ -14,8 +14,8 @@ import java.util.BitSet;
 public class BitSetLabeler extends Labeler {
     private final Partitioner[] partitioners;
 
-    public BitSetLabeler(MissingDataCompare mdc, Instance test, boolean ignoreUnknowns) {
-        super(mdc, test, ignoreUnknowns);
+    public BitSetLabeler(Instance test, boolean ignoreUnknowns, MissingDataCompare mdc) {
+        super(test, ignoreUnknowns, mdc);
         partitioners = new Partitioner[numPartitions()];
         Partition[] spans = partitions();
         for (int i = 0; i < numPartitions(); i++) {
@@ -51,10 +51,18 @@ public class BitSetLabeler extends Labeler {
         return new BitSetLabel(label, getCardinality());
     }
 
-    @Override
-    public Label getAllMatchLabel() {
-        return new BitSetLabel(new BitSet(), getCardinality());
-    }
+	@Override
+	public Label getLatticeTop() {
+		return new BitSetLabel(new BitSet(), getCardinality());
+	}
+
+	@Override
+	public Label getLatticeBottom() {
+		BitSet bottom = new BitSet();
+		bottom.set(0, getCardinality());
+
+		return new BitSetLabel(bottom, getCardinality());
+	}
 
 	@Override
 	public Label fromBits(int labelBits) {

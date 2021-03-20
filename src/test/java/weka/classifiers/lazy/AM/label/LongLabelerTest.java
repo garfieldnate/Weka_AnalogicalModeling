@@ -17,7 +17,7 @@ public class LongLabelerTest {
     @Test
     public void testLabelLargeInstance() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        LongLabeler labeler = new LongLabeler(MissingDataCompare.VARIABLE, data.get(0), false);
+        LongLabeler labeler = new LongLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         Label label = labeler.label(data.get(1));
         // bits 15, 25, 26, 27, 28, 29 and 34 are set
         long bits = 0b10000111110000000001000000000000000L;
@@ -28,7 +28,7 @@ public class LongLabelerTest {
     public void testPartitionLargeLabel() throws Exception {
         // 35 features, 7 partitions
         Instances data = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        LongLabeler labeler = new LongLabeler(MissingDataCompare.VARIABLE, data.get(0), false);
+        LongLabeler labeler = new LongLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         assertEquals(7, labeler.numPartitions());
         Label label = labeler.label(data.get(1));
 

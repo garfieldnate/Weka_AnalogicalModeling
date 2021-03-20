@@ -30,11 +30,11 @@ public abstract class Labeler {
     private static final int PARTITION_SIZE = 5;
 
     /**
-     * @param mdc            Specifies how to compare missing attributes
-     * @param test           Instance being classified
-     * @param ignoreUnknowns true if attributes with undefined values in the test item should be ignored; false if not.
-     */
-    public Labeler(MissingDataCompare mdc, Instance test, boolean ignoreUnknowns) {
+	 * @param test           Instance being classified
+	 * @param ignoreUnknowns true if attributes with undefined values in the test item should be ignored; false if not.
+	 * @param mdc            Specifies how to compare missing attributes
+	 */
+    public Labeler(Instance test, boolean ignoreUnknowns, MissingDataCompare mdc) {
         this.mdc = mdc;
         this.testInstance = test;
         this.ignoreUnknowns = ignoreUnknowns;
@@ -116,12 +116,22 @@ public abstract class Labeler {
     public abstract Label label(Instance data);
 
     /**
-     * Creates and returns the label which belongs at the top of a boolean
-     * lattice, i.e. one in which every feature is a match.
+     * Creates and returns the label which belongs at the top of the boolean
+     * lattice formed by the subcontexts labeled by this labeler, i.e. the one for
+	 * which every feature is a match.
      *
      * @return A label with all matches
      */
-    public abstract Label getAllMatchLabel();
+    public abstract Label getLatticeTop();
+
+	/**
+	 * Creates and returns the label which belongs at the bottom of the boolean
+	 * lattice formed by the subcontexts labeled by this labeler, i.e. the one for
+	 * which every feature is a mismatch.
+	 *
+	 * @return A label with all mismatches
+	 */
+    public abstract Label getLatticeBottom();
 
 	/**
 	 * For testing purposes, this method allows the client to directly specify the label using

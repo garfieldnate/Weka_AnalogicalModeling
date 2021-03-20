@@ -45,8 +45,8 @@ public class IntLabeler extends Labeler {
      *
      * @throws IllegalArgumentException if the cardinality of the input instance is greater than 32
      */
-    public IntLabeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
-        super(mdc, instance, ignoreUnknowns);
+    public IntLabeler(Instance instance, boolean ignoreUnknowns, MissingDataCompare mdc) {
+        super(instance, ignoreUnknowns, mdc);
         if (getCardinality() > IntLabel.MAX_CARDINALITY) throw new IllegalArgumentException(
             "Cardinality of instance too high (" + getCardinality() + "); max cardinality for this labeler is "
             + IntLabel.MAX_CARDINALITY);
@@ -84,9 +84,14 @@ public class IntLabeler extends Labeler {
     }
 
     @Override
-    public Label getAllMatchLabel() {
+    public Label getLatticeTop() {
         return new IntLabel(0, getCardinality());
     }
+
+    @Override
+	public Label getLatticeBottom() {
+		return new IntLabel(-1, getCardinality());
+	}
 
     @Override
 	public Label fromBits(int labelBits) {

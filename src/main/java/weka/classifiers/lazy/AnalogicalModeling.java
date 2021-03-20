@@ -173,10 +173,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     private AnalogicalSet classify(Instance testItem) throws InterruptedException, ExecutionException {
         if (getDebug()) System.out.println("Classifying: " + testItem);
 
-        Labeler labeler = LabelerFactory.createLabeler(testItem, m_ignoreUnknowns, mdc);
-        // 3 steps to assigning outcome probabilities:
-        // 1. Place each data item in a subcontext
-        SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
+		Labeler labeler = new LabelerFactory.CardinalityBasedLabelerFactory().createLabeler(testItem, m_ignoreUnknowns, mdc);
+		// 3 steps to assigning outcome probabilities:
+		// 1. Place each data item in a subcontext
+		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
         // 2. Place subcontexts into a supracontextual lattice
 		Lattice lattice = new LatticeFactory.CardinalityBasedLatticeFactory().createLattice(subList);
 		// 3. create analogical set from the pointers in resulting homogeneous

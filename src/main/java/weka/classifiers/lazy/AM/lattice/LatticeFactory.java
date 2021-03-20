@@ -52,6 +52,7 @@ public interface LatticeFactory {
 	}
 
 	/**
+	 * {@inheritDoc}
 	 * Chooses the lattice implementation based on the cardinality of
 	 * the instances in the subcontext list.
 	 */

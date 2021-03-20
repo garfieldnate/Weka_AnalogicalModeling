@@ -7,18 +7,19 @@ import org.junit.runners.Parameterized.Parameter;
 
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.label.Labeler.Partition;
+import weka.classifiers.lazy.AM.label.LabelerFactory.IntLabelerFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static weka.classifiers.lazy.AM.TestUtils.mockInstance;
+import static weka.classifiers.lazy.AM.label.LabelerFactory.*;
+import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
 
 /**
  * Test all of the {@link Labeler} implementations.
@@ -30,38 +31,30 @@ public class LabelerTest {
     @Parameter()
     public String testName;
     @Parameter(1)
-    public Constructor<Labeler> labelerConstructor;
+    public LabelerFactory labelerFactory;
 
-    /**
-     * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
-     * the {@link Constructor} for a {@link Labeler} class to be tested.</li> </ol>
-     * @throws NoSuchMethodException if one of the {@link Labeler} classes does not implement the expected constructor
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
-        Collection<Object[]> parameters = new ArrayList<>();
-
-        // There are three kinds of labelers and associated labels
-        List<Class> labelerClasses = new ArrayList<>() {
-			{
-				add(IntLabeler.class);
-				add(LongLabeler.class);
-				add(BitSetLabeler.class);
-			}
-		};
-        for (Class c : labelerClasses)
-            parameters.add(new Object[]{
-                c.getSimpleName(), c.getConstructor(MissingDataCompare.class, Instance.class, boolean.class)
-            });
-
-        return parameters;
-    }
+	/**
+	 * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
+	 * the {@link LabelerFactory} for the {@link Labeler} to be tested.</li> </ol>
+	 */
+	@Parameterized.Parameters(name = "{0}")
+	public static Collection<Object[]> instancesToTest() {
+		return List.of(
+				new Object[]{
+						"IntLabeler", new IntLabelerFactory()
+				},
+				new Object[]{
+						"LongLabeler", new LongLabelerFactory()
+				},
+				new Object[]{
+						"BitSetLabeler", new BitSetLabelerFactory()
+				});
+	}
 
     @Test
     public void testAccessors() throws Exception {
         Instance instance = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_DATA, 0);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, instance, false);
+        Labeler labeler = labelerFactory.createLabeler(instance, false, MissingDataCompare.MATCH);
         assertEquals(labeler.getCardinality(), 3);
 		assertFalse(labeler.getIgnoreUnknowns());
         assertEquals(labeler.getMissingDataCompare(), MissingDataCompare.MATCH);
@@ -77,20 +70,20 @@ public class LabelerTest {
     public void testIsIgnored() throws Exception {
         Instance instance = TestUtils.getInstanceFromFile(TestUtils.FINNVERB, 0);
 
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, instance, false);
+        Labeler labeler = labelerFactory.createLabeler(instance, false, MissingDataCompare.MATCH);
         for (int i = 0; i < instance.numAttributes(); i++)
             assertFalse(labeler.isIgnored(i));
 
-        labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, instance, true);
+        labeler = labelerFactory.createLabeler(instance, true, MissingDataCompare.MATCH);
         for (int i = 0; i < instance.numAttributes(); i++)
             if (instance.isMissing(i)) assertTrue(labeler.isIgnored(i));
             else assertFalse(labeler.isIgnored(i));
     }
 
     @Test
-    public void testLabel() throws Exception {
+    public void testLabel() {
         Instances dataset = TestUtils.sixCardinalityData();
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, dataset.get(0), false);
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MissingDataCompare.MATCH);
         assertLabelEquals(new IntLabel(0b00000, 5), labeler.label(dataset.get(1)));
         assertLabelEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(2)));
         assertLabelEquals(new IntLabel(0b00011, 5), labeler.label(dataset.get(3)));
@@ -102,13 +95,12 @@ public class LabelerTest {
      * Test with a different class index to make sure its location is not hard
      * coded.
      *
-     * @throws Exception if there's a problem loading the six-cardinality dataset
-     */
+	 */
     @Test
-    public void testLabelWithAlternateClassIndex() throws Exception {
+    public void testLabelWithAlternateClassIndex() {
         Instances dataset = TestUtils.sixCardinalityData();
         dataset.setClassIndex(2);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, dataset.get(0), false);
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MissingDataCompare.MATCH);
         assertLabelEquals(new IntLabel(0b10100, 5), labeler.label(dataset.get(2)));
         assertLabelEquals(new IntLabel(0b00110, 5), labeler.label(dataset.get(3)));
         assertLabelEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(4)));
@@ -122,35 +114,67 @@ public class LabelerTest {
      * {@link MissingDataCompare} value.
      */
     @Test
-    public void testGetContextLabelMissingDataCompares() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public void testGetContextLabelMissingDataCompares() {
         Instances dataset = TestUtils.sixCardinalityData();
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, dataset.get(6), false);
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(6), false, MissingDataCompare.MATCH);
         assertLabelEquals("MATCH: always matches", new IntLabel(0b00100, 5), labeler.label(dataset.get(0)));
 
-        labeler = labelerConstructor.newInstance(MissingDataCompare.MISMATCH, dataset.get(6), false);
+        labeler = labelerFactory.createLabeler(dataset.get(6), false, MissingDataCompare.MISMATCH);
         assertLabelEquals("MISMATCH: always mismatches", new IntLabel(0b00101, 5), labeler.label(dataset.get(0)));
 
-        labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, dataset.get(6), false);
+        labeler = labelerFactory.createLabeler(dataset.get(6), false, MissingDataCompare.VARIABLE);
         assertLabelEquals("VARIABLE: matches other unknowns", new IntLabel(0b00100, 5), labeler.label(dataset.get(7)));
         assertLabelEquals("VARIABLE: mismatches non-unknowns", new IntLabel(0b00111, 5), labeler.label(dataset.get(8)));
     }
+
+	@Test
+	public void testGetLatticeTop() {
+		int cardinality = labelerFactory.getMaximumCardinality();
+		if (cardinality < 0) {
+			// no maximum cardinality; use arbitrarily high value
+			cardinality = 100;
+		}
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(cardinality), false, MATCH);
+		Label top = labeler.getLatticeTop();
+		assertEquals("top cardinality should be " + cardinality, cardinality, top.getCardinality());
+		for (int i = 0; i < cardinality; i++) {
+			assertTrue("Attribute " + i + " should match", top.matches(i));
+		}
+		assertEquals("All attributes should match", cardinality, top.numMatches());
+	}
+
+	@Test
+	public void testGetLatticeBottom() {
+		int cardinality = labelerFactory.getMaximumCardinality();
+		if (cardinality < 0) {
+			// no maximum cardinality; use arbitrarily high value
+			cardinality = 100;
+		}
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(cardinality), false, MATCH);
+		Label bottom = labeler.getLatticeBottom();
+		assertEquals("bottom cardinality should be " + cardinality, cardinality, bottom.getCardinality());
+		for (int i = 0; i < cardinality; i++) {
+			assertFalse("Attribute " + i + " should not match", bottom.matches(i));
+		}
+		assertEquals("No attributes should match", 0, bottom.numMatches());
+	}
 
     @Test
     public void testNumPartitions() throws Exception {
         // current behavior is to always limit the size of a label to 5
         // 3 features, 1 partition
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        Labeler labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         assertEquals(1, labeler.numPartitions());
 
         // 8 features, 2 partitions
         data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "1-2");
-        labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         assertEquals(2, labeler.numPartitions());
 
         // 10 features, 2 partitions
         data = TestUtils.getDataSet(TestUtils.FINNVERB);
-        labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         assertEquals(2, labeler.numPartitions());
     }
 
@@ -160,14 +184,14 @@ public class LabelerTest {
     @Test
     public void testPartitions() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.FINNVERB);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        Labeler labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         Partition[] partitions = labeler.partitions();
         assertEquals(partitions.length, 2);
         assertPartitionEquals(partitions[0], 0, 5);
         assertPartitionEquals(partitions[1], 5, 5);
 
         data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "1-2");
-        labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         partitions = labeler.partitions();
         assertEquals(2, partitions.length);
         assertPartitionEquals(partitions[0], 0, 4);
@@ -187,7 +211,7 @@ public class LabelerTest {
     @Test
     public void testPartition() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.FINNVERB);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(0), false);
+        Labeler labeler = labelerFactory.createLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         Label label = labeler.label(data.get(1));
         assertLabelEquals(label, new IntLabel(0b0000110010, 10));
         assertEquals(labeler.numPartitions(), 2);

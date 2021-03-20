@@ -19,7 +19,7 @@ public class BitSetLabelerTest {
     @Test
     public void testLabelLargeInstance() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        BitSetLabeler labeler = new BitSetLabeler(MissingDataCompare.VARIABLE, data.get(0), false);
+        BitSetLabeler labeler = new BitSetLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         Label label = labeler.label(data.get(1));
         BitSet bits = new BitSet();
         for (int i : new int[]{15, 25, 26, 27, 28, 29, 34})
@@ -31,7 +31,7 @@ public class BitSetLabelerTest {
     public void testPartitionLargeLabel() throws Exception {
         // 35 features, 7 partitions
         Instances data = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        BitSetLabeler labeler = new BitSetLabeler(MissingDataCompare.VARIABLE, data.get(0), false);
+        BitSetLabeler labeler = new BitSetLabeler(data.get(0), false, MissingDataCompare.VARIABLE);
         assertEquals(7, labeler.numPartitions());
     }
 

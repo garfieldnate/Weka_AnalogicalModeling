@@ -36,7 +36,7 @@ public class SparseLattice implements Lattice {
 
 	SparseLattice(SubcontextList subList) {
         tagList = new LinkedList<>();
-        Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler().getAllMatchLabel(), new ClassifiedSupra());
+        Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler().getLatticeTop(), new ClassifiedSupra());
         lattice.add(bottom);
         // int i = 0;
         for (Subcontext sub : subList) {

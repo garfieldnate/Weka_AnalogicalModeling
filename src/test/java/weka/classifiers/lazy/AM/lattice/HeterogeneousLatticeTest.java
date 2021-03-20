@@ -2,6 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import org.junit.Test;
 
+import org.mockito.Mockito;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.SubcontextList;
@@ -13,6 +14,7 @@ import weka.core.Instances;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * Test the HeterogeneousLattice, which does not remove heterogeneous
@@ -31,38 +33,12 @@ public class HeterogeneousLatticeTest {
         // Define a labeler which doesn't partition labels so that we can just
         // test with the chapter 3 data without it being reduced to a
         // cardinality of one
-        Labeler noPartitionLabeler = new Labeler(MissingDataCompare.MATCH, test, false) {
-            final Labeler l = new IntLabeler(MissingDataCompare.MATCH, test, false);
+		Labeler noPartitionLabeler = Mockito.spy(new LabelerFactory.IntLabelerFactory().createLabeler(test, false, MissingDataCompare.MATCH));
+		when(noPartitionLabeler.numPartitions()).thenReturn(1);
+		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
+		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList, 0);
 
-            @Override
-            public Label label(Instance data) {
-                return l.label(data);
-            }
-
-            @Override
-            public int numPartitions() {
-                return 1;
-            }
-
-            @Override
-            public Label partition(Label label, int partitionIndex) {
-                return label;
-            }
-
-            @Override
-            public Label getAllMatchLabel() {
-                return null;
-            }
-
-			@Override
-			public Label fromBits(int labelBits) {
-				return null;
-			}
-        };
-        SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
-        HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList, 0);
-
-        Set<Supracontext> actualSupras = heteroLattice.getSupracontexts();
+		Set<Supracontext> actualSupras = heteroLattice.getSupracontexts();
 
         String[] expectedSupras = new String[]{
             "[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]", "[1x(100|r|2,1,2,r)]",

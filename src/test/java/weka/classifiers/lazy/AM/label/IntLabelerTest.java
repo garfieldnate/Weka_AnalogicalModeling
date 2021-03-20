@@ -23,7 +23,7 @@ public class IntLabelerTest {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("Cardinality of instance too high (35)"));
         Instances data = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        new IntLabeler(MissingDataCompare.MATCH, data.get(0), false);
+        new IntLabeler(data.get(0), false, MissingDataCompare.MATCH);
     }
 
 }
