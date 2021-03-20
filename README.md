@@ -1,10 +1,14 @@
 ## Analogical Modeling Weka Plugin
 
-This project is a Weka plugin containing state-of-the-art algorithms for classification using [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling).
+State-of-the-art [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling) plugin for [Weka](https://www.cs.waikato.ac.nz/ml/weka/).
 
 * [Issue Tracker](https://github.com/garfieldnate/Weka_AnalogicalModeling/issues)
 * [Repository](https://github.com/garfieldnate/Weka_AnalogicalModeling)
 * [Documentation](http://garfieldnate.github.io/Weka_AnalogicalModeling/)
+
+[![Build](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/build.yml/badge.svg)](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/build.yml)
+[![documentation](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/gh-pages.yml)
+
 
 ### Installation and Use in Weka
 
