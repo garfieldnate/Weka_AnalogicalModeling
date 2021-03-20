@@ -1,0 +1,6 @@
+weka.classifiers.evaluation.output.prediction
+weka.classifiers.lazy
+weka.classifiers.lazy.AM
+weka.classifiers.lazy.AM.data
+weka.classifiers.lazy.AM.label
+weka.classifiers.lazy.AM.lattice

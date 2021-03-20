@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"weka.classifiers.evaluation.output.prediction"},{"l":"weka.classifiers.lazy"},{"l":"weka.classifiers.lazy.AM"},{"l":"weka.classifiers.lazy.AM.data"},{"l":"weka.classifiers.lazy.AM.label"},{"l":"weka.classifiers.lazy.AM.lattice"}]
