@@ -66,17 +66,7 @@ public class BitSetLabel extends Label {
         return new BitSetLabel(bitSet, getCardinality());
     }
 
-    @Override
-    public BitSetLabel BOTTOM() {
-        BitSet top = new BitSet();
-        top.set(0, getCardinality() - 1);
-        for(int i = 0; i < getCardinality(); i++) {
-            top.set(i);
-        }
-        return new BitSetLabel(top, getCardinality());
-    }
-
-    @Override
+	@Override
     public String toString() {
         long[] longs = labelBits.toLongArray();
         int topCardinality = getCardinality() % LongLabel.MAX_CARDINALITY;

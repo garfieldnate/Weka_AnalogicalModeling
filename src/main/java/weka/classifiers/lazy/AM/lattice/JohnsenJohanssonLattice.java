@@ -75,7 +75,7 @@ import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
  *
  * <br>
  *
- * TODO: maybe if H(p) is small enough we can do exact counting with
+ * TODO: maybe if H(p) is small enough we could do exact counting with
  * include-exclude
  *
  * @author Nate
@@ -86,6 +86,7 @@ public class JohnsenJohanssonLattice implements Lattice {
     private final Set<Supracontext> supras = new HashSet<>();
     private static final BigInteger TWO = BigInteger.valueOf(2);
 	private boolean filled;
+	private Label bottom;
 
 	JohnsenJohanssonLattice(){}
 
@@ -95,6 +96,7 @@ public class JohnsenJohanssonLattice implements Lattice {
 			throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
 		}
 		filled = true;
+		bottom = sublist.getLabeler().getLatticeBottom();
         // first organize sub labels by outcome for quick H(p) construction
         Map<Double, List<Label>> outcomeSubMap = new HashMap<>();
         for (Subcontext s : sublist) {
@@ -176,7 +178,6 @@ public class JohnsenJohanssonLattice implements Lattice {
         int heteroCount = 0;
 
         Map<Label, Boolean> cache = new HashMap<>();
-        Label bottom = hp.get(0).BOTTOM();
         for (int i = 0; i < numExperiments; i++) {
             // choose x_s, a union of random items from H(p)
             Label Xs = bottom;

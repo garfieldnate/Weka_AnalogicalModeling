@@ -97,12 +97,7 @@ public class LongLabel extends Label {
         return new LongLabel(labelBits & otherLabel.labelBits, getCardinality());
     }
 
-    @Override
-    public LongLabel BOTTOM() {
-        return new LongLabel(-1L, getCardinality());
-    }
-
-    @Override
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         String binary = Long.toBinaryString(labelBits());
