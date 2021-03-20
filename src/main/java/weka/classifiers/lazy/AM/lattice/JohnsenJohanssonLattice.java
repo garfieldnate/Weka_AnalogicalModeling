@@ -102,7 +102,7 @@ public class JohnsenJohanssonLattice implements Lattice {
             l.add(s.getLabel());
         }
         // Estimate the counts for each supracontext in parallel
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_CORES);
+        ExecutorService executor = Executors.newWorkStealingPool();
         CompletionService<Supracontext> taskCompletionService = new ExecutorCompletionService<>(executor);
         for (Subcontext p : sublist) {
             taskCompletionService.submit(new SupraApproximator(p, outcomeSubMap));

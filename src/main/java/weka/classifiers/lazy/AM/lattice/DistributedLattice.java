@@ -86,7 +86,7 @@ public class DistributedLattice implements Lattice {
 		}
         Labeler labeler = subList.getLabeler();
 
-        ExecutorService executor = Executors.newFixedThreadPool(Math.max(MIN_THREADS, NUM_CORES));
+        ExecutorService executor = Executors.newWorkStealingPool(Math.max(MIN_THREADS, NUM_CORES));
         // first, create heterogeneous lattices by splitting the labels contained in the subcontext list
         CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
         int numLattices = labeler.numPartitions();
