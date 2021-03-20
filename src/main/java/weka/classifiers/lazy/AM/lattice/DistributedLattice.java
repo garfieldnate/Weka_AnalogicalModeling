@@ -50,7 +50,10 @@ import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
  * @author Nathan Glenn
  */
 public class DistributedLattice implements Lattice {
-    private final Set<Supracontext> supras;
+	// Less than 3 threads and this implementation will hang forever!
+	// TODO: introduce task framework that accounts for tasks adding subtasks
+	private static final int MIN_THREADS = 3;
+	private final Set<Supracontext> supras;
 
     /**
      * @return the list of homogeneous supracontexts created with this lattice
@@ -73,7 +76,7 @@ public class DistributedLattice implements Lattice {
     public DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
         Labeler labeler = subList.getLabeler();
 
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_CORES);
+        ExecutorService executor = Executors.newFixedThreadPool(Math.max(MIN_THREADS, NUM_CORES));
         // first, create heterogeneous lattices by splitting the labels contained in the subcontext list
         CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
         int numLattices = labeler.numPartitions();
