@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static weka.classifiers.lazy.AM.TestUtils.mockInstance;
 import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
 
 @RunWith(Parameterized.class)
@@ -199,6 +201,17 @@ public class LabelTest {
 		si = label.descendantIterator();
 		while (si.hasNext()) actualLabels.add(si.next());
 		assertEquals(expectedLabels, actualLabels);
+	}
+
+	@Test
+	public void testIsDescendantOf() throws Exception {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(4), false);
+
+		Label parentLabel = labeler.fromBits(0b100);
+		Label descendantLabel = labeler.fromBits(0b101);
+		assertTrue(descendantLabel.isDescendantOf(parentLabel));
+		Label nonDescendantLabel = labeler.fromBits(0b001);
+		assertFalse(nonDescendantLabel.isDescendantOf(parentLabel));
 	}
 
     @Test

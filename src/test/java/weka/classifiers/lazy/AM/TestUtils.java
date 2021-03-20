@@ -22,6 +22,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TestUtils {
 
@@ -308,4 +310,10 @@ public class TestUtils {
 
         // TODO: test error conditions
     }
+
+    public static Instance mockInstance(int numAttributes) {
+		Instance inst = mock(Instance.class);
+		when(inst.numAttributes()).thenReturn(numAttributes);
+		return inst;
+	}
 }

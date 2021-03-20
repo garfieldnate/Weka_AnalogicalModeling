@@ -13,10 +13,14 @@ repositories {
 }
 
 dependencies {
-  implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
-  implementation group: 'com.google.guava', name: 'guava', version: '19.0'
-  testImplementation 'junit:junit:4.11',
-  [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.9.5']
+	implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
+	implementation group: 'com.google.guava', name: 'guava', version: '19.0'
+	testImplementation 'junit:junit:4.11'
+	testImplementation group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.9.5'
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
+	// Required to silence warnings for now; see https://github.com/mockito/mockito/issues/1325
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.8.0'
+
 }
 
 tasks.withType(Test).configureEach {

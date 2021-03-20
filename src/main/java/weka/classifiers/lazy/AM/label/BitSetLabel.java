@@ -181,7 +181,7 @@ public class BitSetLabel extends Label {
         // boolean lattice ancestor/descendants yield the descendant when ORed;
         // this label needs to have all of the same ones (and optionally more
         // ones)
-        for (int i = otherLabel.labelBits.nextSetBit(0); i < card; i = otherLabel.labelBits.nextSetBit(i + 1))
+        for (int i = otherLabel.labelBits.nextSetBit(0); i != -1 && i < card; i = otherLabel.labelBits.nextSetBit(i + 1))
             if (!labelBits.get(i)) return false;
         return true;
     }
