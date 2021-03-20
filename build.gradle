@@ -41,6 +41,7 @@ task javadoc(type: Javadoc, overwrite:true) {
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
 
+  options.addBooleanOption("-allow-script-in-comments",true)
   // DO NOT use single quotes (') in the strings below, or you will get
   // weird errors like "Illegal package name" when you run the JavaDoc task
   options.header = "<script type=\"text/x-mathjax-config\">" +
