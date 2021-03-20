@@ -7,24 +7,17 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
-
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.label.IntLabel;
-import weka.classifiers.lazy.AM.label.IntLabeler;
-import weka.classifiers.lazy.AM.label.Label;
-import weka.classifiers.lazy.AM.label.Labeler;
-import weka.classifiers.lazy.AM.label.MissingDataCompare;
+import weka.classifiers.lazy.AM.label.*;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -55,6 +48,8 @@ public class LatticeTest {
      */
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() {
+		// ensure deterministic behavior from JohnsenJohanssonLatice
+		AtomicLong randomSeeder = new AtomicLong(0);
 		return List.of(
 				new Object[]{
 						"BasicLattice", (Supplier<Lattice>) BasicLattice::new
@@ -66,7 +61,7 @@ public class LatticeTest {
 						"Sparse Lattice", (Supplier<Lattice>) SparseLattice::new
 				},
 				new Object[]{
-						"Johnsen-Johansson Lattice", (Supplier<Lattice>) JohnsenJohanssonLattice::new
+						"Johnsen-Johansson Lattice", (Supplier<Lattice>) () -> new JohnsenJohanssonLattice(() -> new Random(randomSeeder.getAndIncrement()))
 				},
 				new Object[]{
 						"Heterogeneous Lattice", (Supplier<Lattice>) () -> new HeterogeneousLattice(0)

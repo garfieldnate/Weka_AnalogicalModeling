@@ -16,18 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 import java.util.function.Function;
-
-import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
+import java.util.function.Supplier;
 
 /**
  * The approximation algorithm from "Efficient Modeling of Analogy", Johnsen and
@@ -87,8 +80,14 @@ public class JohnsenJohanssonLattice implements Lattice {
     private static final BigInteger TWO = BigInteger.valueOf(2);
 	private boolean filled;
 	private Label bottom;
+	private final Supplier<Random> randomProvider;
 
-	JohnsenJohanssonLattice(){}
+	/**
+	 * @param randomProvider Provides randomness used for performing Monte Carlo simulation in child threads
+	 */
+	JohnsenJohanssonLattice(Supplier<Random> randomProvider) {
+		this.randomProvider = randomProvider;
+	}
 
 	@Override
 	public void fill(SubcontextList sublist) throws InterruptedException, ExecutionException {
@@ -107,7 +106,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         ExecutorService executor = Executors.newWorkStealingPool();
         CompletionService<Supracontext> taskCompletionService = new ExecutorCompletionService<>(executor);
         for (Subcontext p : sublist) {
-            taskCompletionService.submit(new SupraApproximator(p, outcomeSubMap));
+            taskCompletionService.submit(new SupraApproximator(p, outcomeSubMap, randomProvider.get()));
         }
         for (int i = 0; i < sublist.size(); i++) {
             supras.add(taskCompletionService.take().get());
@@ -118,101 +117,103 @@ public class JohnsenJohanssonLattice implements Lattice {
     class SupraApproximator implements Callable<Supracontext> {
         private final Subcontext p;
         private final Map<Double, List<Label>> outcomeSubMap;
+		private final Random random;
 
-        SupraApproximator(Subcontext p, Map<Double, List<Label>> outcomeSubMap) {
+		SupraApproximator(Subcontext p, Map<Double, List<Label>> outcomeSubMap, Random random) {
             this.p = p;
             this.outcomeSubMap = outcomeSubMap;
-        }
+			this.random = random;
+		}
 
         @Override
         public Supracontext call() {
             return approximateSupra(p, outcomeSubMap);
         }
-    }
 
-    private Supracontext approximateSupra(Subcontext p, Map<Double, List<Label>> outcomeSubMap) {
-        Label pLabel = p.getLabel();
-        // H(p) is p intersected with labels of any subcontexts with a
-        // different class, or all other sub labels if p is non-deterministic
-        // (combination with these would lead to heterogeneity)
-        List<Label> hp = new ArrayList<>();
-        for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
-            if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
-                for (Label x : e.getValue())
-                    hp.add(pLabel.intersect(x));
-            }
-        }
-        // min(p) is the number of matches in the label in H(p) with the most matches
-        // max(p) is the number of matches in the union of all labels in H(p)
-        int minP = 0;
-        Label hpUnion = pLabel;
-        for (Label l : hp) {
-            if (l.numMatches() > minP) {
-                minP = l.numMatches();
-            }
-            hpUnion = hpUnion.union(l);
-        }
-        int maxP = hpUnion.numMatches();
-        // the upper bound on H_limit(p)
-        BigInteger ubP = BigInteger.ZERO;
-        for (int k = 1; k <= minP; k++) {
-            ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
-        }
-        // ratio of |{x_s in H(p)}| to |{x_s}|
-        double heteroRatio = estimateHeteroRatio(hp, hpUnion, NUM_EXPERIMENTS);
-        // final estimation of total count of space subsumed by elements of
-        // H(p); rounds down
-        BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heteroRatio)).toBigInteger();
-        // final count is 2^|p| - heteroCountEstimate
-        BigInteger count = TWO.pow(pLabel.numMatches());
-        count = count.subtract(heteroCountEstimate);
+		private Supracontext approximateSupra(Subcontext p, Map<Double, List<Label>> outcomeSubMap) {
+			Label pLabel = p.getLabel();
+			// H(p) is p intersected with labels of any subcontexts with a
+			// different class, or all other sub labels if p is non-deterministic
+			// (combination with these would lead to heterogeneity)
+			List<Label> hp = new ArrayList<>();
+			for (Entry<Double, List<Label>> e : outcomeSubMap.entrySet()) {
+				if (p.getOutcome() != e.getKey() || p.getOutcome() == AMUtils.HETEROGENEOUS) {
+					for (Label x : e.getValue())
+						hp.add(pLabel.intersect(x));
+				}
+			}
+			// min(p) is the number of matches in the label in H(p) with the most matches
+			// max(p) is the number of matches in the union of all labels in H(p)
+			int minP = 0;
+			Label hpUnion = pLabel;
+			for (Label l : hp) {
+				if (l.numMatches() > minP) {
+					minP = l.numMatches();
+				}
+				hpUnion = hpUnion.union(l);
+			}
+			int maxP = hpUnion.numMatches();
+			// the upper bound on H_limit(p)
+			BigInteger ubP = BigInteger.ZERO;
+			for (int k = 1; k <= minP; k++) {
+				ubP = ubP.add(memoizedNcK.apply(new Pair(maxP, k)));
+			}
+			// ratio of |{x_s in H(p)}| to |{x_s}|
+			double heteroRatio = estimateHeteroRatio(hp, hpUnion, NUM_EXPERIMENTS);
+			// final estimation of total count of space subsumed by elements of
+			// H(p); rounds down
+			BigInteger heteroCountEstimate = new BigDecimal(ubP).multiply(new BigDecimal(heteroRatio)).toBigInteger();
+			// final count is 2^|p| - heteroCountEstimate
+			BigInteger count = TWO.pow(pLabel.numMatches());
+			count = count.subtract(heteroCountEstimate);
 
-        // add the approximated sub as its own supra with the given count
-        Supracontext approximatedSupra = new ClassifiedSupra();
-        approximatedSupra.add(p);
-        approximatedSupra.setCount(count);
-        return approximatedSupra;
-    }
+			// add the approximated sub as its own supra with the given count
+			Supracontext approximatedSupra = new ClassifiedSupra();
+			approximatedSupra.add(p);
+			approximatedSupra.setCount(count);
+			return approximatedSupra;
+		}
 
-    private double estimateHeteroRatio(List<Label> hp, Label hpUnion, int numExperiments) {
-        int heteroCount = 0;
+		private double estimateHeteroRatio(List<Label> hp, Label hpUnion, int numExperiments) {
+			int heteroCount = 0;
 
-        Map<Label, Boolean> cache = new HashMap<>();
-        for (int i = 0; i < numExperiments; i++) {
-            // choose x_s, a union of random items from H(p)
-            Label Xs = bottom;
-            Collections.shuffle(hp);
-            for (Label l : hp) {
-                // cannot use Math.random() in parallel code
-                if (ThreadLocalRandom.current().nextDouble() > .5) {
-                    // further union operations would do nothing since we are supposed to compare against hpUnion
-                    Label unioned = Xs.union(l);
-                    if(unioned.equals(hpUnion))
-                        break;
-                    Xs = unioned;
-                }
-            }
-            Boolean wasHetero = cache.get(Xs);
-            if (wasHetero != null) {
-                if (wasHetero) {
-                    heteroCount++;
-                }
-                continue;
-            }
-            // x_s is hetero if it is a child of any element of H(p)
-            boolean hetero = false;
-            for (Label l : hp) {
-                // use union to discover ancestor relationship
-                if (l.union(Xs).equals(l)) {
-                    heteroCount++;
-                    hetero = true;
-                    break;
-                }
-            }
-            cache.put(Xs, hetero);
-        }
-        return heteroCount / (double) numExperiments;
-    }
+			Map<Label, Boolean> cache = new HashMap<>();
+			for (int i = 0; i < numExperiments; i++) {
+				// choose x_s, a union of random items from H(p)
+				Label Xs = bottom;
+				Collections.shuffle(hp);
+				for (Label l : hp) {
+					// cannot use Math.random() in parallel code
+					if (this.random.nextDouble() > .5) {
+						// further union operations would do nothing since we are supposed to compare against hpUnion
+						Label unioned = Xs.union(l);
+						if (unioned.equals(hpUnion))
+							break;
+						Xs = unioned;
+					}
+				}
+				Boolean wasHetero = cache.get(Xs);
+				if (wasHetero != null) {
+					if (wasHetero) {
+						heteroCount++;
+					}
+					continue;
+				}
+				// x_s is hetero if it is a child of any element of H(p)
+				boolean hetero = false;
+				for (Label l : hp) {
+					// use union to discover ancestor relationship
+					if (l.union(Xs).equals(l)) {
+						heteroCount++;
+						hetero = true;
+						break;
+					}
+				}
+				cache.put(Xs, hetero);
+			}
+			return heteroCount / (double) numExperiments;
+		}
+	}
 
     private static class Memoizer<T, U> {
         private final Map<T, U> cache = new ConcurrentHashMap<>();
