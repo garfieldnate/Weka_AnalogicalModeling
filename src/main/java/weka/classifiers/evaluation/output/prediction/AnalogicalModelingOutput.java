@@ -33,85 +33,60 @@ import java.util.Vector;
 /**
  * This class implements a classification output scheme specific to the
  * Analogical Modeling classifier. In particular, it allows the user to print
- * gang effects and analogical sets. <!-- options-start --> * Valid options are:
+ * gang effects and analogical sets. <!-- options-start --> Valid options are:
  * <p>
- * * *
  *
  * <pre>
  * -p &lt;range&gt;
- * *  The range of attributes to print in addition to the classification.
- * *  (default: none)
+ *    The range of attributes to print in addition to the classification.
+ *    (default: none)
  * </pre>
- *
- * * *
- *
  * <pre>
  * -distribution
- * *  Whether to turn on the output of the class distribution.
- * *  Only for nominal class attributes.
- * *  (default: off)
+ *    Whether to turn on the output of the class distribution.
+ *    Only for nominal class attributes.
+ *    (default: off)
  * </pre>
- *
- * * *
- *
  * <pre>
  * -decimals &lt;num&gt;
- * *  The number of digits after the decimal point.
- * *  (default: 3)
+ *    The number of digits after the decimal point.
+ *    (default: 3)
  * </pre>
- *
- * * *
- *
  * <pre>
  * -file &lt;path&gt;
- * *  The file to store the output in, instead of outputting it on stdout.
- * *  Gets ignored if the supplied path is a directory.
- * *  (default: .)
+ *    The file to store the output in, instead of outputting it on stdout.
+ *    Gets ignored if the supplied path is a directory.
+ *    (default: .)
  * </pre>
- *
- * * *
- *
  * <pre>
  * -suppress
- * *  In case the data gets stored in a file, then this flag can be used
- * *  to suppress the regular output.
- * *  (default: not suppressed)
+ *    In case the data gets stored in a file, then this flag can be used
+ *    to suppress the regular output.
+ *    (default: not suppressed)
  * </pre>
- *
- * * *
- *
  * <pre>
  * -summary
- * *  Output short summary statistics
+ *    Output short summary statistics
  * </pre>
- *
- * * *
- *
  * <pre>
  * -as
- * *  Output the analogical set
+ *    Output the analogical set
  * </pre>
- *
- * * *
- *
  * <pre>
  * -gang
- * *  Output gang effects
+ *    Output gang effects
  * </pre>
- *
- * * <!-- options-end --> <!-- globalinfo-start --> * This output module enables
+ * <p>
+ * <!-- options-end -->
+ * <!-- globalinfo-start -->This output module enables
  * detailed reporting on the results of the Analogical Modeling classifier, such
- * as the analogical set and gang effects. *
+ * as the analogical set and gang effects.
  * <p>
  * <!-- globalinfo-end -->
  *
- * @author nate
+ * @author Nathan Glenn
  */
 public class AnalogicalModelingOutput extends AbstractOutput {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -757810288402645056L;
 
     @Override
