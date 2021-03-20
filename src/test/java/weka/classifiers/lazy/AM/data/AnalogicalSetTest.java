@@ -57,7 +57,6 @@ public class AnalogicalSetTest {
         }
     }
 
-    @SuppressWarnings("serial")
     @Test
     public void pointersTest() {
         assertEquals(as.getTotalPointers(), BigInteger.valueOf(13));
@@ -81,7 +80,6 @@ public class AnalogicalSetTest {
     }
 
     @Test
-    @SuppressWarnings("serial")
     public void classDistributionTest() {
         Map<String, BigDecimal> distribution = as.getClassLikelihood();
 

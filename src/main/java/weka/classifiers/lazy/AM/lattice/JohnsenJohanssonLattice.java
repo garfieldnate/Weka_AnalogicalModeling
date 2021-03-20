@@ -115,7 +115,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         }
 
         @Override
-        public Supracontext call() throws Exception {
+        public Supracontext call() {
             return approximateSupra(p, outcomeSubMap);
         }
     }
@@ -212,7 +212,7 @@ public class JohnsenJohanssonLattice implements Lattice {
         }
 
         private Function<T, U> doMemoize(final Function<T, U> function) {
-            return input -> cache.computeIfAbsent(input, function::apply);
+            return input -> cache.computeIfAbsent(input, function);
         }
 
         public static <T, U> Function<T, U> memoize(final Function<T, U> function) {
@@ -221,8 +221,8 @@ public class JohnsenJohanssonLattice implements Lattice {
     }
 
     private static class Pair {
-        int first;
-        int second;
+        final int first;
+        final int second;
 
         private Pair(int first, int second) {
             this.first = first;

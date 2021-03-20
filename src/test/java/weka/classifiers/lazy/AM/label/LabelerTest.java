@@ -11,6 +11,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Parameterized.class)
 public class LabelerTest {
-    @Parameter(0)
+    @Parameter()
     public String testName;
     @Parameter(1)
     public Constructor<Labeler> labelerConstructor;
@@ -34,21 +35,21 @@ public class LabelerTest {
     /**
      * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
      * the {@link Constructor} for a {@link Labeler} class to be tested.</li> </ol>
-     * @throws Exception
+     * @throws NoSuchMethodException if one of the {@link Labeler} classes does not implement the expected constructor
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws Exception {
+    public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
         Collection<Object[]> parameters = new ArrayList<>();
 
         // There are three kinds of labelers and associated labels
-        @SuppressWarnings("serial") List<Class> labelerClasses = new ArrayList<Class>() {
-            {
-                add(IntLabeler.class);
-                add(LongLabeler.class);
-                add(BitSetLabeler.class);
-            }
-        };
+        List<Class> labelerClasses = new ArrayList<>() {
+			{
+				add(IntLabeler.class);
+				add(LongLabeler.class);
+				add(BitSetLabeler.class);
+			}
+		};
         for (Class c : labelerClasses)
             parameters.add(new Object[]{
                 c.getSimpleName(), c.getConstructor(MissingDataCompare.class, Instance.class, boolean.class)
@@ -62,7 +63,7 @@ public class LabelerTest {
         Instance instance = TestUtils.getInstanceFromFile(TestUtils.CHAPTER_3_DATA, 0);
         Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, instance, false);
         assertEquals(labeler.getCardinality(), 3);
-        assertEquals(labeler.getIgnoreUnknowns(), false);
+		assertFalse(labeler.getIgnoreUnknowns());
         assertEquals(labeler.getMissingDataCompare(), MissingDataCompare.MATCH);
         assertEquals(labeler.getTestInstance(), instance);
     }
@@ -70,7 +71,7 @@ public class LabelerTest {
     /**
      * Test the default behavior for {@link Labeler#isIgnored(int)}.
      *
-     * @throws Exception
+     * @throws Exception If there's a problem loading the Finnverb dataset
      */
     @Test
     public void testIsIgnored() throws Exception {
@@ -101,7 +102,7 @@ public class LabelerTest {
      * Test with a different class index to make sure its location is not hard
      * coded.
      *
-     * @throws Exception
+     * @throws Exception if there's a problem loading the six-cardinality dataset
      */
     @Test
     public void testLabelWithAlternateClassIndex() throws Exception {
@@ -119,11 +120,9 @@ public class LabelerTest {
     /**
      * test that missing values are compared based on the input
      * {@link MissingDataCompare} value.
-     *
-     * @throws Exception
      */
     @Test
-    public void testGetContextLabelMissingDataCompares() throws Exception {
+    public void testGetContextLabelMissingDataCompares() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         Instances dataset = TestUtils.sixCardinalityData();
         Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, dataset.get(6), false);
         assertLabelEquals("MATCH: always matches", new IntLabel(0b00100, 5), labeler.label(dataset.get(0)));
@@ -157,8 +156,6 @@ public class LabelerTest {
 
     /**
      * Tests the protected default partitioning scheme.
-     *
-     * @throws Exception
      */
     @Test
     public void testPartitions() throws Exception {
@@ -185,7 +182,7 @@ public class LabelerTest {
     /**
      * Tests the default partitioning functionality.
      *
-     * @throws Exception
+     * @throws Exception if there's an issue loading the Finnverb dataset
      */
     @Test
     public void testPartition() throws Exception {

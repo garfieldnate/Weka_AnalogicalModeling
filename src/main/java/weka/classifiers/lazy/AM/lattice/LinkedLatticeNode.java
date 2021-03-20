@@ -43,7 +43,7 @@ public class LinkedLatticeNode<T extends Supracontext> implements Supracontext {
     /**
      * Create a new node by copying this one, adding the given subcontext and
      * setting the index to that provided. Insert the new node between this node
-     * and its next node by setting the new node to be the next node and seting
+     * and its next node by setting the new node to be the next node and setting
      * the previous next node to be the new node's next node.
      *
      * @param sub Subcontext to insert into the copied Supracontext

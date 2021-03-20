@@ -62,6 +62,11 @@ public class LongLabeler extends Labeler {
         return new LongLabel(0L, getCardinality());
     }
 
+	@Override
+	public Label fromBits(int labelBits) {
+		return new LongLabel(labelBits, getCardinality());
+	}
+
     @Override
     public Label partition(Label label, int partitionIndex) {
         if (partitionIndex > numPartitions() || partitionIndex < 0)
@@ -81,7 +86,7 @@ public class LongLabeler extends Labeler {
     /**
      * Object used to partition LongLabels via an long bit mask.
      */
-    private class BitMask {
+    private static class BitMask {
         final int startIndex;
         final int cardinality;
         /**

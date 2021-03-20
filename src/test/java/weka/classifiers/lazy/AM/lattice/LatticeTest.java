@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(Parameterized.class)
 public class LatticeTest {
-    @Parameter(0)
+    @Parameter()
     public String testName;
     @Parameter(1)
     public Constructor<Lattice> latticeConstructor;
@@ -41,8 +41,6 @@ public class LatticeTest {
     /**
      * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
      * <li>arg[1] is the {@link Constructor} for the {@link Lattice} to be tested.</li> </ol>
-     * @throws SecurityException     if a lattice constructor can't be run due to security requirements
-     * @throws NoSuchMethodException if a lattice constructor can't be run
      */
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> instancesToTest() throws NoSuchMethodException, SecurityException {
@@ -100,8 +98,6 @@ public class LatticeTest {
     /**
      * Test that {@link BasicLattice#cleanSupra()} is only run after a
      * subcontext is inserted completely, not after each single insertion
-     *
-     * @throws Exception
      */
     @Test
     public void testCleanSupraTiming() throws Exception {
@@ -122,14 +118,8 @@ public class LatticeTest {
      * @param testIndex      Index of item in dataset to remove and use as a test item
      * @param expectedSupras String representations of the supracontexts that should be created from the train/test
      *                       combo
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
-    private void testSupras(Instances train, int testIndex, String[] expectedSupras) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    private void testSupras(Instances train, int testIndex, String[] expectedSupras) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         final Instance test = train.get(testIndex);
         train.remove(testIndex);
         SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train);
@@ -168,6 +158,11 @@ public class LatticeTest {
             public Label getAllMatchLabel() {
                 return internal.getAllMatchLabel();
             }
+
+			@Override
+			public Label fromBits(int labelBits) {
+				return null;
+			}
         };
     }
 }

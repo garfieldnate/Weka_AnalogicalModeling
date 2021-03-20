@@ -30,9 +30,6 @@ import weka.core.Instances;
 import java.math.BigInteger;
 import java.util.HashMap;
 
-import static org.junit.Assume.assumeTrue;
-import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
-
 /**
  * Tests AnalogicalModeling.
  *
@@ -76,10 +73,9 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
      * classification, then do a leave-one-out classification for the whole set
      * and verify the accuracy.
      *
-     * @throws Exception
+     * @throws Exception If there's a problem loading the Finnverb dataset
      */
     @Test
-    @SuppressWarnings("serial")
     public void testFinnverb() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
         Assert.assertEquals(new HashMap<String, BigInteger>() {
@@ -95,7 +91,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
     // larger set that forces use of LongLabel
     @Test
-    @SuppressWarnings("serial")
     public void testSoybean() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.SOYBEAN);
         Assert.assertEquals(new HashMap<String, BigInteger>() {

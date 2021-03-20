@@ -16,13 +16,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class SupracontextTest {
-    @Parameter(0)
+    @Parameter()
     public String testName;
     @Parameter(1)
     public SupraFactory supraFactory;
@@ -36,29 +34,26 @@ public class SupracontextTest {
     /**
      * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
      * a factory for creating a supracontext of a specific implementation to be tested.</li> </ol>
-     * @throws Exception
      */
     @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws Exception {
-        @SuppressWarnings("serial") Collection<Object[]> parameters = new ArrayList<Object[]>() {
-            {
-                add(new Object[]{BasicSupra.class.getSimpleName(), (SupraFactory) BasicSupra::new});
-                add(new Object[]{ClassifiedSupra.class.getSimpleName(), (SupraFactory) ClassifiedSupra::new});
-                add(new Object[]{
-                    LinkedLatticeNode.class.getSimpleName(),
-                    (SupraFactory) () -> new LinkedLatticeNode<>(new BasicSupra())
-                });
-                add(new Object[]{
-                    Concept.class.getSimpleName(), (SupraFactory) () -> new Concept<>(null, new BasicSupra())
-                });
-            }
-        };
-
-        return parameters;
+    public static Collection<Object[]> instancesToTest() {
+		return new ArrayList<>() {
+			{
+				add(new Object[]{BasicSupra.class.getSimpleName(), (SupraFactory) BasicSupra::new});
+				add(new Object[]{ClassifiedSupra.class.getSimpleName(), (SupraFactory) ClassifiedSupra::new});
+				add(new Object[]{
+						LinkedLatticeNode.class.getSimpleName(),
+						(SupraFactory) () -> new LinkedLatticeNode<>(new BasicSupra())
+				});
+				add(new Object[]{
+						Concept.class.getSimpleName(), (SupraFactory) () -> new Concept<>(null, new BasicSupra())
+				});
+			}
+		};
     }
 
     @Test
-    public void testCount() throws Exception {
+    public void testCount() {
         Supracontext testSupra = supraFactory.getSupra();
         assertEquals(testSupra.getCount(), BigInteger.ONE);
         testSupra.setCount(BigInteger.valueOf(42));
@@ -66,7 +61,7 @@ public class SupracontextTest {
     }
 
     @Test
-    public void testSetCountThrowsErrorWhenArgIsNull() throws Exception {
+    public void testSetCountThrowsErrorWhenArgIsNull() {
         Supracontext testSupra = supraFactory.getSupra();
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("count must not be null"));
@@ -74,7 +69,7 @@ public class SupracontextTest {
     }
 
     @Test
-    public void testSetCountThrowsErrorWhenArgIsLessThanZero() throws Exception {
+    public void testSetCountThrowsErrorWhenArgIsLessThanZero() {
         Supracontext testSupra = supraFactory.getSupra();
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("count must not be less than zero"));
@@ -115,7 +110,7 @@ public class SupracontextTest {
         Supracontext testSupra2 = testSupra1.copy();
         assertEquals(testSupra1.getClass(), testSupra2.getClass());
         TestUtils.supraDeepEquals(testSupra1, testSupra2);
-        assertFalse(testSupra1 == testSupra2);
+		assertNotSame(testSupra1, testSupra2);
     }
 
     @Test
@@ -130,16 +125,16 @@ public class SupracontextTest {
 
         testSupra1.add(sub1);
         testSupra1.add(sub2);
-        assertFalse(testSupra1.equals(testSupra2));
-        assertFalse(testSupra1.hashCode() == testSupra2.hashCode());
+		assertNotEquals(testSupra1, testSupra2);
+		assertNotEquals(testSupra1.hashCode(), testSupra2.hashCode());
 
         testSupra2.add(sub1);
         testSupra2.add(sub2);
-        assertTrue(testSupra1.equals(testSupra2));
-        assertTrue(testSupra1.hashCode() == testSupra2.hashCode());
+		assertEquals(testSupra1, testSupra2);
+		assertEquals(testSupra1.hashCode(), testSupra2.hashCode());
 
         testSupra1.setCount(BigInteger.valueOf(29));
-        assertTrue("count is not compared for equality", testSupra1.equals(testSupra2));
-        assertTrue("count does not affect hashCode", testSupra1.hashCode() == testSupra2.hashCode());
+		assertEquals("count is not compared for equality", testSupra1, testSupra2);
+		assertEquals("count does not affect hashCode", testSupra1.hashCode(), testSupra2.hashCode());
     }
 }

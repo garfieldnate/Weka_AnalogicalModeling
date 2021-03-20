@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test all implementations of {@link LinkedLatticeNode} for correctness.
@@ -32,7 +31,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Parameterized.class)
 public class LinkedLatticeNodeTest {
-    @Parameter(0)
+    @Parameter()
     public String testName;
     @Parameter(1)
     public Constructor<Supracontext> supraConstructor;
@@ -46,21 +45,20 @@ public class LinkedLatticeNodeTest {
     /**
      * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
      * <li>arg[1] is a {@link Supracontext} to be decorated by a LatticeLinkedNode for testing.</li> </ol>
-     * @throws Exception
+     * @throws NoSuchMethodException if one of the SupraContext implementations doesn't have a 0-argument constructor
      */
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws Exception {
-        Collection<Object[]> parameters = new ArrayList<>();
-
-        // Two Supracontext classes can be decorated
-        parameters.add(new Object[]{
-            ClassifiedSupra.class.getSimpleName(), ClassifiedSupra.class.getConstructor()
-        });
-        parameters.add(new Object[]{
-            BasicSupra.class.getSimpleName(), BasicSupra.class.getConstructor()
-        });
-        return parameters;
-    }
+	@Parameterized.Parameters(name = "{0}")
+	public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
+		// Two Supracontext classes can be decorated
+		Class<?>[] supraClasses = new Class[]{ClassifiedSupra.class, BasicSupra.class};
+		Collection<Object[]> parameters = new ArrayList<>();
+		for (Class<?> clazz : supraClasses) {
+			parameters.add(new Object[]{
+					clazz.getSimpleName(), clazz.getConstructor()
+			});
+		}
+		return parameters;
+	}
 
     @Test
     public void testDefaultIndexIsMinus1() throws Exception {
@@ -73,7 +71,7 @@ public class LinkedLatticeNodeTest {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void testNext() throws Exception {
         LinkedLatticeNode testNode = new LinkedLatticeNode(supraConstructor.newInstance());
-        assertEquals(testNode.getNext(), null);
+		assertNull(testNode.getNext());
         testNode.setNext(testNode);
         assertEquals(testNode.getNext(), testNode);
     }
@@ -100,7 +98,7 @@ public class LinkedLatticeNodeTest {
     }
 
     @Test
-    @SuppressWarnings({"serial", "rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testInsertAfter() throws Exception {
         LinkedLatticeNode testNode1 = new LinkedLatticeNode(supraConstructor.newInstance());
 
@@ -115,38 +113,38 @@ public class LinkedLatticeNodeTest {
 
         LinkedLatticeNode testNode2 = testNode1.insertAfter(sub1, 11);
 
-        Supracontext expected = new BasicSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-            }
-        }, BigInteger.ONE);
+        Supracontext expected = new BasicSupra(new HashSet<>() {
+			{
+				add(sub1);
+			}
+		}, BigInteger.ONE);
         assertEquals(testNode2, expected);
         assertEquals(testNode2.getIndex(), 11);
-        assertTrue(testNode1.getNext() == testNode2);
-        assertTrue(testNode2.getNext() == null);
+		assertSame(testNode1.getNext(), testNode2);
+		assertNull(testNode2.getNext());
 
         LinkedLatticeNode testNode3 = testNode2.insertAfter(sub2, 29);
-        expected = new BasicSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-                add(sub2);
-            }
-        }, BigInteger.ZERO);
+        expected = new BasicSupra(new HashSet<>() {
+			{
+				add(sub1);
+				add(sub2);
+			}
+		}, BigInteger.ZERO);
         assertEquals(testNode3, expected);
         assertEquals(testNode3.getIndex(), 29);
-        assertTrue(testNode2.getNext() == testNode3);
-        assertTrue(testNode3.getNext() == null);
+		assertSame(testNode2.getNext(), testNode3);
+		assertNull(testNode3.getNext());
 
         LinkedLatticeNode testNode4 = testNode2.insertAfter(sub3, 37);
-        expected = new BasicSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-                add(sub3);
-            }
-        }, BigInteger.ZERO);
+        expected = new BasicSupra(new HashSet<>() {
+			{
+				add(sub1);
+				add(sub3);
+			}
+		}, BigInteger.ZERO);
         assertEquals(testNode4, expected);
-        assertTrue(testNode2.getNext() == testNode4);
-        assertTrue(testNode4.getNext() == testNode3);
+		assertSame(testNode2.getNext(), testNode4);
+		assertSame(testNode4.getNext(), testNode3);
     }
     // TODO: test copy, equals and hashCode for correctness regarding next
     // variable

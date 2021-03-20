@@ -22,15 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
 
 @RunWith(Parameterized.class)
 public class LabelTest {
-    // note that labels of all classes are normalized to IntLabels throughout so
-    // that they can be hashed and compared.
-    @Parameter(0)
+    @Parameter()
     public String testName;
     @Parameter(1)
     public Constructor<Labeler> labelerConstructor;
@@ -41,21 +38,21 @@ public class LabelTest {
     /**
      * @return A collection of parameter arrays for running tests: <ol> <li>arg[0] is the test name;</li> <li>arg[1] is
      * the {@link Constructor} for a {@link Labeler} class to be tested.</li> </ol>
-     * @throws Exception
+     * @throws NoSuchMethodException if one of the {@link Labeler} classes doesn't have the expected constructor
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws Exception {
+    public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
         Collection<Object[]> parameters = new ArrayList<>();
 
         // There are three kinds of labels and associated labelers
-        @SuppressWarnings("serial") List<Class> labelerClasses = new ArrayList<Class>() {
-            {
-                add(IntLabeler.class);
-                add(LongLabeler.class);
-                add(BitSetLabeler.class);
-            }
-        };
+        List<Class> labelerClasses = new ArrayList<>() {
+			{
+				add(IntLabeler.class);
+				add(LongLabeler.class);
+				add(BitSetLabeler.class);
+			}
+		};
         for (Class c : labelerClasses)
             parameters.add(new Object[]{
                 c.getSimpleName(), c.getConstructor(MissingDataCompare.class, Instance.class, boolean.class)
@@ -68,7 +65,7 @@ public class LabelTest {
     @Test
     public void testEquivalence() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label firstLabel = labeler.label(data.get(1));// 001
         Label secondLabel = labeler.label(data.get(5));// 001
@@ -83,14 +80,14 @@ public class LabelTest {
     }
 
     private void assertLabelEquals(Label firstLabel, Label secondLabel) {
-        assertTrue(firstLabel.equals(secondLabel));
-        assertTrue(secondLabel.equals(firstLabel));
-        assertTrue(firstLabel.hashCode() == secondLabel.hashCode());
+		assertEquals(firstLabel, secondLabel);
+		assertEquals(secondLabel, firstLabel);
+		assertEquals(firstLabel.hashCode(), secondLabel.hashCode());
     }
 
     private void assertLabelNotEquivalent(Label firstLabel, Label secondLabel) {
-        assertFalse(firstLabel.equals(secondLabel));
-        assertFalse(secondLabel.equals(firstLabel));
+		assertNotEquals(firstLabel, secondLabel);
+		assertNotEquals(secondLabel, firstLabel);
         // technically not always true, but it's a good test on our small set
         assertTrue(firstLabel.hashCode() != secondLabel.hashCode());
     }
@@ -98,7 +95,7 @@ public class LabelTest {
     @Test
     public void testGetCardinality() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label firstLabel = labeler.label(data.get(1));// 001
         assertEquals(firstLabel.getCardinality(), 3);
@@ -107,7 +104,7 @@ public class LabelTest {
     @Test
     public void testMatches() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label testLabel = labeler.label(data.get(1));// 001
         boolean[] matches = new boolean[]{false, true, true};
@@ -123,7 +120,7 @@ public class LabelTest {
     @Test
     public void testIntersect() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label label1 = labeler.label(data.get(1));// 001
         Label label2 = labeler.label(data.get(4));// 100
@@ -136,20 +133,19 @@ public class LabelTest {
     @Test
     public void testUnion() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label label1 = labeler.label(data.get(1));// 001
         Label label2 = labeler.label(data.get(4));// 100
-        boolean[] matches = new boolean[]{true, true, true};
         Label intersected = label1.union(label2);
-        for (int i = 0; i < matches.length; i++)
-            assertEquals(intersected.matches(i), matches[i]);
+        for (int i = 0; i < intersected.getCardinality(); i++)
+			assertTrue(intersected.matches(i));
     }
 
     @Test
     public void testMatchesThrowsExceptionForIndexTooLow() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label testLabel = labeler.label(data.get(1));// 001
         exception.expect(IllegalArgumentException.class);
@@ -160,7 +156,7 @@ public class LabelTest {
     @Test
     public void testMatchesThrowsExceptionForIndexTooHigh() throws Exception {
         Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
+        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
 
         Label testLabel = labeler.label(data.get(1));// 001
         exception.expect(IllegalArgumentException.class);
@@ -168,45 +164,42 @@ public class LabelTest {
         testLabel.matches(3);
     }
 
-    // Currently this also checks iterator order, which shouldn't matter.
-    // For now, it's fine.
-    @Test
-    public void testDescendantIterator() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MissingDataCompare.MATCH, data.get(0), false);
-        Label label = labeler.label(data.get(4));
-        assertEquals(new IntLabel(label), new IntLabel(0b100, 3));
+	// Currently this also checks iterator order, which shouldn't matter.
+	// For now, it's fine.
+	// TODO: should use correct Label class instead of always using IntLabel.
+	@Test
+	public void testDescendantIterator() throws Exception {
+		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+		Label label = labeler.label(data.get(4));
+		assertEquals(label, labeler.fromBits(0b100));
 
-        Set<IntLabel> expectedLabels = new HashSet<>(Arrays.asList(new IntLabel[]{
-            new IntLabel(0b101, 3), new IntLabel(0b111, 3), new IntLabel(0b110, 3)
-        }));
+		Set<Label> expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b101), labeler.fromBits(0b111), labeler.fromBits(0b110)));
 
-        Set<IntLabel> actualLabels = new HashSet<>();
-        Iterator<Label> si = label.descendantIterator();
-        while (si.hasNext()) actualLabels.add(new IntLabel(si.next()));
-        assertEquals(expectedLabels, actualLabels);
+		Set<Label> actualLabels = new HashSet<>();
+		Iterator<Label> si = label.descendantIterator();
+		while (si.hasNext()) actualLabels.add(si.next());
+		assertEquals(expectedLabels, actualLabels);
 
-        // comparing:
-        // V , O , V , I , 0 , ? , O , T , T , A , A
-        // V , U , V , O , 0 , ? , 0 , ? , L , E , A
-        data = TestUtils.getDataSet(TestUtils.FINNVERB);
-        labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(165), false);
-        label = labeler.label(data.get(166));
-        assertEquals(new IntLabel(label), new IntLabel(0b0101001111, 10));
+		// comparing:
+		// V , O , V , I , 0 , ? , O , T , T , A , A
+		// V , U , V , O , 0 , ? , 0 , ? , L , E , A
+		data = TestUtils.getDataSet(TestUtils.FINNVERB);
+		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(165), false);
+		label = labeler.label(data.get(166));
+		assertEquals(label, labeler.fromBits(0b0101001111));
 
-        expectedLabels = new HashSet<>(Arrays.asList(new IntLabel[]{
-            new IntLabel(0b0101011111, 10), new IntLabel(0b0101111111, 10), new IntLabel(0b0101101111, 10),
-            new IntLabel(0b0111101111, 10), new IntLabel(0b0111111111, 10), new IntLabel(0b0111011111, 10),
-            new IntLabel(0b0111001111, 10), new IntLabel(0b1111001111, 10), new IntLabel(0b1111011111, 10),
-            new IntLabel(0b1111111111, 10), new IntLabel(0b1111101111, 10), new IntLabel(0b1101101111, 10),
-            new IntLabel(0b1101111111, 10), new IntLabel(0b1101011111, 10), new IntLabel(0b1101001111, 10)
-        }));
+		expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b0101011111), labeler.fromBits(0b0101111111), labeler.fromBits(0b0101101111),
+				labeler.fromBits(0b0111101111), labeler.fromBits(0b0111111111), labeler.fromBits(0b0111011111),
+				labeler.fromBits(0b0111001111), labeler.fromBits(0b1111001111), labeler.fromBits(0b1111011111),
+				labeler.fromBits(0b1111111111), labeler.fromBits(0b1111101111), labeler.fromBits(0b1101101111),
+				labeler.fromBits(0b1101111111), labeler.fromBits(0b1101011111), labeler.fromBits(0b1101001111)));
 
-        actualLabels = new HashSet<>();
-        si = label.descendantIterator();
-        while (si.hasNext()) actualLabels.add(new IntLabel(si.next()));
-        assertEquals(expectedLabels, actualLabels);
-    }
+		actualLabels = new HashSet<>();
+		si = label.descendantIterator();
+		while (si.hasNext()) actualLabels.add(si.next());
+		assertEquals(expectedLabels, actualLabels);
+	}
 
     @Test
     public void testBottom() {

@@ -35,9 +35,7 @@ public class LongLabel extends Label {
     }
 
     /**
-     * Create an IntLabel by copying the contents of another {@link Label}.
-     *
-     * @param other
+     * Create a {@link LongLabel} by copying the contents of {@code other}.
      */
     public LongLabel(Label other) {
         if (other.getCardinality() > MAX_CARDINALITY) throw new IllegalArgumentException(
@@ -110,8 +108,7 @@ public class LongLabel extends Label {
         String binary = Long.toBinaryString(labelBits());
 
         int diff = getCardinality() - binary.length();
-        for (int i = 0; i < diff; i++)
-            sb.append('0');
+		sb.append("0".repeat(diff));
 
         sb.append(binary);
         return sb.toString();
@@ -144,12 +141,12 @@ public class LongLabel extends Label {
         // item is.
         private long[] gaps;
         private final int card;
-        private boolean hasNext = true;
+        private boolean hasNext;
         private long current;
         private long binCounter;
 
         /**
-         * @return Iterator over all subsets of the given label
+         * Iterator over all subsets of the given label
          */
         public SubsetIterator() {
             long supraContext = LongLabel.this.labelBits();
@@ -163,7 +160,7 @@ public class LongLabel extends Label {
             // where the gap was found in the supracontext. So 10101
             // would create two gaps: 01000 and 00010.
             for (int i = 0; i < card; i++) {
-                if (((1 << i) & supraContext) == 0) {
+                if (((1L << i) & supraContext) == 0) {
                     // create a long with only bit i set to 1
                     gapsTemp.add(1L << i);
                 }

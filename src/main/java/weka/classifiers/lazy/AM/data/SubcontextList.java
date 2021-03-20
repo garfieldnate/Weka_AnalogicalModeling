@@ -72,14 +72,12 @@ public class SubcontextList implements Iterable<Subcontext> {
     }
 
     /**
-     * Adds the exemplar to the correct subcontext.
-     *
-     * @param data
+     * Adds {@code exemplar} to the correct subcontext.
      */
-    void add(Instance data) {
-        Label label = labeler.label(data);
+    void add(Instance exemplar) {
+        Label label = labeler.label(exemplar);
         if (!labelToSubcontext.containsKey(label)) labelToSubcontext.put(label, new Subcontext(label));
-        labelToSubcontext.get(label).add(data);
+        labelToSubcontext.get(label).add(exemplar);
     }
 
     /**
@@ -133,25 +131,25 @@ public class SubcontextList implements Iterable<Subcontext> {
     @Override
     public Iterator<Subcontext> iterator() {
 
-        return new Iterator<Subcontext>() {
+        return new Iterator<>() {
 
-            final Iterator<Label> keyIterator = labelToSubcontext.keySet().iterator();
+			final Iterator<Label> keyIterator = labelToSubcontext.keySet().iterator();
 
-            @Override
-            public boolean hasNext() {
-                return keyIterator.hasNext();
-            }
+			@Override
+			public boolean hasNext() {
+				return keyIterator.hasNext();
+			}
 
-            @Override
-            public Subcontext next() {
-                return labelToSubcontext.get(keyIterator.next());
-            }
+			@Override
+			public Subcontext next() {
+				return labelToSubcontext.get(keyIterator.next());
+			}
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
     }
 
     public int size() {

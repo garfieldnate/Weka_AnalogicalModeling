@@ -44,8 +44,6 @@ public class Concept<T extends Supracontext> implements Supracontext {
 
     /**
      * Add the given subcontext to the extent of this concept.
-     *
-     * @param newSub
      */
     public void addToExtent(Subcontext newSub) {
         // TODO: not needed. Is anything needed?
@@ -141,8 +139,8 @@ public class Concept<T extends Supracontext> implements Supracontext {
         extent.setCount(count);
     }
 
-    public boolean isTagged() {
-        return tag;
+    public boolean notTagged() {
+        return !tag;
     }
 
     public void setTagged(boolean tag) {

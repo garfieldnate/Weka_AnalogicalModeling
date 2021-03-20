@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -47,7 +47,7 @@ import java.util.Set;
  * and by having to combine sublattices are a compromise to the alternative,
  * using a single lattice for any size exemplars. Remember that the underlying
  * structure of a lattice is an array of size 2^n, n being the size of the
- * exemplars contained. So if the exemplars are 20 features long, a signle
+ * exemplars contained. So if the exemplars are 20 features long, a single
  * lattice would be 2^20 or 1M elements long. On the other hand, if the
  * exemplars are split in 4, then 4 sublattices of size 2^5, or 32, can be used
  * instead, making for close to 100,000 times less memory used.
@@ -120,9 +120,6 @@ public class HeterogeneousLattice implements Lattice {
 
     /**
      * Add the given subcontext to the supracontext with the given label
-     *
-     * @param sub
-     * @param label
      */
     private void addToContext(Subcontext sub, Label label) {
         // the default value is the empty supracontext (leave null until now to

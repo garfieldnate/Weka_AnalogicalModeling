@@ -20,7 +20,7 @@ public class SubcontextTest {
     private static Instances dataset;
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
         ArrayList<Attribute> atts = new ArrayList<>();
         ArrayList<String> classes = new ArrayList<>();
         classes.add("e");
@@ -41,9 +41,8 @@ public class SubcontextTest {
 
     private static final double DELTA = 1e-10;
 
-    @SuppressWarnings("serial")
     @Test
-    public void test() throws Exception {
+    public void test() {
         Label label = new IntLabel(0, 1);
         Subcontext s = new Subcontext(label);
         s.add(dataset.get(0));

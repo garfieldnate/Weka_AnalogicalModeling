@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -53,8 +53,8 @@ public class AMUtils {
     /**
      * Format a double into a string using {@link #DECIMAL_FORMAT}.
      *
-     * @param d
-     * @return
+     * @param d value to format
+     * @return {@code d} formatted using {@link #DECIMAL_FORMAT}
      */
     public static String formatDouble(double d) {
         return String.format(DECIMAL_FORMAT, d);

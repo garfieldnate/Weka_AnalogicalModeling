@@ -36,8 +36,6 @@ public class IntLabel extends Label {
 
     /**
      * Create an IntLabel by copying the contents of another {@link Label}.
-     *
-     * @param other
      */
     public IntLabel(Label other) {
         // fast copy if the other label is an IntLabel
@@ -117,8 +115,7 @@ public class IntLabel extends Label {
         String binary = Integer.toBinaryString(labelBits());
 
         int diff = getCardinality() - binary.length();
-        for (int i = 0; i < diff; i++)
-            sb.append('0');
+		sb.append("0".repeat(diff));
 
         sb.append(binary);
         return sb.toString();
@@ -151,7 +148,7 @@ public class IntLabel extends Label {
         // item is.
         private int[] gaps;
         private final int card;
-        private boolean hasNext = true;
+        private boolean hasNext;
         private int current;
         private int binCounter;
 

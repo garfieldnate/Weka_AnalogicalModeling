@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -45,7 +45,7 @@ public class IntLabeler extends Labeler {
      *
      * @throws IllegalArgumentException if the cardinality of the input instance is greater than 32
      */
-    // TODO: since this throws an exception, perhaps a static factor method
+    // TODO: since this throws an exception, perhaps a static factory method
     // would be better?
     public IntLabeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
         super(mdc, instance, ignoreUnknowns);
@@ -91,6 +91,11 @@ public class IntLabeler extends Labeler {
     }
 
     @Override
+	public Label fromBits(int labelBits) {
+    	return new IntLabel(labelBits, getCardinality());
+	}
+
+    @Override
     public Label partition(Label label, int partitionIndex) {
         if (partitionIndex > numPartitions() || partitionIndex < 0)
             throw new IllegalArgumentException("Illegal partition index: " + partitionIndex);
@@ -109,7 +114,7 @@ public class IntLabeler extends Labeler {
     /**
      * Object used to partition IntLabels via an integer bit mask.
      */
-    private class BitMask {
+    private static class BitMask {
         final int startIndex;
         final int cardinality;
         /**

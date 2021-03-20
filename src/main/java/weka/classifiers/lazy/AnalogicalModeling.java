@@ -48,7 +48,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 /**
- * <!-- globalinfo-start --> * Implements the Analogical Modeling algorith, invented by Royal Skousen. Analogical
+ * <!-- globalinfo-start --> * Implements the Analogical Modeling algorithm, invented by Royal Skousen. Analogical
  * modeling is an instance-based algorithm designed to model human behavior.For more information, see the following
  * references:<br> * <br> * Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic Publishers.<br> * <br>
  * * Theron Stanford (2002). Analogical modeling: an exemplar-based approach to language. * <p>
@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutionException;
  * *    title = {Analogical Modeling of Language},
  * *    year = {1989},
  * *    abstract = {Review: 'Skousen develops an analogical approach, which is claimed to handle not merely cases which
- * are problematic for tructuralist approaches, but to be applicable equally to the cases with which structuralism is at
+ * are problematic for structuralist approaches, but to be applicable equally to the cases with which structuralism is at
  * its best - in short, to be an Einstein to the common Newton.This is altogether a stimulating and richly suggestive
  * book whose fundamental notions are presented with formal rigour. Other, more psychologically adequate, formal
  * analogical theories may be devised, but Skousen has shown the way forward.' Artificial Intelligence and Stimulation
@@ -167,8 +167,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      *
      * @param testItem Item to make context base on
      * @return Analogical set which holds results of the classification for the given item
-     * @throws ExecutionException
-     * @throws InterruptedException
+	 * @throws ExecutionException If execution is rejected for some reason
+	 * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
     private AnalogicalSet classify(Instance testItem) throws InterruptedException, ExecutionException {
         if (getDebug()) System.out.println("Classifying: " + testItem);
@@ -212,19 +212,23 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * @return Tooltip text describing the linearCount option
      */
+    @SuppressWarnings("unused") // used by Weka UI
     public String linearCountTipText() {
         return "Set this to true if counting of pointers within homogeneous supracontexts should be "
                + "done linearly instead of quadratically.";
     }
 
+	@SuppressWarnings("unused") // used by Weka UI
     public boolean getIgnoreUnknowns() {
         return m_ignoreUnknowns;
     }
 
+	@SuppressWarnings("unused") // used by Weka UI
     public void setIgnoreUnknowns(boolean parallel) {
         m_ignoreUnknowns = parallel;
     }
 
+	@SuppressWarnings("unused") // used by Weka UI
     public String ignoreUnknownsTipText() {
         return "set to true attributes with unknown values in the test item should be ignored";
     }
@@ -252,6 +256,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * @return Tooltip text describing the removeTestExemplar option
      */
+	@SuppressWarnings("unused") // used by Weka UI
     public String removeTestExemplarTipText() {
         return "Set to true if you wish to remove a test instance from the training set before "
                + "attempting to predict its outcome.";
@@ -282,6 +287,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * @return Tooltip text describing the missingDataCompare option
      */
+	@SuppressWarnings("unused") // used by Weka UI
     public String missingDataCompareTipText() {
         return "The strategy to use when comparing missing attribute values with other values while filling "
                + "subcontexts and supracontexts";
@@ -293,6 +299,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      *
      * @return General information and references about the Analogical Modeling classifier
      */
+	@SuppressWarnings("unused") // used by Weka UI
     public String globalInfo() {
         return ("Implements the Analogical Modeling algorithm, invented by Royal Skousen. "
                 + "Analogical modeling is an instance-based algorithm designed to model " + "human behavior."
@@ -370,7 +377,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
         options.add(mdc.getOptionString());
         // add all options of the superclass
         options.addAll(Arrays.asList(super.getOptions()));
-        return options.toArray(new String[options.size()]);
+        return options.toArray(new String[0]);
     }
 
     /**
@@ -462,7 +469,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
         ti.setValue(TechnicalInformation.Field.PUBLISHER, "Kluwer Academic Publishers");
         ti.setValue(TechnicalInformation.Field.ABSTRACT,
                     "Review: 'Skousen develops an analogical approach, which is claimed "
-                    + "to handle not merely cases which are problematic for tructuralist "
+                    + "to handle not merely cases which are problematic for structuralist "
                     + "approaches, but to be applicable equally to the cases with which "
                     + "structuralism is at its best - in short, to be an Einstein to the "
                     + "common Newton.This is altogether a stimulating and richly suggestive "
@@ -498,7 +505,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
         ti2.setValue(TechnicalInformation.Field.PAGES, "385--409");
         ti2.setValue(TechnicalInformation.Field.ISBN13, "9789027223623");
 
-        TechnicalInformation ti3 = new TechnicalInformation(Type.MISC, "wiki:AnalgocialModeling");
+        TechnicalInformation ti3 = new TechnicalInformation(Type.MISC, "wiki:AnalogicalModeling");
         ti3.setValue(TechnicalInformation.Field.AUTHOR, "Wikipedia");
         ti3.setValue(TechnicalInformation.Field.URL, "http://en.wikipedia.org/wiki/Analogical_modeling");
         ti3.setValue(TechnicalInformation.Field.NOTE, "[Online; accessed 15-June-2012]");
@@ -510,7 +517,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 
     /**
      * This is used to build the classifier; it specifies the capabilities of
-     * the classifier and loads in examplars to be used for prediction. No
+     * the classifier and loads in exemplars to be used for prediction. No
      * actual analysis happens here because AM is a lazy classifier.
      *
      * @see weka.classifiers.Classifier#buildClassifier(weka.core.Instances)
@@ -531,8 +538,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 
         // create exemplars for actually running the classifier
         trainingExemplars = new LinkedList<>();
-        for (Instance i : instances)
-            trainingExemplars.add(i);
+		trainingExemplars.addAll(instances);
     }
 
     /**

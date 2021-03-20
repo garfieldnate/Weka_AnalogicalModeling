@@ -302,13 +302,12 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     @Override
     public String[] getOptions() {
 
-        List<String> options = new LinkedList<>();
-        options.addAll(Arrays.asList(super.getOptions()));
+		List<String> options = new LinkedList<>(Arrays.asList(super.getOptions()));
 
         if (getSummary()) options.add("-summary");
         if (getAnalogicalSet()) options.add("-as");
         if (getGangs()) options.add("-gang");
-        return options.toArray(new String[options.size()]);
+        return options.toArray(new String[0]);
     }
 
     private boolean m_Summary = false;
@@ -385,7 +384,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     }
 
     @Override
-    protected void doPrintClassification(double[] arg0, Instance arg1, int arg2) throws Exception {
+    protected void doPrintClassification(double[] arg0, Instance arg1, int arg2) {
         // TODO Auto-generated method stub
         append("TODO: doPrintClassification()");
     }

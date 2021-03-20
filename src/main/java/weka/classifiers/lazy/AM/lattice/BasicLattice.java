@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -55,8 +55,6 @@ public class BasicLattice implements Lattice {
      * All points in the lattice point to the empty supracontext by default.
      */
     private LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
-    // static {
-    // }
 
     private static final LinkedLatticeNode<ClassifiedSupra> heteroSupra;
 
@@ -116,9 +114,8 @@ public class BasicLattice implements Lattice {
     }
 
     /**
-     * @param sub
-     * @param label
-     * @return false if the item was added to heteroSupra, true otherwise
+     * @param sub subcontext to be added
+     * @param label label of supracontext to add the subcontext to
      */
     private void addToContext(Subcontext sub, Label label) {
         // the default value is the empty supracontext (leave null until now to

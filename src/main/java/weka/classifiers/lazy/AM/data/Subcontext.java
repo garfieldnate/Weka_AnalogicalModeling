@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -47,11 +47,10 @@ public class Subcontext {
     }
 
     /**
-     * Adds an exemplar to the subcontext and sets the outcome accordingly. If
+     * Adds an exemplar {@code e} to the subcontext and sets the outcome accordingly. If
      * different outcomes are present in the contained exemplars, the outcome is
      * {@link AMUtils#NONDETERMINISTIC}
      *
-     * @param e
      */
     public void add(Instance e) {
         if (data.size() != 0) {

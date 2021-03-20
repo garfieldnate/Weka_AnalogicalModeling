@@ -68,7 +68,7 @@ public class TestUtils {
      * then return it.
      *
      * @param fileInDataFolder name of file in the project data folder
-     * @param ignoreAtts       A string like "5-10, 12" specififying which attributes should be removed. These numbers
+     * @param ignoreAtts       A string like "5-10, 12" specifying which attributes should be removed. These numbers
      *                         should be 1-indexed (required by Weka API here).
      * @return The altered dataset
      * @throws Exception if there is a problem loading the dataset
@@ -133,7 +133,7 @@ public class TestUtils {
 
     /**
      * An equals function that compares labels of different classes against
-     * eachother.
+     * each other.
      *
      * @param firstLabel  first label to compare
      * @param secondLabel second label to compare
@@ -247,10 +247,9 @@ public class TestUtils {
     /**
      * Test that the getSupraFromString utility function above works as desired.
      *
-     * @throws Exception if there is a problem loading the finnverb set
+     * @throws Exception if there is a problem loading the finnverb dataset
      */
     @Test
-    @SuppressWarnings("serial")
     public void getSupraFromStringTest() throws Exception {
         Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "6-10");
 
@@ -260,13 +259,13 @@ public class TestUtils {
         sub2.add(data.get(2));// K,U,V,U,0,A
         final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
         sub3.add(data.get(1));// U,U,V,I,0,A
-        ClassifiedSupra expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-                add(sub2);
-                add(sub3);
-            }
-        }, BigInteger.ONE);
+        ClassifiedSupra expectedSupra = new ClassifiedSupra(new HashSet<>() {
+			{
+				add(sub1);
+				add(sub2);
+				add(sub3);
+			}
+		}, BigInteger.ONE);
 
         String supraString = "[1x(10110|A|P,U,0,?,0,A),(10000|A|K,U,V,U,0,A),(10010|A|U,U,V,I,0,A)]";
         ClassifiedSupra actualSupra = getSupraFromString(supraString, data);
@@ -280,11 +279,11 @@ public class TestUtils {
         final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
         sub4.add(data.get(4)); // H,A,V,I,0,A
         sub4.add(data.get(5)); // H,A,V,A,0,B
-        expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub4);
-            }
-        }, BigInteger.ONE);
+        expectedSupra = new ClassifiedSupra(new HashSet<>() {
+			{
+				add(sub4);
+			}
+		}, BigInteger.ONE);
 
         assertTrue("sub with multiple instances", supraDeepEquals(expectedSupra, actualSupra));
         assertTrue("fromString mirrors toString",
@@ -295,11 +294,11 @@ public class TestUtils {
         final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
         sub5.add(data.get(1));// A,A,0,?,S,B
         sub5.add(data.get(2));// also A,A,0,?,S,B
-        expectedSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub5);
-            }
-        }, BigInteger.valueOf(6));
+        expectedSupra = new ClassifiedSupra(new HashSet<>() {
+			{
+				add(sub5);
+			}
+		}, BigInteger.valueOf(6));
         supraString = "[6x(00001|B|A,A,0,?,S,B/A,A,0,?,S,B)]";
         actualSupra = getSupraFromString(supraString, data);
         assertTrue("multiple instances with same string representation", supraDeepEquals(expectedSupra, actualSupra));

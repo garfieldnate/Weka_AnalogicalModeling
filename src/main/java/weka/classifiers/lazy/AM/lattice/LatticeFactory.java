@@ -20,8 +20,8 @@ public class LatticeFactory {
      *
      * @param subList List of subcontexts to add to lattice
      * @return A lattice filled with the provided subcontexts.
-     * @throws InterruptedException
-     * @throws ExecutionException
+	 * @throws ExecutionException If execution is rejected for some reason
+	 * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
     public static Lattice createLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
         Lattice lattice;

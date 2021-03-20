@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -17,8 +17,6 @@
 package weka.classifiers.lazy.AM.lattice;
 
 import com.google.common.collect.Iterables;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import weka.classifiers.lazy.AM.data.BasicSupra;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
@@ -69,8 +67,8 @@ public class DistributedLattice implements Lattice {
      * {@link Labeler#numPartitions()}.
      *
      * @param subList list of Subcontexts to add to the lattice
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * @throws ExecutionException If execution is rejected for some reason
+     * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
     public DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
         Labeler labeler = subList.getLabeler();
@@ -97,7 +95,7 @@ public class DistributedLattice implements Lattice {
         supras = combineInParallel(taskCompletionService.take().get(),
                                    taskCompletionService.take().get(),
                                    executor,
-                                   (s1, s2) -> new FinalCombiner(s1, s2)
+				FinalCombiner::new
         );
         executor.shutdownNow();
     }
@@ -105,7 +103,7 @@ public class DistributedLattice implements Lattice {
     /**
      * Fills a heterogeneous lattice with subcontexts.
      */
-    class LatticeFiller implements Callable<Set<Supracontext>> {
+	static class LatticeFiller implements Callable<Set<Supracontext>> {
         private final SubcontextList subList;
         private final int partitionIndex;
 
@@ -115,7 +113,7 @@ public class DistributedLattice implements Lattice {
         }
 
         @Override
-        public Set<Supracontext> call() throws Exception {
+        public Set<Supracontext> call() {
             HeterogeneousLattice lattice = new HeterogeneousLattice(subList, partitionIndex);
             return lattice.getSupracontexts();
         }
@@ -142,7 +140,7 @@ public class DistributedLattice implements Lattice {
             return combineInParallel(supras1.get(),
                                      supras2.get(),
                                      executor,
-                                     (s1, s2) -> new IntermediateCombiner(s1, s2)
+					IntermediateCombiner::new
             );
         }
     }
@@ -154,7 +152,6 @@ public class DistributedLattice implements Lattice {
      *
      * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
      *                            supracontexts
-     * @return
      */
     private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, Executor executor, BiFunction<Iterable<Supracontext>, Set<Supracontext>, Callable<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
         CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
@@ -190,7 +187,7 @@ public class DistributedLattice implements Lattice {
         return finalSupras.unwrap();
     }
 
-    class IntermediateCombiner implements Callable<Set<Supracontext>> {
+    static class IntermediateCombiner implements Callable<Set<Supracontext>> {
         private final Iterable<Supracontext> supras1;
         private final Set<Supracontext> supras2;
 
@@ -200,7 +197,7 @@ public class DistributedLattice implements Lattice {
         }
 
         @Override
-        public Set<Supracontext> call() throws Exception {
+        public Set<Supracontext> call() {
             BasicSupra newSupra;
             GettableSet<Supracontext> combinedSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
@@ -247,7 +244,7 @@ public class DistributedLattice implements Lattice {
         }
     }
 
-    class FinalCombiner implements Callable<Set<Supracontext>> {
+    static class FinalCombiner implements Callable<Set<Supracontext>> {
         private final Iterable<Supracontext> supras1;
         private final Set<Supracontext> supras2;
 
@@ -257,7 +254,7 @@ public class DistributedLattice implements Lattice {
         }
 
         @Override
-        public Set<Supracontext> call() throws Exception {
+        public Set<Supracontext> call() {
             ClassifiedSupra supra;
             GettableSet<Supracontext> finalSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
@@ -360,12 +357,12 @@ public class DistributedLattice implements Lattice {
 
         @Override
         public Object[] toArray() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public <T1> T1[] toArray(T1[] a) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -376,32 +373,32 @@ public class DistributedLattice implements Lattice {
 
         @Override
         public boolean remove(Object o) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean containsAll(Collection<?> c) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean addAll(Collection<? extends T> c) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean retainAll(Collection<?> c) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean removeAll(Collection<?> c) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void clear() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
     }
 }

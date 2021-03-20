@@ -44,11 +44,11 @@ public abstract class Label {
      * The "descendants" of a label are the set of labels with the same
      * "mismatch" entries, but with one or more of the "match" entries changed
      * into a "mismatch" entry. For example, the children of
-     * <code>{match, mismatch, mistmatch, match}</code> are:
+     * <code>{match, mismatch, mismatch, match}</code> are:
      * <ul>
-     * <li><code>{mismatch, mismatch, mistmatch, match}</code>,</li>
-     * <li><code>{match, mismatch, mistmatch, mismatch}</code>, and</li>
-     * <li><code>{mismatch, mismatch, mistmatch, mismatch}</code></li>
+     * <li><code>{mismatch, mismatch, mismatch, match}</code>,</li>
+     * <li><code>{match, mismatch, mismatch, mismatch}</code>, and</li>
+     * <li><code>{mismatch, mismatch, mismatch, mismatch}</code></li>
      * </ul>
      * .
      *
@@ -79,11 +79,8 @@ public abstract class Label {
 
     /**
      * Create a new label for which each location is marked as a match if either
-     * this label or otherLabel is marked match, otherwise mismatch. In other
+     * this label or {@code other} is marked match, otherwise mismatch. In other
      * words, keep all matches from both labels.
-     *
-     * @param label
-     * @return
      */
-    public abstract Label union(Label label);
+    public abstract Label union(Label other);
 }

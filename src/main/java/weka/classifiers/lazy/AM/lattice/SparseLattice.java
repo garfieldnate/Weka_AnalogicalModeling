@@ -66,7 +66,7 @@ public class SparseLattice implements Lattice {
         Label intersection = intent.intersect(generatorConcept.getIntent());
         generatorConcept = getMaximalConcept(intersection, generatorConcept);
         if (generatorConcept.getIntent().equals(intersection)) {
-            if (!generatorConcept.isTagged()) {
+            if (generatorConcept.notTagged()) {
                 tagList.add(generatorConcept);
                 generatorConcept.setTagged(true);
                 generatorConcept.setCandidateParent(generatorConcept);
@@ -76,7 +76,7 @@ public class SparseLattice implements Lattice {
         }
         Set<Concept<ClassifiedSupra>> newParents = new HashSet<>();
         for (Concept<ClassifiedSupra> candidate : generatorConcept.getParents()) {
-            if (!candidate.isTagged()) {
+            if (candidate.notTagged()) {
                 Concept<ClassifiedSupra> tempConcept = candidate;
                 if (!candidate.getIntent().isDescendantOf(intersection)) {
                     // this possible parent turned out not to be a parent, so
@@ -237,7 +237,7 @@ public class SparseLattice implements Lattice {
      * cardinality of the union of several sets, you include the cardinalities
      * of the individual sets, exclude the cardinalities of the pair-wise
      * intersections, include that of the triple-wise intersections, exclude
-     * quardruple-wise, etc. For example, |A&cup;B&cup;C| = |A| + |B| + |C| -
+     * quadruple-wise, etc. For example, |A&cup;B&cup;C| = |A| + |B| + |C| -
      * |A&cap;B| - |A&cap;C| - |B&cap;C| + |A&cap;B&cap;C|. See <a href=
      * "https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle"
      * >Wikipedia</a> for more discussion.
@@ -267,13 +267,13 @@ public class SparseLattice implements Lattice {
      */
     private BigInteger countOfIntersections(List<Label> parentLabels, int size) {
         intersectionCount = BigInteger.ZERO;
-        recursiveCountOfIntesections(parentLabels, new Label[size], 0, 0);
+        recursiveCountOfIntersections(parentLabels, new Label[size], 0, 0);
         return intersectionCount;
     }
 
     // this recursively finds all subsets of size labels.length and adds their
     // intersections to intersectionCount
-    private void recursiveCountOfIntesections(List<Label> parentLabels, Label[] labels, int subsetSize, int nextIndex) {
+    private void recursiveCountOfIntersections(List<Label> parentLabels, Label[] labels, int subsetSize, int nextIndex) {
         if (subsetSize == labels.length) {
             Label intersection = labels[0];
             for (int i = 1; i < labels.length; i++)
@@ -282,7 +282,7 @@ public class SparseLattice implements Lattice {
         } else {
             for (int j = nextIndex; j < parentLabels.size(); j++) {
                 labels[subsetSize] = parentLabels.get(j);
-                recursiveCountOfIntesections(parentLabels, labels, subsetSize + 1, j + 1);
+                recursiveCountOfIntersections(parentLabels, labels, subsetSize + 1, j + 1);
             }
         }
     }

@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -106,11 +106,8 @@ public class ClassifiedSupra implements Supracontext {
         }
         if (sub.getOutcome() != outcome) {
             return true;
-        } else if (sub.getOutcome() == AMUtils.NONDETERMINISTIC) {
-            return true;
-        }
-        return false;
-    }
+        } else return sub.getOutcome() == AMUtils.NONDETERMINISTIC;
+	}
 
     @Override
     public ClassifiedSupra copy() {

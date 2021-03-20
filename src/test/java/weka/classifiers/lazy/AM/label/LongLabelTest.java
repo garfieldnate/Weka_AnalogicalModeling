@@ -31,7 +31,7 @@ public class LongLabelTest {
     }
 
     @Test
-    public void testConstructorCardinalityTooHigh() throws Exception {
+    public void testConstructorCardinalityTooHigh() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("Input cardinality too high (65)"));
         new IntLabel(0b101, 65);

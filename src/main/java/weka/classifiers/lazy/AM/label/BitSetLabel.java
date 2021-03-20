@@ -113,7 +113,7 @@ public class BitSetLabel extends Label {
         // the indices of the 0 entries
         private final List<Integer> gaps;
         private final int card;
-        private boolean hasNext = true;
+        private boolean hasNext;
         private final BitSet current;
         private BitSet binCounter;
 
@@ -163,7 +163,7 @@ public class BitSetLabel extends Label {
             current.flip(gaps.get(rightMost));
             // we are done permuting when binCounter hits all zeros
             if (binCounter.isEmpty()) hasNext = false;
-            return new BitSetLabel(current, card);
+            return new BitSetLabel(BitSet.valueOf(current.toLongArray()), card);
         }
 
         @Override
@@ -174,7 +174,7 @@ public class BitSetLabel extends Label {
 
     @Override
     public boolean isDescendantOf(Label possibleDescendant) {
-        if (!(possibleDescendant instanceof IntLabel)) {
+        if (!(possibleDescendant instanceof BitSetLabel)) {
             return false;
         }
         BitSetLabel otherLabel = (BitSetLabel) possibleDescendant;

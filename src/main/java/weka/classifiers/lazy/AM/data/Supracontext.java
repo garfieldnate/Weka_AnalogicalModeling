@@ -12,7 +12,7 @@ import java.util.Set;
  * Classifying data sets with analogical modeling tends to create many
  * supracontexts with the exact same set of subcontexts. To save time and space,
  * duplicate supracontexts should be kept track of using the count instead of by
- * saving seperate Supracontext objects. The count is stored in a
+ * saving separate Supracontext objects. The count is stored in a
  * {@link BigInteger} object and starts out as {@link BigInteger#ONE one} and is
  * never allowed to fall below {@link BigInteger#ZERO zero}, which indicates
  * that the object should be discarded.

@@ -1,5 +1,6 @@
 package weka.classifiers.lazy.AM.label;
 
+import com.google.common.annotations.VisibleForTesting;
 import weka.core.Instance;
 
 import java.util.Collections;
@@ -122,6 +123,13 @@ public abstract class Labeler {
      */
     public abstract Label getAllMatchLabel();
 
+	/**
+	 * For testing purposes, this method allows the client to directly specify the label using
+	 * the bits of an integer
+	 */
+	@VisibleForTesting
+    public abstract Label fromBits(int labelBits);
+
     /**
      * In distributed processing, it is necessary to split labels into
      * partitions. This method returns a partition for the given label. A full
@@ -175,7 +183,7 @@ public abstract class Labeler {
     /**
      * Simple class for storing index spans.
      */
-    protected class Partition {
+    protected static class Partition {
         private final int startIndex;
         private final int cardinality;
 

@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -81,9 +81,7 @@ public class AnalogicalSet {
         return arg1.getValue().compareTo(arg2.getValue());
     };
 
-    private static final Comparator<Entry<String, BigInteger>> entryComparator2 = Comparator.comparing(Entry::getValue);
-
-    /**
+	/**
      * @param lattice  filled lattice, which contains the data for calculating the analogical set
      * @param testItem Exemplar being classified
      * @param linear   True if counting of pointers should be done linearly; false if quadratically.
@@ -173,12 +171,9 @@ public class AnalogicalSet {
                 for (Instance e : sub.getExemplars()) {
                     // pointers to exemplar = pointersToSupra * pointers in list
                     // add together if already in the map
-                    if (pointers.get(e) != null) pointers.put(e,
-                                                              pointers.get(e)
-                                                                      .add((linear ? BigInteger.ONE : pointersInList).multiply(
-                                                                          pointersToSupra))
-                    );
-                    else pointers.put(e, (linear ? BigInteger.ONE : pointersInList).multiply(pointersToSupra));
+					BigInteger pointerProduct = (linear ? BigInteger.ONE : pointersInList).multiply(
+							pointersToSupra);
+					pointers.merge(e, pointerProduct, BigInteger::add);
                 }
             }
         }
@@ -214,7 +209,7 @@ public class AnalogicalSet {
               .append(AMUtils.LINE_SEPARATOR);
         }
 
-        Set<Entry<String, BigInteger>> sortedEntries2 = new TreeSet<>(entryComparator2);
+        Set<Entry<String, BigInteger>> sortedEntries2 = new TreeSet<>(Entry.comparingByValue());
         sortedEntries2.addAll(getClassPointers().entrySet());
         sb.append("Outcome likelihoods:").append(newline);
         for (Entry<String, BigInteger> e : sortedEntries2)

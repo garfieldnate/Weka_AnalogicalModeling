@@ -22,12 +22,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ClassifiedSupraTest {
-    // contains subs with these outcomes: nondeterministic, nondeterminstic, 1,
+    // contains subs with these outcomes: non-deterministic, non-deterministic, 1,
     // 0, 0
     private static List<Subcontext> subs;
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
         ArrayList<Attribute> atts = new ArrayList<>();
         ArrayList<String> classes = new ArrayList<>();
         classes.add("e");
@@ -77,12 +77,11 @@ public class ClassifiedSupraTest {
         // AMUtils.UNKNOWN is Double.NaN
         assertTrue(Double.isNaN(testSupra.getOutcome()));
         assertFalse(testSupra.isHeterogeneous());
-        assertTrue(testSupra.equals(testSupra));
+		assertEquals(testSupra, testSupra);
     }
 
     // TODO: remove this test, and instead don't have a constructor that takes
     // data like this (add() is tested in SupracontextTest).
-    @SuppressWarnings("serial")
     @Test
     public void testData() {
         ClassifiedSupra testSupra = new ClassifiedSupra();
@@ -91,13 +90,13 @@ public class ClassifiedSupraTest {
         final Subcontext sub1 = new Subcontext(label);
         final Subcontext sub2 = new Subcontext(label);
         final Subcontext sub3 = new Subcontext(label);
-        testSupra = new ClassifiedSupra(new HashSet<Subcontext>() {
-            {
-                add(sub1);
-                add(sub2);
-                add(sub3);
-            }
-        }, BigInteger.ZERO);
+        testSupra = new ClassifiedSupra(new HashSet<>() {
+			{
+				add(sub1);
+				add(sub2);
+				add(sub3);
+			}
+		}, BigInteger.ZERO);
         assertFalse(testSupra.isEmpty());
         assertEquals(testSupra.getData(), new HashSet<Subcontext>() {
             {

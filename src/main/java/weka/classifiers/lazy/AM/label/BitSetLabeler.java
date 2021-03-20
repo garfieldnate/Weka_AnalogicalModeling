@@ -56,6 +56,20 @@ public class BitSetLabeler extends Labeler {
         return new BitSetLabel(new BitSet(), getCardinality());
     }
 
+	@Override
+	public Label fromBits(int labelBits) {
+		BitSet bits = new BitSet(getCardinality());
+		int index = 0;
+		while (labelBits != 0) {
+			if (labelBits % 2 != 0) {
+				bits.set(index);
+			}
+			++index;
+			labelBits = labelBits >>> 1;
+		}
+		return new BitSetLabel(bits, getCardinality());
+	}
+
     @Override
     public Label partition(Label label, int partitionIndex) {
         if (partitionIndex > numPartitions() || partitionIndex < 0)
@@ -75,7 +89,7 @@ public class BitSetLabeler extends Labeler {
     /**
      * Private class for storing label partitions
      */
-    private class Partitioner {
+    private static class Partitioner {
         private final int startIndex;
         private final int cardinality;
 

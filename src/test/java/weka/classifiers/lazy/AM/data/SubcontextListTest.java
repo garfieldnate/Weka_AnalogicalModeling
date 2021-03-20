@@ -51,13 +51,12 @@ public class SubcontextListTest {
     }
 
     private List<Subcontext> getSubList(final SubcontextList subcontextList) {
-        @SuppressWarnings("serial") List<Subcontext> subs = new ArrayList<Subcontext>() {
-            {
-                for (Subcontext s : subcontextList)
-                    add(s);
-            }
-        };
-        return subs;
+		return new ArrayList<>() {
+			{
+				for (Subcontext s : subcontextList)
+					add(s);
+			}
+		};
     }
 
     @Test

@@ -5,16 +5,16 @@ plugins {
 
 version = getVersionFromDescriptionProps()
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  compile 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
-  compile group: 'com.google.guava', name: 'guava', version: '19.0'
+  implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
+  implementation group: 'com.google.guava', name: 'guava', version: '19.0'
   testImplementation 'junit:junit:4.11',
   [group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.9.5']
 }

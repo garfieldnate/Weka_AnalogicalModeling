@@ -12,7 +12,7 @@ public class LongLabelerTest {
     /**
      * Test that LongLabeler can work with data larger than 32 bits.
      *
-     * @throws Exception
+     * @throws Exception if there's a problem loading the Soybean dataset
      */
     @Test
     public void testLabelLargeInstance() throws Exception {

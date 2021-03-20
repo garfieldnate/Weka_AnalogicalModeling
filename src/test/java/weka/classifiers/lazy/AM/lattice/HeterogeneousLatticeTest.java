@@ -6,13 +6,11 @@ import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.data.Supracontext;
-import weka.classifiers.lazy.AM.label.IntLabeler;
-import weka.classifiers.lazy.AM.label.Label;
-import weka.classifiers.lazy.AM.label.Labeler;
-import weka.classifiers.lazy.AM.label.MissingDataCompare;
+import weka.classifiers.lazy.AM.label.*;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.util.BitSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -54,9 +52,13 @@ public class HeterogeneousLatticeTest {
 
             @Override
             public Label getAllMatchLabel() {
-                // TODO Auto-generated method stub
                 return null;
             }
+
+			@Override
+			public Label fromBits(int labelBits) {
+				return null;
+			}
         };
         SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
         HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList, 0);
