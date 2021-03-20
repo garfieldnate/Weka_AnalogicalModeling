@@ -149,7 +149,6 @@ public class LabelTest {
 
 	// Currently this also checks iterator order, which shouldn't matter.
 	// For now, it's fine.
-	// TODO: should use correct Label class instead of always using IntLabel.
 	@Test
 	public void testDescendantIterator() {
 		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);

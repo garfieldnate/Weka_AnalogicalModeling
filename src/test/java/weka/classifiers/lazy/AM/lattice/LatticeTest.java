@@ -27,7 +27,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -52,7 +55,6 @@ public class LatticeTest {
      */
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() {
-		// Note that HeterogeneousLattice isn't here because its behavior is quite different. TODO: can we apply *any* of the tests to HeteroLattice?
 		return List.of(
 				new Object[]{
 						"BasicLattice", (Supplier<Lattice>) BasicLattice::new
@@ -62,7 +64,17 @@ public class LatticeTest {
 				},
 				new Object[]{
 						"Sparse Lattice", (Supplier<Lattice>) SparseLattice::new
+				},
+				new Object[]{
+						"Johnsen-Johansson Lattice", (Supplier<Lattice>) JohnsenJohanssonLattice::new
+				},
+				new Object[]{
+						"Heterogeneous Lattice", (Supplier<Lattice>) () -> new HeterogeneousLattice(0)
 				});
+	}
+
+	private void skipForLatticeClass(String reason, Class<? extends Lattice> clazz) {
+		assumeThat(reason, latticeSupplier.get(), not(instanceOf(clazz)));
 	}
 
 	@Test
@@ -82,6 +94,8 @@ public class LatticeTest {
 
 	@Test
 	public void testChapter3Data() throws Exception {
+		skipForLatticeClass("Not designed for prediction", HeterogeneousLattice.class);
+		skipForLatticeClass("Inaccurate for small datasets", JohnsenJohanssonLattice.class);
 		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
 		String[] expectedSupras = new String[]{
 				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]", "[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]"
@@ -96,6 +110,8 @@ public class LatticeTest {
      */
     @Test
     public void testHeterogeneousMarking() throws Exception {
+		skipForLatticeClass("Not designed for prediction", HeterogeneousLattice.class);
+		skipForLatticeClass("Inaccurate for small datasets", JohnsenJohanssonLattice.class);
         Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "6-10");
         String[] expectedSupras = new String[]{
             "[1x(01010|&nondeterministic&|H,A,V,I,0,A/H,A,V,A,0,B)]", "[2x(10000|A|K,U,V,U,0,A)]",
@@ -117,10 +133,12 @@ public class LatticeTest {
      * Test that {@link BasicLattice#cleanSupra()} is only run after a
      * subcontext is inserted completely, not after each single insertion
      */
-    @Test
+	@Test
     public void testCleanSupraTiming() throws Exception {
-        Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "1,7-10");
+		skipForLatticeClass("Not designed for prediction", HeterogeneousLattice.class);
+		skipForLatticeClass("Inaccurate for small datasets", JohnsenJohanssonLattice.class);
 
+        Instances train = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "1,7-10");
         String[] expectedSupras = new String[]{
             "[6x(00000|A|U,V,U,0,?,A)]", "[3x(00000|A|U,V,U,0,?,A),(00100|A|U,V,I,0,?,A)]",
             "[3x(00000|A|U,V,U,0,?,A),(01100|A|U,0,?,0,?,A),(00100|A|U,V,I,0,?,A)]"
