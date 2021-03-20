@@ -2,6 +2,10 @@
 
 This project is a Weka plugin containing state-of-the-art algorithms for classification using [analogical modeling](https://en.wikipedia.org/wiki/Analogical_modeling).
 
+* [Issue Tracker](https://github.com/garfieldnate/Weka_AnalogicalModeling/issues)
+* [Repository](https://github.com/garfieldnate/Weka_AnalogicalModeling)
+* [Documentation](http://garfieldnate.github.io/Weka_AnalogicalModeling/)
+
 ### Installation and Use in Weka
 
 1. Download Weka. You need at least 3.7.2 to use the package manager. You can download it here: http://www.cs.waikato.ac.nz/ml/weka/
@@ -27,6 +31,7 @@ This project is a Weka plugin containing state-of-the-art algorithms for classif
 ![weka classifier screen with analogical modeling classifier output](https://user-images.githubusercontent.com/778453/50684600-6f0da180-1016-11e9-9238-6bb4c1318fd0.png)
 
 ### About Analogical Modeling
+
 Analogical Modeling (or AM) was developed as an exemplar-based approach to modeling language usage, and has also been found useful in modeling other "sticky" phenomena. AM is especially suited to this because it predicts probabilistic occurrences instead of assigning static labels for instances.
 
 AM was not designed to be a classifier, but as a cognitive theory explaining variation in human behavior. As such, though in practice it is often used like any other machine learning classifier, there are fine theoretical points in which it differs. As a theory of human behavior, much of the value in its predictions lies in matching observed human behavior, including non-determinism and degradations in accuracy caused by paucity of data.
@@ -51,6 +56,7 @@ As an evolving project, the most important design principle has been modularity 
 Some algorithmic improvements have been made to the distributed lattice and approximate lattice filling algorithms. Concurrency is also used extensively so that 8 CPU cores will fill lattices roughly 8 times faster, etc.
 
 ### Building
+
 This project is managed with [Gradle](https://gradle.org/). The following build commands are then available:
 
     # compile Java source into a jar
@@ -61,8 +67,6 @@ This project is managed with [Gradle](https://gradle.org/). The following build 
     ./gradlew javadoc
     # build the project archive for release as a Weka plugin
     ./gradlew dist
-    # generate an Eclipse project
-    ./gradlew eclipse
     # bump the minor version number (update Description.props, git commit/tag/push)
     ./gradlew bumpMinor
 
