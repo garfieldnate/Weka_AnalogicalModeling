@@ -13,6 +13,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 import static weka.classifiers.lazy.AM.TestUtils.mockInstance;
 import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
 
@@ -65,13 +65,12 @@ public class LabelTest {
 
     // test that equals() and hashCode() work correctly and agree
     @Test
-    public void testEquivalence() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testEquivalence() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label firstLabel = labeler.label(data.get(1));// 001
-        Label secondLabel = labeler.label(data.get(5));// 001
-        Label thirdLabel = labeler.label(data.get(2));// 101
+        Label firstLabel = labeler.fromBits(0b001);
+        Label secondLabel = labeler.fromBits(0b001);
+        Label thirdLabel = labeler.fromBits(0b101);
 
         assertLabelEquals(firstLabel, secondLabel);
         assertLabelEquals(firstLabel, firstLabel);
@@ -95,37 +94,33 @@ public class LabelTest {
     }
 
     @Test
-    public void testGetCardinality() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
-
-        Label firstLabel = labeler.label(data.get(1));// 001
-        assertEquals(firstLabel.getCardinality(), 3);
+    public void testGetCardinality() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+		Label testLabel = labeler.fromBits(0b001);
+        assertEquals(testLabel.getCardinality(), 3);
     }
 
     @Test
-    public void testMatches() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testMatches() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label testLabel = labeler.label(data.get(1));// 001
+		Label testLabel = labeler.fromBits(0b001);
         boolean[] matches = new boolean[]{false, true, true};
         for (int i = 0; i < matches.length; i++)
             assertEquals(testLabel.matches(i), matches[i]);
 
         matches = new boolean[]{false, true, false};
-        testLabel = labeler.label(data.get(2));// 101
+        testLabel = labeler.fromBits(0b101);
         for (int i = 0; i < matches.length; i++)
             assertEquals(testLabel.matches(i), matches[i]);
     }
 
     @Test
-    public void testIntersect() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testIntersect() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label label1 = labeler.label(data.get(1));// 001
-        Label label2 = labeler.label(data.get(4));// 100
+		Label label1 = labeler.fromBits(0b001);
+		Label label2 = labeler.fromBits(0b100);
         boolean[] matches = new boolean[]{false, true, false};
         Label intersected = label1.intersect(label2);
         for (int i = 0; i < matches.length; i++)
@@ -133,34 +128,31 @@ public class LabelTest {
     }
 
     @Test
-    public void testUnion() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testUnion() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label label1 = labeler.label(data.get(1));// 001
-        Label label2 = labeler.label(data.get(4));// 100
+		Label label1 = labeler.fromBits(0b001);
+		Label label2 = labeler.fromBits(0b100);
         Label intersected = label1.union(label2);
         for (int i = 0; i < intersected.getCardinality(); i++)
 			assertTrue(intersected.matches(i));
     }
 
     @Test
-    public void testMatchesThrowsExceptionForIndexTooLow() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testMatchesThrowsExceptionForIndexTooLow() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label testLabel = labeler.label(data.get(1));// 001
+		Label testLabel = labeler.fromBits(0b001);
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("Illegal index"));
         testLabel.matches(-10);
     }
 
     @Test
-    public void testMatchesThrowsExceptionForIndexTooHigh() throws Exception {
-        Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
+    public void testMatchesThrowsExceptionForIndexTooHigh() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
-        Label testLabel = labeler.label(data.get(1));// 001
+        Label testLabel = labeler.fromBits(0b001);
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(new StringContains("Illegal index"));
         testLabel.matches(3);
@@ -170,11 +162,9 @@ public class LabelTest {
 	// For now, it's fine.
 	// TODO: should use correct Label class instead of always using IntLabel.
 	@Test
-	public void testDescendantIterator() throws Exception {
-		Instances data = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-		Labeler labeler = labelerConstructor.newInstance(MATCH, data.get(0), false);
-		Label label = labeler.label(data.get(4));
-		assertEquals(label, labeler.fromBits(0b100));
+	public void testDescendantIterator() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
+		Label label = labeler.fromBits(0b100);
 
 		Set<Label> expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b101), labeler.fromBits(0b111), labeler.fromBits(0b110)));
 
@@ -186,10 +176,8 @@ public class LabelTest {
 		// comparing:
 		// V , O , V , I , 0 , ? , O , T , T , A , A
 		// V , U , V , O , 0 , ? , 0 , ? , L , E , A
-		data = TestUtils.getDataSet(TestUtils.FINNVERB);
-		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, data.get(165), false);
-		label = labeler.label(data.get(166));
-		assertEquals(label, labeler.fromBits(0b0101001111));
+		labeler = labelerConstructor.newInstance(MissingDataCompare.VARIABLE, mockInstance(10), false);
+		label = labeler.fromBits(0b0101001111);
 
 		expectedLabels = new HashSet<>(Arrays.asList(labeler.fromBits(0b0101011111), labeler.fromBits(0b0101111111), labeler.fromBits(0b0101101111),
 				labeler.fromBits(0b0111101111), labeler.fromBits(0b0111111111), labeler.fromBits(0b0111011111),
@@ -204,12 +192,14 @@ public class LabelTest {
 	}
 
 	@Test
-	public void testIsDescendantOf() throws Exception {
-		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(4), false);
+	public void testIsDescendantOf() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Labeler labeler = labelerConstructor.newInstance(MATCH, mockInstance(3), false);
 
 		Label parentLabel = labeler.fromBits(0b100);
+
 		Label descendantLabel = labeler.fromBits(0b101);
 		assertTrue(descendantLabel.isDescendantOf(parentLabel));
+
 		Label nonDescendantLabel = labeler.fromBits(0b001);
 		assertFalse(nonDescendantLabel.isDescendantOf(parentLabel));
 	}

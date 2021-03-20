@@ -313,7 +313,8 @@ public class TestUtils {
 
     public static Instance mockInstance(int numAttributes) {
 		Instance inst = mock(Instance.class);
-		when(inst.numAttributes()).thenReturn(numAttributes);
+		// add one attribute for the class, so that numAttributes matches the resulting label size exactly
+		when(inst.numAttributes()).thenReturn(numAttributes + 1);
 		return inst;
 	}
 }
