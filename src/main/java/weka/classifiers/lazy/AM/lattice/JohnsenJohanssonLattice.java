@@ -86,7 +86,7 @@ public class JohnsenJohanssonLattice implements Lattice {
     private final Set<Supracontext> supras = new HashSet<>();
     private static final BigInteger TWO = BigInteger.valueOf(2);
 
-    public JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
+	JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
         // first organize sub labels by outcome for quick H(p) construction
         Map<Double, List<Label>> outcomeSubMap = new HashMap<>();
         for (Subcontext s : sublist) {

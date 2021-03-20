@@ -63,7 +63,7 @@ public class BasicLattice implements Lattice {
         heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
     }
 
-    /**
+	/**
      * Initializes the empty and the heterogeneous supracontexts as well as the
      * lattice
      */
@@ -81,7 +81,7 @@ public class BasicLattice implements Lattice {
      *
      * @param subList List of subcontexts
      */
-    public BasicLattice(SubcontextList subList) {
+    BasicLattice(SubcontextList subList) {
 
         init();
 

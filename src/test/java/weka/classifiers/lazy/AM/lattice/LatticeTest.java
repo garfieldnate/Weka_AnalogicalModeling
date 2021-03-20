@@ -14,14 +14,16 @@ import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory.BasicLatticeFactory;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory.DistributedLatticeFactory;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory.SparseLatticeFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,31 +38,28 @@ public class LatticeTest {
     @Parameter()
     public String testName;
     @Parameter(1)
-    public Constructor<Lattice> latticeConstructor;
+    public LatticeFactory latticeFactory;
 
-    /**
+	/**
      * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
-     * <li>arg[1] is the {@link Constructor} for the {@link Lattice} to be tested.</li> </ol>
+     * <li>arg[1] is a {@link LatticeFactory} for the {@link Lattice} to be tested.</li> </ol>
      */
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> instancesToTest() throws NoSuchMethodException, SecurityException {
-        Collection<Object[]> parameters = new ArrayList<>();
-
-        // basic, non-distributed lattice
-        parameters.add(new Object[]{
-            BasicLattice.class.getSimpleName(), BasicLattice.class.getConstructor(SubcontextList.class)
-        });
-        // distributed lattice
-        parameters.add(new Object[]{
-            DistributedLattice.class.getSimpleName(), DistributedLattice.class.getConstructor(SubcontextList.class)
-        });
-        // sparse lattice
-        parameters.add(new Object[]{
-            SparseLattice.class.getSimpleName(), SparseLattice.class.getConstructor(SubcontextList.class)
-        });
-
-        return parameters;
-    }
+	@Parameterized.Parameters(name = "{0}")
+	public static Collection<Object[]> instancesToTest() {
+		return List.of(
+				// basic, non-distributed lattice
+				new Object[]{
+						"BasicLattice", new BasicLatticeFactory()
+				},
+				// distributed lattice
+				new Object[]{
+						"Distributed Lattice", new DistributedLatticeFactory()
+				},
+				// sparse lattice
+				new Object[]{
+						"Sparse Lattice", new SparseLatticeFactory()
+				});
+	}
 
     @Test
     public void testChapter3Data() throws Exception {
@@ -119,11 +118,11 @@ public class LatticeTest {
      * @param expectedSupras String representations of the supracontexts that should be created from the train/test
      *                       combo
      */
-    private void testSupras(Instances train, int testIndex, String[] expectedSupras) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void testSupras(Instances train, int testIndex, String[] expectedSupras) throws ExecutionException, InterruptedException {
         final Instance test = train.get(testIndex);
         train.remove(testIndex);
         SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train);
-        Lattice testLattice = latticeConstructor.newInstance(subList);
+        Lattice testLattice = latticeFactory.createLattice(subList);
         Set<Supracontext> actualSupras = testLattice.getSupracontexts();
 
         assertEquals(expectedSupras.length, actualSupras.size());
@@ -136,7 +135,7 @@ public class LatticeTest {
     // create a labeler which splits labels into labels of cardinality 1
     private Labeler getFullSplitLabeler(final Instance test) {
         return new Labeler(MissingDataCompare.VARIABLE, test, false) {
-            final Labeler internal = new IntLabeler(MissingDataCompare.VARIABLE, test, false);
+            final Labeler internal = new IntLabeler(test, false, MissingDataCompare.VARIABLE);
 
             @Override
             public Label label(Instance data) {

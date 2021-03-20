@@ -34,7 +34,7 @@ public class SparseLattice implements Lattice {
     private static final BigInteger two = BigInteger.valueOf(2);
     final List<Concept<ClassifiedSupra>> tagList;
 
-    public SparseLattice(SubcontextList subList) {
+	SparseLattice(SubcontextList subList) {
         tagList = new LinkedList<>();
         Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler().getAllMatchLabel(), new ClassifiedSupra());
         lattice.add(bottom);

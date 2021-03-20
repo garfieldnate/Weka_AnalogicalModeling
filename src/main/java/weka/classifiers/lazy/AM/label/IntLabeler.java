@@ -45,8 +45,6 @@ public class IntLabeler extends Labeler {
      *
      * @throws IllegalArgumentException if the cardinality of the input instance is greater than 32
      */
-    // TODO: since this throws an exception, perhaps a static factory method
-    // would be better?
     public IntLabeler(MissingDataCompare mdc, Instance instance, boolean ignoreUnknowns) {
         super(mdc, instance, ignoreUnknowns);
         if (getCardinality() > IntLabel.MAX_CARDINALITY) throw new IllegalArgumentException(

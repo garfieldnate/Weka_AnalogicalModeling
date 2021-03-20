@@ -10,7 +10,6 @@ import weka.classifiers.lazy.AM.label.*;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.util.BitSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;

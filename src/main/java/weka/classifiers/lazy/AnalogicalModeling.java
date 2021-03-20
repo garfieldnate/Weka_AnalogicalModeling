@@ -23,8 +23,8 @@ import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.LabelerFactory;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
-import weka.classifiers.lazy.AM.lattice.CardinalityBasedLatticeFactory;
 import weka.classifiers.lazy.AM.lattice.Lattice;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -178,8 +178,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
         // 1. Place each data item in a subcontext
         SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
         // 2. Place subcontexts into a supracontextual lattice
-        Lattice lattice = CardinalityBasedLatticeFactory.INSTANCE.createLattice(subList);
-        // 3. create analogical set from the pointers in resulting homogeneous
+		Lattice lattice = new LatticeFactory.CardinalityBasedLatticeFactory().createLattice(subList);
+		// 3. create analogical set from the pointers in resulting homogeneous
         // supracontexts
         // we save the analogical set for use with AnalogicalModelingOutput
         as = new AnalogicalSet(lattice, testItem, m_linearCount);

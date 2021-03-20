@@ -55,7 +55,7 @@ public class DistributedLattice implements Lattice {
 	private static final int MIN_THREADS = 3;
 	private final Set<Supracontext> supras;
 
-    /**
+	/**
      * @return the list of homogeneous supracontexts created with this lattice
      */
     @Override
@@ -73,7 +73,7 @@ public class DistributedLattice implements Lattice {
      * @throws ExecutionException If execution is rejected for some reason
      * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
-    public DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
+    DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
         Labeler labeler = subList.getLabeler();
 
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(MIN_THREADS, NUM_CORES));
@@ -123,7 +123,7 @@ public class DistributedLattice implements Lattice {
 
     }
 
-    /**
+	/**
      * Combines two sets of supracontexts (heterogeneous lattices) into one new
      * set of supracontexts for a heterogeneous lattice.
      */
