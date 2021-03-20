@@ -107,7 +107,7 @@ public class AnalogicalSet {
                 e,
                 new BigDecimal(exPointerMap.get(e)).divide(
                     new BigDecimal(getTotalPointers()),
-                    AMUtils.matchContext
+                    AMUtils.mathContext
                 )
             );
 
@@ -124,7 +124,7 @@ public class AnalogicalSet {
         for (String className : classPointerMap.keySet())
             classLikelihoodMap.put(className,
                                    new BigDecimal(classPointerMap.get(className)).divide(new BigDecimal(totalPointers),
-                                                                                         AMUtils.matchContext
+                                                                                         AMUtils.mathContext
                                    )
             );
         // Find the classes with the highest likelihood (there may be a tie)
@@ -204,7 +204,7 @@ public class AnalogicalSet {
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.matchContext))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.mathContext))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
         }
@@ -217,7 +217,7 @@ public class AnalogicalSet {
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.matchContext))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.mathContext))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
 

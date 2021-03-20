@@ -63,6 +63,6 @@ public class AMUtils {
     /**
      * This is used by all of the BigDecimals. Precision is to 10 decimals.
      */
-    public static final MathContext matchContext = new MathContext(10, RoundingMode.HALF_EVEN);
+    public static final MathContext mathContext = new MathContext(10, RoundingMode.HALF_EVEN);
 
 }
