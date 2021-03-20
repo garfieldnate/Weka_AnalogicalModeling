@@ -60,10 +60,11 @@ import java.util.Set;
  */
 public class HeterogeneousLattice implements Lattice {
 
-    /**
+	private final int partitionIndex;
+	/**
      * Lattice is a 2^n array of Supracontexts
      */
-    private Map<Label, LinkedLatticeNode<BasicSupra>> lattice;
+    private final Map<Label, LinkedLatticeNode<BasicSupra>> lattice;
 
     // the current number of the subcontext being added
     private int index = -1;
@@ -71,36 +72,37 @@ public class HeterogeneousLattice implements Lattice {
     /**
      * All points in the lattice point to the empty supracontext by default.
      */
-    private LinkedLatticeNode<BasicSupra> emptySupracontext;
-
-    /**
-     * Initializes the empty and the heterogeneous supracontexts as well as the
-     * lattice
-     */
-    private void init() {
-        emptySupracontext = new LinkedLatticeNode<>(new BasicSupra());
-        emptySupracontext.setNext(emptySupracontext);
-
-        lattice = new HashMap<>();
-    }
+    private final LinkedLatticeNode<BasicSupra> emptySupracontext;
+    private boolean filled;
 
     /**
      * Initializes Supracontextual lattice to a 2^n length array of
-     * Supracontexts and then fills it with the contents of subList
+     * Supracontexts, as well as the empty and the heterogeneous supracontexts.
      *
-     * @param subList List of subcontexts
-     * @param i       label partition index
+     * @param partitionIndex       which label partition to use in assigning subcontexts to supracontexts
      */
-    public HeterogeneousLattice(SubcontextList subList, int i) {
-        Labeler labeler = subList.getLabeler();
-        init();
+    public HeterogeneousLattice(int partitionIndex) {
+		this.partitionIndex = partitionIndex;
+		emptySupracontext = new LinkedLatticeNode<>(new BasicSupra());
+		emptySupracontext.setNext(emptySupracontext);
 
-        // Fill the lattice with all of the subcontexts, masking labels
-        for (Subcontext sub : subList) {
-            index++;
-            insert(sub, labeler.partition(sub.getLabel(), i));
-        }
+		lattice = new HashMap<>();
     }
+
+    @Override
+	public void fill(SubcontextList subList) {
+    	if (filled) {
+    		throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
+		}
+    	filled = true;
+		Labeler labeler = subList.getLabeler();
+
+		// Fill the lattice with all of the subcontexts, masking labels
+		for (Subcontext sub : subList) {
+			index++;
+			insert(sub, labeler.partition(sub.getLabel(), partitionIndex));
+		}
+	}
 
     /**
      * Inserts sub into the lattice, into location given by label

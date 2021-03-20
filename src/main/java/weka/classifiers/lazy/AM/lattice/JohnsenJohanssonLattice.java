@@ -85,8 +85,16 @@ public class JohnsenJohanssonLattice implements Lattice {
     private static final int NUM_EXPERIMENTS = 10;
     private final Set<Supracontext> supras = new HashSet<>();
     private static final BigInteger TWO = BigInteger.valueOf(2);
+	private boolean filled;
 
-	JohnsenJohanssonLattice(SubcontextList sublist) throws InterruptedException, ExecutionException {
+	JohnsenJohanssonLattice(){}
+
+	@Override
+	public void fill(SubcontextList sublist) throws InterruptedException, ExecutionException {
+		if (filled) {
+			throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
+		}
+		filled = true;
         // first organize sub labels by outcome for quick H(p) construction
         Map<Double, List<Label>> outcomeSubMap = new HashMap<>();
         for (Subcontext s : sublist) {

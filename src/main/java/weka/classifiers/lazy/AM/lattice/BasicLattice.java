@@ -42,55 +42,47 @@ import java.util.Set;
  * @author Nate Glenn
  */
 public class BasicLattice implements Lattice {
+	/**
+	 * points to nothing, has no data or outcome.
+	 */
+	private static final LinkedLatticeNode<ClassifiedSupra> heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
+	/**
+	 * All points in the lattice point to the empty supracontext by default.
+	 */
+	private final LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
 
     /**
      * Lattice is a 2^n array of Supracontexts
      */
-    private Map<Label, LinkedLatticeNode<ClassifiedSupra>> lattice;
-
+    private final Map<Label, LinkedLatticeNode<ClassifiedSupra>> lattice;
+	private boolean filled;
     // the current number of the subcontext being added
     private int index = -1;
 
     /**
-     * All points in the lattice point to the empty supracontext by default.
-     */
-    private LinkedLatticeNode<ClassifiedSupra> emptySupracontext;
-
-    private static final LinkedLatticeNode<ClassifiedSupra> heteroSupra;
-
-    static {
-        // points to nothing, has no data or outcome.
-        heteroSupra = new LinkedLatticeNode<>(new ClassifiedSupra());
-    }
-
-	/**
-     * Initializes the empty and the heterogeneous supracontexts as well as the
-     * lattice
-     */
-    private void init() {
-        // TODO: dangit, now we have to support a blank constructor.
-        emptySupracontext = new LinkedLatticeNode<>(new ClassifiedSupra());
-        emptySupracontext.setNext(emptySupracontext);
-
-        lattice = new HashMap<>();
-    }
-
-    /**
      * Initializes Supracontextual lattice to a 2^n length array of
-     * Supracontexts and then fills it with the contents of subList
-     *
-     * @param subList List of subcontexts
+     * Supracontexts, as well as the empty and heterogeneous supracontexts.
      */
-    BasicLattice(SubcontextList subList) {
+    BasicLattice() {
+		// TODO: dangit, now we have to support a blank constructor.
+		emptySupracontext = new LinkedLatticeNode<>(new ClassifiedSupra());
+		emptySupracontext.setNext(emptySupracontext);
 
-        init();
-
-        // Fill the lattice with all of the subcontexts
-        for (Subcontext sub : subList) {
-            index++;
-            insert(sub);
-        }
+		lattice = new HashMap<>();
     }
+
+    @Override
+	public void fill(SubcontextList subList) {
+		if (filled) {
+			throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
+		}
+		filled = true;
+		// Fill the lattice with all of the subcontexts
+		for (Subcontext sub : subList) {
+			index++;
+			insert(sub);
+		}
+	}
 
     /**
      * Inserts sub into the lattice.

@@ -49,16 +49,6 @@ public class SubcontextList implements Iterable<Subcontext> {
     }
 
     /**
-     * If you use this constructor, you will have to call the {@link #add}
-     * method repeatedly in order to fill the contexts.
-     *
-     * @param labeler Labeler for assigning labels to input training data items
-     */
-    SubcontextList(Labeler labeler) {
-        this.labeler = labeler;
-    }
-
-    /**
      * This is the easiest to use constructor. It creates and stores a list of
      * subcontexts given classified exemplars and an exemplar to be classified.
      *

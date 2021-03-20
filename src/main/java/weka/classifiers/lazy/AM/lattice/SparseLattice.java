@@ -33,9 +33,22 @@ public class SparseLattice implements Lattice {
     private final List<Concept<ClassifiedSupra>> lattice = new ArrayList<>();
     private static final BigInteger two = BigInteger.valueOf(2);
     final List<Concept<ClassifiedSupra>> tagList;
+	private boolean filled;
 
-	SparseLattice(SubcontextList subList) {
-        tagList = new LinkedList<>();
+	SparseLattice(){
+		tagList = new LinkedList<>();
+	}
+
+	@Override
+	public void fill(SubcontextList subList) {
+		if (filled) {
+			throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
+		}
+		filled = true;
+		if (subList.size() == 0) {
+			return;
+		}
+		// TODO: the top is the bottom? That's confusing :/
         Concept<ClassifiedSupra> bottom = new Concept<>(subList.getLabeler().getLatticeTop(), new ClassifiedSupra());
         lattice.add(bottom);
         // int i = 0;

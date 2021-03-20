@@ -45,7 +45,8 @@ import java.util.function.BiFunction;
 import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
 /**
- * This lass manages several smaller, heterogeneous lattices.
+ * This lass manages several smaller, heterogeneous lattices. The
+ * supracontexts of smaller lattices are combined to create the final Supracontexts.
  *
  * @author Nathan Glenn
  */
@@ -53,7 +54,8 @@ public class DistributedLattice implements Lattice {
 	// Less than 3 threads and this implementation will hang forever!
 	// TODO: introduce task framework that accounts for tasks adding subtasks
 	private static final int MIN_THREADS = 3;
-	private final Set<Supracontext> supras;
+	private Set<Supracontext> supras;
+	private boolean filled;
 
 	/**
      * @return the list of homogeneous supracontexts created with this lattice
@@ -63,17 +65,25 @@ public class DistributedLattice implements Lattice {
         return supras;
     }
 
+	public DistributedLattice(){}
+
     /**
-     * Creates a distributed lattice for creating Supracontexts. The
-     * supracontexts of smaller lattices are combined to create the final
-     * Supracontexts. The number of lattices is determined by
-     * {@link Labeler#numPartitions()}.
+	 * {@inheritDoc}
+     * The number of sub-lattices is determined via {@link Labeler#numPartitions() subList.getLabeler().numPartitions()}.
      *
      * @param subList list of Subcontexts to add to the lattice
      * @throws ExecutionException If execution is rejected for some reason
      * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
-    DistributedLattice(SubcontextList subList) throws InterruptedException, ExecutionException {
+    @Override
+	public void fill(SubcontextList subList) throws InterruptedException, ExecutionException {
+		if (filled) {
+			throw new IllegalStateException("Lattice is already filled and cannot be filled again.");
+		}
+		filled = true;
+		if (subList.size() == 0) {
+			return;
+		}
         Labeler labeler = subList.getLabeler();
 
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(MIN_THREADS, NUM_CORES));
@@ -117,7 +127,8 @@ public class DistributedLattice implements Lattice {
 
         @Override
         public Set<Supracontext> call() {
-            HeterogeneousLattice lattice = new HeterogeneousLattice(subList, partitionIndex);
+            HeterogeneousLattice lattice = new HeterogeneousLattice(partitionIndex);
+            lattice.fill(subList);
             return lattice.getSupracontexts();
         }
 

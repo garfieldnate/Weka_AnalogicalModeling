@@ -177,8 +177,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
 		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
-        // 2. Place subcontexts into a supracontextual lattice
-		Lattice lattice = new LatticeFactory.CardinalityBasedLatticeFactory().createLattice(subList);
+        // 2. Create a supracontextual lattice and fill it with subcontexts
+		Lattice lattice = new LatticeFactory.CardinalityBasedLatticeFactory(subList.getCardinality(), subList.getLabeler().numPartitions()).createLattice();
+		lattice.fill(subList);
 		// 3. create analogical set from the pointers in resulting homogeneous
         // supracontexts
         // we save the analogical set for use with AnalogicalModelingOutput

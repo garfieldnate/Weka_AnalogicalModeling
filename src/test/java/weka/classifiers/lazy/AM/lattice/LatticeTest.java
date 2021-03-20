@@ -1,6 +1,9 @@
 package weka.classifiers.lazy.AM.lattice;
 
+import org.hamcrest.core.StringContains;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -14,18 +17,18 @@ import weka.classifiers.lazy.AM.label.IntLabeler;
 import weka.classifiers.lazy.AM.label.Label;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
-import weka.classifiers.lazy.AM.lattice.LatticeFactory.BasicLatticeFactory;
-import weka.classifiers.lazy.AM.lattice.LatticeFactory.DistributedLatticeFactory;
-import weka.classifiers.lazy.AM.lattice.LatticeFactory.SparseLatticeFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test the lattices that can be used for item classification. These are
@@ -38,37 +41,53 @@ public class LatticeTest {
     @Parameter()
     public String testName;
     @Parameter(1)
-    public LatticeFactory latticeFactory;
+    public Supplier<Lattice> latticeSupplier;
+
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
 
 	/**
      * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
-     * <li>arg[1] is a {@link LatticeFactory} for the {@link Lattice} to be tested.</li> </ol>
+     * <li>arg[1] is a supplier of {@link Lattice} test instances.</li> </ol>
      */
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() {
+		// Note that HeterogeneousLattice isn't here because its behavior is quite different. TODO: can we apply *any* of the tests to HeteroLattice?
 		return List.of(
-				// basic, non-distributed lattice
 				new Object[]{
-						"BasicLattice", new BasicLatticeFactory()
+						"BasicLattice", (Supplier<Lattice>) BasicLattice::new
 				},
-				// distributed lattice
 				new Object[]{
-						"Distributed Lattice", new DistributedLatticeFactory()
+						"Distributed Lattice", (Supplier<Lattice>) DistributedLattice::new
 				},
-				// sparse lattice
 				new Object[]{
-						"Sparse Lattice", new SparseLatticeFactory()
+						"Sparse Lattice", (Supplier<Lattice>) SparseLattice::new
 				});
 	}
 
-    @Test
-    public void testChapter3Data() throws Exception {
-        Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-        String[] expectedSupras = new String[]{
-            "[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]", "[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]"
-        };
-        testSupras(train, 0, expectedSupras);
-    }
+	@Test
+	public void testFillingWithEmptySubcontextList() throws Exception {
+		Lattice lattice = latticeSupplier.get();
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+	}
+
+	@Test
+	public void testLatticeCannotBeFilledTwice() throws Exception {
+		Lattice lattice = latticeSupplier.get();
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+		exception.expect(IllegalStateException.class);
+		exception.expectMessage(new StringContains("already filled"));
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+	}
+
+	@Test
+	public void testChapter3Data() throws Exception {
+		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+		String[] expectedSupras = new String[]{
+				"[2x(001|&nondeterministic&|3,1,0,e/3,1,1,r)]", "[1x(100|r|2,1,2,r)]", "[1x(100|r|2,1,2,r),(110|r|0,3,2,r)]"
+		};
+		testSupras(train, 0, expectedSupras);
+	}
 
     /**
      * Test that supracontexts are properly marked heterogeneous.
@@ -122,7 +141,8 @@ public class LatticeTest {
         final Instance test = train.get(testIndex);
         train.remove(testIndex);
         SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train);
-        Lattice testLattice = latticeFactory.createLattice(subList);
+        Lattice testLattice = latticeSupplier.get();
+        testLattice.fill(subList);
         Set<Supracontext> actualSupras = testLattice.getSupracontexts();
 
         assertEquals(expectedSupras.length, actualSupras.size());

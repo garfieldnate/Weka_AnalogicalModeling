@@ -36,7 +36,8 @@ public class HeterogeneousLatticeTest {
 		Labeler noPartitionLabeler = Mockito.spy(new LabelerFactory.IntLabelerFactory().createLabeler(test, false, MissingDataCompare.MATCH));
 		when(noPartitionLabeler.numPartitions()).thenReturn(1);
 		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
-		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(subList, 0);
+		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(0);
+		heteroLattice.fill(subList);
 
 		Set<Supracontext> actualSupras = heteroLattice.getSupracontexts();
 
