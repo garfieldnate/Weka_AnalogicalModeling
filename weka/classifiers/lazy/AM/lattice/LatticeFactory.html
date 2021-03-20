@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -88,15 +88,15 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -116,23 +116,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <main role="main">
 <div class="header">
 <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">weka.classifiers.lazy.AM.lattice</a></div>
-<h2 title="Class LatticeFactory" class="title">Class LatticeFactory</h2>
+<h2 title="Interface LatticeFactory" class="title">Interface LatticeFactory</h2>
 </div>
 <div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>weka.classifiers.lazy.AM.lattice.LatticeFactory</li>
-</ul>
-</li>
-</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><code><a href="LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></code>, <code><a href="LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></code>, <code><a href="LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></code>, <code><a href="LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></code>, <code><a href="LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></code></dd>
+</dl>
 <hr>
-<pre>public class <span class="typeNameLabel">LatticeFactory</span>
-extends java.lang.Object</pre>
+<pre>public interface <span class="typeNameLabel">LatticeFactory</span></pre>
 <div class="block">Factory for creating <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattices</code></a>.</div>
 </li>
 </ul>
@@ -140,21 +135,47 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<!-- ======== NESTED CLASS SUMMARY ======== -->
 <section role="region">
 <ul class="blockList">
-<li class="blockList"><a id="constructor.summary">
+<li class="blockList"><a id="nested.class.summary">
 <!--   -->
 </a>
-<h3>Constructor Summary</h3>
+<h3>Nested Class Summary</h3>
 <table class="memberSummary">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Constructor</th>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Interface</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">LatticeFactory</a></span>()</code></th>
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></span></code></th>
+<td class="colLast">
+<div class="block">
+ Chooses the lattice implementation based on the cardinality of
+ the instances in the subcontext list.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -169,14 +190,14 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></code></td>
+<td class="colFirst"><code><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice</a></span>&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)</code></th>
 <td class="colLast">
 <div class="block">Fills a <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="../data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
@@ -185,13 +206,6 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
 </li>
 </ul>
 </section>
@@ -201,25 +215,6 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<section role="region">
-<ul class="blockList">
-<li class="blockList"><a id="constructor.detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a id="&lt;init&gt;()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>LatticeFactory</h4>
-<pre>public&nbsp;LatticeFactory()</pre>
-</li>
-</ul>
-</li>
-</ul>
-</section>
 <!-- ============ METHOD DETAIL ========== -->
 <section role="region">
 <ul class="blockList">
@@ -233,13 +228,12 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createLattice</h4>
-<pre class="methodSignature">public static&nbsp;<a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a>&nbsp;createLattice&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)
-                             throws java.lang.InterruptedException,
-                                    java.util.concurrent.ExecutionException</pre>
+<pre class="methodSignature"><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a>&nbsp;createLattice&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)
+               throws java.lang.InterruptedException,
+                      java.util.concurrent.ExecutionException</pre>
 <div class="block">Fills a <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="../data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
  contained in the input <a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data"><code>SubcontextList</code></a>, and returns the resulting
- lattice. The implementation of lattice used depends on the cardinality of
- the instances in the subcontext list.</div>
+ lattice.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>subList</code> - List of subcontexts to add to lattice</dd>
@@ -303,15 +297,15 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>

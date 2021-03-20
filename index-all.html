@@ -160,11 +160,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">This class holds the supracontextual lattice and does the work of filling
  itself during classification.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/BasicLattice.html#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList)">BasicLattice(SubcontextList)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/BasicLattice.html" title="class in weka.classifiers.lazy.AM.lattice">BasicLattice</a></dt>
-<dd>
-<div class="block">Initializes Supracontextual lattice to a 2^n length array of
- Supracontexts and then fills it with the contents of subList</div>
-</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html#%3Cinit%3E()">BasicLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/BasicSupra.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">BasicSupra</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>
 <div class="block">Basic implementation of <a href="weka/classifiers/lazy/AM/data/Supracontext.html" title="interface in weka.classifiers.lazy.AM.data"><code>Supracontext</code></a> with no extra features.</div>
@@ -191,7 +188,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">A <a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label"><code>Labeler</code></a> implementation that creates <a href="weka/classifiers/lazy/AM/label/BitSetLabel.html" title="class in weka.classifiers.lazy.AM.label"><code>BitSetLabels</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html#%3Cinit%3E(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">BitSetLabeler(MissingDataCompare, Instance, boolean)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html#%3Cinit%3E(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">BitSetLabeler(Instance, boolean, MissingDataCompare)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.BitSetLabelerFactory.html#%3Cinit%3E()">BitSetLabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.BitSetLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.BitSetLabelerFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabel.html#BOTTOM()">BOTTOM()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabel.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabel</a></dt>
 <dd>&nbsp;</dd>
@@ -216,6 +215,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The number of attributes.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html#%3Cinit%3E()">CardinalityBasedLabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.CardinalityBasedLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#%3Cinit%3E()">CardinalityBasedLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/ClassifiedSupra.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">ClassifiedSupra</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>
 <div class="block">This supracontext is called "classified" because it keeps track of its
@@ -250,17 +253,35 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LinkedLatticeNode.html#copy()">copy()</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LinkedLatticeNode.html" title="class in weka.classifiers.lazy.AM.lattice">LinkedLatticeNode</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Static method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.BitSetLabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.BitSetLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.BitSetLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.CardinalityBasedLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in interface weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="interface in weka.classifiers.lazy.AM.label">LabelerFactory</a></dt>
 <dd>
 <div class="block">Create and return a new <a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label"><code>Labeler</code></a> instance for labeling data
  instances via comparison with a test instance.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Static method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.IntLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in interface weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="interface in weka.classifiers.lazy.AM.lattice">LatticeFactory</a></dt>
 <dd>
 <div class="block">Fills a <a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="weka/classifiers/lazy/AM/data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
  contained in the input <a href="weka/classifiers/lazy/AM/data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data"><code>SubcontextList</code></a>, and returns the resulting
  lattice.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:D">
 <!--   -->
@@ -288,10 +309,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">This lass manages several smaller, heterogeneous lattices.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList)">DistributedLattice(SubcontextList)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html" title="class in weka.classifiers.lazy.AM.lattice">DistributedLattice</a></dt>
-<dd>
-<div class="block">Creates a distributed lattice for creating Supracontexts.</div>
-</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html#%3Cinit%3E()">DistributedLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AnalogicalModeling.html#distributionForInstance(weka.core.Instance)">distributionForInstance(Instance)</a></span> - Method in class weka.classifiers.lazy.<a href="weka/classifiers/lazy/AnalogicalModeling.html" title="class in weka.classifiers.lazy">AnalogicalModeling</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/evaluation/output/prediction/AnalogicalModelingOutput.html#doPrintClassification(double%5B%5D,weka.core.Instance,int)">doPrintClassification(double[], Instance, int)</a></span> - Method in class weka.classifiers.evaluation.output.prediction.<a href="weka/classifiers/evaluation/output/prediction/AnalogicalModelingOutput.html" title="class in weka.classifiers.evaluation.output.prediction">AnalogicalModelingOutput</a></dt>
@@ -375,17 +394,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Returns the tip text for this property.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html#getAllMatchLabel()">getAllMatchLabel()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabeler</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabeler.html#getAllMatchLabel()">getAllMatchLabel()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabeler.html" title="class in weka.classifiers.lazy.AM.label">IntLabeler</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#getAllMatchLabel()">getAllMatchLabel()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
-<dd>
-<div class="block">Creates and returns the label which belongs at the top of a boolean
- lattice, i.e.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LongLabeler.html#getAllMatchLabel()">getAllMatchLabel()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LongLabeler.html" title="class in weka.classifiers.lazy.AM.label">LongLabeler</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/evaluation/output/prediction/AnalogicalModelingOutput.html#getAnalogicalSet()">getAnalogicalSet()</a></span> - Method in class weka.classifiers.evaluation.output.prediction.<a href="weka/classifiers/evaluation/output/prediction/AnalogicalModelingOutput.html" title="class in weka.classifiers.evaluation.output.prediction">AnalogicalModelingOutput</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AnalogicalModeling.html#getAnalogicalSet()">getAnalogicalSet()</a></span> - Method in class weka.classifiers.lazy.<a href="weka/classifiers/lazy/AnalogicalModeling.html" title="class in weka.classifiers.lazy">AnalogicalModeling</a></dt>
@@ -470,7 +478,35 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/data/SubcontextList.html#getLabeler()">getLabeler()</a></span> - Method in class weka.classifiers.lazy.AM.data.<a href="weka/classifiers/lazy/AM/data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html#getLatticeBottom()">getLatticeBottom()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabeler.html#getLatticeBottom()">getLatticeBottom()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabeler.html" title="class in weka.classifiers.lazy.AM.label">IntLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#getLatticeBottom()">getLatticeBottom()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
+<dd>
+<div class="block">Creates and returns the label which belongs at the bottom of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LongLabeler.html#getLatticeBottom()">getLatticeBottom()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LongLabeler.html" title="class in weka.classifiers.lazy.AM.label">LongLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html#getLatticeTop()">getLatticeTop()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabeler.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabeler.html#getLatticeTop()">getLatticeTop()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabeler.html" title="class in weka.classifiers.lazy.AM.label">IntLabeler</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#getLatticeTop()">getLatticeTop()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
+<dd>
+<div class="block">Creates and returns the label which belongs at the top of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LongLabeler.html#getLatticeTop()">getLatticeTop()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LongLabeler.html" title="class in weka.classifiers.lazy.AM.label">LongLabeler</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AnalogicalModeling.html#getLinearCount()">getLinearCount()</a></span> - Method in class weka.classifiers.lazy.<a href="weka/classifiers/lazy/AnalogicalModeling.html" title="class in weka.classifiers.lazy">AnalogicalModeling</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html#getMaximumCardinality()">getMaximumCardinality()</a></span> - Method in interface weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="interface in weka.classifiers.lazy.AM.label">LabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html#getMaximumCardinality()">getMaximumCardinality()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.IntLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html#getMaximumCardinality()">getMaximumCardinality()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#getMissingDataCompare()">getMissingDataCompare()</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
 <dd>&nbsp;</dd>
@@ -628,7 +664,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Analogical Modeling uses labels composed of boolean vectors in order to group
  instances into subcontexts and subcontexts in supracontexts.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabeler.html#%3Cinit%3E(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">IntLabeler(MissingDataCompare, Instance, boolean)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabeler.html" title="class in weka.classifiers.lazy.AM.label">IntLabeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabeler.html#%3Cinit%3E(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">IntLabeler(Instance, boolean, MissingDataCompare)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabeler.html" title="class in weka.classifiers.lazy.AM.label">IntLabeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html#%3Cinit%3E()">IntLabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.IntLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/BitSetLabel.html#isDescendantOf(weka.classifiers.lazy.AM.label.Label)">isDescendantOf(Label)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/BitSetLabel.html" title="class in weka.classifiers.lazy.AM.label">BitSetLabel</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/IntLabel.html#isDescendantOf(weka.classifiers.lazy.AM.label.Label)">isDescendantOf(Label)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/IntLabel.html" title="class in weka.classifiers.lazy.AM.label">IntLabel</a></dt>
@@ -673,7 +711,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The approximation algorithm from "Efficient Modeling of Analogy", Johnsen and
  Johansson, DOI 10.1007/978-3-540-30586-6_77.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/JohnsenJohanssonLattice.html#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList)">JohnsenJohanssonLattice(SubcontextList)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/JohnsenJohanssonLattice.html" title="class in weka.classifiers.lazy.AM.lattice">JohnsenJohanssonLattice</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html#%3Cinit%3E()">JohnsenJohanssonLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a id="I:L">
@@ -708,28 +746,50 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Analogical Modeling uses labels composed of boolean vectors in order to group
  instances into subcontexts and subcontexts in supracontexts.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#%3Cinit%3E(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">Labeler(MissingDataCompare, Instance, boolean)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/Labeler.html#%3Cinit%3E(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">Labeler(Instance, boolean, MissingDataCompare)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/label/Labeler.Partition.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">Labeler.Partition</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
 <dd>
 <div class="block">Simple class for storing index spans.</div>
 </dd>
-<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
+<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="interface in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory</span></a> - Interface in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
 <dd>
 <div class="block">A factory for creating <a href="weka/classifiers/lazy/AM/label/Labeler.html" title="class in weka.classifiers.lazy.AM.label"><code>Labeler</code></a> instances.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.html#%3Cinit%3E()">LabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory</a></dt>
+<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.BitSetLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory.BitSetLabelerFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory.CardinalityBasedLabelerFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
+<dd>
+<div class="block">
+ The cardinality of the instances restricts what kinds of <a href="weka/classifiers/lazy/AM/label/Label.html" title="class in weka.classifiers.lazy.AM.label"><code>labels</code></a> can be used, and
+ the Labeler which produces the smallest, fastest labels will be returned.</div>
+</dd>
+<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory.IntLabelerFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label"><span class="typeNameLink">LabelerFactory.LongLabelerFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/label/package-summary.html">weka.classifiers.lazy.AM.label</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">Lattice</span></a> - Interface in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
 <dd>
 <div class="block">Given a list of subcontexts, a lattice creates a collection of supracontexts,
  which are then used to create analogical sets and classify data.</div>
 </dd>
-<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="interface in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory</span></a> - Interface in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
 <dd>
 <div class="block">Factory for creating <a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattices</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html#%3Cinit%3E()">LatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory</a></dt>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.BasicLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.CardinalityBasedLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
+<dd>
+<div class="block">
+ Chooses the lattice implementation based on the cardinality of
+ the instances in the subcontext list.</div>
+</dd>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.DistributedLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.JohnsenJohanssonLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.SparseLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/AMUtils.html#LINE_SEPARATOR">LINE_SEPARATOR</a></span> - Static variable in class weka.classifiers.lazy.AM.<a href="weka/classifiers/lazy/AM/AMUtils.html" title="class in weka.classifiers.lazy.AM">AMUtils</a></dt>
 <dd>&nbsp;</dd>
@@ -767,7 +827,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">This labeler creates labels via the <a href="weka/classifiers/lazy/AM/label/LongLabel.html" title="class in weka.classifiers.lazy.AM.label"><code>LongLabel</code></a> implementation.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LongLabeler.html#%3Cinit%3E(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">LongLabeler(MissingDataCompare, Instance, boolean)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LongLabeler.html" title="class in weka.classifiers.lazy.AM.label">LongLabeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LongLabeler.html#%3Cinit%3E(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">LongLabeler(Instance, boolean, MissingDataCompare)</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LongLabeler.html" title="class in weka.classifiers.lazy.AM.label">LongLabeler</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html#%3Cinit%3E()">LongLabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:M">
 <!--   -->
@@ -932,7 +994,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Warning: this class is currently experimental, slow, and not correct.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/SparseLattice.html#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList)">SparseLattice(SubcontextList)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/SparseLattice.html" title="class in weka.classifiers.lazy.AM.lattice">SparseLattice</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html#%3Cinit%3E()">SparseLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">Subcontext</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>

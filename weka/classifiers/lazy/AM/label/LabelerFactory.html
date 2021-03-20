@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":6,"i1":18};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -88,15 +88,15 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -116,23 +116,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <main role="main">
 <div class="header">
 <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">weka.classifiers.lazy.AM.label</a></div>
-<h2 title="Class LabelerFactory" class="title">Class LabelerFactory</h2>
+<h2 title="Interface LabelerFactory" class="title">Interface LabelerFactory</h2>
 </div>
 <div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>weka.classifiers.lazy.AM.label.LabelerFactory</li>
-</ul>
-</li>
-</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><code><a href="LabelerFactory.BitSetLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.BitSetLabelerFactory</a></code>, <code><a href="LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.CardinalityBasedLabelerFactory</a></code>, <code><a href="LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.IntLabelerFactory</a></code>, <code><a href="LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></code></dd>
+</dl>
 <hr>
-<pre>public class <span class="typeNameLabel">LabelerFactory</span>
-extends java.lang.Object</pre>
+<pre>public interface <span class="typeNameLabel">LabelerFactory</span></pre>
 <div class="block">A factory for creating <a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label"><code>Labeler</code></a> instances.</div>
 </li>
 </ul>
@@ -140,21 +135,42 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<!-- ======== NESTED CLASS SUMMARY ======== -->
 <section role="region">
 <ul class="blockList">
-<li class="blockList"><a id="constructor.summary">
+<li class="blockList"><a id="nested.class.summary">
 <!--   -->
 </a>
-<h3>Constructor Summary</h3>
+<h3>Nested Class Summary</h3>
 <table class="memberSummary">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Constructor</th>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Interface</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">LabelerFactory</a></span>()</code></th>
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LabelerFactory.BitSetLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.BitSetLabelerFactory</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.CardinalityBasedLabelerFactory</a></span></code></th>
+<td class="colLast">
+<div class="block">
+ The cardinality of the instances restricts what kinds of <a href="Label.html" title="class in weka.classifiers.lazy.AM.label"><code>labels</code></a> can be used, and
+ the Labeler which produces the smallest, fastest labels will be returned.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LabelerFactory.IntLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.IntLabelerFactory</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -169,14 +185,14 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></code></td>
+<td class="colFirst"><code><a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler</a></span>&#8203;(weka.core.Instance&nbsp;testInstance,
              boolean&nbsp;ignoreUnknowns,
              <a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc)</code></th>
@@ -185,14 +201,12 @@ extends java.lang.Object</pre>
  instances via comparison with a test instance.</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>default int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMaximumCardinality()">getMaximumCardinality</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
 </li>
 </ul>
 </section>
@@ -202,25 +216,6 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<section role="region">
-<ul class="blockList">
-<li class="blockList"><a id="constructor.detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a id="&lt;init&gt;()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>LabelerFactory</h4>
-<pre>public&nbsp;LabelerFactory()</pre>
-</li>
-</ul>
-</li>
-</ul>
-</section>
 <!-- ============ METHOD DETAIL ========== -->
 <section role="region">
 <ul class="blockList">
@@ -231,16 +226,14 @@ extends java.lang.Object</pre>
 <a id="createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>createLabeler</h4>
-<pre class="methodSignature">public static&nbsp;<a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a>&nbsp;createLabeler&#8203;(weka.core.Instance&nbsp;testInstance,
-                                    boolean&nbsp;ignoreUnknowns,
-                                    <a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc)</pre>
+<pre class="methodSignature"><a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a>&nbsp;createLabeler&#8203;(weka.core.Instance&nbsp;testInstance,
+                      boolean&nbsp;ignoreUnknowns,
+                      <a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc)</pre>
 <div class="block">Create and return a new <a href="Labeler.html" title="class in weka.classifiers.lazy.AM.label"><code>Labeler</code></a> instance for labeling data
- instances via comparison with a test instance. The cardinality of the
- instances restricts what kinds of <a href="Label.html" title="class in weka.classifiers.lazy.AM.label"><code>labels</code></a> can be used, and
- the Labeler which produces the smallest, fastest labels will be returned.</div>
+ instances via comparison with a test instance.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>testInstance</code> - The instance being classified</dd>
@@ -248,6 +241,19 @@ extends java.lang.Object</pre>
 <dd><code>ignoreUnknowns</code> - True if missing data should be ignored, false otherwise</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>A new Labeler</dd>
+</dl>
+</li>
+</ul>
+<a id="getMaximumCardinality()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getMaximumCardinality</h4>
+<pre class="methodSignature">default&nbsp;int&nbsp;getMaximumCardinality()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>The maximum cardinality for labels created by this labeler, or -1 if there is no maximum.</dd>
 </dl>
 </li>
 </ul>
@@ -303,15 +309,15 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>

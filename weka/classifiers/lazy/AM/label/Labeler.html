@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":6,"i9":10,"i10":6};
+var data = {"i0":6,"i1":10,"i2":9,"i3":10,"i4":6,"i5":6,"i6":10,"i7":10,"i8":10,"i9":6,"i10":10,"i11":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -190,9 +190,9 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">Labeler</a></span>&#8203;(<a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc,
-       weka.core.Instance&nbsp;test,
-       boolean&nbsp;ignoreUnknowns)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">Labeler</a></span>&#8203;(weka.core.Instance&nbsp;test,
+       boolean&nbsp;ignoreUnknowns,
+       <a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -222,19 +222,11 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getAllMatchLabel()">getAllMatchLabel</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Creates and returns the label which belongs at the top of a boolean
- lattice, i.e.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCardinality()">getCardinality</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCardinality(weka.core.Instance,boolean)">getCardinality</a></span>&#8203;(weka.core.Instance&nbsp;testInstance,
               boolean&nbsp;ignoreUnknowns)</code></th>
@@ -242,29 +234,45 @@ extends java.lang.Object</pre>
 <div class="block">Calculate the label cardinality for a given test instance</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIgnoreUnknowns()">getIgnoreUnknowns</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLatticeBottom()">getLatticeBottom</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Creates and returns the label which belongs at the bottom of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e.</div>
+</td>
+</tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLatticeTop()">getLatticeTop</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Creates and returns the label which belongs at the top of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMissingDataCompare()">getMissingDataCompare</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>weka.core.Instance</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTestInstance()">getTestInstance</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isIgnored(int)">isIgnored</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">
 <div class="block">Find if the attribute at the given index is ignored during labeling.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#label(weka.core.Instance)">label</a></span>&#8203;(weka.core.Instance&nbsp;data)</code></th>
 <td class="colLast">
@@ -272,12 +280,12 @@ extends java.lang.Object</pre>
  test instance.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#numPartitions()">numPartitions</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#partition(weka.classifiers.lazy.AM.label.Label,int)">partition</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label,
          int&nbsp;partitionIndex)</code></th>
@@ -310,20 +318,20 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(weka.classifiers.lazy.AM.label.MissingDataCompare,weka.core.Instance,boolean)">
+<a id="&lt;init&gt;(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Labeler</h4>
-<pre>public&nbsp;Labeler&#8203;(<a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc,
-               weka.core.Instance&nbsp;test,
-               boolean&nbsp;ignoreUnknowns)</pre>
+<pre>public&nbsp;Labeler&#8203;(weka.core.Instance&nbsp;test,
+               boolean&nbsp;ignoreUnknowns,
+               <a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a>&nbsp;mdc)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>mdc</code> - Specifies how to compare missing attributes</dd>
 <dd><code>test</code> - Instance being classified</dd>
 <dd><code>ignoreUnknowns</code> - true if attributes with undefined values in the test item should be ignored; false if not.</dd>
+<dd><code>mdc</code> - Specifies how to compare missing attributes</dd>
 </dl>
 </li>
 </ul>
@@ -446,18 +454,35 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="getAllMatchLabel()">
+<a id="getLatticeTop()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getAllMatchLabel</h4>
-<pre class="methodSignature">public abstract&nbsp;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;getAllMatchLabel()</pre>
-<div class="block">Creates and returns the label which belongs at the top of a boolean
- lattice, i.e. one in which every feature is a match.</div>
+<h4>getLatticeTop</h4>
+<pre class="methodSignature">public abstract&nbsp;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;getLatticeTop()</pre>
+<div class="block">Creates and returns the label which belongs at the top of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e. the one for
+ which every feature is a match.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>A label with all matches</dd>
+</dl>
+</li>
+</ul>
+<a id="getLatticeBottom()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLatticeBottom</h4>
+<pre class="methodSignature">public abstract&nbsp;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;getLatticeBottom()</pre>
+<div class="block">Creates and returns the label which belongs at the bottom of the boolean
+ lattice formed by the subcontexts labeled by this labeler, i.e. the one for
+ which every feature is a mismatch.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>A label with all mismatches</dd>
 </dl>
 </li>
 </ul>
