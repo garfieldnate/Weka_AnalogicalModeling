@@ -124,7 +124,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></code>, <code><a href="LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></code>, <code><a href="LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></code>, <code><a href="LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></code>, <code><a href="LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></code></dd>
+<dd><code><a href="LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></code></dd>
 </dl>
 <hr>
 <pre>public interface <span class="typeNameLabel">LatticeFactory</span></pre>
@@ -151,32 +151,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></span></code></th>
 <td class="colLast">
-<div class="block">
- Chooses the lattice implementation based on the cardinality of
+<div class="block">Chooses the lattice implementation based on the cardinality of
  the instances in the subcontext list.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></span></code></th>
-<td class="colLast">&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -198,12 +177,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice</a></span>&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)</code></th>
-<td class="colLast">
-<div class="block">Fills a <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="../data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
- contained in the input <a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data"><code>SubcontextList</code></a>, and returns the resulting
- lattice.</div>
-</td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createLattice()">createLattice</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -222,26 +197,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">
+<a id="createLattice()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createLattice</h4>
-<pre class="methodSignature"><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a>&nbsp;createLattice&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)
-               throws java.lang.InterruptedException,
-                      java.util.concurrent.ExecutionException</pre>
-<div class="block">Fills a <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="../data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
- contained in the input <a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data"><code>SubcontextList</code></a>, and returns the resulting
- lattice.</div>
+<pre class="methodSignature"><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a>&nbsp;createLattice()</pre>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>subList</code> - List of subcontexts to add to lattice</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>A lattice filled with the provided subcontexts.</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.util.concurrent.ExecutionException</code> - If execution is rejected for some reason</dd>
-<dd><code>java.lang.InterruptedException</code> - If any thread is interrupted for any reason (user presses ctrl-C, etc.)</dd>
+<dd><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> implementation</dd>
 </dl>
 </li>
 </ul>

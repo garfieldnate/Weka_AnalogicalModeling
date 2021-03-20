@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -181,11 +181,10 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList,int)">HeterogeneousLattice</a></span>&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList,
-                    int&nbsp;i)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(int)">HeterogeneousLattice</a></span>&#8203;(int&nbsp;partitionIndex)</code></th>
 <td class="colLast">
 <div class="block">Initializes Supracontextual lattice to a 2^n length array of
- Supracontexts and then fills it with the contents of subList</div>
+ Supracontexts, as well as the empty and the heterogeneous supracontexts.</div>
 </td>
 </tr>
 </table>
@@ -207,11 +206,18 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill</a></span>&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)</code></th>
+<td class="colLast">
+<div class="block">Fill the lattice with given subcontexts.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../data/Supracontext.html" title="interface in weka.classifiers.lazy.AM.data">Supracontext</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSupracontexts()">getSupracontexts</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#insert(weka.classifiers.lazy.AM.data.Subcontext,weka.classifiers.lazy.AM.label.Label)">insert</a></span>&#8203;(<a href="../data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data">Subcontext</a>&nbsp;sub,
       <a href="../label/Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label)</code></th>
@@ -219,7 +225,7 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <div class="block">Inserts sub into the lattice, into location given by label</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supraListToString()">supraListToString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -248,20 +254,18 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(weka.classifiers.lazy.AM.data.SubcontextList,int)">
+<a id="&lt;init&gt;(int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>HeterogeneousLattice</h4>
-<pre>public&nbsp;HeterogeneousLattice&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList,
-                            int&nbsp;i)</pre>
+<pre>public&nbsp;HeterogeneousLattice&#8203;(int&nbsp;partitionIndex)</pre>
 <div class="block">Initializes Supracontextual lattice to a 2^n length array of
- Supracontexts and then fills it with the contents of subList</div>
+ Supracontexts, as well as the empty and the heterogeneous supracontexts.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>subList</code> - List of subcontexts</dd>
-<dd><code>i</code> - label partition index</dd>
+<dd><code>partitionIndex</code> - which label partition to use in assigning subcontexts to supracontexts</dd>
 </dl>
 </li>
 </ul>
@@ -275,6 +279,21 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="fill(weka.classifiers.lazy.AM.data.SubcontextList)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fill</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;fill&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;subList)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="Lattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">Lattice</a></code></span></div>
+<div class="block">Fill the lattice with given subcontexts. This is meant to be done only once for a given Lattice instance.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="Lattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill</a></code>&nbsp;in interface&nbsp;<code><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></code></dd>
+</dl>
+</li>
+</ul>
 <a id="insert(weka.classifiers.lazy.AM.data.Subcontext,weka.classifiers.lazy.AM.label.Label)">
 <!--   -->
 </a>

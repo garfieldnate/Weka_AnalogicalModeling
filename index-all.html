@@ -160,8 +160,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">This class holds the supracontextual lattice and does the work of filling
  itself during classification.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html#%3Cinit%3E()">BasicLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/BasicSupra.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">BasicSupra</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>
 <div class="block">Basic implementation of <a href="weka/classifiers/lazy/AM/data/Supracontext.html" title="interface in weka.classifiers.lazy.AM.data"><code>Supracontext</code></a> with no extra features.</div>
@@ -217,7 +215,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html#%3Cinit%3E()">CardinalityBasedLabelerFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.CardinalityBasedLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.CardinalityBasedLabelerFactory</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#%3Cinit%3E()">CardinalityBasedLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#%3Cinit%3E(int,int)">CardinalityBasedLatticeFactory(int, int)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/ClassifiedSupra.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">ClassifiedSupra</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>
@@ -266,21 +264,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html#createLabeler(weka.core.Instance,boolean,weka.classifiers.lazy.AM.label.MissingDataCompare)">createLabeler(Instance, boolean, MissingDataCompare)</a></span> - Method in class weka.classifiers.lazy.AM.label.<a href="weka/classifiers/lazy/AM/label/LabelerFactory.LongLabelerFactory.html" title="class in weka.classifiers.lazy.AM.label">LabelerFactory.LongLabelerFactory</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.BasicLatticeFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#createLattice()">createLattice()</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.CardinalityBasedLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in interface weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="interface in weka.classifiers.lazy.AM.lattice">LatticeFactory</a></dt>
-<dd>
-<div class="block">Fills a <a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattice</code></a> object with the <a href="weka/classifiers/lazy/AM/data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><code>subcontexts</code></a>
- contained in the input <a href="weka/classifiers/lazy/AM/data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data"><code>SubcontextList</code></a>, and returns the resulting
- lattice.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html#createLattice(weka.classifiers.lazy.AM.data.SubcontextList)">createLattice(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html#createLattice()">createLattice()</a></span> - Method in interface weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.html" title="interface in weka.classifiers.lazy.AM.lattice">LatticeFactory</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a id="I:D">
@@ -309,7 +295,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">This lass manages several smaller, heterogeneous lattices.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html#%3Cinit%3E()">DistributedLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.DistributedLatticeFactory</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html#%3Cinit%3E()">DistributedLattice()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html" title="class in weka.classifiers.lazy.AM.lattice">DistributedLattice</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AnalogicalModeling.html#distributionForInstance(weka.core.Instance)">distributionForInstance(Instance)</a></span> - Method in class weka.classifiers.lazy.<a href="weka/classifiers/lazy/AnalogicalModeling.html" title="class in weka.classifiers.lazy">AnalogicalModeling</a></dt>
 <dd>&nbsp;</dd>
@@ -369,6 +355,22 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">F</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/BasicLattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/BasicLattice.html" title="class in weka.classifiers.lazy.AM.lattice">BasicLattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/DistributedLattice.html" title="class in weka.classifiers.lazy.AM.lattice">DistributedLattice</a></dt>
+<dd>
+<div class="block">Fill the lattice with given subcontexts.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html" title="class in weka.classifiers.lazy.AM.lattice">HeterogeneousLattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/JohnsenJohanssonLattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/JohnsenJohanssonLattice.html" title="class in weka.classifiers.lazy.AM.lattice">JohnsenJohanssonLattice</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/Lattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in interface weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></dt>
+<dd>
+<div class="block">Fill the lattice with given subcontexts.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/SparseLattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill(SubcontextList)</a></span> - Method in class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/SparseLattice.html" title="class in weka.classifiers.lazy.AM.lattice">SparseLattice</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/AMUtils.html#formatDouble(double)">formatDouble(double)</a></span> - Static method in class weka.classifiers.lazy.AM.<a href="weka/classifiers/lazy/AM/AMUtils.html" title="class in weka.classifiers.lazy.AM">AMUtils</a></dt>
 <dd>
 <div class="block">Format a double into a string using <a href="weka/classifiers/lazy/AM/AMUtils.html#DECIMAL_FORMAT"><code>AMUtils.DECIMAL_FORMAT</code></a>.</div>
@@ -611,10 +613,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Same as a normal lattice, except no supracontext is deemed heterogeneous and
  hence everything is kept.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html#%3Cinit%3E(weka.classifiers.lazy.AM.data.SubcontextList,int)">HeterogeneousLattice(SubcontextList, int)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html" title="class in weka.classifiers.lazy.AM.lattice">HeterogeneousLattice</a></dt>
+<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html#%3Cinit%3E(int)">HeterogeneousLattice(int)</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/HeterogeneousLattice.html" title="class in weka.classifiers.lazy.AM.lattice">HeterogeneousLattice</a></dt>
 <dd>
 <div class="block">Initializes Supracontextual lattice to a 2^n length array of
- Supracontexts and then fills it with the contents of subList</div>
+ Supracontexts, as well as the empty and the heterogeneous supracontexts.</div>
 </dd>
 </dl>
 <a id="I:I">
@@ -711,8 +713,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The approximation algorithm from "Efficient Modeling of Analogy", Johnsen and
  Johansson, DOI 10.1007/978-3-540-30586-6_77.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html#%3Cinit%3E()">JohnsenJohanssonLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.JohnsenJohanssonLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
 </dl>
 <a id="I:L">
 <!--   -->
@@ -777,20 +777,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Factory for creating <a href="weka/classifiers/lazy/AM/lattice/Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice"><code>Lattices</code></a>.</div>
 </dd>
-<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.BasicLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.BasicLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.CardinalityBasedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.CardinalityBasedLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
 <dd>
-<div class="block">
- Chooses the lattice implementation based on the cardinality of
+<div class="block">Chooses the lattice implementation based on the cardinality of
  the instances in the subcontext list.</div>
 </dd>
-<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.DistributedLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.DistributedLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.JohnsenJohanssonLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.JohnsenJohanssonLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice"><span class="typeNameLink">LatticeFactory.SparseLatticeFactory</span></a> - Class in <a href="weka/classifiers/lazy/AM/lattice/package-summary.html">weka.classifiers.lazy.AM.lattice</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/AMUtils.html#LINE_SEPARATOR">LINE_SEPARATOR</a></span> - Static variable in class weka.classifiers.lazy.AM.<a href="weka/classifiers/lazy/AM/AMUtils.html" title="class in weka.classifiers.lazy.AM">AMUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AnalogicalModeling.html#linearCountTipText()">linearCountTipText()</a></span> - Method in class weka.classifiers.lazy.<a href="weka/classifiers/lazy/AnalogicalModeling.html" title="class in weka.classifiers.lazy">AnalogicalModeling</a></dt>
@@ -994,8 +985,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Warning: this class is currently experimental, slow, and not correct.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html#%3Cinit%3E()">SparseLatticeFactory()</a></span> - Constructor for class weka.classifiers.lazy.AM.lattice.<a href="weka/classifiers/lazy/AM/lattice/LatticeFactory.SparseLatticeFactory.html" title="class in weka.classifiers.lazy.AM.lattice">LatticeFactory.SparseLatticeFactory</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="weka/classifiers/lazy/AM/data/Subcontext.html" title="class in weka.classifiers.lazy.AM.data"><span class="typeNameLink">Subcontext</span></a> - Class in <a href="weka/classifiers/lazy/AM/data/package-summary.html">weka.classifiers.lazy.AM.data</a></dt>
 <dd>
 <div class="block">Represents a subcontext, containing a list of <code>Instances</code>

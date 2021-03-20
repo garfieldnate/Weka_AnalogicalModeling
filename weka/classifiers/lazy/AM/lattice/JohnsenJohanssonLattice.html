@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10};
+var data = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -206,6 +206,13 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill</a></span>&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;sublist)</code></th>
+<td class="colLast">
+<div class="block">Fill the lattice with given subcontexts.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../data/Supracontext.html" title="interface in weka.classifiers.lazy.AM.data">Supracontext</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSupracontexts()">getSupracontexts</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -234,6 +241,26 @@ implements <a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.l
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="fill(weka.classifiers.lazy.AM.data.SubcontextList)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fill</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;fill&#8203;(<a href="../data/SubcontextList.html" title="class in weka.classifiers.lazy.AM.data">SubcontextList</a>&nbsp;sublist)
+          throws java.lang.InterruptedException,
+                 java.util.concurrent.ExecutionException</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="Lattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">Lattice</a></code></span></div>
+<div class="block">Fill the lattice with given subcontexts. This is meant to be done only once for a given Lattice instance.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="Lattice.html#fill(weka.classifiers.lazy.AM.data.SubcontextList)">fill</a></code>&nbsp;in interface&nbsp;<code><a href="Lattice.html" title="interface in weka.classifiers.lazy.AM.lattice">Lattice</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.InterruptedException</code></dd>
+<dd><code>java.util.concurrent.ExecutionException</code></dd>
+</dl>
+</li>
+</ul>
 <a id="getSupracontexts()">
 <!--   -->
 </a>
