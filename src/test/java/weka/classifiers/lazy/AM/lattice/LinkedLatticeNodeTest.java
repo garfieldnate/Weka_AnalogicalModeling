@@ -16,11 +16,11 @@ import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.core.Instances;
 
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -31,121 +31,118 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 public class LinkedLatticeNodeTest {
-    @Parameter()
-    public String testName;
-    @Parameter(1)
-    public Constructor<Supracontext> supraConstructor;
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
+	@Parameter()
+	public String testName;
+	@Parameter(1)
+	public Supplier<Supracontext> supraSupplier;
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
 
-    // Note that we have to use unchecked/raw types throughout because it is not
-    // known until runtime what the generic type of the LinkedLatticeNode will
-    // be.
+	// Note that we have to use unchecked/raw types throughout because it is not
+	// known until runtime what the generic type of the LinkedLatticeNode will
+	// be.
 
-    /**
-     * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
-     * <li>arg[1] is a {@link Supracontext} to be decorated by a LatticeLinkedNode for testing.</li> </ol>
-     * @throws NoSuchMethodException if one of the SupraContext implementations doesn't have a 0-argument constructor
-     */
+	/**
+	 * @return A collection of argument arrays for running tests. In each array: <ol> <li>arg[0] is the test name.</li>
+	 * <li>arg[1] is a supplier of {@link Supracontext}s to be decorated by a LatticeLinkedNode for testing.</li> </ol>
+	 */
 	@Parameterized.Parameters(name = "{0}")
-	public static Collection<Object[]> instancesToTest() throws NoSuchMethodException {
+	public static Collection<Object[]> instancesToTest() {
 		// Two Supracontext classes can be decorated
-		Class<?>[] supraClasses = new Class[]{ClassifiedSupra.class, BasicSupra.class};
-		Collection<Object[]> parameters = new ArrayList<>();
-		for (Class<?> clazz : supraClasses) {
-			parameters.add(new Object[]{
-					clazz.getSimpleName(), clazz.getConstructor()
-			});
-		}
-		return parameters;
+		return List.of(
+				new Object[]{
+						"BasicSupra", (Supplier<Supracontext>) BasicSupra::new
+				},
+				new Object[]{
+						"ClassifiedSupra", (Supplier<Supracontext>) ClassifiedSupra::new,
+				});
 	}
 
-    @Test
-    public void testDefaultIndexIsMinus1() throws Exception {
-        @SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraConstructor
-                                                                                                            .newInstance());
-        assertEquals(testNode.getIndex(), -1);
-    }
+	@Test
+	public void testDefaultIndexIsMinus1() {
+		@SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraSupplier.get());
+		assertEquals(testNode.getIndex(), -1);
+	}
 
-    @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testNext() throws Exception {
-        LinkedLatticeNode testNode = new LinkedLatticeNode(supraConstructor.newInstance());
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void testNext() {
+		LinkedLatticeNode testNode = new LinkedLatticeNode(supraSupplier.get());
 		assertNull(testNode.getNext());
-        testNode.setNext(testNode);
-        assertEquals(testNode.getNext(), testNode);
-    }
+		testNode.setNext(testNode);
+		assertEquals(testNode.getNext(), testNode);
+	}
 
-    @Test
-    public void testCount() throws Exception {
-        @SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraConstructor
-                                                                                                            .newInstance());
-        assertEquals(BigInteger.ONE, testNode.getCount());
-        testNode.incrementCount();
-        assertEquals(testNode.getCount(), BigInteger.valueOf(2));
-        testNode.decrementCount();
-        assertEquals(testNode.getCount(), BigInteger.ONE);
-    }
+	@Test
+	public void testCount() {
+		@SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraSupplier
+				.get());
+		assertEquals(BigInteger.ONE, testNode.getCount());
+		testNode.incrementCount();
+		assertEquals(testNode.getCount(), BigInteger.valueOf(2));
+		testNode.decrementCount();
+		assertEquals(testNode.getCount(), BigInteger.ONE);
+	}
 
-    @Test
-    public void testDecrementCountThrowsErrorWhenCountIsZero() throws Exception {
-        @SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraConstructor
-                                                                                                            .newInstance());
-        testNode.setCount(BigInteger.ZERO);
-        exception.expect(IllegalStateException.class);
-        exception.expectMessage(new StringContains("Count cannot be less than zero"));
-        testNode.decrementCount();
-    }
+	@Test
+	public void testDecrementCountThrowsErrorWhenCountIsZero() {
+		@SuppressWarnings({"rawtypes", "unchecked"}) LinkedLatticeNode testNode = new LinkedLatticeNode(supraSupplier
+				.get());
+		testNode.setCount(BigInteger.ZERO);
+		exception.expect(IllegalStateException.class);
+		exception.expectMessage(new StringContains("Count cannot be less than zero"));
+		testNode.decrementCount();
+	}
 
-    @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testInsertAfter() throws Exception {
-        LinkedLatticeNode testNode1 = new LinkedLatticeNode(supraConstructor.newInstance());
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void testInsertAfter() throws Exception {
+		LinkedLatticeNode testNode1 = new LinkedLatticeNode(supraSupplier.get());
 
-        Instances dataset = TestUtils.getDataSet(TestUtils.FINNVERB_MIN);
+		Instances dataset = TestUtils.getDataSet(TestUtils.FINNVERB_MIN);
 
-        final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-        sub1.add(dataset.get(0));
-        final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
-        sub2.add(dataset.get(1));
-        sub2.add(dataset.get(2));
-        final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
+		sub1.add(dataset.get(0));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
+		sub2.add(dataset.get(1));
+		sub2.add(dataset.get(2));
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
 
-        LinkedLatticeNode testNode2 = testNode1.insertAfter(sub1, 11);
+		LinkedLatticeNode testNode2 = testNode1.insertAfter(sub1, 11);
 
-        Supracontext expected = new BasicSupra(new HashSet<>() {
+		Supracontext expected = new BasicSupra(new HashSet<>() {
 			{
 				add(sub1);
 			}
 		}, BigInteger.ONE);
-        assertEquals(testNode2, expected);
-        assertEquals(testNode2.getIndex(), 11);
+		assertEquals(testNode2, expected);
+		assertEquals(testNode2.getIndex(), 11);
 		assertSame(testNode1.getNext(), testNode2);
 		assertNull(testNode2.getNext());
 
-        LinkedLatticeNode testNode3 = testNode2.insertAfter(sub2, 29);
-        expected = new BasicSupra(new HashSet<>() {
+		LinkedLatticeNode testNode3 = testNode2.insertAfter(sub2, 29);
+		expected = new BasicSupra(new HashSet<>() {
 			{
 				add(sub1);
 				add(sub2);
 			}
 		}, BigInteger.ZERO);
-        assertEquals(testNode3, expected);
-        assertEquals(testNode3.getIndex(), 29);
+		assertEquals(testNode3, expected);
+		assertEquals(testNode3.getIndex(), 29);
 		assertSame(testNode2.getNext(), testNode3);
 		assertNull(testNode3.getNext());
 
-        LinkedLatticeNode testNode4 = testNode2.insertAfter(sub3, 37);
-        expected = new BasicSupra(new HashSet<>() {
+		LinkedLatticeNode testNode4 = testNode2.insertAfter(sub3, 37);
+		expected = new BasicSupra(new HashSet<>() {
 			{
 				add(sub1);
 				add(sub3);
 			}
 		}, BigInteger.ZERO);
-        assertEquals(testNode4, expected);
+		assertEquals(testNode4, expected);
 		assertSame(testNode2.getNext(), testNode4);
 		assertSame(testNode4.getNext(), testNode3);
-    }
-    // TODO: test copy, equals and hashCode for correctness regarding next
-    // variable
+	}
+	// TODO: test copy, equals and hashCode for correctness regarding next
+	// variable
 }
