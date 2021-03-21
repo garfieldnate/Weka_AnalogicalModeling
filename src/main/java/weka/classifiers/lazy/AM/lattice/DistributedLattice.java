@@ -17,29 +17,11 @@
 package weka.classifiers.lazy.AM.lattice;
 
 import com.google.common.collect.Iterables;
-
-import weka.classifiers.lazy.AM.data.BasicSupra;
-import weka.classifiers.lazy.AM.data.ClassifiedSupra;
-import weka.classifiers.lazy.AM.data.Subcontext;
-import weka.classifiers.lazy.AM.data.SubcontextList;
-import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.data.*;
 import weka.classifiers.lazy.AM.label.Labeler;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.BiFunction;
 
 import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
@@ -98,8 +80,8 @@ public class DistributedLattice implements Lattice {
         // then combine them 2 at a time, consolidating duplicate supracontexts
         if (numLattices > 2) {
             for (int i = 1; i < numLattices - 1; i++) {
-                taskCompletionService.submit(new LatticeCombiner(taskCompletionService.take(),
-                                                                 taskCompletionService.take(),
+                taskCompletionService.submit(new LatticeCombiner(taskCompletionService.take().get(),
+                                                                 taskCompletionService.take().get(),
                                                                  executor
                 ));
             }
@@ -139,11 +121,11 @@ public class DistributedLattice implements Lattice {
      * set of supracontexts for a heterogeneous lattice.
      */
     class LatticeCombiner implements Callable<Set<Supracontext>> {
-        final Future<Set<Supracontext>> supras1;
-        final Future<Set<Supracontext>> supras2;
+        final Set<Supracontext> supras1;
+        final Set<Supracontext> supras2;
         final Executor executor;
 
-        LatticeCombiner(Future<Set<Supracontext>> supras1, Future<Set<Supracontext>> supras2, Executor executor) {
+        LatticeCombiner(Set<Supracontext> supras1, Set<Supracontext> supras2, Executor executor) {
             this.supras1 = supras1;
             this.supras2 = supras2;
             this.executor = executor;
@@ -151,8 +133,8 @@ public class DistributedLattice implements Lattice {
 
         @Override
         public Set<Supracontext> call() throws Exception {
-            return combineInParallel(supras1.get(),
-                                     supras2.get(),
+            return combineInParallel(supras1,
+                                     supras2,
                                      executor,
 					IntermediateCombiner::new
             );
