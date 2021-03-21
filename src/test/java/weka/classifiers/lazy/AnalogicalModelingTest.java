@@ -17,10 +17,8 @@
 package weka.classifiers.lazy;
 
 import junit.framework.TestSuite;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.data.AnalogicalSet;
@@ -47,7 +45,10 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
      */
     @Override
     public AnalogicalModeling getClassifier() {
-        return new AnalogicalModeling();
+        AnalogicalModeling am = new AnalogicalModeling();
+        // Ensure Johnsen-Johansson lattice runs deterministically
+        am.setRandomProvider(TestUtils.getDeterministicRandomProvider());
+        return am;
     }
 
     private static final double DELTA = 1e-10;

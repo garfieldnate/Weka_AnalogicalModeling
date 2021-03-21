@@ -18,7 +18,10 @@ import weka.filters.unsupervised.attribute.Remove;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -246,7 +249,7 @@ public class TestUtils {
         return new ClassifiedSupra(subs, count);
     }
 
-    /**
+	/**
      * Test that the getSupraFromString utility function above works as desired.
      *
      * @throws Exception if there is a problem loading the finnverb dataset
@@ -316,5 +319,14 @@ public class TestUtils {
 		// add one attribute for the class, so that numAttributes matches the resulting label size exactly
 		when(inst.numAttributes()).thenReturn(numAttributes + 1);
 		return inst;
+	}
+
+	/**
+	 * Supply deterministic PRNG output for testing algorithms that use randomness (JJLattice, etc.)
+	 * @return A random provider with deterministic output
+	 */
+	public static Supplier<Random> getDeterministicRandomProvider() {
+		AtomicLong randomSeeder = new AtomicLong(0);
+		return () -> new Random(randomSeeder.getAndIncrement());
 	}
 }

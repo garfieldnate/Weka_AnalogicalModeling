@@ -17,7 +17,6 @@ import weka.core.Instances;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -48,8 +47,6 @@ public class LatticeTest {
      */
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> instancesToTest() {
-		// ensure deterministic behavior from JohnsenJohanssonLatice
-		AtomicLong randomSeeder = new AtomicLong(0);
 		return List.of(
 				new Object[]{
 						"BasicLattice", (Supplier<Lattice>) BasicLattice::new
@@ -61,7 +58,7 @@ public class LatticeTest {
 						"Sparse Lattice", (Supplier<Lattice>) SparseLattice::new
 				},
 				new Object[]{
-						"Johnsen-Johansson Lattice", (Supplier<Lattice>) () -> new JohnsenJohanssonLattice(() -> new Random(randomSeeder.getAndIncrement()))
+						"Johnsen-Johansson Lattice", (Supplier<Lattice>) () -> new JohnsenJohanssonLattice(TestUtils.getDeterministicRandomProvider())
 				},
 				new Object[]{
 						"Heterogeneous Lattice", (Supplier<Lattice>) () -> new HeterogeneousLattice(0)

@@ -23,8 +23,10 @@ import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.LabelerFactory;
 import weka.classifiers.lazy.AM.label.MissingDataCompare;
+import weka.classifiers.lazy.AM.lattice.JohnsenJohanssonLattice;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.classifiers.lazy.AM.lattice.LatticeFactory;
+import weka.classifiers.lazy.AM.lattice.LatticeFactory.CardinalityBasedLatticeFactory;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -39,13 +41,10 @@ import weka.core.TechnicalInformationHandler;
 import weka.core.Utils;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 /**
  * <!-- globalinfo-start --> * Implements the Analogical Modeling algorithm, invented by Royal Skousen. Analogical
@@ -160,8 +159,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     private static final long serialVersionUID = 1212462913157286103L;
 
     private MissingDataCompare mdc = MissingDataCompare.VARIABLE;
+	private transient Supplier<Random> randomProvider;
 
-    /**
+	/**
      * This method is where all of the action happens! Given test item, it uses
      * existing exemplars to assign outcome probabilities to it.
      *
@@ -178,7 +178,13 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		// 1. Place each data item in a subcontext
 		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
         // 2. Create a supracontextual lattice and fill it with subcontexts
-		Lattice lattice = new LatticeFactory.CardinalityBasedLatticeFactory(subList.getCardinality(), subList.getLabeler().numPartitions()).createLattice();
+		LatticeFactory latticeFactory;
+		if (randomProvider == null) {
+			latticeFactory = new CardinalityBasedLatticeFactory(subList.getCardinality(), subList.getLabeler().numPartitions());
+		} else {
+			latticeFactory = new CardinalityBasedLatticeFactory(subList.getCardinality(), subList.getLabeler().numPartitions(), randomProvider);
+		}
+		Lattice lattice = latticeFactory.createLattice();
 		lattice.fill(subList);
 		// 3. create analogical set from the pointers in resulting homogeneous
         // supracontexts
@@ -284,6 +290,15 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
             mdc = MissingDataCompare.getElement(newMode);
         }
     }
+
+	/**
+	 * Provide the source of randomness for algorithms that require it (e.g. {@link JohnsenJohanssonLattice}). This cannot
+	 * be set from the Weka GUI and is marked {@code transient}, e.g. it cannot be serialized with the class. The provider
+	 * must be thread-safe.
+	 */
+	public void setRandomProvider(Supplier<Random> randomProvider) {
+    	this.randomProvider = randomProvider;
+	}
 
     /**
      * @return Tooltip text describing the missingDataCompare option
