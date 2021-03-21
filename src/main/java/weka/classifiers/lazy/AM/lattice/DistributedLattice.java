@@ -23,6 +23,8 @@ import weka.classifiers.lazy.AM.label.Labeler;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
@@ -33,9 +35,6 @@ import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
  * @author Nathan Glenn
  */
 public class DistributedLattice implements Lattice {
-	// Less than 3 threads and this implementation will hang forever!
-	// TODO: introduce task framework that accounts for tasks adding subtasks
-	private static final int MIN_THREADS = 3;
 	private Set<Supracontext> supras;
 	private boolean filled;
 
@@ -68,7 +67,7 @@ public class DistributedLattice implements Lattice {
 		}
         Labeler labeler = subList.getLabeler();
 
-        ExecutorService executor = Executors.newWorkStealingPool(Math.max(MIN_THREADS, NUM_CORES));
+        ExecutorService executor = Executors.newWorkStealingPool(ForkJoinPool.getCommonPoolParallelism());
         // first, create heterogeneous lattices by splitting the labels contained in the subcontext list
         CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
         int numLattices = labeler.numPartitions();
@@ -81,15 +80,13 @@ public class DistributedLattice implements Lattice {
         if (numLattices > 2) {
             for (int i = 1; i < numLattices - 1; i++) {
                 taskCompletionService.submit(new LatticeCombiner(taskCompletionService.take().get(),
-                                                                 taskCompletionService.take().get(),
-                                                                 executor
-                ));
+                                                                 taskCompletionService.take().get()
+				));
             }
         }
         // the final combination creates ClassifiedSupras and ignores the heterogeneous ones.
         supras = combineInParallel(taskCompletionService.take().get(),
                                    taskCompletionService.take().get(),
-                                   executor,
 				FinalCombiner::new
         );
         executor.shutdownNow();
@@ -123,19 +120,16 @@ public class DistributedLattice implements Lattice {
     class LatticeCombiner implements Callable<Set<Supracontext>> {
         final Set<Supracontext> supras1;
         final Set<Supracontext> supras2;
-        final Executor executor;
 
-        LatticeCombiner(Set<Supracontext> supras1, Set<Supracontext> supras2, Executor executor) {
+        LatticeCombiner(Set<Supracontext> supras1, Set<Supracontext> supras2) {
             this.supras1 = supras1;
             this.supras2 = supras2;
-            this.executor = executor;
         }
 
         @Override
         public Set<Supracontext> call() throws Exception {
             return combineInParallel(supras1,
                                      supras2,
-                                     executor,
 					IntermediateCombiner::new
             );
         }
@@ -149,15 +143,11 @@ public class DistributedLattice implements Lattice {
      * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
      *                            supracontexts
      */
-    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, Executor executor, BiFunction<Iterable<Supracontext>, Set<Supracontext>, Callable<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
-        CompletionService<Set<Supracontext>> taskCompletionService = new ExecutorCompletionService<>(executor);
+    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Iterable<Supracontext>, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
         Iterable<List<Supracontext>> suprasPartition = Iterables.partition(supras1, getPartitionSize(supras1));
-        int numSubmitted = 0;
-        for (Iterable<Supracontext> supraIter : suprasPartition) {
-            taskCompletionService.submit(combinerConstructor.apply(supraIter, supras2));
-            numSubmitted++;
-        }
-        return reduceSupraCombinations(taskCompletionService, numSubmitted);
+		Collection<RecursiveTask<Set<Supracontext>>> subTasks = StreamSupport.stream(suprasPartition.spliterator(), false).map(supra -> combinerConstructor.apply(supra, supras2)).collect(Collectors.toList());
+		Collection<RecursiveTask<Set<Supracontext>>> combined = ForkJoinTask.invokeAll(subTasks);
+		return reduceSupraCombinations(combined);
     }
 
     private static int getPartitionSize(Collection<?> coll) {
@@ -165,10 +155,10 @@ public class DistributedLattice implements Lattice {
     }
 
     // combine supracontext sets generated in separate threads into one set
-    private Set<Supracontext> reduceSupraCombinations(CompletionService<Set<Supracontext>> taskCompletionService, int numSubmitted) throws InterruptedException, ExecutionException {
+    private Set<Supracontext> reduceSupraCombinations(Collection<RecursiveTask<Set<Supracontext>>> supraComboTasks) throws InterruptedException, ExecutionException {
         GettableSet<Supracontext> finalSupras = new GettableSet<>();
-        for (int i = 0; i < numSubmitted; i++) {
-            Set<Supracontext> partialCountSupras = taskCompletionService.take().get();
+        for (RecursiveTask<Set<Supracontext>> task : supraComboTasks) {
+			Set<Supracontext> partialCountSupras = task.join();
             for (Supracontext supra : partialCountSupras) {
                 // add to the existing count if the same supra was formed from a
                 // previous combination
@@ -183,7 +173,7 @@ public class DistributedLattice implements Lattice {
         return finalSupras.unwrap();
     }
 
-    static class IntermediateCombiner implements Callable<Set<Supracontext>> {
+    static class IntermediateCombiner extends RecursiveTask<Set<Supracontext>> {
         private final Iterable<Supracontext> supras1;
         private final Set<Supracontext> supras2;
 
@@ -192,8 +182,8 @@ public class DistributedLattice implements Lattice {
             this.supras2 = supras2;
         }
 
-        @Override
-        public Set<Supracontext> call() {
+		@Override
+		protected Set<Supracontext> compute() {
             BasicSupra newSupra;
             GettableSet<Supracontext> combinedSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
@@ -238,9 +228,9 @@ public class DistributedLattice implements Lattice {
             if (combinedSubs.isEmpty()) return null;
             return new BasicSupra(combinedSubs, supra1.getCount().multiply(supra2.getCount()));
         }
-    }
+	}
 
-    static class FinalCombiner implements Callable<Set<Supracontext>> {
+    static class FinalCombiner extends RecursiveTask<Set<Supracontext>> {
         private final Iterable<Supracontext> supras1;
         private final Set<Supracontext> supras2;
 
@@ -249,8 +239,8 @@ public class DistributedLattice implements Lattice {
             this.supras2 = supras2;
         }
 
-        @Override
-        public Set<Supracontext> call() {
+		@Override
+		protected Set<Supracontext> compute() {
             ClassifiedSupra supra;
             GettableSet<Supracontext> finalSupras = new GettableSet<>();
             for (Supracontext supra1 : supras1) {
