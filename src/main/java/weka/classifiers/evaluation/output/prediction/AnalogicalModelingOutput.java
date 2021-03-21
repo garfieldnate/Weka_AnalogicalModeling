@@ -285,6 +285,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *
      * @return tip text for this property suitable for displaying in the GUI
      */
+    @SuppressWarnings("unused") // used by Weka
     public String gangsTipText() {
         return "Whether to print the gang effects.";
     }
@@ -308,6 +309,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *
      * @return tip text for this property suitable for displaying in the GUI
      */
+	@SuppressWarnings("unused") // used by Weka
     public String summaryTipText() {
         return "Whether to print a short summary.";
     }
@@ -331,6 +333,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *
      * @return tip text for this property suitable for displaying in the GUI
      */
+	@SuppressWarnings("unused") // used by Weka
     public String analogicalSetTipText() {
         return "Whether to print analogical sets";
     }
