@@ -78,16 +78,16 @@ public class DistributedLattice implements Lattice {
 			for (int i = 1; i < numLattices - 1; i++) {
 				Set<Supracontext> supras1 = taskCompletionService.take().get();
 				Set<Supracontext> supras2 = taskCompletionService.take().get();
-				taskCompletionService.submit(() -> combineInParallel(
+				taskCompletionService.submit(() -> latticeProduct(
 						supras1,
 						supras2,
-						IntermediateCombiner::new));
+						IntermediateProduct::new));
 			}
 		}
         // the final combination creates ClassifiedSupras and ignores the heterogeneous ones.
-        supras = combineInParallel(taskCompletionService.take().get(),
+        supras = latticeProduct(taskCompletionService.take().get(),
                                    taskCompletionService.take().get(),
-				FinalCombiner::new
+				FinalizingProduct::new
         );
         executor.shutdownNow();
     }
@@ -106,22 +106,27 @@ public class DistributedLattice implements Lattice {
      * List representing the intersection of two lattices. The lattice-combining
      * step is partitioned and run in several threads.
      *
-     * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
-     *                            supracontexts
+     * @param supraProductConstructor the constructor of the task which will produce the product of one supracontext with a set of supracontexts
      */
-	private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<CanonicalizingSet<Supracontext>>> combinerConstructor) {
+	private Set<Supracontext> latticeProduct(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<CanonicalizingSet<Supracontext>>> supraProductConstructor) {
 		Collection<RecursiveTask<CanonicalizingSet<Supracontext>>> subTasks =
-				supras1.stream().map(supra -> combinerConstructor.apply(supra, supras2)).
+				supras1.stream().map(supra -> supraProductConstructor.apply(supra, supras2)).
 						collect(Collectors.toList());
 		Collection<RecursiveTask<CanonicalizingSet<Supracontext>>> combined =
 				ForkJoinTask.invokeAll(subTasks);
 
+		// calling join here signals to the ForkJoinPool that this task is blocking and should
+		// be rescheduled
 		return combined.parallelStream().map(RecursiveTask::join).
-				reduce(DistributedLattice::reduceSupraCombinations).
+				reduce(DistributedLattice::removeDuplicateResults).
 				orElse(CanonicalizingSet.emptySet());
 	}
 
-	private static CanonicalizingSet<Supracontext> reduceSupraCombinations(CanonicalizingSet<Supracontext> supras1, CanonicalizingSet<Supracontext> supras2) {
+	/**
+	 * Find duplicate supracontexts in {@code supras1} and {@code supras2} and return a single set of supracontexts
+	 * with the combined counts from both sets.
+	 */
+	private static CanonicalizingSet<Supracontext> removeDuplicateResults(CanonicalizingSet<Supracontext> supras1, CanonicalizingSet<Supracontext> supras2) {
 		// make sure supras2 is the smaller set of supracontexts, since we will iterate over it
 		if (supras2.size() > supras1.size()) {
 			CanonicalizingSet<Supracontext> temp = supras1;
@@ -139,11 +144,11 @@ public class DistributedLattice implements Lattice {
 		return supras1;
 	}
 
-	static class IntermediateCombiner extends RecursiveTask<CanonicalizingSet<Supracontext>> {
+	static class IntermediateProduct extends RecursiveTask<CanonicalizingSet<Supracontext>> {
         private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
-        IntermediateCombiner(Supracontext supra1, Set<Supracontext> supras2) {
+        IntermediateProduct(Supracontext supra1, Set<Supracontext> supras2) {
             this.supra1 = supra1;
             this.supras2 = supras2;
         }
@@ -153,7 +158,7 @@ public class DistributedLattice implements Lattice {
 			BasicSupra newSupra;
 			CanonicalizingSet<Supracontext> combinedSupras = new CanonicalizingSet<>();
 			for (Supracontext supra2 : supras2) {
-				newSupra = combine(supra1, supra2);
+				newSupra = product(supra1, supra2);
 				if (newSupra != null) {
 					// add to the existing count if the same supra was formed from a
 					// previous combination
@@ -176,7 +181,7 @@ public class DistributedLattice implements Lattice {
          * @param supra2 second partial supracontext to combine
          * @return A new partial supracontext, or null if it would have been empty.
          */
-        private BasicSupra combine(Supracontext supra1, Supracontext supra2) {
+        private BasicSupra product(Supracontext supra1, Supracontext supra2) {
             Set<Subcontext> smaller;
             Set<Subcontext> larger;
             if (supra1.getData().size() > supra2.getData().size()) {
@@ -194,11 +199,11 @@ public class DistributedLattice implements Lattice {
         }
 	}
 
-    static class FinalCombiner extends RecursiveTask<CanonicalizingSet<Supracontext>> {
+    static class FinalizingProduct extends RecursiveTask<CanonicalizingSet<Supracontext>> {
         private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
-        FinalCombiner(Supracontext supra1, Set<Supracontext> supras2) {
+        FinalizingProduct(Supracontext supra1, Set<Supracontext> supras2) {
             this.supra1 = supra1;
             this.supras2 = supras2;
         }
@@ -208,7 +213,7 @@ public class DistributedLattice implements Lattice {
 			ClassifiedSupra supra;
 			CanonicalizingSet<Supracontext> finalSupras = new CanonicalizingSet<>();
 			for (Supracontext supra2 : supras2) {
-				supra = combine(supra1, supra2);
+				supra = product(supra1, supra2);
 				if (supra == null) continue;
 				// add to the existing count if the same supra was formed from a
 				// previous combination
@@ -232,7 +237,7 @@ public class DistributedLattice implements Lattice {
          * @return a combined supracontext, or null if supra1 and supra2 had no data in common or if the new
          * supracontext is heterogeneous
          */
-        private ClassifiedSupra combine(Supracontext supra1, Supracontext supra2) {
+        private ClassifiedSupra product(Supracontext supra1, Supracontext supra2) {
             Set<Subcontext> smaller;
             Set<Subcontext> larger;
             if (supra1.getData().size() > supra2.getData().size()) {
