@@ -139,36 +139,37 @@ public class DistributedLattice implements Lattice {
      * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
      *                            supracontexts
      */
-    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) {
-		Collection<RecursiveTask<Set<Supracontext>>> subTasks = supras1.stream().map(supra -> combinerConstructor.apply(supra, supras2)).collect(Collectors.toList());
-		Collection<RecursiveTask<Set<Supracontext>>> combined = ForkJoinTask.invokeAll(subTasks);
-		return reduceSupraCombinations(combined);
-    }
+	private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<CanonicalizingSet<Supracontext>>> combinerConstructor) {
+		Collection<RecursiveTask<CanonicalizingSet<Supracontext>>> subTasks =
+				supras1.stream().map(supra -> combinerConstructor.apply(supra, supras2)).
+						collect(Collectors.toList());
+		Collection<RecursiveTask<CanonicalizingSet<Supracontext>>> combined =
+				ForkJoinTask.invokeAll(subTasks);
 
-    // combine supracontext sets generated in separate threads into one set
-    private Set<Supracontext> reduceSupraCombinations(Collection<RecursiveTask<Set<Supracontext>>> supraComboTasks) {
-        GettableSet<Supracontext> finalSupras = new GettableSet<>();
-        for (RecursiveTask<Set<Supracontext>> task : supraComboTasks) {
-			Set<Supracontext> partialCountSupras = task.join();
-			reduceSupraCombinations(finalSupras, partialCountSupras);
-		}
-        return finalSupras.unwrap();
-    }
-
-	private void reduceSupraCombinations(GettableSet<Supracontext> finalSupras, Set<Supracontext> partialCountSupras) {
-		for (Supracontext supra : partialCountSupras) {
-			// add to the existing count if the same supra was formed from a
-			// previous combination
-			if (finalSupras.contains(supra)) {
-				Supracontext existing = finalSupras.get(supra);
-				existing.setCount(supra.getCount().add(existing.getCount()));
-			} else {
-				finalSupras.add(supra);
-			}
-		}
+		return combined.parallelStream().map(RecursiveTask::join).
+				reduce(DistributedLattice::reduceSupraCombinations).
+				orElse(CanonicalizingSet.emptySet());
 	}
 
-	static class IntermediateCombiner extends RecursiveTask<Set<Supracontext>> {
+	private static CanonicalizingSet<Supracontext> reduceSupraCombinations(CanonicalizingSet<Supracontext> supras1, CanonicalizingSet<Supracontext> supras2) {
+		// make sure supras2 is the smaller set of supracontexts, since we will iterate over it
+		if (supras2.size() > supras1.size()) {
+			CanonicalizingSet<Supracontext> temp = supras1;
+			supras1 = supras2;
+			supras2 = temp;
+		}
+		for (Supracontext supra : supras2) {
+			// add to the existing count if the same supra was formed from a
+			// previous combination
+			supras1.merge(supra, (s1, s2) -> {
+				s1.setCount(s1.getCount().add(s2.getCount()));
+				return s1;
+			});
+		}
+		return supras1;
+	}
+
+	static class IntermediateCombiner extends RecursiveTask<CanonicalizingSet<Supracontext>> {
         private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
@@ -178,9 +179,9 @@ public class DistributedLattice implements Lattice {
         }
 
 		@Override
-		protected Set<Supracontext> compute() {
+		protected CanonicalizingSet<Supracontext> compute() {
 			BasicSupra newSupra;
-			GettableSet<Supracontext> combinedSupras = new GettableSet<>();
+			CanonicalizingSet<Supracontext> combinedSupras = new CanonicalizingSet<>();
 			for (Supracontext supra2 : supras2) {
 				newSupra = combine(supra1, supra2);
 				if (newSupra != null) {
@@ -192,7 +193,7 @@ public class DistributedLattice implements Lattice {
 					}
 				}
 			}
-			return combinedSupras.unwrap();
+			return combinedSupras;
 		}
 
         /**
@@ -223,7 +224,7 @@ public class DistributedLattice implements Lattice {
         }
 	}
 
-    static class FinalCombiner extends RecursiveTask<Set<Supracontext>> {
+    static class FinalCombiner extends RecursiveTask<CanonicalizingSet<Supracontext>> {
         private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
@@ -233,9 +234,9 @@ public class DistributedLattice implements Lattice {
         }
 
 		@Override
-		protected Set<Supracontext> compute() {
+		protected CanonicalizingSet<Supracontext> compute() {
 			ClassifiedSupra supra;
-			GettableSet<Supracontext> finalSupras = new GettableSet<>();
+			CanonicalizingSet<Supracontext> finalSupras = new CanonicalizingSet<>();
 			for (Supracontext supra2 : supras2) {
 				supra = combine(supra1, supra2);
 				if (supra == null) continue;
@@ -248,7 +249,7 @@ public class DistributedLattice implements Lattice {
 					finalSupras.add(supra);
 				}
 			}
-			return finalSupras.unwrap();
+			return finalSupras;
 		}
 
 		/**
@@ -286,96 +287,6 @@ public class DistributedLattice implements Lattice {
             }
             supra.setCount(supra1.getCount().multiply(supra2.getCount()));
             return supra;
-        }
-    }
-
-    /**
-     * A set implementation that adds a get method (not present in Java's Set interface).
-     * This is required for combining sets of supracontexts, since supracontexts
-     * are equal even if their counts are different.
-     */
-    private static class GettableSet<T> implements Set<T> {
-        private final Map<T, T> backingMap = new HashMap<>();
-
-        /**
-         * @return null if {@code t} is not contained in the set; otherwise the object contained in the set for which
-         * {@code t.equals(theObject} is true.
-         */
-        public T get(T t) {
-            return backingMap.get(t);
-        }
-
-        /**
-         * @return the underlying set
-         */
-        public Set<T> unwrap() {
-            return backingMap.keySet();
-        }
-
-        @Override
-        public int size() {
-            return backingMap.size();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return backingMap.isEmpty();
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return backingMap.containsKey(o);
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return backingMap.keySet().iterator();
-        }
-
-        @Override
-        public Object[] toArray() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T1> T1[] toArray(T1[] a) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean add(T t) {
-            backingMap.put(t, t);
-            return true;
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(Collection<? extends T> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean retainAll(Collection<?> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean removeAll(Collection<?> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
         }
     }
 }
