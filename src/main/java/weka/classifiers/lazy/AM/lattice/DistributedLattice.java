@@ -123,7 +123,7 @@ public class DistributedLattice implements Lattice {
         }
 
         @Override
-        public Set<Supracontext> call() throws Exception {
+        public Set<Supracontext> call() {
             return combineInParallel(supras1,
                                      supras2,
 					IntermediateCombiner::new
@@ -139,32 +139,36 @@ public class DistributedLattice implements Lattice {
      * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
      *                            supracontexts
      */
-    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
+    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) {
 		Collection<RecursiveTask<Set<Supracontext>>> subTasks = supras1.stream().map(supra -> combinerConstructor.apply(supra, supras2)).collect(Collectors.toList());
 		Collection<RecursiveTask<Set<Supracontext>>> combined = ForkJoinTask.invokeAll(subTasks);
 		return reduceSupraCombinations(combined);
     }
 
     // combine supracontext sets generated in separate threads into one set
-    private Set<Supracontext> reduceSupraCombinations(Collection<RecursiveTask<Set<Supracontext>>> supraComboTasks) throws InterruptedException, ExecutionException {
+    private Set<Supracontext> reduceSupraCombinations(Collection<RecursiveTask<Set<Supracontext>>> supraComboTasks) {
         GettableSet<Supracontext> finalSupras = new GettableSet<>();
         for (RecursiveTask<Set<Supracontext>> task : supraComboTasks) {
 			Set<Supracontext> partialCountSupras = task.join();
-            for (Supracontext supra : partialCountSupras) {
-                // add to the existing count if the same supra was formed from a
-                // previous combination
-                if (finalSupras.contains(supra)) {
-                    Supracontext existing = finalSupras.get(supra);
-                    existing.setCount(supra.getCount().add(existing.getCount()));
-                } else {
-                    finalSupras.add(supra);
-                }
-            }
-        }
+			reduceSupraCombinations(finalSupras, partialCountSupras);
+		}
         return finalSupras.unwrap();
     }
 
-    static class IntermediateCombiner extends RecursiveTask<Set<Supracontext>> {
+	private void reduceSupraCombinations(GettableSet<Supracontext> finalSupras, Set<Supracontext> partialCountSupras) {
+		for (Supracontext supra : partialCountSupras) {
+			// add to the existing count if the same supra was formed from a
+			// previous combination
+			if (finalSupras.contains(supra)) {
+				Supracontext existing = finalSupras.get(supra);
+				existing.setCount(supra.getCount().add(existing.getCount()));
+			} else {
+				finalSupras.add(supra);
+			}
+		}
+	}
+
+	static class IntermediateCombiner extends RecursiveTask<Set<Supracontext>> {
         private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
