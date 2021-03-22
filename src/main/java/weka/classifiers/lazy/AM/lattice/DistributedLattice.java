@@ -16,7 +16,6 @@
 
 package weka.classifiers.lazy.AM.lattice;
 
-import com.google.common.collect.Iterables;
 import weka.classifiers.lazy.AM.data.*;
 import weka.classifiers.lazy.AM.label.Labeler;
 
@@ -24,9 +23,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static weka.classifiers.lazy.AM.AMUtils.NUM_CORES;
 
 /**
  * This lass manages several smaller, heterogeneous lattices. The
@@ -143,15 +139,10 @@ public class DistributedLattice implements Lattice {
      * @param combinerConstructor the constructor of the Callable which will combine (one partition of) the sets of
      *                            supracontexts
      */
-    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Iterable<Supracontext>, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
-        Iterable<List<Supracontext>> suprasPartition = Iterables.partition(supras1, getPartitionSize(supras1));
-		Collection<RecursiveTask<Set<Supracontext>>> subTasks = StreamSupport.stream(suprasPartition.spliterator(), false).map(supra -> combinerConstructor.apply(supra, supras2)).collect(Collectors.toList());
+    private Set<Supracontext> combineInParallel(Set<Supracontext> supras1, Set<Supracontext> supras2, BiFunction<Supracontext, Set<Supracontext>, RecursiveTask<Set<Supracontext>>> combinerConstructor) throws ExecutionException, InterruptedException {
+		Collection<RecursiveTask<Set<Supracontext>>> subTasks = supras1.stream().map(supra -> combinerConstructor.apply(supra, supras2)).collect(Collectors.toList());
 		Collection<RecursiveTask<Set<Supracontext>>> combined = ForkJoinTask.invokeAll(subTasks);
 		return reduceSupraCombinations(combined);
-    }
-
-    private static int getPartitionSize(Collection<?> coll) {
-        return (int) Math.ceil(coll.size() / (double) NUM_CORES);
     }
 
     // combine supracontext sets generated in separate threads into one set
@@ -174,33 +165,31 @@ public class DistributedLattice implements Lattice {
     }
 
     static class IntermediateCombiner extends RecursiveTask<Set<Supracontext>> {
-        private final Iterable<Supracontext> supras1;
+        private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
-        IntermediateCombiner(Iterable<Supracontext> supras1, Set<Supracontext> supras2) {
-            this.supras1 = supras1;
+        IntermediateCombiner(Supracontext supra1, Set<Supracontext> supras2) {
+            this.supra1 = supra1;
             this.supras2 = supras2;
         }
 
 		@Override
 		protected Set<Supracontext> compute() {
-            BasicSupra newSupra;
-            GettableSet<Supracontext> combinedSupras = new GettableSet<>();
-            for (Supracontext supra1 : supras1) {
-                for (Supracontext supra2 : supras2) {
-                    newSupra = combine(supra1, supra2);
-                    if (newSupra != null) {
-                        if (combinedSupras.contains(newSupra)) {
-                            Supracontext oldSupra = combinedSupras.get(newSupra);
-                            oldSupra.setCount(oldSupra.getCount().add(newSupra.getCount()));
-                        } else {
-                            combinedSupras.add(newSupra);
-                        }
-                    }
-                }
-            }
-            return combinedSupras.unwrap();
-        }
+			BasicSupra newSupra;
+			GettableSet<Supracontext> combinedSupras = new GettableSet<>();
+			for (Supracontext supra2 : supras2) {
+				newSupra = combine(supra1, supra2);
+				if (newSupra != null) {
+					if (combinedSupras.contains(newSupra)) {
+						Supracontext oldSupra = combinedSupras.get(newSupra);
+						oldSupra.setCount(oldSupra.getCount().add(newSupra.getCount()));
+					} else {
+						combinedSupras.add(newSupra);
+					}
+				}
+			}
+			return combinedSupras.unwrap();
+		}
 
         /**
          * Combine this partial supracontext with another to make a third which
@@ -231,36 +220,34 @@ public class DistributedLattice implements Lattice {
 	}
 
     static class FinalCombiner extends RecursiveTask<Set<Supracontext>> {
-        private final Iterable<Supracontext> supras1;
+        private final Supracontext supra1;
         private final Set<Supracontext> supras2;
 
-        FinalCombiner(Iterable<Supracontext> supras1, Set<Supracontext> supras2) {
-            this.supras1 = supras1;
+        FinalCombiner(Supracontext supra1, Set<Supracontext> supras2) {
+            this.supra1 = supra1;
             this.supras2 = supras2;
         }
 
 		@Override
 		protected Set<Supracontext> compute() {
-            ClassifiedSupra supra;
-            GettableSet<Supracontext> finalSupras = new GettableSet<>();
-            for (Supracontext supra1 : supras1) {
-                for (Supracontext supra2 : supras2) {
-                    supra = combine(supra1, supra2);
-                    if (supra == null) continue;
-                    // add to the existing count if the same supra was formed from a
-                    // previous combination
-                    if (finalSupras.contains(supra)) {
-                        Supracontext existing = finalSupras.get(supra);
-                        existing.setCount(supra.getCount().add(existing.getCount()));
-                    } else {
-                        finalSupras.add(supra);
-                    }
-                }
-            }
-            return finalSupras.unwrap();
-        }
+			ClassifiedSupra supra;
+			GettableSet<Supracontext> finalSupras = new GettableSet<>();
+			for (Supracontext supra2 : supras2) {
+				supra = combine(supra1, supra2);
+				if (supra == null) continue;
+				// add to the existing count if the same supra was formed from a
+				// previous combination
+				if (finalSupras.contains(supra)) {
+					Supracontext existing = finalSupras.get(supra);
+					existing.setCount(supra.getCount().add(existing.getCount()));
+				} else {
+					finalSupras.add(supra);
+				}
+			}
+			return finalSupras.unwrap();
+		}
 
-        /**
+		/**
          * Combine this partial supracontext with another to make a
          * {@link ClassifiedSupra} object. The new one contains the subcontexts
          * found in both, and the pointer count is set to the product of the two
