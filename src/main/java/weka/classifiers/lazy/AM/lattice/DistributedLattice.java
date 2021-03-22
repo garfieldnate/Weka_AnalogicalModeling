@@ -69,17 +69,21 @@ public class DistributedLattice implements Lattice {
         int numLattices = labeler.numPartitions();
         for (int i = 0; i < numLattices; i++) {
             // fill each heterogeneous lattice with a given label partition
-            taskCompletionService.submit(new LatticeFiller(subList, i));
+			final int partitionIndex = i;
+			taskCompletionService.submit(() -> fillLatticePartition(subList, partitionIndex));
         }
 
-        // then combine them 2 at a time, consolidating duplicate supracontexts
-        if (numLattices > 2) {
-            for (int i = 1; i < numLattices - 1; i++) {
-                taskCompletionService.submit(new LatticeCombiner(taskCompletionService.take().get(),
-                                                                 taskCompletionService.take().get()
-				));
-            }
-        }
+		// then combine them 2 at a time, consolidating duplicate supracontexts
+		if (numLattices > 2) {
+			for (int i = 1; i < numLattices - 1; i++) {
+				Set<Supracontext> supras1 = taskCompletionService.take().get();
+				Set<Supracontext> supras2 = taskCompletionService.take().get();
+				taskCompletionService.submit(() -> combineInParallel(
+						supras1,
+						supras2,
+						IntermediateCombiner::new));
+			}
+		}
         // the final combination creates ClassifiedSupras and ignores the heterogeneous ones.
         supras = combineInParallel(taskCompletionService.take().get(),
                                    taskCompletionService.take().get(),
@@ -88,48 +92,14 @@ public class DistributedLattice implements Lattice {
         executor.shutdownNow();
     }
 
-    /**
-     * Fills a heterogeneous lattice with subcontexts.
-     */
-	static class LatticeFiller implements Callable<Set<Supracontext>> {
-        private final SubcontextList subList;
-        private final int partitionIndex;
-
-        LatticeFiller(SubcontextList subList, int partitionIndex) {
-            this.subList = subList;
-            this.partitionIndex = partitionIndex;
-        }
-
-        @Override
-        public Set<Supracontext> call() {
-            HeterogeneousLattice lattice = new HeterogeneousLattice(partitionIndex);
-            lattice.fill(subList);
-            return lattice.getSupracontexts();
-        }
-
-    }
-
 	/**
-     * Combines two sets of supracontexts (heterogeneous lattices) into one new
-     * set of supracontexts for a heterogeneous lattice.
-     */
-    class LatticeCombiner implements Callable<Set<Supracontext>> {
-        final Set<Supracontext> supras1;
-        final Set<Supracontext> supras2;
-
-        LatticeCombiner(Set<Supracontext> supras1, Set<Supracontext> supras2) {
-            this.supras1 = supras1;
-            this.supras2 = supras2;
-        }
-
-        @Override
-        public Set<Supracontext> call() {
-            return combineInParallel(supras1,
-                                     supras2,
-					IntermediateCombiner::new
-            );
-        }
-    }
+	 * Fills a heterogeneous lattice with subcontexts using the given label partition index.
+	 */
+	private static Set<Supracontext> fillLatticePartition(SubcontextList subList, int partitionIndex) {
+		HeterogeneousLattice lattice = new HeterogeneousLattice(partitionIndex);
+		lattice.fill(subList);
+		return lattice.getSupracontexts();
+	}
 
     /**
      * Combines two sets of {@link Supracontext Supracontexts} to make a new
@@ -185,12 +155,12 @@ public class DistributedLattice implements Lattice {
 			for (Supracontext supra2 : supras2) {
 				newSupra = combine(supra1, supra2);
 				if (newSupra != null) {
-					if (combinedSupras.contains(newSupra)) {
-						Supracontext oldSupra = combinedSupras.get(newSupra);
-						oldSupra.setCount(oldSupra.getCount().add(newSupra.getCount()));
-					} else {
-						combinedSupras.add(newSupra);
-					}
+					// add to the existing count if the same supra was formed from a
+					// previous combination
+					combinedSupras.merge(newSupra, (s1, s2) -> {
+						s1.setCount(s1.getCount().add(s2.getCount()));
+						return s1;
+					});
 				}
 			}
 			return combinedSupras;
@@ -242,12 +212,10 @@ public class DistributedLattice implements Lattice {
 				if (supra == null) continue;
 				// add to the existing count if the same supra was formed from a
 				// previous combination
-				if (finalSupras.contains(supra)) {
-					Supracontext existing = finalSupras.get(supra);
-					existing.setCount(supra.getCount().add(existing.getCount()));
-				} else {
-					finalSupras.add(supra);
-				}
+				finalSupras.merge(supra, (s1, s2) -> {
+					s1.setCount(s1.getCount().add(s2.getCount()));
+					return s1;
+				});
 			}
 			return finalSupras;
 		}
