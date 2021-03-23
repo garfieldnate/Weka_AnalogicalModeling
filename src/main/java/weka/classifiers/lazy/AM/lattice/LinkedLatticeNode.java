@@ -2,6 +2,7 @@ package weka.classifiers.lazy.AM.lattice;
 
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
+import weka.classifiers.lazy.AM.label.Label;
 
 import java.math.BigInteger;
 import java.util.Set;
@@ -144,7 +145,12 @@ public class LinkedLatticeNode<T extends Supracontext> implements Supracontext {
         supra.setCount(count);
     }
 
-    @Override
+	@Override
+	public Label getContext() {
+		return supra.getContext();
+	}
+
+	@Override
     public boolean equals(Object other) {
         if (this == other) return true;
         if (other == null) return false;

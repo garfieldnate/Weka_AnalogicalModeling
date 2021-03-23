@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SubcontextTest {
     private static Instances dataset;
@@ -67,7 +68,13 @@ public class SubcontextTest {
         // TODO: can't test toString() like this because data is an unordered
         // set
         // assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
-
     }
+    
+    @Test
+	public void testToStringWithEmptyData() {
+    	Subcontext testSub = new Subcontext(new IntLabel(0b10, 2));
+    	String actual = testSub.toString();
+    	assertNotNull(actual);
+	}
 
 }

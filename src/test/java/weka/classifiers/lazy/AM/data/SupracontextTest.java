@@ -15,8 +15,12 @@ import weka.classifiers.lazy.AM.lattice.LinkedLatticeNode;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
+import static org.junit.Assume.assumeThat;
 
 @RunWith(Parameterized.class)
 public class SupracontextTest {
@@ -67,6 +71,19 @@ public class SupracontextTest {
         exception.expectMessage(new StringContains("count must not be null"));
         testSupra.setCount(null);
     }
+
+	@Test
+	public void testDefaultGetContext() {
+		assumeThat("Concept determines context differently", supraFactory.getSupra(), not(instanceOf(Concept.class)));
+		Supracontext testSupra = supraFactory.getSupra();
+		for (int bits : List.of(0b01010, 0b01010, 0b10010, 0b11000)) {
+			testSupra.add(new Subcontext(new IntLabel(bits, 5)));
+		}
+		assertEquals("Label should be intersect of subcontext labels", new IntLabel(0b11010, 5), testSupra.getContext());
+
+    	testSupra.add(new Subcontext(new IntLabel(0b01001, 5)));
+    	assertEquals("New context should be intersected with previous one", new IntLabel(0b11011, 5), testSupra.getContext());
+	}
 
     @Test
     public void testSetCountThrowsErrorWhenArgIsLessThanZero() {

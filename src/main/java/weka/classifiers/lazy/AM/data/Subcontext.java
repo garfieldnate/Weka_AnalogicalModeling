@@ -113,8 +113,13 @@ public class Subcontext {
 
         // we know all of the exemplars must have the same outcome;
         // otherwise the outcome is nondeterministic
-        if (outcome == AMUtils.NONDETERMINISTIC) sb.append(AMUtils.NONDETERMINISTIC_STRING);
-        else sb.append(data.iterator().next().stringValue(data.iterator().next().classAttribute()));
+        if (outcome == AMUtils.NONDETERMINISTIC) {
+        	sb.append(AMUtils.NONDETERMINISTIC_STRING);
+		} else {
+        	if (!data.isEmpty()) {
+				sb.append(data.iterator().next().stringValue(data.iterator().next().classAttribute()));
+			}
+		}
         sb.append('|');
 
         for (Instance instance : data) {

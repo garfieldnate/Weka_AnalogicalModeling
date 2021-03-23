@@ -16,6 +16,7 @@
 package weka.classifiers.lazy.AM.data;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.label.Label;
 
 import java.math.BigInteger;
 import java.util.Set;
@@ -139,7 +140,12 @@ public class ClassifiedSupra implements Supracontext {
         supra.setCount(count);
     }
 
-    @Override
+	@Override
+	public Label getContext() {
+		return supra.getContext();
+	}
+
+	@Override
     public boolean equals(Object other) {
         if (this == other) return true;
         if (other == null) return false;

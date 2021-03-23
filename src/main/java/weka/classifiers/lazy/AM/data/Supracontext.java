@@ -59,7 +59,25 @@ public interface Supracontext {
      */
     void setCount(BigInteger count);
 
-    /**
+	/**
+	 * Retrieve the supracontextual context, represented with a {@link Label} object.
+	 * Label mismatches should be interpreted as "contained subcontexts may or may not match
+	 * for this attribute, while matches should be regarded as "all contained subcontexts
+	 * matched for this attribute".
+	 *
+	 * The running time for this default implementation is linear in the number of contained
+	 * subcontexts.
+	 *
+	 * @return The context for this supracontext, or {@code null} if the subcontexts are empty
+	 */
+	default Label getContext() {
+		return getData().stream().
+				map(Subcontext::getLabel).
+				reduce(Label::intersect).
+				orElse(null);
+	}
+
+	/**
      * {@inheritDoc} Two Supracontexts are equal if they are of the same class
      * and contain the same subcontexts.
      */

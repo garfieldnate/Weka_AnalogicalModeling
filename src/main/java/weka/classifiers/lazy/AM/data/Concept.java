@@ -139,7 +139,12 @@ public class Concept<T extends Supracontext> implements Supracontext {
         extent.setCount(count);
     }
 
-    public boolean notTagged() {
+	@Override
+	public Label getContext() {
+		return intent;
+	}
+
+	public boolean notTagged() {
         return !tag;
     }
 

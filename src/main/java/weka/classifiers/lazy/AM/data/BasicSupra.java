@@ -1,5 +1,7 @@
 package weka.classifiers.lazy.AM.data;
 
+import weka.classifiers.lazy.AM.label.Label;
+
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,6 +15,8 @@ import java.util.Set;
 public class BasicSupra implements Supracontext {
     private BigInteger count = BigInteger.ONE;
     private final Set<Subcontext> data;
+    // cached on first calculation
+    private Label context;
 
     /**
      * Create a new supracontext with an empty data set.
@@ -36,7 +40,9 @@ public class BasicSupra implements Supracontext {
 
     @Override
     public void add(Subcontext sub) {
-        data.add(sub);
+		// the value is cached when getContext is called, but is invalidated when new data is added
+    	this.context = null;
+    	data.add(sub);
     }
 
     @Override
@@ -62,7 +68,15 @@ public class BasicSupra implements Supracontext {
         this.count = count;
     }
 
-    @Override
+	@Override
+	public Label getContext() {
+    	if(this.context == null) {
+			this.context = Supracontext.super.getContext();
+		}
+    	return this.context;
+	}
+
+	@Override
     public BasicSupra copy() {
         return new BasicSupra(data, count);
     }
@@ -102,5 +116,4 @@ public class BasicSupra implements Supracontext {
         sb.append(']');
         return sb.toString();
     }
-
 }
