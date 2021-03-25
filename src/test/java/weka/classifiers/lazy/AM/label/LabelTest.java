@@ -191,4 +191,12 @@ public class LabelTest {
 		Label nonDescendantLabel = labeler.fromBits(0b001);
 		assertFalse(nonDescendantLabel.isDescendantOf(parentLabel));
 	}
+
+	@Test
+	public void testToString() {
+		int labelBits = 0b1010101000111;
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(13), false, MATCH);
+		Label label = labeler.fromBits(labelBits);
+		assertEquals(Integer.toString(labelBits,2), label.toString());
+	}
 }
