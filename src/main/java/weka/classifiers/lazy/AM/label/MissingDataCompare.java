@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              * 
+ * Copyright 2012 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -20,7 +20,6 @@ import weka.core.Instance;
 import weka.core.SelectedTag;
 import weka.core.Tag;
 
-//TODO: 0 being a match and 1 being a mismatch is a leaked abstraction; change these to booleans.
 public enum MissingDataCompare {
     /**
      * Always returns 0, considering the missing data to match anything
