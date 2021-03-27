@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
-
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AM.label.Labeler.Partition;
 import weka.classifiers.lazy.AM.label.LabelerFactory.IntLabelerFactory;
@@ -14,11 +13,13 @@ import weka.core.Instances;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static weka.classifiers.lazy.AM.TestUtils.mockInstance;
-import static weka.classifiers.lazy.AM.label.LabelerFactory.*;
+import static weka.classifiers.lazy.AM.TestUtils.sixCardinalityData;
+import static weka.classifiers.lazy.AM.label.LabelerFactory.BitSetLabelerFactory;
+import static weka.classifiers.lazy.AM.label.LabelerFactory.LongLabelerFactory;
 import static weka.classifiers.lazy.AM.label.MissingDataCompare.MATCH;
 
 /**
@@ -82,7 +83,7 @@ public class LabelerTest {
 
     @Test
     public void testLabel() {
-        Instances dataset = TestUtils.sixCardinalityData();
+        Instances dataset = sixCardinalityData();
         Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MissingDataCompare.MATCH);
         assertLabelEquals(new IntLabel(0b00000, 5), labeler.label(dataset.get(1)));
         assertLabelEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(2)));
@@ -94,11 +95,10 @@ public class LabelerTest {
     /**
      * Test with a different class index to make sure its location is not hard
      * coded.
-     *
 	 */
     @Test
     public void testLabelWithAlternateClassIndex() {
-        Instances dataset = TestUtils.sixCardinalityData();
+        Instances dataset = sixCardinalityData();
         dataset.setClassIndex(2);
         Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MissingDataCompare.MATCH);
         assertLabelEquals(new IntLabel(0b10100, 5), labeler.label(dataset.get(2)));
@@ -106,16 +106,15 @@ public class LabelerTest {
         assertLabelEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(4)));
         assertLabelEquals(new IntLabel(0b11110, 5), labeler.label(dataset.get(5)));
         dataset.setClassIndex(dataset.numAttributes() - 1);
-
     }
 
     /**
-     * test that missing values are compared based on the input
+     * Test that missing values are compared based on the input
      * {@link MissingDataCompare} value.
      */
     @Test
     public void testGetContextLabelMissingDataCompares() {
-        Instances dataset = TestUtils.sixCardinalityData();
+        Instances dataset = sixCardinalityData();
         Labeler labeler = labelerFactory.createLabeler(dataset.get(6), false, MissingDataCompare.MATCH);
         assertLabelEquals("MATCH: always matches", new IntLabel(0b00100, 5), labeler.label(dataset.get(0)));
 
@@ -126,6 +125,61 @@ public class LabelerTest {
         assertLabelEquals("VARIABLE: matches other unknowns", new IntLabel(0b00100, 5), labeler.label(dataset.get(7)));
         assertLabelEquals("VARIABLE: mismatches non-unknowns", new IntLabel(0b00111, 5), labeler.label(dataset.get(8)));
     }
+
+	@Test
+	public void testGetContextString() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+		Label label = new IntLabel(0b01011, 5);
+		String actual = labeler.getContextString(label);
+		assertEquals("a * v * *", actual);
+	}
+
+	@Test
+	public void testGetInstanceAttsString() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+		String actual = labeler.getInstanceAttsString(dataset.get(0));
+		assertEquals("a x v u s", actual);
+	}
+
+	@Test
+	public void testGetContextStringWithIgnoredAttribute() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = spy(labelerFactory.createLabeler(dataset.get(0), false, MATCH));
+		Label label = new IntLabel(0b0011, 4);
+		when(labeler.isIgnored(0)).thenReturn(true);
+		String actual = labeler.getContextString(label);
+		assertEquals("x v * *", actual);
+	}
+
+	@Test
+	public void testGetInstanceAttsStringWithIgnoredAttribute() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = spy(labelerFactory.createLabeler(dataset.get(0), false, MATCH));
+		when(labeler.isIgnored(0)).thenReturn(true);
+		String actual = labeler.getInstanceAttsString(dataset.get(0));
+		assertEquals("x v u s", actual);
+	}
+
+	@Test
+	public void testGetContextStringWithAlternativeClassIndex() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+		dataset.setClassIndex(2);
+		Label label = new IntLabel(0b01011, 5);
+		String actual = labeler.getContextString(label);
+		assertEquals("a * u * *", actual);
+	}
+
+	@Test
+	public void testGetInstanceAttsStringWithAlternativeClassIndex() {
+		Instances dataset = sixCardinalityData();
+		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+		dataset.setClassIndex(2);
+		String actual = labeler.getInstanceAttsString(dataset.get(0));
+		assertEquals("a x u s r", actual);
+	}
 
 	@Test
 	public void testGetLatticeTop() {

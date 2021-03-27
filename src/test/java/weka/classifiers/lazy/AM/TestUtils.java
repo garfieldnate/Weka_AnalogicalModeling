@@ -1,7 +1,6 @@
 package weka.classifiers.lazy.AM;
 
 import org.junit.Test;
-
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
@@ -16,10 +15,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
@@ -110,15 +106,12 @@ public class TestUtils {
 
     public static Instances sixCardinalityData() {
         ArrayList<Attribute> atts = new ArrayList<>();
-        ArrayList<String> classes = new ArrayList<>();
-        classes.add("e");
-        classes.add("r");
-        atts.add(new Attribute("a"));
-        atts.add(new Attribute("b"));
-        atts.add(new Attribute("c"));
-        atts.add(new Attribute("d"));
-        atts.add(new Attribute("e"));
-        atts.add(new Attribute("class", classes));
+		atts.add(new Attribute("a", List.of("a", "z", "w")));
+		atts.add(new Attribute("b", List.of("b", "x", "y")));
+		atts.add(new Attribute("c", List.of("c", "w", "v")));
+		atts.add(new Attribute("d", List.of("d", "u", "t")));
+		atts.add(new Attribute("e", List.of("e", "s", "r")));
+		atts.add(new Attribute("class", List.of("e", "r")));
         Instances dataset = new Instances("TestInstances", atts, 0);
         dataset.setClassIndex(dataset.numAttributes() - 1);
 
