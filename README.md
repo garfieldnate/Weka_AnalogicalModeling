@@ -7,7 +7,6 @@ State-of-the-art [analogical modeling](https://en.wikipedia.org/wiki/Analogical_
 * [Documentation](http://garfieldnate.github.io/Weka_AnalogicalModeling/)
 
 [![Build](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/build.yml?query=branch%3Amaster)
-[![documentation](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/garfieldnate/Weka_AnalogicalModeling/actions/workflows/gh-pages.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ### Installation and Use in Weka
