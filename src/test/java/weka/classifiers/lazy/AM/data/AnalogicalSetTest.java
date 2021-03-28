@@ -2,7 +2,6 @@ package weka.classifiers.lazy.AM.data;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import weka.classifiers.lazy.AM.TestUtils;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
@@ -15,11 +14,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Test the data contained in {@link AnalogicalSet} after classifying the chapter 3
- * data.
+ * data. Note that many tests are implemented in a roundabout way because Weka's {@link Instance} implementations
+ * do not implement {@link Object#equals(Object) equals} or {@link Object#hashCode() hashCode}!
  *
  * @author Nathan Glenn
  */
@@ -27,7 +31,9 @@ public class AnalogicalSetTest {
 
     private static Instances train;
     private static Instance test;
-    private static AnalogicalSet as;
+	private static AnalogicalSet asQuadratic;
+	private static AnalogicalSet asLinear;
+	private static final BigDecimal EPSILON = new BigDecimal("1e-10");
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -39,67 +45,113 @@ public class AnalogicalSetTest {
         am.buildClassifier(train);
         am.distributionForInstance(test);
 
-        as = am.getAnalogicalSet();
+        asQuadratic = am.getAnalogicalSet();
+
+        am.setLinearCount(true);
+		am.distributionForInstance(test);
+        asLinear = am.getAnalogicalSet();
     }
 
-    @Test
-    public void exemplarEffectsTest() {
-        Map<Instance, BigDecimal> effects = as.getExemplarEffectMap();
-        assertEquals(effects.size(), 4);
-        // we have to do it this long way because Instance implements
-        // equals but not hashCode or comparable(!)
-        for (Entry<Instance, BigDecimal> entry : effects.entrySet()) {
-            Instance i = entry.getKey();
-            if (i.equals(train.get(0))) assertEquals(entry.getValue(), new BigDecimal("0.3076923077923077"));
-            if (i.equals(train.get(2))) assertEquals(entry.getValue(), new BigDecimal("0.15384615384615385"));
-            if (i.equals(train.get(3))) assertEquals(entry.getValue(), new BigDecimal("0.23076923076923078"));
-            if (i.equals(train.get(4))) assertEquals(entry.getValue(), new BigDecimal("0.307692307692307"));
-        }
-    }
+	@Test
+	public void exemplarQuadraticEffectsTest() {
+		Map<String, BigDecimal> effects = instanceKeysToString(asQuadratic.getExemplarEffectMap());
+		assertEquals(effects.size(), 4);
+		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.3076923077"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1538461538"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2307692308"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.3076923077"), EPSILON)));
+	}
 
-    @Test
-    public void pointersTest() {
-        assertEquals(as.getTotalPointers(), BigInteger.valueOf(13));
-        assertEquals(as.getClassPointers(), new HashMap<String, BigInteger>() {
-            {
-                put("r", BigInteger.valueOf(9));
-                put("e", BigInteger.valueOf(4));
-            }
-        });
-        Map<Instance, BigInteger> pointers = as.getExemplarPointers();
-        assertEquals(pointers.size(), 4);
-        // we can't do effects.get(train.get(x)) because Instance implements
-        // equals but not hashCode or comparable(!)
-        for (Entry<Instance, BigInteger> entry : pointers.entrySet()) {
-            Instance i = entry.getKey();
-            if (i.equals(train.get(0))) assertEquals(entry.getValue(), BigInteger.valueOf(4));
-            if (i.equals(train.get(2))) assertEquals(entry.getValue(), BigInteger.valueOf(2));
-            if (i.equals(train.get(3))) assertEquals(entry.getValue(), BigInteger.valueOf(3));
-            if (i.equals(train.get(4))) assertEquals(entry.getValue(), BigInteger.valueOf(4));
-        }
-    }
+	@Test
+	public void exemplarLinearEffectsTest() {
+		Map<String, BigDecimal> effects = instanceKeysToString(asLinear.getExemplarEffectMap());
+		assertEquals(effects.size(), 4);
+		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1428571429"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
+	}
 
-    @Test
-    public void classDistributionTest() {
-        Map<String, BigDecimal> distribution = as.getClassLikelihood();
+	@Test
+	public void quadraticPointersTest() {
+		assertEquals(asQuadratic.getTotalPointers(), BigInteger.valueOf(13));
+		assertEquals(asQuadratic.getClassPointers(), new HashMap<String, BigInteger>() {
+			{
+				put("r", BigInteger.valueOf(9));
+				put("e", BigInteger.valueOf(4));
+			}
+		});
+		Map<String, BigInteger> pointers = instanceKeysToString(asQuadratic.getExemplarPointers());
+		assertEquals(pointers.size(), 4);
+		assertThat(pointers, hasEntry("3,1,0,e", BigInteger.valueOf(4)));
+		assertThat(pointers, hasEntry("0,3,2,r", BigInteger.valueOf(2)));
+		assertThat(pointers, hasEntry("2,1,2,r", BigInteger.valueOf(3)));
+		assertThat(pointers, hasEntry("3,1,1,r", BigInteger.valueOf(4)));
+	}
 
-        assertEquals(distribution.size(), 2);
-        // test to 10 decimal places, the number used by AMUtils.mathContext
-        assertEquals(distribution.get("r"), new BigDecimal("0.6923076923"));
-        assertEquals(distribution.get("e"), new BigDecimal("0.3076923077"));
+	@Test
+	public void linearPointersTest() {
+		assertEquals(asLinear.getTotalPointers(), BigInteger.valueOf(7));
+		assertEquals(asLinear.getClassPointers(), new HashMap<String, BigInteger>() {
+			{
+				put("r", BigInteger.valueOf(5));
+				put("e", BigInteger.valueOf(2));
+			}
+		});
+		Map<String, BigInteger> pointers = instanceKeysToString(asLinear.getExemplarPointers());
+		assertEquals(pointers.size(), 4);
+		assertThat(pointers, hasEntry("3,1,0,e", BigInteger.valueOf(2)));
+		assertThat(pointers, hasEntry("0,3,2,r", BigInteger.valueOf(1)));
+		assertThat(pointers, hasEntry("2,1,2,r", BigInteger.valueOf(2)));
+		assertThat(pointers, hasEntry("3,1,1,r", BigInteger.valueOf(2)));
+	}
 
-        assertEquals(as.getPredictedClasses(), new HashSet<String>() {
-            {
-                add("r");
-            }
-        });
-        assertEquals(as.getClassProbability(), new BigDecimal("0.6923076923"));
-    }
+	@Test
+	public void quadraticClassDistributionTest() {
+		Map<String, BigDecimal> distribution = asQuadratic.getClassLikelihood();
+
+		assertEquals(distribution.size(), 2);
+		// test to 10 decimal places, the number used by AMUtils.mathContext
+		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.6923076923"), EPSILON));
+		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.3076923077"), EPSILON));
+
+		assertEquals(asQuadratic.getPredictedClasses(), new HashSet<String>() {
+			{
+				add("r");
+			}
+		});
+		assertThat(asQuadratic.getClassProbability(), closeTo(new BigDecimal("0.6923076923"), EPSILON));
+	}
+
+	@Test
+	public void linearClassDistributionTest() {
+		Map<String, BigDecimal> distribution = asLinear.getClassLikelihood();
+
+		assertEquals(distribution.size(), 2);
+		// test to 10 decimal places, the number used by AMUtils.mathContext
+		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.7142857143"), EPSILON));
+		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.2857142857"), EPSILON));
+
+		assertEquals(asLinear.getPredictedClasses(), new HashSet<String>() {
+			{
+				add("r");
+			}
+		});
+		assertThat(asLinear.getClassProbability(), closeTo(new BigDecimal("0.7142857143"), EPSILON));
+	}
 
     @Test
     public void classifiedExTest() {
-        assertEquals(as.getClassifiedEx(), test);
+        assertEquals(asQuadratic.getClassifiedEx(), test);
     }
+    // TODO: test with linear counting
     // TODO: test toString
 
+	private static <T> Map<String, T> instanceKeysToString(Map<Instance, T> instanceMap) {
+		Map<String, T> translated = new HashMap<>();
+		for(Entry<Instance, T> e : instanceMap.entrySet()) {
+			translated.put(e.getKey().toString(), e.getValue());
+		}
+		return translated;
+	}
 }

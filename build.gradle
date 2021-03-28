@@ -15,7 +15,10 @@ repositories {
 dependencies {
 	implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
 	implementation group: 'com.google.guava', name: 'guava', version: '19.0'
-	testImplementation 'junit:junit:4.11'
+
+	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+	testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+
 	testImplementation group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', classifier: 'tests', version: '3.9.5'
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
 	// Required to silence warnings for now; see https://github.com/mockito/mockito/issues/1325
