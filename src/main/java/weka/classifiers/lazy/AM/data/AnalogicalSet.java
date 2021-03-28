@@ -17,6 +17,7 @@
 package weka.classifiers.lazy.AM.data;
 
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.core.Instance;
 
@@ -57,7 +58,7 @@ public class AnalogicalSet {
 
     private BigInteger totalPointers = BigInteger.ZERO;
 
-    private Set<String> predictedClasses = null;
+    private final Set<String> predictedClasses = new HashSet<>();
     private BigDecimal classProbability = BigDecimal.valueOf(-1);
 
     /**
@@ -66,6 +67,7 @@ public class AnalogicalSet {
     private final Instance classifiedExemplar;
 
     private static final String newline = System.getProperty("line.separator");
+	private final Labeler labeler;
 
     // these are used for sorting items to be printed
     private static final Comparator<Map.Entry<Instance, BigInteger>> entryComparator1 = (arg1, arg2) -> {
@@ -85,15 +87,17 @@ public class AnalogicalSet {
      * @param lattice  filled lattice, which contains the data for calculating the analogical set
      * @param testItem Exemplar being classified
      * @param linear   True if counting of pointers should be done linearly; false if quadratically.
+	 * @param labeler  The labeler that was used to assign contextual labels; this is made available
+	 *                 for printing purposes.
      */
-    public AnalogicalSet(Lattice lattice, Instance testItem, boolean linear) {
-
-        Set<Supracontext> set = lattice.getSupracontexts();
+    public AnalogicalSet(Lattice lattice, Instance testItem, boolean linear, Labeler labeler) {
+		Set<Supracontext> set = lattice.getSupracontexts();
 
         this.classifiedExemplar = testItem;
         this.supraList = set;
+		this.labeler = labeler;
 
-        // find numbers of pointers to individual exemplars
+		// find numbers of pointers to individual exemplars
         exPointerMap = getPointers(set, linear);
 
         // find the total number of pointers
@@ -134,7 +138,7 @@ public class AnalogicalSet {
             int comp = temp.compareTo(getClassProbability());
             if (comp > 0) {
                 classProbability = temp;
-                predictedClasses = new HashSet<>();
+                predictedClasses.clear();
                 predictedClasses.add(className);
             } else if (comp == 0) {
                 predictedClasses.add(className);
@@ -294,4 +298,11 @@ public class AnalogicalSet {
     public Set<Supracontext> getSupraList() {
         return Collections.unmodifiableSet(supraList);
     }
+
+	/**
+	 * @return The Labeler object that was used to assign all of the contextual labels.
+	 */
+	public Labeler getLabeler() {
+		return labeler;
+	}
 }

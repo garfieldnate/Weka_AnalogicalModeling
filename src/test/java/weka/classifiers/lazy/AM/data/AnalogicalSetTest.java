@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test the data contained in AnalogicalSet after classifying the chapter 3
+ * Test the data contained in {@link AnalogicalSet} after classifying the chapter 3
  * data.
  *
  * @author Nathan Glenn
