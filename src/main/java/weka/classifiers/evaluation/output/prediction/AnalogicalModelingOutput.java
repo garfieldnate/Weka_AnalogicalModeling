@@ -24,11 +24,9 @@ import weka.core.Instance;
 import weka.core.Option;
 import weka.core.Utils;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
+
+import static weka.classifiers.lazy.AM.data.GangEffectsFormatter.formatGangs;
 
 /**
  * This class implements a classification output scheme specific to the
@@ -128,8 +126,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         AMResults results = am.getResults();
 
         if (getSummary()) {
-            // StringBuilder sb = new StringBuilder();
-
             append("Total pointers: " + results.getTotalPointers() + AMUtils.LINE_SEPARATOR);
             append("Instances in analogical set: " + results.getExemplarEffectMap().size());
         }
@@ -144,7 +140,12 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getAnalogicalSet()) append(results.toString());
-        if (getGangs()) ;// TODO:print gangs
+        if (getGangs()) {
+            append("Gang effects:");
+            append(AMUtils.LINE_SEPARATOR);
+		append(formatGangs(results));
+            append(AMUtils.LINE_SEPARATOR);
+		}
     }
 
     @Override

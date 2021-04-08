@@ -13,7 +13,8 @@ repositories {
 }
 
 dependencies {
-	implementation 'nz.ac.waikato.cms.weka:weka-dev:3.9.5'
+	implementation group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', version: '3.9.5'
+	implementation group: 'com.jakewharton.picnic', name: 'picnic', version: '0.5.0'
 	implementation group: 'com.google.guava', name: 'guava', version: '19.0'
 	compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
@@ -25,7 +26,6 @@ dependencies {
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
 	// Required to silence warnings for now; see https://github.com/mockito/mockito/issues/1325
 	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.8.0'
-
 }
 
 tasks.withType(Test).configureEach {
