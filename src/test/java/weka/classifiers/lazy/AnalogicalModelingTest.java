@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.data.AnalogicalSet;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -125,20 +125,20 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
     private int leaveOneOut(Instances data) throws Exception {
         int correct = 0;
         for (int i = 0; i < data.numInstances(); i++) {
-            AnalogicalSet set = leaveOneOut(data, i);
+            AMResults set = leaveOneOut(data, i);
             if (set.getPredictedClasses().contains(data.get(i).stringValue(data.classIndex()))) correct++;
         }
         return correct;
     }
 
-    private AnalogicalSet leaveOneOut(Instances data, int index) throws Exception {
+    private AMResults leaveOneOut(Instances data, int index) throws Exception {
         Instances train = new Instances(data);
         Instance test = train.get(index);
         train.remove(index);
         AnalogicalModeling am = getClassifier();
         am.buildClassifier(train);
         am.distributionForInstance(test);
-        return am.getAnalogicalSet();
+        return am.getResults();
     }
 
     public static junit.framework.Test suite() {

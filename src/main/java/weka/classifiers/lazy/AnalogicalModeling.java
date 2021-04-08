@@ -18,7 +18,7 @@ package weka.classifiers.lazy;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
-import weka.classifiers.lazy.AM.data.AnalogicalSet;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.classifiers.lazy.AM.label.LabelerFactory;
@@ -170,7 +170,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 	 * @throws ExecutionException If execution is rejected for some reason
 	 * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
-    private AnalogicalSet classify(Instance testItem) throws InterruptedException, ExecutionException {
+    private AMResults classify(Instance testItem) throws InterruptedException, ExecutionException {
         if (getDebug()) System.out.println("Classifying: " + testItem);
 
 		Labeler labeler = new LabelerFactory.CardinalityBasedLabelerFactory().createLabeler(testItem, m_ignoreUnknowns, mdc);
@@ -189,8 +189,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		// 3. create analogical set from the pointers in resulting homogeneous
         // supracontexts
         // we save the analogical set for use with AnalogicalModelingOutput
-        as = new AnalogicalSet(lattice, testItem, m_linearCount, labeler);
-        return as;
+        results = new AMResults(lattice, testItem, m_linearCount, labeler);
+        return results;
     }
 
     // ////OPTION STORAGE VARIABLES
@@ -592,12 +592,12 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
             return new double[]{1};
         }
 
-        AnalogicalSet as = classify(instance);
-        if (getDebug()) System.out.println(as);
+        AMResults results = classify(instance);
+        if (getDebug()) System.out.println(results);
 
         double[] classProbability = new double[trainingInstances.numClasses()];
         int index = 0;
-        for (Entry<String, BigDecimal> entry : as.getClassLikelihood().entrySet())
+        for (Entry<String, BigDecimal> entry : results.getClassLikelihood().entrySet())
             classProbability[index++] = entry.getValue().doubleValue();
 
         return classProbability;
@@ -606,15 +606,15 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * The analogical set from the last call to distributionForInstance
      */
-    private AnalogicalSet as = null;
+    private AMResults results = null;
 
     /**
-     * @return The analogical set from the last call to distributionForInstance
+     * @return The classification results from the last call to distributionForInstance
      * @throws IllegalStateException if you've never called distributionForInstance from this object
      */
-    public AnalogicalSet getAnalogicalSet() {
-        if (as == null) throw new IllegalStateException("Call distributionForInstance before calling this");
-        return as;
+    public AMResults getResults() {
+        if (results == null) throw new IllegalStateException("Call distributionForInstance before calling this");
+        return results;
     }
 
     @Override

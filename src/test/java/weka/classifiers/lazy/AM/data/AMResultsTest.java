@@ -21,18 +21,18 @@ import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test the data contained in {@link AnalogicalSet} after classifying the chapter 3
+ * Test the data contained in {@link AMResults} after classifying the chapter 3
  * data. Note that many tests are implemented in a roundabout way because Weka's {@link Instance} implementations
  * do not implement {@link Object#equals(Object) equals} or {@link Object#hashCode() hashCode}!
  *
  * @author Nathan Glenn
  */
-public class AnalogicalSetTest {
+public class AMResultsTest {
 
     private static Instances train;
     private static Instance test;
-	private static AnalogicalSet asQuadratic;
-	private static AnalogicalSet asLinear;
+	private static AMResults asQuadratic;
+	private static AMResults asLinear;
 	private static final BigDecimal EPSILON = new BigDecimal("1e-10");
 
     @BeforeClass
@@ -45,11 +45,11 @@ public class AnalogicalSetTest {
         am.buildClassifier(train);
         am.distributionForInstance(test);
 
-        asQuadratic = am.getAnalogicalSet();
+        asQuadratic = am.getResults();
 
         am.setLinearCount(true);
 		am.distributionForInstance(test);
-        asLinear = am.getAnalogicalSet();
+        asLinear = am.getResults();
     }
 
 	@Test

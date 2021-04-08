@@ -34,12 +34,13 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * This class holds a list of the exemplars that influenced the predicted
- * outcome of a certain test item, along with the analogical effect of each.
+ * The results of running {@link weka.classifiers.lazy.AnalogicalModeling AM}, containing
+ * the analogical effects of the individual training instances as well as the relevant supracontexts
+ * and overall class likelihoods.
  *
  * @author Nate Glenn
  */
-public class AnalogicalSet {
+public class AMResults {
 
     /**
      * Mapping of an exemplar to its analogical effect
@@ -91,7 +92,7 @@ public class AnalogicalSet {
 	 * @param labeler  The labeler that was used to assign contextual labels; this is made available
 	 *                 for printing purposes.
      */
-    public AnalogicalSet(Lattice lattice, Instance testItem, boolean linear, Labeler labeler) {
+    public AMResults(Lattice lattice, Instance testItem, boolean linear, Labeler labeler) {
 		Set<Supracontext> set = lattice.getSupracontexts();
 
         this.classifiedExemplar = testItem;

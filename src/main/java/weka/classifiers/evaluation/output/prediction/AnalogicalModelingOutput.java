@@ -18,7 +18,7 @@ package weka.classifiers.evaluation.output.prediction;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AM.AMUtils;
-import weka.classifiers.lazy.AM.data.AnalogicalSet;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Option;
@@ -125,13 +125,13 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         // later
         double[] distribution = am.distributionForInstance(inst);
 
-        AnalogicalSet as = am.getAnalogicalSet();
+        AMResults results = am.getResults();
 
         if (getSummary()) {
             // StringBuilder sb = new StringBuilder();
 
-            append("Total pointers: " + as.getTotalPointers() + AMUtils.LINE_SEPARATOR);
-            append("Instances in analogical set: " + as.getExemplarEffectMap().size());
+            append("Total pointers: " + results.getTotalPointers() + AMUtils.LINE_SEPARATOR);
+            append("Instances in analogical set: " + results.getExemplarEffectMap().size());
         }
         append(AMUtils.LINE_SEPARATOR);
 
@@ -143,7 +143,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
             }
         }
 
-        if (getAnalogicalSet()) append(as.toString());
+        if (getAnalogicalSet()) append(results.toString());
         if (getGangs()) ;// TODO:print gangs
     }
 
