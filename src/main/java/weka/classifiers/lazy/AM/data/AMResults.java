@@ -100,7 +100,7 @@ public class AMResults {
 		this.labeler = labeler;
 
 		// find numbers of pointers to individual exemplars
-        exPointerMap = getPointers(set, linear);
+        this.exPointerMap = getPointers(set, linear);
 
         // find the total number of pointers
         for (Instance e : exPointerMap.keySet())

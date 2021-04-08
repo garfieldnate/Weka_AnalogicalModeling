@@ -47,7 +47,7 @@ public interface Supracontext {
     boolean isEmpty();
 
     /**
-     * @return the count, or number of instances, of this supracontext
+     * @return the number of copies of this supracontext contained in the lattice
      */
     BigInteger getCount();
 
