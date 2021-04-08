@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * This class holds a list of the exemplars that influenced the predicted
@@ -298,6 +299,15 @@ public class AnalogicalSet {
     public Set<Supracontext> getSupraList() {
         return Collections.unmodifiableSet(supraList);
     }
+
+	/**
+	 * @return All subcontexts contained in all of the supracntexts of the analogical set.
+	 */
+	public Set<Subcontext> getSubcontexts() {
+		return getSupraList().stream().
+				flatMap(supra -> supra.getData().stream()).
+				collect(Collectors.toSet());
+	}
 
 	/**
 	 * @return The Labeler object that was used to assign all of the contextual labels.
