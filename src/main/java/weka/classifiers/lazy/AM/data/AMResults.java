@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
  */
 public class AMResults {
 
-    /**
+	/**
      * Mapping of an exemplar to its analogical effect
      */
     private final Map<Instance, BigDecimal> exEffectMap = new HashMap<>();
@@ -308,6 +309,19 @@ public class AMResults {
 		return getSupraList().stream().
 				flatMap(supra -> supra.getData().stream()).
 				collect(Collectors.toSet());
+	}
+
+	/**
+	 * @return The gang effects, sorted by size of the effect and then alphabetically by the
+	 * subcontext display label
+	 */
+	public List<GangEffect> getGangEffects() {
+		return getSubcontexts().stream().
+				map(sub -> new GangEffect(sub, getExemplarPointers())).
+				sorted(
+						Comparator.comparing(GangEffect::getTotalPointers).reversed().
+								thenComparing(e -> e.getSubcontext().getDisplayLabel())).
+				collect(Collectors.toList());
 	}
 
 	/**

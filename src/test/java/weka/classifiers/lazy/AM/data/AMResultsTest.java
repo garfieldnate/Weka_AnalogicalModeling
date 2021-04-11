@@ -11,9 +11,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -153,5 +155,13 @@ public class AMResultsTest {
 			translated.put(e.getKey().toString(), e.getValue());
 		}
 		return translated;
+	}
+
+	@Test
+	public void getGangEffectsTest() {
+		List<GangEffect> effects = asQuadratic.getGangEffects();
+		assertEquals("Should return 3 gang effects ordered by number of pointers",
+				List.of("3 1 *", "* 1 2", "* * 2"),
+				effects.stream().map(e -> e.getSubcontext().getDisplayLabel()).collect(toList()));
 	}
 }

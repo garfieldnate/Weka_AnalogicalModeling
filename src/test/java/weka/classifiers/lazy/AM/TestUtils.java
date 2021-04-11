@@ -116,10 +116,10 @@ public class TestUtils {
         dataset.setClassIndex(dataset.numAttributes() - 1);
 
         double[][] data = new double[][]{
-            new double[]{0, 1, 2, 1, 1, 1}, new double[]{0, 1, 2, 1, 1, 1}, new double[]{2, 1, 1, 2, 1, 1},
-            new double[]{0, 1, 2, 0, 2, 1}, new double[]{2, 1, 2, 0, 2, 1}, new double[]{1, 0, 1, 0, 0, 1},
+            new double[]{0, 1, 2, 1, 1, 1}, new double[]{0, 1, 2, 1, 1, 0}, new double[]{2, 1, 1, 2, 1, 1},
+            new double[]{0, 1, 2, 0, 2, 0}, new double[]{2, 1, 2, 0, 2, 1}, new double[]{1, 0, 1, 0, 0, 0},
             // NaN means a missing attribute
-            new double[]{0, 1, 1, 1, Double.NaN, 1}, new double[]{0, 1, 0, 1, Double.NaN, 1},
+            new double[]{0, 1, 1, 1, Double.NaN, 1}, new double[]{0, 1, 0, 1, Double.NaN, 0},
             new double[]{0, 1, 2, Double.NaN, 1, 1}
         };
         for (double[] datum : data) {
