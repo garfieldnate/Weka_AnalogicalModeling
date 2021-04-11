@@ -197,7 +197,7 @@ public class TestUtils {
 
             // parse label
             Label label = new IntLabel(Integer.parseInt(subComponents[0], 2), subComponents[0].length());
-            Subcontext sub = new Subcontext(label);
+            Subcontext sub = new Subcontext(label, "foo");
 
             // parse outcome
             double outcome;
@@ -251,11 +251,11 @@ public class TestUtils {
     public void getSupraFromStringTest() throws Exception {
         Instances data = TestUtils.getReducedDataSet(TestUtils.FINNVERB_MIN, "6-10");
 
-        final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5));
+        final Subcontext sub1 = new Subcontext(new IntLabel(0b10110, 5), "foo");
         sub1.add(data.get(3)); // P,U,0,?,0,A
-        final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5));
+        final Subcontext sub2 = new Subcontext(new IntLabel(0b10000, 5), "foo");
         sub2.add(data.get(2));// K,U,V,U,0,A
-        final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5));
+        final Subcontext sub3 = new Subcontext(new IntLabel(0b10010, 5), "foo");
         sub3.add(data.get(1));// U,U,V,I,0,A
         ClassifiedSupra expectedSupra = new ClassifiedSupra(new HashSet<>() {
 			{
@@ -274,7 +274,7 @@ public class TestUtils {
 
         supraString = "[1x(01010|&nondeterministic&|H,A,V,A,0,B/H,A,V,I,0,A)]";
         actualSupra = getSupraFromString(supraString, data);
-        final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5));
+        final Subcontext sub4 = new Subcontext(new IntLabel(0b01010, 5), "foo");
         sub4.add(data.get(4)); // H,A,V,I,0,A
         sub4.add(data.get(5)); // H,A,V,A,0,B
         expectedSupra = new ClassifiedSupra(new HashSet<>() {
@@ -289,7 +289,7 @@ public class TestUtils {
         );
 
         data = TestUtils.getReducedDataSet(TestUtils.FINNVERB, "6-10");
-        final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5));
+        final Subcontext sub5 = new Subcontext(new IntLabel(0b00001, 5), "foo");
         sub5.add(data.get(1));// A,A,0,?,S,B
         sub5.add(data.get(2));// also A,A,0,?,S,B
         expectedSupra = new ClassifiedSupra(new HashSet<>() {

@@ -77,11 +77,11 @@ public class SupracontextTest {
 		assumeThat("Concept determines context differently", supraFactory.getSupra(), not(instanceOf(Concept.class)));
 		Supracontext testSupra = supraFactory.getSupra();
 		for (int bits : List.of(0b01010, 0b01010, 0b10010, 0b11000)) {
-			testSupra.add(new Subcontext(new IntLabel(bits, 5)));
+			testSupra.add(new Subcontext(new IntLabel(bits, 5), "foo"));
 		}
 		assertEquals("Label should be intersect of subcontext labels", new IntLabel(0b11010, 5), testSupra.getContext());
 
-    	testSupra.add(new Subcontext(new IntLabel(0b01001, 5)));
+    	testSupra.add(new Subcontext(new IntLabel(0b01001, 5), "foo"));
     	assertEquals("New context should be intersected with previous one", new IntLabel(0b11011, 5), testSupra.getContext());
 	}
 
@@ -97,14 +97,14 @@ public class SupracontextTest {
     public void testIsEmpty() {
         Supracontext testSupra = supraFactory.getSupra();
         assertTrue(testSupra.isEmpty());
-        testSupra.add(new Subcontext(new IntLabel(0b0, 1)));
+        testSupra.add(new Subcontext(new IntLabel(0b0, 1), "foo"));
         assertFalse(testSupra.isEmpty());
     }
 
     @Test
     public void testData() {
-        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), "foo");
+        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2), "foo");
 
         Supracontext testSupra = supraFactory.getSupra();
 
@@ -116,8 +116,8 @@ public class SupracontextTest {
 
     @Test
     public void testCopy() {
-        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), "foo");
+        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2), "foo");
 
         Supracontext testSupra1 = supraFactory.getSupra();
 
@@ -134,8 +134,8 @@ public class SupracontextTest {
     public void testEqualsAndHashCode() {
         // equals and hash code work different for Concept
         if (testName.equals(Concept.class.getSimpleName())) return;
-        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
-        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2));
+        Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), "foo");
+        Subcontext sub2 = new Subcontext(new IntLabel(0b0, 2), "foo");
 
         Supracontext testSupra1 = supraFactory.getSupra();
         Supracontext testSupra2 = supraFactory.getSupra();

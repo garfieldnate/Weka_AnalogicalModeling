@@ -32,20 +32,20 @@ public class SubcontextListTest {
         List<Subcontext> subList = getSubList(subs);
         assertEquals(subList.size(), 4);
 
-        Subcontext expected = new Subcontext(new IntLabel(0b001, 3));
+        Subcontext expected = new Subcontext(new IntLabel(0b001, 3), "foo");
         expected.add(train.get(0));// 310e
         expected.add(train.get(4));// 311r
         assertTrue(subList.contains(expected));
 
-        expected = new Subcontext(new IntLabel(0b100, 3));
+        expected = new Subcontext(new IntLabel(0b100, 3), "foo");
         expected.add(train.get(3));// 212r
         assertTrue(subList.contains(expected));
 
-        expected = new Subcontext(new IntLabel(0b101, 3));
+        expected = new Subcontext(new IntLabel(0b101, 3), "foo");
         expected.add(train.get(1));// 210r
         assertTrue(subList.contains(expected));
 
-        expected = new Subcontext(new IntLabel(0b110, 3));
+        expected = new Subcontext(new IntLabel(0b110, 3), "foo");
         expected.add(train.get(2));// 032r
         assertTrue(subList.contains(expected));
     }

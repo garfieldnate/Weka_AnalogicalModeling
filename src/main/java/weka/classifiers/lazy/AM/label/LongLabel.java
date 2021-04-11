@@ -23,14 +23,14 @@ public class LongLabel extends Label {
     private final int hashCode;
 
     /**
-     * @param l binary label represented by bits in a long
-     * @param c cardinality of the label
+     * @param bits binary label represented by bits in a long
+     * @param cardinality cardinality of the label
      */
-    public LongLabel(long l, int c) {
-        if (c > MAX_CARDINALITY) throw new IllegalArgumentException(
-            "Input cardinality too high (" + c + "); max cardinality for this labeler is " + MAX_CARDINALITY);
-        labelBits = l;
-        card = c;
+    public LongLabel(long bits, int cardinality) {
+        if (cardinality > MAX_CARDINALITY) throw new IllegalArgumentException(
+            "Input cardinality too high (" + cardinality + "); max cardinality for this labeler is " + MAX_CARDINALITY);
+        labelBits = bits;
+        card = cardinality;
         hashCode = calculateHashCode();
     }
 
@@ -99,11 +99,14 @@ public class LongLabel extends Label {
 
 	@Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+		if(getCardinality() == 0) {
+			return "";
+		}
+        StringBuilder sb = new StringBuilder(getCardinality());
         String binary = Long.toBinaryString(labelBits());
 
-        int diff = getCardinality() - binary.length();
-		sb.append("0".repeat(diff));
+        int numLeadingZeroes = getCardinality() - binary.length();
+		sb.append("0".repeat(numLeadingZeroes));
 
         sb.append(binary);
         return sb.toString();

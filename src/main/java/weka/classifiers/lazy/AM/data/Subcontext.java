@@ -17,6 +17,7 @@ package weka.classifiers.lazy.AM.data;
 
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AM.label.Labeler;
 import weka.core.Instance;
 
 import java.util.HashSet;
@@ -31,19 +32,20 @@ import java.util.Set;
  * @author Nathan Glenn
  */
 public class Subcontext {
-    private final Set<Instance> data;
-    private double outcome;
     private final Label label;
-
+    private final String displayLabel;
+    private final Set<Instance> data = new HashSet<>();
+    private double outcome;
 
     /**
      * Initializes the subcontext by creating a list to hold the data
      *
-     * @param label Binary label of the subcontext
-     */
-    public Subcontext(Label label) {
-        data = new HashSet<>();
+	 * @param label Binary label of the subcontext
+	 * @param displayLabel user-friendly label string {@link Labeler#getContextString(Label)}
+	 */
+    public Subcontext(Label label, String displayLabel) {
         this.label = label;
+		this.displayLabel = displayLabel;
     }
 
     /**
@@ -71,6 +73,14 @@ public class Subcontext {
     public Label getLabel() {
         return label;
     }
+
+	/**
+	 * @see Labeler#getContextString(Label)
+	 * @return User-friendly label string
+	 */
+	public String getDisplayLabel() {
+		return displayLabel;
+	}
 
     /**
      * @return list of Exemplars contained in this subcontext

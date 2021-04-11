@@ -102,9 +102,9 @@ public class LabelerTest {
         dataset.setClassIndex(2);
         Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MissingDataCompare.MATCH);
         assertLabelEquals(new IntLabel(0b10100, 5), labeler.label(dataset.get(2)));
-        assertLabelEquals(new IntLabel(0b00110, 5), labeler.label(dataset.get(3)));
+        assertLabelEquals(new IntLabel(0b00111, 5), labeler.label(dataset.get(3)));
         assertLabelEquals(new IntLabel(0b10110, 5), labeler.label(dataset.get(4)));
-        assertLabelEquals(new IntLabel(0b11110, 5), labeler.label(dataset.get(5)));
+        assertLabelEquals(new IntLabel(0b11111, 5), labeler.label(dataset.get(5)));
         dataset.setClassIndex(dataset.numAttributes() - 1);
     }
 

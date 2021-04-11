@@ -101,12 +101,12 @@ public class LinkedLatticeNodeTest {
 
 		Instances dataset = TestUtils.getDataSet(TestUtils.FINNVERB_MIN);
 
-		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1));
+		final Subcontext sub1 = new Subcontext(new IntLabel(0b0, 1), "foo");
 		sub1.add(dataset.get(0));
-		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1));
+		final Subcontext sub2 = new Subcontext(new IntLabel(0b1, 1), "foo");
 		sub2.add(dataset.get(1));
 		sub2.add(dataset.get(2));
-		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1));
+		final Subcontext sub3 = new Subcontext(new IntLabel(0b0, 1), "foo");
 
 		LinkedLatticeNode testNode2 = testNode1.insertAfter(sub1, 11);
 

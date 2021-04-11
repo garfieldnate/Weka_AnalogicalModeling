@@ -45,7 +45,7 @@ public class SubcontextTest {
     @Test
     public void test() {
         Label label = new IntLabel(0, 1);
-        Subcontext s = new Subcontext(label);
+        Subcontext s = new Subcontext(label, "foo");
         s.add(dataset.get(0));
         assertEquals(s.getExemplars(), new HashSet<Instance>() {
             {
@@ -69,10 +69,10 @@ public class SubcontextTest {
         // set
         // assertEquals("(0|&nondeterministic&|1,r,{2}/1,e,{2})", s.toString());
     }
-    
+
     @Test
 	public void testToStringWithEmptyData() {
-    	Subcontext testSub = new Subcontext(new IntLabel(0b10, 2));
+    	Subcontext testSub = new Subcontext(new IntLabel(0b10, 2), "foo");
     	String actual = testSub.toString();
     	assertNotNull(actual);
 	}

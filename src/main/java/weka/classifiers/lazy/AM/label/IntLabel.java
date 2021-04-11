@@ -106,6 +106,9 @@ public class IntLabel extends Label {
 
 	@Override
     public String toString() {
+    	if(getCardinality() == 0) {
+    		return "";
+		}
         StringBuilder sb = new StringBuilder();
         String binary = Integer.toBinaryString(labelBits());
 

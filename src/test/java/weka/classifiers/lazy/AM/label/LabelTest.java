@@ -197,6 +197,21 @@ public class LabelTest {
 		int labelBits = 0b1010101000111;
 		Labeler labeler = labelerFactory.createLabeler(mockInstance(13), false, MATCH);
 		Label label = labeler.fromBits(labelBits);
-		assertEquals(Integer.toString(labelBits,2), label.toString());
+		assertEquals("toString of label with elements", Integer.toString(labelBits,2), label.toString());
+	}
+
+	@Test
+	public void testToStringAllZeroes() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(13), false, MATCH);
+		Label label = labeler.fromBits(0);
+		assertEquals("0000000000000", label.toString());
+	}
+
+	// It seems like a dumb case to handle, but Weka's classifier test actually exercises this case
+	@Test
+	public void testToStringNoAttributes() {
+		Labeler labeler = labelerFactory.createLabeler(mockInstance(0), false, MATCH);
+		Label label = labeler.fromBits(0);
+		assertEquals("", label.toString());
 	}
 }

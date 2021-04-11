@@ -46,25 +46,25 @@ public class ClassifiedSupraTest {
         }
 
         subs = new ArrayList<>();
-        Subcontext sub = new Subcontext(new IntLabel(0b0, 1));
+        Subcontext sub = new Subcontext(new IntLabel(0b0, 1), "foo");
         sub.add(dataset.get(0));
         sub.add(dataset.get(1));
         subs.add(sub);
 
-        sub = new Subcontext(new IntLabel(0b0, 1));
+        sub = new Subcontext(new IntLabel(0b0, 1), "foo");
         sub.add(dataset.get(0));
         sub.add(dataset.get(2));
         subs.add(sub);
 
-        sub = new Subcontext(new IntLabel(0b0, 1));
+        sub = new Subcontext(new IntLabel(0b0, 1), "foo");
         sub.add(dataset.get(0));
         subs.add(sub);
 
-        sub = new Subcontext(new IntLabel(0b0, 1));
+        sub = new Subcontext(new IntLabel(0b0, 1), "foo");
         sub.add(dataset.get(1));
         subs.add(sub);
 
-        sub = new Subcontext(new IntLabel(0b0, 1));
+        sub = new Subcontext(new IntLabel(0b0, 1), "foo");
         sub.add(dataset.get(2));
         subs.add(sub);
     }
@@ -87,9 +87,9 @@ public class ClassifiedSupraTest {
         ClassifiedSupra testSupra = new ClassifiedSupra();
         assertEquals(testSupra.getData(), new HashSet<Subcontext>());
         Label label = new IntLabel(0b001, 3);
-        final Subcontext sub1 = new Subcontext(label);
-        final Subcontext sub2 = new Subcontext(label);
-        final Subcontext sub3 = new Subcontext(label);
+        final Subcontext sub1 = new Subcontext(label, "foo");
+        final Subcontext sub2 = new Subcontext(label, "foo");
+        final Subcontext sub3 = new Subcontext(label, "foo");
         testSupra = new ClassifiedSupra(new HashSet<>() {
 			{
 				add(sub1);

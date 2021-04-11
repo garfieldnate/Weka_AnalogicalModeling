@@ -66,7 +66,9 @@ public class SubcontextList implements Iterable<Subcontext> {
      */
     void add(Instance exemplar) {
         Label label = labeler.label(exemplar);
-        if (!labelToSubcontext.containsKey(label)) labelToSubcontext.put(label, new Subcontext(label));
+        if (!labelToSubcontext.containsKey(label)) {
+			labelToSubcontext.put(label, new Subcontext(label, labeler.getContextString(label)));
+		}
         labelToSubcontext.get(label).add(exemplar);
     }
 
