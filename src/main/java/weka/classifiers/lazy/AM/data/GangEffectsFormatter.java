@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
+import static weka.classifiers.lazy.AM.AMUtils.REPORT_TABLE_STYLE;
+
 public class GangEffectsFormatter {
 	private static final CellStyle SUBHEADER_STYLE = new CellStyle.Builder().setBorderTop(true).setBorderBottom(true).build();
 
@@ -40,31 +42,22 @@ public class GangEffectsFormatter {
 						// sort and print instances
 						instances.stream().map(labeler::getInstanceAttsString).sorted().forEach(s -> bodyBuilder.addRow("", "", "", "", s));
 					});
+        }
 
-		}
-
-		return new Table.Builder().
-				setTableStyle(
-						new TableStyle.Builder().
-								setBorder(true).build()).
-				setCellStyle(
-						new CellStyle.Builder()
-								.setPaddingLeft(1).
-								setPaddingRight(1).
-								setBorderLeft(true).
-								setBorderRight(true).
-								setAlignment(TextAlignment.MiddleRight).build()
-				).setHeader(
-				new TableSection.Builder().
-						addRow(
-								"Percentage", "Pointers", "Num Items", "Class", "Context").build())
-				.setBody(bodyBuilder.build())
-				.setFooter(
-						new TableSection.Builder()
-								.build())
-				.build()
-				.toString();
-	}
+        return new Table.Builder().
+            setTableStyle(
+                new TableStyle.Builder().
+                    setBorder(true).build()).
+            setCellStyle(
+                REPORT_TABLE_STYLE
+            ).setHeader(
+            new TableSection.Builder().
+                addRow(
+                    "Percentage", "Pointers", "Num Items", "Class", "Context").build())
+            .setBody(bodyBuilder.build())
+            .build()
+            .toString();
+    }
 
 	private static Row getClassHeader(String className, BigInteger classPointers, BigDecimal totalPointers, int numInstances) {
 		return new Row.Builder().

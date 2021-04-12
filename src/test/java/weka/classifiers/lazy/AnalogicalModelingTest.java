@@ -51,7 +51,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         return am;
     }
 
-    private static final double DELTA = 1e-10;
+    private static final double DELTA = 1e-7;
 
     @Test
     public void testChapter3dataSerial() throws Exception {
@@ -63,9 +63,9 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
         double[] prediction = am.distributionForInstance(test);
         Assert.assertEquals("distribution given for two classes", prediction.length, 2);
-        // test to 10 decimals places, the number used by AMUtils.matchContext
-        Assert.assertEquals(0.6923076923076923, prediction[0], DELTA);
-        Assert.assertEquals(0.3076923076923077, prediction[1], DELTA);
+        // test to 7 decimals places, the number used by AMUtils.matchContext
+        Assert.assertEquals(0.6923077, prediction[0], DELTA);
+        Assert.assertEquals(0.3076923, prediction[1], DELTA);
     }
 
     /**

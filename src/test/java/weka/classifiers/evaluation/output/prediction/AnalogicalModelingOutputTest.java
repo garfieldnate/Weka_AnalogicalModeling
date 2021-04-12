@@ -8,8 +8,7 @@ import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AnalogicalModelingOutputTest {
@@ -36,41 +35,31 @@ public class AnalogicalModelingOutputTest {
         output.setHeader(train);
         am.buildClassifier(train);
         output.doPrintClassification(am, test, 0);
-        assertTrue("report contained analogical set", buf.toString().contains("Exemplar effects:"));
+        String actualOutput = buf.toString();
+
+        assertFalse("report should not contain distribution", actualOutput.contains("Class probability distribution:"));
+        assertFalse("report should not contain summary", actualOutput.contains("Classifying instance"));
+        assertTrue("report should contain analogical set", actualOutput.contains("Analogical set:"));
+        assertFalse("report should not contain gang effects", actualOutput.contains("Gang effects:"));
     }
 
-	@Test
-	public void testChapter3Gangs() throws Exception {
-		Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
-		Instance test = train.remove(0);
+    @Test
+    public void testChapter3InvertedDefaultSettingsGangs() throws Exception {
+        Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+        Instance test = train.remove(0);
 
-		output.setHeader(train);
-		output.setGangs(true);
-		am.buildClassifier(train);
-		output.doPrintClassification(am, test, 0);
+        output.setHeader(train);
+        output.setSummary(true);
+        output.setOutputDistribution(true);
+        output.setAnalogicalSet(false);
+        output.setGangs(true);
+        am.buildClassifier(train);
+        output.doPrintClassification(am, test, 0);
+        String actualOutput = buf.toString();
 
-		String expectedGangs =
-				"┌────────────┬──────────┬───────────┬───────┬─────────┐\n" +
-				"│ Percentage │ Pointers │ Num Items │ Class │ Context │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %61.538 │        8 │         2 │       │   3 1 * │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %30.769 │        4 │         1 │     e │         │\n" +
-				"│            │          │           │       │   3 1 0 │\n" +
-				"│    %30.769 │        4 │         1 │     r │         │\n" +
-				"│            │          │           │       │   3 1 1 │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %23.077 │        3 │         1 │       │   * 1 2 │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %23.077 │        3 │         1 │     r │         │\n" +
-				"│            │          │           │       │   2 1 2 │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %15.385 │        2 │         1 │       │   * * 2 │\n" +
-				"├────────────┼──────────┼───────────┼───────┼─────────┤\n" +
-				"│    %15.385 │        2 │         1 │     r │         │\n" +
-				"│            │          │           │       │   0 3 2 │\n" +
-				"└────────────┴──────────┴───────────┴───────┴─────────┘";
-
-		assertThat(output.getBuffer().toString(), containsString(expectedGangs));
-	}
+        assertTrue("report should distribution", actualOutput.contains("Class probability distribution:"));
+        assertTrue("report should contain summary", actualOutput.contains("Classifying instance"));
+        assertFalse("report should not contain analogical set", actualOutput.contains("Analogical set:"));
+        assertTrue("report should contain gang effects", actualOutput.contains("Gang effects:"));
+    }
 }

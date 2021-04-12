@@ -72,20 +72,6 @@ public class AMResults {
     private static final String newline = System.getProperty("line.separator");
 	private final Labeler labeler;
 
-    // these are used for sorting items to be printed
-    private static final Comparator<Map.Entry<Instance, BigInteger>> entryComparator1 = (arg1, arg2) -> {
-        // compare all attribute string values and then the number of
-        // pointers
-        int compare;
-        for (int i = 0; i < arg1.getKey().numAttributes(); i++) {
-            compare = arg1.getKey().stringValue(i).compareTo(arg2.getKey().stringValue(i));
-            if (compare != 0) {
-                return compare;
-            }
-        }
-        return arg1.getValue().compareTo(arg2.getValue());
-    };
-
 	/**
      * @param lattice  filled lattice, which contains the data for calculating the analogical set
      * @param testItem Exemplar being classified
@@ -114,7 +100,7 @@ public class AMResults {
                 e,
                 new BigDecimal(exPointerMap.get(e)).divide(
                     new BigDecimal(getTotalPointers()),
-                    AMUtils.mathContext
+                    AMUtils.MATH_CONTEXT
                 )
             );
 
@@ -131,7 +117,7 @@ public class AMResults {
         for (String className : classPointerMap.keySet())
             classLikelihoodMap.put(className,
                                    new BigDecimal(classPointerMap.get(className)).divide(new BigDecimal(totalPointers),
-                                                                                         AMUtils.mathContext
+                                                                                         AMUtils.MATH_CONTEXT
                                    )
             );
         // Find the classes with the highest likelihood (there may be a tie)
@@ -202,16 +188,14 @@ public class AMResults {
         sb.append(")");
         sb.append(newline);
 
-        Set<Entry<Instance, BigInteger>> sortedEntries1 = new TreeSet<>(entryComparator1);
-        sortedEntries1.addAll(getExemplarPointers().entrySet());
         sb.append("Exemplar effects:");
         sb.append(AMUtils.LINE_SEPARATOR);
-        for (Entry<Instance, BigInteger> e : sortedEntries1) {
+        for (Entry<Instance, BigInteger> e : getExemplarPointers().entrySet()) {
             sb.append(e.getKey())
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.mathContext))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.MATH_CONTEXT))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
         }
@@ -224,7 +208,7 @@ public class AMResults {
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.mathContext))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.MATH_CONTEXT))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
 

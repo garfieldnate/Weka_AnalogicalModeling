@@ -26,6 +26,7 @@ import weka.core.Utils;
 
 import java.util.*;
 
+import static weka.classifiers.lazy.AM.data.AnalogicalSetFormatter.formatAnalogicalSet;
 import static weka.classifiers.lazy.AM.data.GangEffectsFormatter.formatGangs;
 
 /**
@@ -87,6 +88,10 @@ import static weka.classifiers.lazy.AM.data.GangEffectsFormatter.formatGangs;
 public class AnalogicalModelingOutput extends AbstractOutput {
     private static final long serialVersionUID = -757810288402645056L;
 
+    private boolean m_Summary = false;
+    private boolean m_AnalogicalSet = true;
+    private boolean m_Gangs = false;
+
     @Override
     public String globalInfo() {
         return "This output module enables detailed reporting on the results of the "
@@ -100,7 +105,13 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 
     @Override
     protected void doPrintHeader() {
-        // TODO: print something?
+        append("=================================");
+        append(AMUtils.LINE_SEPARATOR);
+        append("Begin Analogical Modeling Results");
+        append(AMUtils.LINE_SEPARATOR);
+        append("=================================");
+        append(AMUtils.LINE_SEPARATOR);
+        append(AMUtils.LINE_SEPARATOR);
     }
 
     /**
@@ -112,45 +123,82 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     protected void doPrintClassification(Classifier classifier, Instance inst, int index) throws Exception {
         if (!(classifier instanceof AnalogicalModeling)) throw new IllegalArgumentException(
             "You are using " + classifier.getClass()
-            + "This output can only be used with the Analogical Modeling classifier");
+            + ". This output can only be used with the Analogical Modeling classifier");
 
         AnalogicalModeling am = (AnalogicalModeling) classifier;
         Instance withMissing = (Instance) inst.copy();
         withMissing.setDataset(inst.dataset());
         inst = preProcessInstance(withMissing, classifier);
 
-        // when you call the AM classifier, it stores the analogical set for
-        // later
+        // when you call the AM classifier, it stores the results for later
         double[] distribution = am.distributionForInstance(inst);
 
         AMResults results = am.getResults();
 
+        doPrintHeader();
+
         if (getSummary()) {
+            append("Classifying instance ");
+            append(Integer.toString(index));
+            append(" (");
+            append(results.getLabeler().getInstanceAttsString(inst));
+            append(", class: ");
+            append(inst.stringValue(inst.classIndex()));
+            append(")");
+            append(AMUtils.LINE_SEPARATOR);
+
             append("Total pointers: " + results.getTotalPointers() + AMUtils.LINE_SEPARATOR);
             append("Instances in analogical set: " + results.getExemplarEffectMap().size());
+            append(AMUtils.LINE_SEPARATOR);
+            append(AMUtils.LINE_SEPARATOR);
         }
-        append(AMUtils.LINE_SEPARATOR);
 
         if (getOutputDistribution()) {
-            append("Class probability distribution:" + AMUtils.LINE_SEPARATOR);
-            for (int i = 0; i < distribution.length; i++) {
-                append(m_Header.classAttribute().value(i) + ": " + AMUtils.formatDouble(distribution[i])
-                       + AMUtils.LINE_SEPARATOR);
-            }
+            outputDistribution(distribution);
+            append(AMUtils.LINE_SEPARATOR);
         }
 
-        if (getAnalogicalSet()) append(results.toString());
+        if (getAnalogicalSet()) {
+            append("Analogical set:");
+            append(AMUtils.LINE_SEPARATOR);
+            append(formatAnalogicalSet(results));
+            append(AMUtils.LINE_SEPARATOR);
+        }
         if (getGangs()) {
             append("Gang effects:");
             append(AMUtils.LINE_SEPARATOR);
-		append(formatGangs(results));
+        	append(formatGangs(results));
             append(AMUtils.LINE_SEPARATOR);
 		}
+
+        doPrintFooter();
+    }
+
+    @Override
+    protected void doPrintClassification(double[] classDistribution, Instance classifiedInstance, int index) {
+        outputDistribution(classDistribution);
+    }
+
+    private void outputDistribution(double[] distribution) {
+        append("Class probability distribution:" + AMUtils.LINE_SEPARATOR);
+        for (int i = 0; i < distribution.length; i++) {
+            append(m_Header.classAttribute().value(i));
+            append(": ");
+            append(AMUtils.formatDouble(distribution[i]));
+            append(AMUtils.LINE_SEPARATOR);
+        }
     }
 
     @Override
     protected void doPrintFooter() {
-        // TODO: print something?
+        append(AMUtils.LINE_SEPARATOR);
+        append("===============================");
+        append(AMUtils.LINE_SEPARATOR);
+        append("End Analogical Modeling Results");
+        append(AMUtils.LINE_SEPARATOR);
+        append("===============================");
+        append(AMUtils.LINE_SEPARATOR);
+        append(AMUtils.LINE_SEPARATOR);
     }
 
     /**
@@ -263,10 +311,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         return options.toArray(new String[0]);
     }
 
-    private boolean m_Summary = false;
-    private boolean m_AnalogicalSet = true;
-    private boolean m_Gangs = true;
-
     /**
      * @param value whether gang effects will be printed
      */
@@ -337,11 +381,5 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 	@SuppressWarnings("unused") // used by Weka
     public String analogicalSetTipText() {
         return "Whether to print analogical sets";
-    }
-
-    @Override
-    protected void doPrintClassification(double[] arg0, Instance arg1, int arg2) {
-        // TODO Auto-generated method stub
-        append("TODO: doPrintClassification()");
     }
 }

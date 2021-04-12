@@ -58,20 +58,20 @@ public class AMResultsTest {
 	public void exemplarQuadraticEffectsTest() {
 		Map<String, BigDecimal> effects = instanceKeysToString(asQuadratic.getExemplarEffectMap());
 		assertEquals(effects.size(), 4);
-		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.3076923077"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1538461538"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2307692308"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.3076923077"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.3076923"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1538462"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2307692"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.3076923"), EPSILON)));
 	}
 
 	@Test
 	public void exemplarLinearEffectsTest() {
 		Map<String, BigDecimal> effects = instanceKeysToString(asLinear.getExemplarEffectMap());
 		assertEquals(effects.size(), 4);
-		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1428571429"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
-		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.2857142857"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,0,e"), closeTo(new BigDecimal("0.2857143"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("0,3,2,r"), closeTo(new BigDecimal("0.1428571"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("2,1,2,r"), closeTo(new BigDecimal("0.2857143"), EPSILON)));
+		assertThat(effects, hasEntry(equalTo("3,1,1,r"), closeTo(new BigDecimal("0.2857143"), EPSILON)));
 	}
 
 	@Test
@@ -114,15 +114,15 @@ public class AMResultsTest {
 
 		assertEquals(distribution.size(), 2);
 		// test to 10 decimal places, the number used by AMUtils.mathContext
-		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.6923076923"), EPSILON));
-		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.3076923077"), EPSILON));
+		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.6923077"), EPSILON));
+		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.3076923"), EPSILON));
 
 		assertEquals(asQuadratic.getPredictedClasses(), new HashSet<String>() {
 			{
 				add("r");
 			}
 		});
-		assertThat(asQuadratic.getClassProbability(), closeTo(new BigDecimal("0.6923076923"), EPSILON));
+		assertThat(asQuadratic.getClassProbability(), closeTo(new BigDecimal("0.6923077"), EPSILON));
 	}
 
 	@Test
@@ -131,15 +131,15 @@ public class AMResultsTest {
 
 		assertEquals(distribution.size(), 2);
 		// test to 10 decimal places, the number used by AMUtils.mathContext
-		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.7142857143"), EPSILON));
-		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.2857142857"), EPSILON));
+		assertThat(distribution.get("r"), closeTo(new BigDecimal("0.7142857"), EPSILON));
+		assertThat(distribution.get("e"), closeTo(new BigDecimal("0.2857143"), EPSILON));
 
 		assertEquals(asLinear.getPredictedClasses(), new HashSet<String>() {
 			{
 				add("r");
 			}
 		});
-		assertThat(asLinear.getClassProbability(), closeTo(new BigDecimal("0.7142857143"), EPSILON));
+		assertThat(asLinear.getClassProbability(), closeTo(new BigDecimal("0.7142857"), EPSILON));
 	}
 
     @Test

@@ -15,8 +15,14 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM;
 
+import com.jakewharton.picnic.CellStyle;
+import com.jakewharton.picnic.TextAlignment;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
-import java.math.RoundingMode;
+
+import static java.math.MathContext.DECIMAL32;
 
 /**
  * This class holds constants and methods used in the AM classifier.
@@ -24,10 +30,6 @@ import java.math.RoundingMode;
  * @author nathan.glenn
  */
 public class AMUtils {
-    /**
-     * The number of processors available in the current runtime
-     */
-    public static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
     /**
      * An unknown class value.
      */
@@ -47,6 +49,16 @@ public class AMUtils {
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
+    /**
+     * Picnic library table style used for printing gangs and analogical sets
+     */
+    public static final CellStyle REPORT_TABLE_STYLE = new CellStyle.Builder()
+        .setPaddingLeft(1).
+        setPaddingRight(1).
+        setBorderLeft(true).
+        setBorderRight(true).
+        setAlignment(TextAlignment.MiddleRight).build();
+
     // used for printing all decimal numbers
     private static final String DECIMAL_FORMAT = "%.5f";
 
@@ -60,9 +72,21 @@ public class AMUtils {
         return String.format(DECIMAL_FORMAT, d);
     }
 
-    /**
-     * This is used by all of the BigDecimals. Precision is to 10 decimals.
-     */
-    public static final MathContext mathContext = new MathContext(10, RoundingMode.HALF_EVEN);
+    public static final MathContext MATH_CONTEXT = DECIMAL32;
 
+    /**
+     * @return return a formatted percentage indicating the size of the analogical effect of {@code pointers}
+     */
+    public static String formatPointerPercentage(BigInteger pointers, BigDecimal totalPointers) {
+        BigDecimal ratio = new BigDecimal(pointers).divide(totalPointers, MATH_CONTEXT);
+        return formatPercentage(ratio);
+    }
+
+    /**
+     * @return {@code val} formatted as a percentage with three decimal places
+     */
+    public static String formatPercentage(BigDecimal val) {
+        float percentage = val.scaleByPowerOfTen(2).floatValue();
+        return String.format("%%%.3f", percentage);
+    }
 }
