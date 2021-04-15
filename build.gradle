@@ -123,7 +123,7 @@ def gitAddAndCommit(message) {
         commandLine 'git', 'add', '.'
     }
     exec {
-        commandLine 'git', 'commit', '-m', 'message'
+        commandLine 'git', 'commit', '-m', "\"$message\""
     }
 }
 
@@ -133,5 +133,11 @@ def gitPush(tagName) {
     }
     exec {
         commandLine 'git', 'push', '--tags'
+    }
+}
+
+def gitTag(tagName) {
+    exec {
+        commandLine 'git', 'tag', tagName
     }
 }
