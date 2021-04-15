@@ -76,10 +76,9 @@ This project is managed with [Gradle](https://gradle.org/). The following build 
 ### Releasing
 
 To release a new version of the plugin:
-
-* run `gradle bumpMinor`
-* create a new release on GitHub corresponding to the new tag
-* upload the distribution to the GitHub release
+* Update and commit Description.props
+* Create and push a new git tag with the next version number
+* upload the distribution (Weka_AnalogicalModeling-X.Y.Z.zip) to the GitHub release
 * send the new Description.props file to Mark Hall <mhall at pentaho.com>
 
 ### Running
