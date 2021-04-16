@@ -78,9 +78,8 @@ This project is managed with [Gradle](https://gradle.org/). The following build 
 To release a new version of the plugin:
 * Update and commit Description.props
 * Create and push a new git tag with the next version number
-* upload the distribution (Weka_AnalogicalModeling-X.Y.Z.zip) to the GitHub release
-  - zip file should contain all of the source code plus the output jar file (Weka_AnalogicalModeling-X.Y.Z.jar)
-* send the new Description.props file to Mark Hall <mhall at pentaho.com>
+* run `./gradlew weka_package`, and upload the resulting artifact (distributions/Weka_AnalogicalModeling-X.Y.Z.zip) to the GitHub release
+* send the new Description.props file to Mark Hall <mhall at waikato ac nz>
 
 ### Running
 

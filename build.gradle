@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id "com.adarshr.test-logger" version "2.1.1"
+	id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
 version = getVersionFromDescriptionProps()
@@ -67,8 +68,9 @@ task javadoc(type: Javadoc, overwrite:true) {
   options.links("http://weka.sourceforge.net/doc.dev/")
 }
 
-task dist(type:Zip){
-    from jar.outputs.files
+task weka_package(type:Zip){
+    // fat jar (with all dependencies) is needed for Weka package
+    from shadowJar.outputs.files
     from (javadoc.outputs.files) {
         into 'doc'
     }

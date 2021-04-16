@@ -15,8 +15,8 @@ import static java.util.stream.Collectors.toSet;
  * Exemplars that seem less similar to the test item than those that seem
  * more similar can still have a magnified effect if there are many of
  * them. This is known as the <em>gang effect</em>.
- *
- * <p/>This class represents the total effect that exemplars in one subcontext have
+ * <p>
+ * This class represents the total effect that exemplars in one subcontext have
  * on the predicted outcome.
  */
 @Value
