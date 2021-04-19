@@ -23,6 +23,7 @@ import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Option;
 import weka.core.Utils;
+import weka.core.WekaException;
 
 import java.util.*;
 
@@ -115,6 +116,23 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     }
 
     /**
+     * This is the function that is called in the GUI (ClassifierPanel); it has to be overridden here because
+     * the implementation in {@link AbstractOutput} calls {@link #doPrintClassification(double[], Instance, int)} instead
+     */
+    @Override
+    public void printClassification(Classifier classifier, Instance inst,
+                                    int index) throws Exception {
+        {
+            String error;
+            if ((error = checkBasic()) != null) {
+                throw new WekaException(error);
+            }
+        }
+
+        doPrintClassification(classifier, preProcessInstance(inst, classifier), index);
+    }
+
+    /**
      * Make sure to call {@link #setHeader(weka.core.Instances) setHeader}
      * first, or this will throw a NullPointerException. All decimals are
      * rounded to five decimal places.
@@ -134,8 +152,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         double[] distribution = am.distributionForInstance(inst);
 
         AMResults results = am.getResults();
-
-        doPrintHeader();
 
         if (getSummary()) {
             append("Classifying instance ");
@@ -170,13 +186,12 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         	append(formatGangs(results));
             append(AMUtils.LINE_SEPARATOR);
 		}
-
-        doPrintFooter();
     }
 
     @Override
     protected void doPrintClassification(double[] classDistribution, Instance classifiedInstance, int index) {
-        outputDistribution(classDistribution);
+        throw new UnsupportedOperationException(
+            "These method should not be used; doPrintClassification should be called with the AM classifier as the first argument");
     }
 
     private void outputDistribution(double[] distribution) {

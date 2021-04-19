@@ -34,7 +34,7 @@ public class AnalogicalModelingOutputTest {
 
         output.setHeader(train);
         am.buildClassifier(train);
-        output.doPrintClassification(am, test, 0);
+        output.printClassification(am, test, 0);
         String actualOutput = buf.toString();
 
         assertFalse("report should not contain distribution", actualOutput.contains("Class probability distribution:"));
@@ -54,7 +54,7 @@ public class AnalogicalModelingOutputTest {
         output.setAnalogicalSet(false);
         output.setGangs(true);
         am.buildClassifier(train);
-        output.doPrintClassification(am, test, 0);
+        output.printClassification(am, test, 0);
         String actualOutput = buf.toString();
 
         assertTrue("report should distribution", actualOutput.contains("Class probability distribution:"));
