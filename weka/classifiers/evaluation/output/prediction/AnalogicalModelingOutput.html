@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -338,27 +338,37 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#printClassification(weka.classifiers.Classifier,weka.core.Instance,int)">printClassification</a></span>&#8203;(weka.classifiers.Classifier&nbsp;classifier,
+                   weka.core.Instance&nbsp;inst,
+                   int&nbsp;index)</code></th>
+<td class="colLast">
+<div class="block">This is the function that is called in the GUI (ClassifierPanel); it has to be overridden here because
+ the implementation in <code>AbstractOutput</code> calls <a href="#doPrintClassification(double%5B%5D,weka.core.Instance,int)"><code>doPrintClassification(double[], Instance, int)</code></a> instead</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAnalogicalSet(boolean)">setAnalogicalSet</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setGangs(boolean)">setGangs</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOptions(java.lang.String%5B%5D)">setOptions</a></span>&#8203;(java.lang.String[]&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Sets the OptionHandler's options using the given list.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setSummary(boolean)">setSummary</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#summaryTipText()">summaryTipText</a></span>()</code></th>
 <td class="colLast">
@@ -371,7 +381,7 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;weka.classifiers.evaluation.output.prediction.AbstractOutput</h3>
-<code>append, attributesTipText, checkBasic, checkHeader, fromCommandline, generatesOutput, getAttributes, getBuffer, getDefaultNumDecimals, getHeader, getNumDecimals, getOutputDistribution, getOutputFile, getSuppressOutput, numDecimalsTipText, outputDistributionTipText, outputFileTipText, preProcessInstance, print, print, printClassification, printClassification, printClassifications, printClassifications, printFooter, printHeader, setAttributes, setBuffer, setHeader, setNumDecimals, setOutputDistribution, setOutputFile, setSuppressOutput, suppressOutputTipText</code></li>
+<code>append, attributesTipText, checkBasic, checkHeader, fromCommandline, generatesOutput, getAttributes, getBuffer, getDefaultNumDecimals, getHeader, getNumDecimals, getOutputDistribution, getOutputFile, getSuppressOutput, numDecimalsTipText, outputDistributionTipText, outputFileTipText, preProcessInstance, print, print, printClassification, printClassifications, printClassifications, printFooter, printHeader, setAttributes, setBuffer, setHeader, setNumDecimals, setOutputDistribution, setOutputFile, setSuppressOutput, suppressOutputTipText</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -451,6 +461,26 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>doPrintHeader</code>&nbsp;in class&nbsp;<code>weka.classifiers.evaluation.output.prediction.AbstractOutput</code></dd>
+</dl>
+</li>
+</ul>
+<a id="printClassification(weka.classifiers.Classifier,weka.core.Instance,int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>printClassification</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;printClassification&#8203;(weka.classifiers.Classifier&nbsp;classifier,
+                                weka.core.Instance&nbsp;inst,
+                                int&nbsp;index)
+                         throws java.lang.Exception</pre>
+<div class="block">This is the function that is called in the GUI (ClassifierPanel); it has to be overridden here because
+ the implementation in <code>AbstractOutput</code> calls <a href="#doPrintClassification(double%5B%5D,weka.core.Instance,int)"><code>doPrintClassification(double[], Instance, int)</code></a> instead</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>printClassification</code>&nbsp;in class&nbsp;<code>weka.classifiers.evaluation.output.prediction.AbstractOutput</code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </li>
 </ul>
