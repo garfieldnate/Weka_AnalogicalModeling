@@ -7,7 +7,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import static junit.framework.TestCase.assertEquals;
-import static weka.classifiers.lazy.AM.data.AnalogicalSetFormatter.formatAnalogicalSet;
 
 public class AnalogicalSetFormatterTest{
 
@@ -20,7 +19,8 @@ public class AnalogicalSetFormatterTest{
         am.buildClassifier(train);
         am.distributionForInstance(test);
         AMResults results = am.getResults();
-        String actualOutput = formatAnalogicalSet(results);
+        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3);
+        String actualOutput = formatter.formatAnalogicalSet(results);
 
         String expectedOutput =
             "┌────────────┬──────────┬───────┬───────┐\n" +

@@ -25,10 +25,8 @@ public class AnalogicalModelingOutputTest {
         output.setBuffer(buf);
     }
 
-    // TODO: test with different options
-    // TODO: test with normalized whitespace
     @Test
-    public void testChapter3basic() throws Exception {
+    public void testDefaultSettings() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
         Instance test = train.remove(0);
 
@@ -44,7 +42,7 @@ public class AnalogicalModelingOutputTest {
     }
 
     @Test
-    public void testChapter3InvertedDefaultSettingsGangs() throws Exception {
+    public void testInvertedDefaultSettingsGangs() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
         Instance test = train.remove(0);
 
@@ -61,5 +59,25 @@ public class AnalogicalModelingOutputTest {
         assertTrue("report should contain summary", actualOutput.contains("Classifying instance"));
         assertFalse("report should not contain analogical set", actualOutput.contains("Analogical set:"));
         assertTrue("report should contain gang effects", actualOutput.contains("Gang effects:"));
+    }
+
+    @Test
+    public void testNumDecimalsSetting() throws Exception {
+        Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+        Instance test = train.remove(0);
+
+        output.setHeader(train);
+        output.setNumDecimals(6);
+        output.setSummary(true);
+        output.setOutputDistribution(true);
+        output.setAnalogicalSet(true);
+        output.setGangs(true);
+        am.buildClassifier(train);
+        output.printClassification(am, test, 0);
+        String actualOutput = buf.toString();
+
+        assertTrue("Gang effects should be printed with 6 decimal places", actualOutput.contains("%61.538464 │        8 │         2 │       │   3 1 * │"));
+        assertTrue("Analogical set should be printed with 6 decimal places", actualOutput.contains("%30.769232 │        4 │ 3 1 0 │     e │"));
+        assertTrue("Distribution should be printed with 6 decimal places", actualOutput.contains("r: 0.692308"));
     }
 }

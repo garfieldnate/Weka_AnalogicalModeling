@@ -19,6 +19,8 @@ package weka.classifiers.evaluation.output.prediction;
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
+import weka.classifiers.lazy.AM.data.AnalogicalSetFormatter;
+import weka.classifiers.lazy.AM.data.GangEffectsFormatter;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Option;
@@ -26,9 +28,6 @@ import weka.core.Utils;
 import weka.core.WekaException;
 
 import java.util.*;
-
-import static weka.classifiers.lazy.AM.data.AnalogicalSetFormatter.formatAnalogicalSet;
-import static weka.classifiers.lazy.AM.data.GangEffectsFormatter.formatGangs;
 
 /**
  * This class implements a classification output scheme specific to the
@@ -134,8 +133,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 
     /**
      * Make sure to call {@link #setHeader(weka.core.Instances) setHeader}
-     * first, or this will throw a NullPointerException. All decimals are
-     * rounded to five decimal places.
+     * first, or this will throw a NullPointerException.
      */
     @Override
     protected void doPrintClassification(Classifier classifier, Instance inst, int index) throws Exception {
@@ -175,17 +173,20 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getAnalogicalSet()) {
+            AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(getNumDecimals());
             append("Analogical set:");
             append(AMUtils.LINE_SEPARATOR);
-            append(formatAnalogicalSet(results));
+            append(formatter.formatAnalogicalSet(results));
             append(AMUtils.LINE_SEPARATOR);
         }
+
         if (getGangs()) {
+            GangEffectsFormatter formatter = new GangEffectsFormatter(getNumDecimals());
             append("Gang effects:");
             append(AMUtils.LINE_SEPARATOR);
-        	append(formatGangs(results));
+            append(formatter.formatGangs(results));
             append(AMUtils.LINE_SEPARATOR);
-		}
+        }
     }
 
     @Override
@@ -195,11 +196,12 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     }
 
     private void outputDistribution(double[] distribution) {
+        String doubleFormat = String.format("%%.%df", getNumDecimals());
         append("Class probability distribution:" + AMUtils.LINE_SEPARATOR);
         for (int i = 0; i < distribution.length; i++) {
             append(m_Header.classAttribute().value(i));
             append(": ");
-            append(AMUtils.formatDouble(distribution[i]));
+            append(String.format(doubleFormat, distribution[i]));
             append(AMUtils.LINE_SEPARATOR);
         }
     }

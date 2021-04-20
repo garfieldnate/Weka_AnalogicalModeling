@@ -17,10 +17,19 @@ import static weka.classifiers.lazy.AM.AMUtils.REPORT_TABLE_STYLE;
 public class GangEffectsFormatter {
 	private static final CellStyle SUBHEADER_STYLE = new CellStyle.Builder().setBorderTop(true).setBorderBottom(true).build();
 
+	private final int numDecimals;
+
+    /**
+     * @param numDecimals the number of digits to output after the decimal point
+     */
+    public GangEffectsFormatter(int numDecimals) {
+        this.numDecimals = numDecimals;
+    }
+
     /**
      * Format the provided gang effects nicely for human consumption; the returned string is <em>not</em> intended to be machine-readable.
      */
-    public static String formatGangs(AMResults results) {
+    public String formatGangs(AMResults results) {
         Labeler labeler = results.getLabeler();
 		BigDecimal totalPointers = new BigDecimal(results.getTotalPointers());
 
@@ -59,9 +68,9 @@ public class GangEffectsFormatter {
             .toString();
     }
 
-	private static Row getClassHeader(String className, BigInteger classPointers, BigDecimal totalPointers, int numInstances) {
+	private Row getClassHeader(String className, BigInteger classPointers, BigDecimal totalPointers, int numInstances) {
 		return new Row.Builder().
-				addCell(AMUtils.formatPointerPercentage(classPointers, totalPointers)).
+				addCell(AMUtils.formatPointerPercentage(classPointers, totalPointers, numDecimals)).
 				addCell(classPointers.toString()).
 				addCell(Integer.toString(numInstances)).
 				addCell(className).
@@ -70,9 +79,9 @@ public class GangEffectsFormatter {
 	}
 
 	@NotNull
-	private static Row getSubcontextHeader(Labeler labeler, BigDecimal totalPointers, GangEffect effect) {
+	private Row getSubcontextHeader(Labeler labeler, BigDecimal totalPointers, GangEffect effect) {
 		return formatSubheaderRow(
-				AMUtils.formatPointerPercentage(effect.getTotalPointers(), totalPointers),
+				AMUtils.formatPointerPercentage(effect.getTotalPointers(), totalPointers, numDecimals),
 				effect.getTotalPointers().toString(),
 				"" + effect.getSubcontext().getExemplars().size(),
 				"",

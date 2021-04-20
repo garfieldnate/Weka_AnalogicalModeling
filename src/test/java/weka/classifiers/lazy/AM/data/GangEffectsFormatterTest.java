@@ -7,7 +7,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import static junit.framework.TestCase.assertEquals;
-import static weka.classifiers.lazy.AM.data.GangEffectsFormatter.formatGangs;
 
 public class GangEffectsFormatterTest {
 
@@ -20,7 +19,8 @@ public class GangEffectsFormatterTest {
         am.buildClassifier(train);
         am.distributionForInstance(test);
         AMResults results = am.getResults();
-        String actualOutput = formatGangs(results);
+        GangEffectsFormatter formatter = new GangEffectsFormatter(3);
+        String actualOutput = formatter.formatGangs(results);
 
         String expectedOutput =
             "┌────────────┬──────────┬───────────┬───────┬─────────┐\n" +

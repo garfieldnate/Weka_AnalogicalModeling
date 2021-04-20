@@ -1,6 +1,8 @@
 package weka.classifiers.lazy.AM.data;
 
-import com.jakewharton.picnic.*;
+import com.jakewharton.picnic.Table;
+import com.jakewharton.picnic.TableSection;
+import com.jakewharton.picnic.TableStyle;
 import lombok.Value;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.label.Labeler;
@@ -13,6 +15,15 @@ import java.util.function.BiFunction;
 
 public class AnalogicalSetFormatter {
 
+    private final int numDecimals;
+
+    /**
+     * @param numDecimals the number of digits to output after the decimal point
+     */
+    public AnalogicalSetFormatter(int numDecimals) {
+        this.numDecimals = numDecimals;
+    }
+
     @Value
     private static class TableEntry {
         BigInteger pointers;
@@ -21,12 +32,12 @@ public class AnalogicalSetFormatter {
         String instanceClass;
     }
 
-    public static String formatAnalogicalSet(AMResults results) {
+    public String formatAnalogicalSet(AMResults results) {
         final Labeler labeler = results.getLabeler();
         final BigDecimal totalPointers = new BigDecimal(results.getTotalPointers());
 
         BiFunction<Instance, BigInteger, TableEntry> getTableEntry = (inst, pointers) -> {
-            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers);
+            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals);
             String instanceAtts = labeler.getInstanceAttsString(inst);
             String instanceClass = inst.stringValue(inst.classIndex());
             return new TableEntry(pointers, percentage, instanceAtts, instanceClass);

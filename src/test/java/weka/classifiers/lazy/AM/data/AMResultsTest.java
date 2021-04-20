@@ -35,7 +35,7 @@ public class AMResultsTest {
     private static Instance test;
 	private static AMResults asQuadratic;
 	private static AMResults asLinear;
-	private static final BigDecimal EPSILON = new BigDecimal("1e-10");
+	private static final BigDecimal EPSILON = new BigDecimal("1e-7");
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {

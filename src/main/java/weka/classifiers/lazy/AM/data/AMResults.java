@@ -23,6 +23,7 @@ import weka.core.Instance;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -100,7 +101,7 @@ public class AMResults {
                 e,
                 new BigDecimal(exPointerMap.get(e)).divide(
                     new BigDecimal(getTotalPointers()),
-                    AMUtils.MATH_CONTEXT
+                    MathContext.DECIMAL64
                 )
             );
 
@@ -116,9 +117,9 @@ public class AMResults {
         // the total pointers
         for (String className : classPointerMap.keySet())
             classLikelihoodMap.put(className,
-                                   new BigDecimal(classPointerMap.get(className)).divide(new BigDecimal(totalPointers),
-                                                                                         AMUtils.MATH_CONTEXT
-                                   )
+                new BigDecimal(classPointerMap.get(className)).divide(new BigDecimal(totalPointers),
+                    MathContext.DECIMAL64
+                )
             );
         // Find the classes with the highest likelihood (there may be a tie)
         BigDecimal temp;
@@ -195,7 +196,7 @@ public class AMResults {
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.MATH_CONTEXT))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
         }
@@ -208,7 +209,7 @@ public class AMResults {
               .append(" : ")
               .append(e.getValue())
               .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), AMUtils.MATH_CONTEXT))
+              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
               .append(")")
               .append(AMUtils.LINE_SEPARATOR);
 

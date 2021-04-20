@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 
-import static java.math.MathContext.DECIMAL32;
+import static java.math.RoundingMode.HALF_EVEN;
 
 /**
  * This class holds constants and methods used in the AM classifier.
@@ -59,34 +59,23 @@ public class AMUtils {
         setBorderRight(true).
         setAlignment(TextAlignment.MiddleRight).build();
 
-    // used for printing all decimal numbers
-    private static final String DECIMAL_FORMAT = "%.5f";
-
     /**
-     * Format a double into a string using {@link #DECIMAL_FORMAT}.
-     *
-     * @param d value to format
-     * @return {@code d} formatted using {@link #DECIMAL_FORMAT}
-     */
-    public static String formatDouble(double d) {
-        return String.format(DECIMAL_FORMAT, d);
-    }
-
-    public static final MathContext MATH_CONTEXT = DECIMAL32;
-
-    /**
+     * @param numDecimals the number of digits to output after the decimal point.
+     * @param pointers the number of pointers for the current context
+     * @param totalPointers the number of pointers for all contexts
      * @return return a formatted percentage indicating the size of the analogical effect of {@code pointers}
      */
-    public static String formatPointerPercentage(BigInteger pointers, BigDecimal totalPointers) {
-        BigDecimal ratio = new BigDecimal(pointers).divide(totalPointers, MATH_CONTEXT);
-        return formatPercentage(ratio);
+    public static String formatPointerPercentage(BigInteger pointers, BigDecimal totalPointers, int numDecimals) {
+        BigDecimal ratio = new BigDecimal(pointers).divide(totalPointers, new MathContext(numDecimals + 2, HALF_EVEN));
+        return formatPercentage(ratio, numDecimals);
     }
 
     /**
+     * @param numDecimals the number of digits to output after the decimal point.
      * @return {@code val} formatted as a percentage with three decimal places
      */
-    public static String formatPercentage(BigDecimal val) {
+    public static String formatPercentage(BigDecimal val, int numDecimals) {
         float percentage = val.scaleByPowerOfTen(2).floatValue();
-        return String.format("%%%.3f", percentage);
+        return String.format("%%%." + numDecimals + "f", percentage);
     }
 }
