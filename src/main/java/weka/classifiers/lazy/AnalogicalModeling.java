@@ -1,6 +1,6 @@
 /*
  * **************************************************************************
- * Copyright 2012 Nathan Glenn                                              *
+ * Copyright 2021 Nathan Glenn                                              *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
@@ -619,7 +619,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 
     @Override
     public String toSummaryString() {
-        return "Analogical Modeling module (2012) by Nathan Glenn";
+        return "Analogical Modeling module (2021) by Nathan Glenn";
     }
 
     /**
@@ -628,7 +628,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Analogical Modeling Classifier (2012 Nathan Glenn)\n");
+        sb.append("Analogical Modeling Classifier (2021 Nathan Glenn)\n");
         if (trainingExemplars != null) {
             sb.append("Training instances: ").append(trainingExemplars.size());
             sb.append("\n");
