@@ -88,8 +88,8 @@ import java.util.*;
 public class AnalogicalModelingOutput extends AbstractOutput {
     private static final long serialVersionUID = -757810288402645056L;
 
-    private boolean m_Summary = false;
-    private boolean m_AnalogicalSet = true;
+    private boolean m_Summary = true;
+    private boolean m_AnalogicalSet = false;
     private boolean m_Gangs = false;
 
     @Override

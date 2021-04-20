@@ -36,8 +36,8 @@ public class AnalogicalModelingOutputTest {
         String actualOutput = buf.toString();
 
         assertFalse("report should not contain distribution", actualOutput.contains("Class probability distribution:"));
-        assertFalse("report should not contain summary", actualOutput.contains("Classifying instance"));
-        assertTrue("report should contain analogical set", actualOutput.contains("Analogical set:"));
+        assertTrue("report should contain summary", actualOutput.contains("Classifying instance"));
+        assertFalse("report should not contain analogical set", actualOutput.contains("Analogical set:"));
         assertFalse("report should not contain gang effects", actualOutput.contains("Gang effects:"));
     }
 
@@ -47,17 +47,17 @@ public class AnalogicalModelingOutputTest {
         Instance test = train.remove(0);
 
         output.setHeader(train);
-        output.setSummary(true);
+        output.setSummary(false);
         output.setOutputDistribution(true);
-        output.setAnalogicalSet(false);
+        output.setAnalogicalSet(true);
         output.setGangs(true);
         am.buildClassifier(train);
         output.printClassification(am, test, 0);
         String actualOutput = buf.toString();
 
         assertTrue("report should distribution", actualOutput.contains("Class probability distribution:"));
-        assertTrue("report should contain summary", actualOutput.contains("Classifying instance"));
-        assertFalse("report should not contain analogical set", actualOutput.contains("Analogical set:"));
+        assertFalse("report should not contain summary", actualOutput.contains("Classifying instance"));
+        assertTrue("report should contain analogical set", actualOutput.contains("Analogical set:"));
         assertTrue("report should contain gang effects", actualOutput.contains("Gang effects:"));
     }
 
