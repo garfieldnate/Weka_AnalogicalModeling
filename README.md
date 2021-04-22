@@ -109,16 +109,15 @@ feedback quickly if a change breaks anything.
 This project is managed with [Gradle](https://gradle.org/), and the project includes the gradle wrapper. The following
 build commands are available:
 
-    # compile Java source into a jar
+    # build and test the project
     ./gradlew build
-    # run unit tests
+    # just run unit tests
     ./gradlew test
     # generate HTML documentation
     ./gradlew javadoc
     # build the project archive for release as a Weka plugin
     ./gradlew weka_package
 
-The JavaDoc is uploaded automatically to
 
 ### Releasing
 
