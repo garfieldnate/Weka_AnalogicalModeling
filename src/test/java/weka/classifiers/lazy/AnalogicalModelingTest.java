@@ -18,10 +18,8 @@ package weka.classifiers.lazy;
 
 import junit.framework.TestSuite;
 import org.junit.Assert;
-import org.junit.Test;
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
-import weka.classifiers.lazy.AM.data.AMResults;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -51,7 +49,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
     private static final double DELTA = 1e-7;
 
-    @Test
     public void testChapter3dataSerial() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
         Instance test = train.get(0);
@@ -77,7 +74,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
      *
      * @throws Exception If there's a problem loading the Finnverb dataset
      */
-    @Test
     public void testFinnverb() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
 
@@ -95,12 +91,11 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         }, am.getResults().getClassPointers());
 
         train.add(test);
-        int numCorrect = leaveOneOut(train);
+        int numCorrect = TestUtils.leaveOneOut(getClassifier(), train);
         Assert.assertEquals("Leave-one-out accuracy on entire finnverb dataset", numCorrect, 160);
     }
 
     // larger set that forces use of LongLabel
-    @Test
     public void testSoybean() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.SOYBEAN);
         Instance test = train.remove(15);
@@ -135,29 +130,10 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
     // larger set that forces use of BitSetLabel and JohnsenJohansson lattice
     // without JohnsenJohansson, this ends with "java.lang.OutOfMemoryError: GC overhead limit exceeded"
-    @Test
     public void testAudiology() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.AUDIOLOGY);
-        int numCorrect = leaveOneOut(train);
-        assertTrue("Leave-one-out accuracy when classifying of audiology dataset", numCorrect >= 155);
-    }
-
-    private int leaveOneOut(Instances data) throws Exception {
-        int correct = 0;
-        for (int i = 0; i < data.numInstances(); i++) {
-            AMResults set = leaveOneOut(data, i);
-            if (set.getPredictedClasses().contains(data.get(i).stringValue(data.classIndex()))) correct++;
-        }
-        return correct;
-    }
-
-    private AMResults leaveOneOut(Instances data, int index) throws Exception {
-        Instances train = new Instances(data);
-        Instance test = train.remove(index);
-        AnalogicalModeling am = getClassifier();
-        am.buildClassifier(train);
-        am.distributionForInstance(test);
-        return am.getResults();
+        int numCorrect = TestUtils.leaveOneOut(getClassifier(), train);
+        assertTrue("Leave-one-out accuracy on audiology dataset should be >= 155; was " + numCorrect, numCorrect >= 155);
     }
 
     public static junit.framework.Test suite() {

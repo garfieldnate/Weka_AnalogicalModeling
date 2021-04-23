@@ -1,11 +1,13 @@
 package weka.classifiers.lazy.AM;
 
 import org.junit.Test;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.data.ClassifiedSupra;
 import weka.classifiers.lazy.AM.data.Subcontext;
 import weka.classifiers.lazy.AM.data.Supracontext;
 import weka.classifiers.lazy.AM.label.IntLabel;
 import weka.classifiers.lazy.AM.label.Label;
+import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -27,6 +29,11 @@ import static org.mockito.Mockito.when;
 public class TestUtils {
 
     /**
+     * Signals that integration (i.e. super long) tests should be run
+     */
+    public static final boolean RUN_INTEGRATION_TESTS = System.getenv().containsKey("RUN_INTEGRATION_TESTS");
+
+    /**
      * The name of the chapter 3 training data file.
      */
     public static final String CHAPTER_3_DATA = "ch3example.arff";
@@ -46,6 +53,10 @@ public class TestUtils {
      * 69 attributes, 226 instances
      */
     public static final String AUDIOLOGY = "audiology.arff";
+    /**
+     * 13 attributes, 4,969 instances
+     */
+    public static final String SPANISH_STRESS = "spanish_stress.arff";
 
     /**
      * Read a dataset from disk and return the Instances object. It is assumed
@@ -242,7 +253,26 @@ public class TestUtils {
         return new ClassifiedSupra(subs, count);
     }
 
-	/**
+    public static int leaveOneOut(AnalogicalModeling am, Instances data) throws Exception {
+        int correct = 0;
+        for (int i = 0; i < data.numInstances(); i++) {
+            AMResults set = leaveOneOut(am, data, i);
+            if (set.getPredictedClasses().contains(data.get(i).stringValue(data.classIndex()))) correct++;
+        }
+        return correct;
+    }
+
+    public static AMResults leaveOneOut(AnalogicalModeling am, Instances data, int index) throws Exception {
+        // copy so that removing an instance doesn't affect the original
+        Instances train = new Instances(data);
+        Instance test = train.remove(index);
+
+        am.buildClassifier(train);
+        am.distributionForInstance(test);
+        return am.getResults();
+    }
+
+    /**
      * Test that the getSupraFromString utility function above works as desired.
      *
      * @throws Exception if there is a problem loading the finnverb dataset
