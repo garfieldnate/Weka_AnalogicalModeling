@@ -33,11 +33,9 @@ import java.util.HashMap;
  *
  * @author <a href="mailto:garfieldnate@gmail.com">Nate Glenn</a>
  */
-// TODO: see if this can be parameterized for parallel/non-parallel
 public class AnalogicalModelingTest extends AbstractClassifierTest {
     public AnalogicalModelingTest(String name) {
         super(name);
-        // DEBUG = true;
     }
 
     /**
@@ -62,10 +60,13 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         am.buildClassifier(train);
 
         double[] prediction = am.distributionForInstance(test);
-        Assert.assertEquals("distribution given for two classes", prediction.length, 2);
-        // test to 7 decimals places, the number used by AMUtils.matchContext
-        Assert.assertEquals(0.6923077, prediction[0], DELTA);
-        Assert.assertEquals(0.3076923, prediction[1], DELTA);
+        Assert.assertArrayEquals("Class distribution", new double[]{0.6923077, 0.3076923}, prediction, DELTA);
+        Assert.assertEquals("Class pointer counts", new HashMap<String, BigInteger>() {
+            {
+                put("r", BigInteger.valueOf(9));
+                put("e", BigInteger.valueOf(4));
+            }
+        }, am.getResults().getClassPointers());
     }
 
     /**
@@ -79,22 +80,41 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
     @Test
     public void testFinnverb() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.FINNVERB);
-        Assert.assertEquals(new HashMap<String, BigInteger>() {
+
+        Instance test = train.remove(15);
+        AnalogicalModeling am = getClassifier();
+        am.buildClassifier(train);
+        double[] prediction = am.distributionForInstance(test);
+        Assert.assertArrayEquals("Class distribution", new double[]{0.0, 0.9902799, 0.0097201}, prediction, DELTA);
+
+        Assert.assertEquals("Class pointer counts", new HashMap<String, BigInteger>() {
             {
                 put("A", BigInteger.valueOf(5094));
                 put("C", BigInteger.valueOf(50));
             }
-        }, leaveOneOut(train, 15).getClassPointers());
+        }, am.getResults().getClassPointers());
 
+        train.add(test);
         int numCorrect = leaveOneOut(train);
-        Assert.assertEquals("Leave-one-out accuracy when classifying of finnverb dataset", numCorrect, 160);
+        Assert.assertEquals("Leave-one-out accuracy on entire finnverb dataset", numCorrect, 160);
     }
 
     // larger set that forces use of LongLabel
     @Test
     public void testSoybean() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.SOYBEAN);
-        Assert.assertEquals(new HashMap<String, BigInteger>() {
+        Instance test = train.remove(15);
+        AnalogicalModeling am = getClassifier();
+        am.buildClassifier(train);
+
+        double[] prediction = am.distributionForInstance(test);
+        Assert.assertArrayEquals("Class distribution", new double[]{
+                0.0000296, 0.9969953, 0.0, 0.000006, 0.0028873,
+                0.0000351, 0.0000001, 0.0000063, 0.0000085, 0.0,
+                0.0000043, 0.0000158, 0.0000000, 0.0000089, 0.0000026,
+                0.0, 0.0, 0.0, 0.0},
+            prediction, DELTA);
+        Assert.assertEquals("Class pointr counts", new HashMap<String, BigInteger>() {
             {
                 put("anthracnose", BigInteger.valueOf(5358272));
                 put("bacterial-blight", BigInteger.valueOf(2880000));
@@ -110,7 +130,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
                 put("diaporthe-stem-canker", BigInteger.valueOf(10013312));
                 put("brown-stem-rot", BigInteger.valueOf(976826156));
             }
-        }, leaveOneOut(train, 15).getClassPointers());
+        }, am.getResults().getClassPointers());
     }
 
     // larger set that forces use of BitSetLabel and JohnsenJohansson lattice
@@ -133,8 +153,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
     private AMResults leaveOneOut(Instances data, int index) throws Exception {
         Instances train = new Instances(data);
-        Instance test = train.get(index);
-        train.remove(index);
+        Instance test = train.remove(index);
         AnalogicalModeling am = getClassifier();
         am.buildClassifier(train);
         am.distributionForInstance(test);

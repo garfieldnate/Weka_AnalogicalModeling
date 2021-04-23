@@ -27,18 +27,9 @@ import weka.classifiers.lazy.AM.lattice.JohnsenJohanssonLattice;
 import weka.classifiers.lazy.AM.lattice.Lattice;
 import weka.classifiers.lazy.AM.lattice.LatticeFactory;
 import weka.classifiers.lazy.AM.lattice.LatticeFactory.CardinalityBasedLatticeFactory;
-import weka.core.Capabilities;
+import weka.core.*;
 import weka.core.Capabilities.Capability;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.SelectedTag;
-import weka.core.Summarizable;
-import weka.core.Tag;
-import weka.core.TechnicalInformation;
 import weka.core.TechnicalInformation.Type;
-import weka.core.TechnicalInformationHandler;
-import weka.core.Utils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -595,10 +586,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
         AMResults results = classify(instance);
         if (getDebug()) System.out.println(results);
 
+        Attribute classAttribute = trainingInstances.attribute(trainingInstances.classIndex());
         double[] classProbability = new double[trainingInstances.numClasses()];
-        int index = 0;
         for (Entry<String, BigDecimal> entry : results.getClassLikelihood().entrySet())
-            classProbability[index++] = entry.getValue().doubleValue();
+            classProbability[classAttribute.indexOfValue(entry.getKey())] = entry.getValue().doubleValue();
 
         return classProbability;
     }
