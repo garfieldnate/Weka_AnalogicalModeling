@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -189,6 +189,11 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>abstract boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#allMatching()">allMatching</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract java.util.Iterator&lt;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#descendantIterator()">descendantIterator</a></span>()</code></th>
 <td class="colLast">
@@ -197,12 +202,12 @@ extends java.lang.Object</pre>
  into a "mismatch" entry.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>abstract int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCardinality()">getCardinality</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#intersect(weka.classifiers.lazy.AM.label.Label)">intersect</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;otherLabel)</code></th>
 <td class="colLast">
@@ -210,26 +215,26 @@ extends java.lang.Object</pre>
  this label and otherLabel are marked match, otherwise mismatch.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isDescendantOf(weka.classifiers.lazy.AM.label.Label)">isDescendantOf</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;possibleAncestor)</code></th>
 <td class="colLast">
 <div class="block">Determine if this label is the "descendant" of possibleAncestor.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#matches(int)">matches</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">
 <div class="block">Determine if the given index is marked as a match or a mismatch.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>abstract int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#numMatches()">numMatches</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#union(weka.classifiers.lazy.AM.label.Label)">union</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;other)</code></th>
 <td class="colLast">
@@ -387,13 +392,27 @@ extends java.lang.Object</pre>
 <a id="union(weka.classifiers.lazy.AM.label.Label)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>union</h4>
 <pre class="methodSignature">public abstract&nbsp;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;union&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;other)</pre>
 <div class="block">Create a new label for which each location is marked as a match if either
  this label or <code>other</code> is marked match, otherwise mismatch. In other
  words, keep all matches from both labels.</div>
+</li>
+</ul>
+<a id="allMatching()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>allMatching</h4>
+<pre class="methodSignature">public abstract&nbsp;boolean&nbsp;allMatching()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if every feature of this label is a match (i.e. this is the
+ <a href="Labeler.html#getLatticeTop()"><code>top of the lattice</code></a>; false otherwise</dd>
+</dl>
 </li>
 </ul>
 </li>

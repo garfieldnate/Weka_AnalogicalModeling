@@ -163,8 +163,9 @@ implements java.lang.Iterable&lt;<a href="Subcontext.html" title="class in weka.
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(weka.classifiers.lazy.AM.label.Labeler,java.util.List)">SubcontextList</a></span>&#8203;(<a href="../label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a>&nbsp;labeler,
-              java.util.List&lt;weka.core.Instance&gt;&nbsp;data)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(weka.classifiers.lazy.AM.label.Labeler,java.util.List,boolean)">SubcontextList</a></span>&#8203;(<a href="../label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a>&nbsp;labeler,
+              java.util.List&lt;weka.core.Instance&gt;&nbsp;data,
+              boolean&nbsp;ignoreFullMatches)</code></th>
 <td class="colLast">
 <div class="block">This is the easiest to use constructor.</div>
 </td>
@@ -254,20 +255,22 @@ implements java.lang.Iterable&lt;<a href="Subcontext.html" title="class in weka.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(weka.classifiers.lazy.AM.label.Labeler,java.util.List)">
+<a id="&lt;init&gt;(weka.classifiers.lazy.AM.label.Labeler,java.util.List,boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SubcontextList</h4>
 <pre>public&nbsp;SubcontextList&#8203;(<a href="../label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a>&nbsp;labeler,
-                      java.util.List&lt;weka.core.Instance&gt;&nbsp;data)</pre>
+                      java.util.List&lt;weka.core.Instance&gt;&nbsp;data,
+                      boolean&nbsp;ignoreFullMatches)</pre>
 <div class="block">This is the easiest to use constructor. It creates and stores a list of
  subcontexts given classified exemplars and an exemplar to be classified.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>labeler</code> - Labeler for assigning labels to items in data</dd>
 <dd><code>data</code> - Training data (exemplars)</dd>
+<dd><code>ignoreFullMatches</code> - if true, will not add entirely matching contexts</dd>
 </dl>
 </li>
 </ul>

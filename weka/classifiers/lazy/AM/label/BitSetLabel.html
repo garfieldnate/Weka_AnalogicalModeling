@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -186,6 +186,11 @@ extends <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Lab
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#allMatching()">allMatching</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#descendantIterator()">descendantIterator</a></span>()</code></th>
 <td class="colLast">
@@ -194,22 +199,22 @@ extends <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Lab
  into a "mismatch" entry.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#equals(java.lang.Object)">equals</a></span>&#8203;(java.lang.Object&nbsp;other)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCardinality()">getCardinality</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hashCode()">hashCode</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#intersect(weka.classifiers.lazy.AM.label.Label)">intersect</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;other)</code></th>
 <td class="colLast">
@@ -217,31 +222,31 @@ extends <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Lab
  this label and otherLabel are marked match, otherwise mismatch.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isDescendantOf(weka.classifiers.lazy.AM.label.Label)">isDescendantOf</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;possibleDescendant)</code></th>
 <td class="colLast">
 <div class="block">Determine if this label is the "descendant" of possibleAncestor.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#matches(int)">matches</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">
 <div class="block">Determine if the given index is marked as a match or a mismatch.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#numMatches()">numMatches</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#union(weka.classifiers.lazy.AM.label.Label)">union</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;other)</code></th>
 <td class="colLast">
@@ -384,6 +389,22 @@ extends <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Lab
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="Label.html#union(weka.classifiers.lazy.AM.label.Label)">union</a></code>&nbsp;in class&nbsp;<code><a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></dd>
+</dl>
+</li>
+</ul>
+<a id="allMatching()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>allMatching</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;allMatching()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="Label.html#allMatching()">allMatching</a></code>&nbsp;in class&nbsp;<code><a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if every feature of this label is a match (i.e. this is the
+ <a href="Labeler.html#getLatticeTop()"><code>top of the lattice</code></a>; false otherwise</dd>
 </dl>
 </li>
 </ul>
