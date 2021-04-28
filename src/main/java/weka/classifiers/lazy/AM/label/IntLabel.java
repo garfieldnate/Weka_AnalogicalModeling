@@ -104,6 +104,11 @@ public class IntLabel extends Label {
         return new IntLabel(labelBits & otherLabel.labelBits, getCardinality());
     }
 
+    @Override
+    public boolean allMatching() {
+        return labelBits == 0;
+    }
+
 	@Override
     public String toString() {
     	if(getCardinality() == 0) {

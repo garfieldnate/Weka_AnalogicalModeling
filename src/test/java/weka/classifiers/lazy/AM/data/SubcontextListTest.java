@@ -13,8 +13,7 @@ import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SubcontextListTest {
 
@@ -26,7 +25,7 @@ public class SubcontextListTest {
 
         Labeler labeler = new IntLabeler(test, false, MissingDataCompare.MATCH);
 
-        SubcontextList subs = new SubcontextList(labeler, train);
+        SubcontextList subs = new SubcontextList(labeler, train, false);
         assertEquals(subs.getCardinality(), 3);
 
         List<Subcontext> subList = getSubList(subs);
@@ -50,6 +49,22 @@ public class SubcontextListTest {
         assertTrue(subList.contains(expected));
     }
 
+    @Test
+    public void testIgnoreFullMatches() throws Exception {
+        Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
+        Instance test = train.get(0);
+
+        Labeler labeler = new IntLabeler(test, false, MissingDataCompare.MATCH);
+        Subcontext allMatchingSub = new Subcontext(new IntLabel(0b000, 3), "foo");
+        allMatchingSub.add(train.get(0));// 310e
+
+        SubcontextList subs = new SubcontextList(labeler, train, false);
+        assertTrue("Should contain 000 sub when not ignoring full matches", getSubList(subs).contains(allMatchingSub));
+
+        subs = new SubcontextList(labeler, train, true);
+        assertFalse("Should not contain 000 sub when ignoring full matches", getSubList(subs).contains(allMatchingSub));
+    }
+
     private List<Subcontext> getSubList(final SubcontextList subcontextList) {
 		return new ArrayList<>() {
 			{
@@ -67,7 +82,7 @@ public class SubcontextListTest {
 
         Labeler labeler = new IntLabeler(test, false, MissingDataCompare.MATCH);
 
-        SubcontextList subs = new SubcontextList(labeler, train);
+        SubcontextList subs = new SubcontextList(labeler, train, false);
         assertEquals("getLabeler returns the labeler used in the constructor", subs.getLabeler(), labeler);
         assertEquals("getCardinality returns the cardinality of the test item", subs.getCardinality(), 3);
     }

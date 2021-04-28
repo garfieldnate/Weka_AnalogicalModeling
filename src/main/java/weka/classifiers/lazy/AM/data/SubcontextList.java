@@ -40,6 +40,7 @@ public class SubcontextList implements Iterable<Subcontext> {
     private final HashMap<Label, Subcontext> labelToSubcontext = new HashMap<>();
 
     private final Labeler labeler;
+    private final boolean ignoreFullMatches;
 
     /**
      * @return the number of attributes used to predict an outcome
@@ -54,9 +55,11 @@ public class SubcontextList implements Iterable<Subcontext> {
      *
      * @param labeler Labeler for assigning labels to items in data
      * @param data    Training data (exemplars)
+     * @param ignoreFullMatches if true, will not add entirely matching contexts
      */
-    public SubcontextList(Labeler labeler, List<Instance> data) {
+    public SubcontextList(Labeler labeler, List<Instance> data, boolean ignoreFullMatches) {
         this.labeler = labeler;
+        this.ignoreFullMatches = ignoreFullMatches;
         for (Instance se : data)
             add(se);
     }
@@ -66,6 +69,9 @@ public class SubcontextList implements Iterable<Subcontext> {
      */
     void add(Instance exemplar) {
         Label label = labeler.label(exemplar);
+        if(ignoreFullMatches && label.allMatching()) {
+            return;
+        }
         if (!labelToSubcontext.containsKey(label)) {
 			labelToSubcontext.put(label, new Subcontext(label, labeler.getContextString(label)));
 		}

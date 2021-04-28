@@ -72,16 +72,16 @@ public class LatticeTest {
 	@Test
 	public void testFillingWithEmptySubcontextList() throws Exception {
 		Lattice lattice = latticeSupplier.get();
-		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList(), false));
 	}
 
 	@Test
 	public void testLatticeCannotBeFilledTwice() throws Exception {
 		Lattice lattice = latticeSupplier.get();
-		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList(), false));
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(new StringContains("already filled"));
-		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList()));
+		lattice.fill(new SubcontextList(mock(IntLabeler.class), Collections.emptyList(), false));
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class LatticeTest {
     private void testSupras(Instances train, int testIndex, String[] expectedSupras) throws ExecutionException, InterruptedException {
         final Instance test = train.get(testIndex);
         train.remove(testIndex);
-        SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train);
+        SubcontextList subList = new SubcontextList(getFullSplitLabeler(test), train, false);
         Lattice testLattice = latticeSupplier.get();
         testLattice.fill(subList);
         Set<Supracontext> actualSupras = testLattice.getSupracontexts();

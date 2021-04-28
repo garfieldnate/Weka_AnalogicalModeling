@@ -35,7 +35,7 @@ public class HeterogeneousLatticeTest {
         // cardinality of one
 		Labeler noPartitionLabeler = Mockito.spy(new LabelerFactory.IntLabelerFactory().createLabeler(test, false, MissingDataCompare.MATCH));
 		when(noPartitionLabeler.numPartitions()).thenReturn(1);
-		SubcontextList subList = new SubcontextList(noPartitionLabeler, train);
+		SubcontextList subList = new SubcontextList(noPartitionLabeler, train, false);
 		HeterogeneousLattice heteroLattice = new HeterogeneousLattice(0);
 		heteroLattice.fill(subList);
 

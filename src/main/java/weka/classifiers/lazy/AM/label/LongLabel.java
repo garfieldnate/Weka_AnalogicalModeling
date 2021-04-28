@@ -97,6 +97,11 @@ public class LongLabel extends Label {
         return new LongLabel(labelBits & otherLabel.labelBits, getCardinality());
     }
 
+    @Override
+    public boolean allMatching() {
+        return labelBits == 0L;
+    }
+
 	@Override
     public String toString() {
 		if(getCardinality() == 0) {

@@ -42,6 +42,7 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
     @Override
     public AnalogicalModeling getClassifier() {
         AnalogicalModeling am = new AnalogicalModeling();
+        am.setRemoveTestExemplar(false);
         // Ensure Johnsen-Johansson lattice runs deterministically
         am.setRandomProvider(TestUtils.getDeterministicRandomProvider());
         return am;
@@ -49,11 +50,12 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
 
     private static final double DELTA = 1e-7;
 
-    public void testChapter3dataSerial() throws Exception {
+    public void testChapter3data() throws Exception {
         Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
         Instance test = train.get(0);
-        train.remove(0);
         AnalogicalModeling am = getClassifier();
+        // test that this method removes the exemplar
+        am.setRemoveTestExemplar(true);
         am.buildClassifier(train);
 
         double[] prediction = am.distributionForInstance(test);

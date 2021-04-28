@@ -67,6 +67,11 @@ public class BitSetLabel extends Label {
     }
 
     @Override
+    public boolean allMatching() {
+        return labelBits.isEmpty();
+    }
+
+    @Override
     public String toString() {
         if (getCardinality() == 0) {
             return "";

@@ -167,7 +167,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		Labeler labeler = new LabelerFactory.CardinalityBasedLabelerFactory().createLabeler(testItem, m_ignoreUnknowns, mdc);
 		// 3 steps to assigning outcome probabilities:
 		// 1. Place each data item in a subcontext
-		SubcontextList subList = new SubcontextList(labeler, trainingExemplars);
+		SubcontextList subList = new SubcontextList(labeler, trainingExemplars, getRemoveTestExemplar());
         // 2. Create a supracontextual lattice and fill it with subcontexts
 		LatticeFactory latticeFactory;
 		if (randomProvider == null) {
@@ -234,7 +234,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * By default, we remove any exemplar with the same features as the test exemplar
      */
-    private boolean m_removeTestExemplar = false;
+    private boolean m_removeTestExemplar = true;
 
     /**
      * @return true if we remove a test instance from training before predicting its outcome
@@ -255,8 +255,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      */
 	@SuppressWarnings("unused") // used by Weka UI
     public String removeTestExemplarTipText() {
-        return "Set to true if you wish to remove a test instance from the training set before "
-               + "attempting to predict its outcome.";
+        return "Set to true if you wish to remove the test instance from the training set before "
+               + "attempting to classify it.";
     }
 
     /**

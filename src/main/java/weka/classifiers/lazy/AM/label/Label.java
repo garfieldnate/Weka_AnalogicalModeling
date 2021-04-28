@@ -77,4 +77,10 @@ public abstract class Label {
      * words, keep all matches from both labels.
      */
     public abstract Label union(Label other);
+
+    /**
+     * @return true if every feature of this label is a match (i.e. this is the
+     * {@link Labeler#getLatticeTop() top of the lattice}; false otherwise
+     */
+    public abstract boolean allMatching();
 }

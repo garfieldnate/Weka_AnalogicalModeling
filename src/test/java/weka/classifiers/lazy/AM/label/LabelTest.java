@@ -128,6 +128,15 @@ public class LabelTest {
     }
 
     @Test
+    public void testAllMatching() {
+        Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
+        assertTrue("Label composed of all 0's", labeler.fromBits(0b000).allMatching());
+        for (int bits : List.of(0b100, 0b001, 0b010, 0b111)) {
+            assertFalse("Label with a 1 in it", labeler.fromBits(bits).allMatching());
+        }
+    }
+
+    @Test
     public void testMatchesThrowsExceptionForIndexTooLow() {
 		Labeler labeler = labelerFactory.createLabeler(mockInstance(3), false, MATCH);
 
