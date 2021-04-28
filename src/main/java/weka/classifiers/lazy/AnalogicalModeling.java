@@ -38,38 +38,38 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 /**
- * <!-- globalinfo-start --> * Implements the Analogical Modeling algorithm, invented by Royal Skousen. Analogical
+ * <!-- globalinfo-start --> Implements the Analogical Modeling algorithm, invented by Royal Skousen. Analogical
  * modeling is an instance-based algorithm designed to model human behavior.For more information, see the following
- * references:<br> * <br> * Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic Publishers.<br> * <br>
- * * Theron Stanford (2002). Analogical modeling: an exemplar-based approach to language. * <p>
+ * references:<br><br> Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic Publishers.<br><br>
+ *   Theron Stanford (2002). Analogical modeling: an exemplar-based approach to language.<p>
  *
  * <!-- globalinfo-end -->
  *
- * <!-- technical-bibtex-start --> * BibTeX: *
+ * <!-- technical-bibtex-start -->BibTeX:
  *
  * <pre>
- * * &#64;book{skousen1989analogical,
- * *    author = {Skousen, R.},
- * *    publisher = {Kluwer Academic Publishers},
- * *    title = {Analogical Modeling of Language},
- * *    year = {1989},
- * *    abstract = {Review: 'Skousen develops an analogical approach, which is claimed to handle not merely cases which
+ *   &#64;book{skousen1989analogical,
+ *      author = {Skousen, R.},
+ *      publisher = {Kluwer Academic Publishers},
+ *      title = {Analogical Modeling of Language},
+ *      year = {1989},
+ *      abstract = {Review: 'Skousen develops an analogical approach, which is claimed to handle not merely cases which
  * are problematic for structuralist approaches, but to be applicable equally to the cases with which structuralism is at
  * its best - in short, to be an Einstein to the common Newton.This is altogether a stimulating and richly suggestive
  * book whose fundamental notions are presented with formal rigour. Other, more psychologically adequate, formal
  * analogical theories may be devised, but Skousen has shown the way forward.' Artificial Intelligence and Stimulation
  * of Behaviour Quarterly, 1990, No. 72},
- * *    ISBN-13 = {9780792305170}
- * * }
- * *
- * * &#64;inbook{skousen2002analogical,
- * *    author = {Theron Stanford},
- * *    editor = {Skousen, Royal and Lonsdale, Deryle and Parkinson, Dilworth},
- * *    pages = {385--409},
- * *    publisher = {John Benjamins Publishing Company},
- * *    title = {Analogical modeling: an exemplar-based approach to language},
- * *    year = {2002},
- * *    abstract = {Analogical Modeling (AM) is an exemplar-based general theory of description that uses both neighbors
+ *      ISBN-13 = {9780792305170}
+ *   }
+ *
+ *   &#64;inbook{skousen2002analogical,
+ *      author = {Theron Stanford},
+ *      editor = {Skousen, Royal and Lonsdale, Deryle and Parkinson, Dilworth},
+ *      pages = {385--409},
+ *      publisher = {John Benjamins Publishing Company},
+ *      title = {Analogical modeling: an exemplar-based approach to language},
+ *      year = {2002},
+ *      abstract = {Analogical Modeling (AM) is an exemplar-based general theory of description that uses both neighbors
  * and non-neighbors (under certain well-defined conditions of homogeneity) to predict language behavior. This book
  * provides a basic introduction to AM, compares the theory with nearest-neighbor approaches, and discusses the most
  * recent advances in the theory, including psycholinguistic evidence, applications to specific languages, the problem
@@ -79,51 +79,51 @@ import java.util.function.Supplier;
  * computing (based on quantum mechanics with its inherent simultaneity and reversibility) provides a precise and
  * natural solution to the exponential explosion in AM. Finally, an extensive appendix provides three tutorials for
  * running the AM computer program (available online).},
- * *    ISBN-13 = {9789027223623}
- * * }
- * *
+ *      ISBN-13 = {9789027223623}
+ *   }
+ *
  * </pre>
  *
- * * <p> <!-- technical-bibtex-end -->
+ *   <p> <!-- technical-bibtex-end -->
  *
- * <!-- technical-plaintext-start --> * Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic
- * Publishers.<br> * <br> * Theron Stanford (2002). Analogical modeling: an exemplar-based approach to language. <!--
+ * <!-- technical-plaintext-start --> Skousen, R. (1989). Analogical Modeling of Language. Kluwer Academic
+ * Publishers.<br><br> Theron Stanford (2002). Analogical modeling: an exemplar-based approach to language. <!--
  * technical-plaintext-end -->
  *
  *
- * <!-- options-start --> * Valid options are: <p> * *
+ * <!-- options-start --> Valid options are: <p>
  *
  * <pre>
  * -D
- * *  If set, classifier is run in debug mode and
- * *  may output additional info to the console
+ *    If set, classifier is run in debug mode and
+ *    may output additional info to the console
  * </pre>
  *
- * * *
+ *
  *
  * <pre>
  * -L
- * *  Use linear instead of quadratic calculation of pointers (default off)
+ *    Use linear instead of quadratic calculation of pointers (default off)
  * </pre>
  *
- * * *
+ *
  *
  * <pre>
  * -R
- * *  Remove test exemplar from training set
+ *    Remove test exemplar from training set
  * </pre>
  *
- * * *
+ *
  *
  * <pre>
  * -M &lt;method&gt;
- * *  Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat
+ *    Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat
  * missing data as a all one variable, 'match' means that missing data will be considered the same as whatever it is
  * compared with, and 'mismatch' means that missing data will always be unequal to whatever it is compared with. Default
  * is 'variable'
  * </pre>
  *
- * * <!-- options-end -->
+ *   <!-- options-end -->
  *
  * @author Nathan Glenn (garfieldnate at gmail dot com)
  */
@@ -177,9 +177,9 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		}
 		Lattice lattice = latticeFactory.createLattice();
 		lattice.fill(subList);
-		// 3. create analogical set from the pointers in resulting homogeneous
-        // supracontexts
-        // we save the analogical set for use with AnalogicalModelingOutput
+		// 3. record the analogical set and other statistics from the pointers in the
+        // resulting homogeneous supracontexts
+        // we save the results for use with AnalogicalModelingOutput
         results = new AMResults(lattice, testItem, m_linearCount, labeler);
         return results;
     }
@@ -232,8 +232,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     }
 
     /**
-     * By default, we leave the test exemplar in the training set if it is
-     * there.
+     * By default, we remove any exemplar with the same features as the test exemplar
      */
     private boolean m_removeTestExemplar = false;
 
@@ -392,35 +391,35 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      *
      * <pre>
      * -D
-     * *  If set, classifier is run in debug mode and
-     * *  may output additional info to the console
+     *    If set, classifier is run in debug mode and
+     *    may output additional info to the console
      * </pre>
      *
-     * * *
+     *
      *
      * <pre>
      * -L
-     * *  Use linear instead of quadratic calculation of pointers (default off)
+     *    Use linear instead of quadratic calculation of pointers (default off)
      * </pre>
      *
-     * * *
+     *
      *
      * <pre>
      * -R
-     * *  Remove test exemplar from training set
+     *    Remove test exemplar from training set
      * </pre>
      *
-     * * *
+     *
      *
      * <pre>
      * -M &lt;method&gt;
-     * *  Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat
+     *    Method of dealing with missing data. The options are variable, match or mismatch; 'variable' means to treat
      * missing data as a all one variable, 'match' means that missing data will be considered the same as whatever it is
      * compared with, and 'mismatch' means that missing data will always be unequal to whatever it is compared with.
      * Default is 'variable'
      * </pre>
      *
-     * * <!-- options-end -->
+     *   <!-- options-end -->
      *
      * @param options {@inheritDoc}
      */
