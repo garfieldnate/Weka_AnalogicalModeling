@@ -100,6 +100,10 @@ import java.util.function.Supplier;
  * </pre>
  *
  *
+ * <pre>
+ * -I
+ *    Ignore attributes with unknown values in the test exemplar
+ * </pre>
  *
  * <pre>
  * -L
@@ -222,8 +226,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     }
 
 	@SuppressWarnings("unused") // used by Weka UI
-    public void setIgnoreUnknowns(boolean parallel) {
-        m_ignoreUnknowns = parallel;
+    public void setIgnoreUnknowns(boolean ignoreUnknowns) {
+        m_ignoreUnknowns = ignoreUnknowns;
     }
 
 	@SuppressWarnings("unused") // used by Weka UI
@@ -262,7 +266,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * Define possible missing value handling methods
      */
-    private static final Tag[] TAGS_MISSING = MissingDataCompare.getTags();
+    public static final Tag[] TAGS_MISSING = MissingDataCompare.getTags();
 
     /**
      * @return String representation of strategy used when comparing missing values with other data
@@ -332,6 +336,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     public Enumeration<Option> listOptions() {
 
         Vector<Option> options = getOptionsOfSuper();
+        options.add(new Option("\tIgnore attributes with unknown value in the test exemplar", "i", 0, "-I"));
         options.add(new Option(
             "\tUse linear instead of quadratic calculation of " + "pointers (default off)",
             "L",
@@ -377,8 +382,15 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     @Override
     public String[] getOptions() {
         Vector<String> options = new Vector<>();
-        if (getLinearCount()) options.add("-L");
-        if (getRemoveTestExemplar()) options.add("-R");
+        if (getLinearCount()) {
+            options.add("-L");
+        }
+        if (getRemoveTestExemplar()) {
+            options.add("-R");
+        }
+        if (getIgnoreUnknowns()) {
+            options.add("-I");
+        }
         options.add("-M");
         options.add(mdc.getOptionString());
         // add all options of the superclass
@@ -396,6 +408,10 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      * </pre>
      *
      *
+     * <pre>
+     * -I
+     *    Ignore attributes with unknown values in the test exemplar
+     * </pre>
      *
      * <pre>
      * -L
@@ -426,11 +442,23 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     @Override
     public void setOptions(String[] options) {
         try {
-            if (Utils.getFlag('L', options)) setLinearCount(true);
-            if (Utils.getFlag('R', options)) setRemoveTestExemplar(true);
+            if (Utils.getFlag('I', options)) {
+                setIgnoreUnknowns(true);
+            }
+            if (Utils.getFlag('L', options)) {
+                setLinearCount(true);
+            }
+            if (Utils.getFlag('R', options)) {
+                setRemoveTestExemplar(true);
+            }
             String optionString = Utils.getOption('M', options);
-            if (optionString.length() != 0) for (MissingDataCompare mdc : MissingDataCompare.values())
-                if (mdc.getOptionString().equals(optionString)) this.mdc = mdc;
+            if (optionString.length() != 0) {
+                for (MissingDataCompare mdc : MissingDataCompare.values()) {
+                    if (mdc.getOptionString().equals(optionString)) {
+                        this.mdc = mdc;
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

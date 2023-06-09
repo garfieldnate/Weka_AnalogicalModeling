@@ -20,11 +20,15 @@ import junit.framework.TestSuite;
 import org.junit.Assert;
 import weka.classifiers.AbstractClassifierTest;
 import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SelectedTag;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+
+import static weka.classifiers.lazy.AnalogicalModeling.TAGS_MISSING;
 
 /**
  * Tests AnalogicalModeling.
@@ -136,6 +140,19 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         Instances train = TestUtils.getDataSet(TestUtils.AUDIOLOGY);
         int numCorrect = TestUtils.leaveOneOut(getClassifier(), train);
         assertTrue("Leave-one-out accuracy on audiology dataset should be >= 155; was " + numCorrect, numCorrect >= 155);
+    }
+
+    public void testGetOptions() {
+        AnalogicalModeling am = new AnalogicalModeling();
+        Assert.assertArrayEquals("Default options", am.getOptions(), new String[]{"-R", "-M", "variable"});
+
+        am.setRemoveTestExemplar(false);
+        am.setMissingDataCompare(new SelectedTag(MissingDataCompare.MISMATCH.ordinal(), TAGS_MISSING));
+        am.setLinearCount(true);
+        am.setIgnoreUnknowns(true);
+
+        System.err.println(String.join(" ", am.getOptions()));
+        Assert.assertArrayEquals("Custom options", am.getOptions(), new String[]{"-L", "-I", "-M", "mismatch"});
     }
 
     public static junit.framework.Test suite() {
