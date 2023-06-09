@@ -156,14 +156,21 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     private MissingDataCompare mdc = MissingDataCompare.VARIABLE;
 	private transient Supplier<Random> randomProvider;
 
-	/**
-     * This method is where all of the action happens! Given test item, it uses
+    /**
+     * This method is where all of the action happens! Given a test item, it uses
      * existing exemplars to assign outcome probabilities to it.
+     * <p>
+     * Note that this method sets the {@link #results} variable (used by
+     * {@link weka.classifiers.evaluation.output.prediction.AnalogicalModelingOutput}) without any synchronization.
+     * This means that if you want to print results from multiple calls to this method, you should not call it
+     * in parallel. If you want to make multiple {@link #classify(Instance) classify} calls in parallel, you should
+     * create multiple classifier instances. This sort of parallelism for large-cardinality datasets is inadvisable,
+     * anyway, since a single classifier instance will attempt to saturate all of the available CPUs.
      *
      * @param testItem Item to make context base on
      * @return Analogical set which holds results of the classification for the given item
-	 * @throws ExecutionException If execution is rejected for some reason
-	 * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
+     * @throws ExecutionException   If execution is rejected for some reason
+     * @throws InterruptedException If any thread is interrupted for any reason (user presses ctrl-C, etc.)
      */
     private AMResults classify(Instance testItem) throws InterruptedException, ExecutionException {
         if (getDebug()) System.out.println("Classifying: " + testItem);
@@ -627,6 +634,8 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     private AMResults results = null;
 
     /**
+     * Note that this is not thread-safe; see the documentation for {@link #classify(Instance) classify}.
+     *
      * @return The classification results from the last call to distributionForInstance
      * @throws IllegalStateException if you've never called distributionForInstance from this object
      */
