@@ -368,7 +368,9 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="AM/data/AMResults.html" title="class in weka.classifiers.lazy.AM.data">AMResults</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResults()">getResults</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Note that this is not thread-safe; see the documentation for <a href="#classify(weka.core.Instance)"><code>classify</code></a>.</div>
+</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>weka.core.TechnicalInformation</code></td>
@@ -926,6 +928,7 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <li class="blockList">
 <h4>getResults</h4>
 <pre class="methodSignature">public&nbsp;<a href="AM/data/AMResults.html" title="class in weka.classifiers.lazy.AM.data">AMResults</a>&nbsp;getResults()</pre>
+<div class="block">Note that this is not thread-safe; see the documentation for <a href="#classify(weka.core.Instance)"><code>classify</code></a>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The classification results from the last call to distributionForInstance</dd>
