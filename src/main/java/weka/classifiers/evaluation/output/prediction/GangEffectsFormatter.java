@@ -1,8 +1,10 @@
-package weka.classifiers.lazy.AM.data;
+package weka.classifiers.evaluation.output.prediction;
 
 import com.jakewharton.picnic.*;
 import org.jetbrains.annotations.NotNull;
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.data.AMResults;
+import weka.classifiers.lazy.AM.data.GangEffect;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.core.Instance;
 
@@ -18,12 +20,14 @@ public class GangEffectsFormatter {
 	private static final CellStyle SUBHEADER_STYLE = new CellStyle.Builder().setBorderTop(true).setBorderBottom(true).build();
 
 	private final int numDecimals;
+    private Format format;
 
     /**
      * @param numDecimals the number of digits to output after the decimal point
      */
-    public GangEffectsFormatter(int numDecimals) {
+    public GangEffectsFormatter(int numDecimals, Format format) {
         this.numDecimals = numDecimals;
+        this.format = format;
     }
 
     /**
@@ -53,19 +57,29 @@ public class GangEffectsFormatter {
 					});
         }
 
-        return new Table.Builder().
-            setTableStyle(
-                new TableStyle.Builder().
-                    setBorder(true).build()).
-            setCellStyle(
-                REPORT_TABLE_STYLE
-            ).setHeader(
-            new TableSection.Builder().
-                addRow(
-                    "Percentage", "Pointers", "Num Items", "Class", "Context").build())
-            .setBody(bodyBuilder.build())
-            .build()
-            .toString();
+        switch(format) {
+            case HUMAN: {
+                return new Table.Builder().
+                    setTableStyle(
+                        new TableStyle.Builder().
+                            setBorder(true).build()).
+                    setCellStyle(
+                        REPORT_TABLE_STYLE
+                    ).setHeader(
+                        new TableSection.Builder().
+                            addRow(
+                                "Percentage", "Pointers", "Num Items", "Class", "Context").build())
+                    .setBody(bodyBuilder.build())
+                    .build()
+                    .toString();
+            }
+            case CSV: {
+                return "TODO";
+            }
+            default: {
+                throw new IllegalStateException("Unknown format " + format.getOptionString());
+            }
+        }
     }
 
 	private Row getClassHeader(String className, BigInteger classPointers, BigDecimal totalPointers, int numInstances) {

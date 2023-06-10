@@ -1,7 +1,9 @@
-package weka.classifiers.lazy.AM.data;
+package weka.classifiers.evaluation.output.prediction;
 
 import org.junit.Test;
+import weka.classifiers.evaluation.output.prediction.AnalogicalSetFormatter;
 import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -19,7 +21,7 @@ public class AnalogicalSetFormatterTest{
         am.buildClassifier(train);
         am.distributionForInstance(test);
         AMResults results = am.getResults();
-        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3);
+        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3, Format.HUMAN);
         String actualOutput = formatter.formatAnalogicalSet(results);
 
         String expectedOutput =

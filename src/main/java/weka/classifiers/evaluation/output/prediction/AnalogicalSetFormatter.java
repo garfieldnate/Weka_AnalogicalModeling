@@ -1,10 +1,11 @@
-package weka.classifiers.lazy.AM.data;
+package weka.classifiers.evaluation.output.prediction;
 
 import com.jakewharton.picnic.Table;
 import com.jakewharton.picnic.TableSection;
 import com.jakewharton.picnic.TableStyle;
 import lombok.Value;
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.core.Instance;
 
@@ -16,12 +17,14 @@ import java.util.function.BiFunction;
 public class AnalogicalSetFormatter {
 
     private final int numDecimals;
+    private final Format format;
 
     /**
      * @param numDecimals the number of digits to output after the decimal point
      */
-    public AnalogicalSetFormatter(int numDecimals) {
+    public AnalogicalSetFormatter(int numDecimals, Format format) {
         this.numDecimals = numDecimals;
+        this.format = format;
     }
 
     @Value
@@ -49,18 +52,28 @@ public class AnalogicalSetFormatter {
             .sorted(Comparator.comparing(TableEntry::getPointers).reversed().thenComparing(TableEntry::getInstanceAtts).thenComparing(TableEntry::getInstanceClass))
             .forEach(e -> bodyBuilder.addRow(e.getPercentage(), e.getPointers().toString(), e.getInstanceAtts(), e.getInstanceClass()));
 
-        return new Table.Builder().
-            setTableStyle(
-                new TableStyle.Builder().
-                    setBorder(true).build()).
-            setCellStyle(
-                AMUtils.REPORT_TABLE_STYLE
-            ).setHeader(
-            new TableSection.Builder().
-                addRow(
-                    "Percentage", "Pointers", "Item", "Class").build())
-            .setBody(bodyBuilder.build())
-            .build()
-            .toString();
+        switch (format) {
+            case HUMAN: {
+                return new Table.Builder().
+                    setTableStyle(
+                        new TableStyle.Builder().
+                            setBorder(true).build()).
+                    setCellStyle(
+                        AMUtils.REPORT_TABLE_STYLE
+                    ).setHeader(
+                        new TableSection.Builder().
+                            addRow(
+                                "Percentage", "Pointers", "Item", "Class").build())
+                    .setBody(bodyBuilder.build())
+                    .build()
+                    .toString();
+            }
+            case CSV: {
+                return "TODO";
+            }
+            default: {
+                throw new IllegalStateException("Unknown format " + format.getOptionString());
+            }
+        }
     }
 }

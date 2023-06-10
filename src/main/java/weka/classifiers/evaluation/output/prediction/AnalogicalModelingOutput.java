@@ -20,9 +20,6 @@ import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AM.AMUtils;
 import weka.classifiers.lazy.AM.Enum2TagUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
-import weka.classifiers.lazy.AM.data.AnalogicalSetFormatter;
-import weka.classifiers.lazy.AM.data.GangEffectsFormatter;
-import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.*;
 
@@ -76,9 +73,10 @@ import java.util.*;
  * </pre>
  * <pre>
  * -F &lt;format&gt;
- *    Format to print reports in. The options are 'table' and 'csv'. 'table' output is a human-readable, text-based
- *    table. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel, Pandas, etc.),
- *    and contains strictly more data, such as the configuration parameters. Default is 'table'.
+ *    Format to print reports in. The options are 'human' and 'csv'. 'human' output is a human-readable, text-based
+ *    table of some kind. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel,
+ *    Pandas, etc.), and contains strictly more data, such as the configuration parameters. Default is 'human'. If
+ *    summary printing is turned on, this is always printed in the human-readable format.
  * </pre>
  * <p>
  * <!-- options-end -->
@@ -97,50 +95,20 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     private boolean m_AnalogicalSet = false;
     private boolean m_Gangs = false;
 
-    private Formatter formatter = Formatter.TABLE;
-
-    private enum Formatter implements Enum2TagUtils.TagInfo {
-        TABLE("table", "Human-readable text table"),
-        CSV("csv", "Machine-readable CSV designed for analysis in Excel, Pandas, etc.")
-        ;
-
-        // string used on command line to indicate the use of this strategy
-        private final String optionString;
-        // string which describes comparison strategy for a given entry
-        private final String description;
-
-        /**
-         * @param optionString The string required to choose this formatter from the command line
-         * @param description  A description of the formatter for the given value
-         */
-        Formatter(String optionString, String description) {
-            this.optionString = optionString;
-            this.description = description;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getOptionString() {
-            return optionString;
-        }
-    }
+    private Format format = Format.HUMAN;
 
     /**
      * Define possible formatting methods
      */
-    public static final Tag[] TAGS_FORMATTER = Enum2TagUtils.getTags(Formatter.class);
+    public static final Tag[] TAGS_FORMATTER = Enum2TagUtils.getTags(Format.class);
 
 
     /**
      * @return Selected formatter
      */
     @SuppressWarnings("unused") // used by Weka framework
-    public SelectedTag getFormatter() {
-        return new SelectedTag(formatter.ordinal(), TAGS_FORMATTER);
+    public SelectedTag getFormat() {
+        return new SelectedTag(format.ordinal(), TAGS_FORMATTER);
     }
 
     /**
@@ -148,9 +116,9 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      * @throws IllegalArgumentException if input is not a known formatter.
      */
     @SuppressWarnings("unused") // used by Weka framework
-    public void setFormatter(SelectedTag newMode) {
+    public void setFormat(SelectedTag newMode) {
         if (newMode.getTags() == TAGS_FORMATTER) {
-            formatter = Enum2TagUtils.getElement(Formatter.class, newMode);
+            format = Enum2TagUtils.getElement(Format.class, newMode);
         }
     }
 
@@ -230,12 +198,13 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getOutputDistribution()) {
-            outputDistribution(distribution);
+            DistributionFormatter formatter = new DistributionFormatter(getNumDecimals(), format);
+            append(formatter.formatDistribution(results, distribution, m_Header));
             append(AMUtils.LINE_SEPARATOR);
         }
 
         if (getAnalogicalSet()) {
-            AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(getNumDecimals());
+            AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(getNumDecimals(), format);
             append("Analogical set:");
             append(AMUtils.LINE_SEPARATOR);
             append(formatter.formatAnalogicalSet(results));
@@ -243,7 +212,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getGangs()) {
-            GangEffectsFormatter formatter = new GangEffectsFormatter(getNumDecimals());
+            GangEffectsFormatter formatter = new GangEffectsFormatter(getNumDecimals(), format);
             append("Gang effects:");
             append(AMUtils.LINE_SEPARATOR);
             append(formatter.formatGangs(results));
@@ -255,17 +224,6 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     protected void doPrintClassification(double[] classDistribution, Instance classifiedInstance, int index) {
         throw new UnsupportedOperationException(
             "These method should not be used; doPrintClassification should be called with the AM classifier as the first argument");
-    }
-
-    private void outputDistribution(double[] distribution) {
-        String doubleFormat = String.format("%%.%df", getNumDecimals());
-        append("Class probability distribution:" + AMUtils.LINE_SEPARATOR);
-        for (int i = 0; i < distribution.length; i++) {
-            append(m_Header.classAttribute().value(i));
-            append(": ");
-            append(String.format(doubleFormat, distribution[i]));
-            append(AMUtils.LINE_SEPARATOR);
-        }
     }
 
     @Override
@@ -293,10 +251,11 @@ public class AnalogicalModelingOutput extends AbstractOutput {
             "-summary"));
         options.add(new Option("\tOutput the analogical set", "as", 0, "-as"));
         options.add(new Option("\tOutput gang effects", "gang", 0, "-gang"));
-        options.add(new Option("\tFormat to print reports in. The options are 'table' and 'csv'. 'table' " +
-            "output is a human-readable, text-based table. 'csv', or comma-separated values, is intended to be " +
-            "machine-readable (for loading in Excel, Pandas, etc.), and contains strictly more data, such as the " +
-            "configuration parameters. Default is 'table'.", "format", 1, "-F <format>"));
+        options.add(new Option("\tFormat to print reports in. The options are 'human' and 'csv'. 'human' " +
+            "output is a human-readable, text-based table of some kind. 'csv', or comma-separated values, is intended to" +
+            " be machine-readable (for loading in Excel, Pandas, etc.), and contains strictly more data, such as the " +
+            "configuration parameters. Default is 'human'. If summary printing is turned on, this is always printed in " +
+            "the human-readable format.", "format", 1, "-F <format>"));
 
         return options.elements();
     }
@@ -399,7 +358,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
             options.add("-gang");
         }
         options.add("-format");
-        options.add(formatter.getOptionString());
+        options.add(format.getOptionString());
 
         return options.toArray(new String[0]);
     }

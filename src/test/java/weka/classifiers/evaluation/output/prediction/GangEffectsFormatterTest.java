@@ -1,7 +1,9 @@
-package weka.classifiers.lazy.AM.data;
+package weka.classifiers.evaluation.output.prediction;
 
 import org.junit.Test;
+import weka.classifiers.evaluation.output.prediction.GangEffectsFormatter;
 import weka.classifiers.lazy.AM.TestUtils;
+import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AnalogicalModeling;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -19,7 +21,7 @@ public class GangEffectsFormatterTest {
         am.buildClassifier(train);
         am.distributionForInstance(test);
         AMResults results = am.getResults();
-        GangEffectsFormatter formatter = new GangEffectsFormatter(3);
+        GangEffectsFormatter formatter = new GangEffectsFormatter(3, Format.HUMAN);
         String actualOutput = formatter.formatGangs(results);
 
         String expectedOutput =
