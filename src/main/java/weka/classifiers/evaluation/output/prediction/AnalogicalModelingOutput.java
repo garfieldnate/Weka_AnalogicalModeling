@@ -18,14 +18,13 @@ package weka.classifiers.evaluation.output.prediction;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.Enum2TagUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.data.AnalogicalSetFormatter;
 import weka.classifiers.lazy.AM.data.GangEffectsFormatter;
+import weka.classifiers.lazy.AM.label.MissingDataCompare;
 import weka.classifiers.lazy.AnalogicalModeling;
-import weka.core.Instance;
-import weka.core.Option;
-import weka.core.Utils;
-import weka.core.WekaException;
+import weka.core.*;
 
 import java.util.*;
 
@@ -75,6 +74,12 @@ import java.util.*;
  * -gang
  *    Output gang effects
  * </pre>
+ * <pre>
+ * -F &lt;format&gt;
+ *    Format to print reports in. The options are 'table' and 'csv'. 'table' output is a human-readable, text-based
+ *    table. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel, Pandas, etc.),
+ *    and contains strictly more data, such as the configuration parameters. Default is 'table'.
+ * </pre>
  * <p>
  * <!-- options-end -->
  * <!-- globalinfo-start -->This output module enables
@@ -91,6 +96,63 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     private boolean m_Summary = true;
     private boolean m_AnalogicalSet = false;
     private boolean m_Gangs = false;
+
+    private Formatter formatter = Formatter.TABLE;
+
+    private enum Formatter implements Enum2TagUtils.TagInfo {
+        TABLE("table", "Human-readable text table"),
+        CSV("csv", "Machine-readable CSV designed for analysis in Excel, Pandas, etc.")
+        ;
+
+        // string used on command line to indicate the use of this strategy
+        private final String optionString;
+        // string which describes comparison strategy for a given entry
+        private final String description;
+
+        /**
+         * @param optionString The string required to choose this formatter from the command line
+         * @param description  A description of the formatter for the given value
+         */
+        Formatter(String optionString, String description) {
+            this.optionString = optionString;
+            this.description = description;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getOptionString() {
+            return optionString;
+        }
+    }
+
+    /**
+     * Define possible formatting methods
+     */
+    public static final Tag[] TAGS_FORMATTER = Enum2TagUtils.getTags(Formatter.class);
+
+
+    /**
+     * @return Selected formatter
+     */
+    @SuppressWarnings("unused") // used by Weka framework
+    public SelectedTag getFormatter() {
+        return new SelectedTag(formatter.ordinal(), TAGS_FORMATTER);
+    }
+
+    /**
+     * @param newMode tag indicating which formatter to use
+     * @throws IllegalArgumentException if input is not a known formatter.
+     */
+    @SuppressWarnings("unused") // used by Weka framework
+    public void setFormatter(SelectedTag newMode) {
+        if (newMode.getTags() == TAGS_FORMATTER) {
+            formatter = Enum2TagUtils.getElement(Formatter.class, newMode);
+        }
+    }
 
     @Override
     public String globalInfo() {
@@ -227,9 +289,14 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     public Enumeration<Option> listOptions() {
         Vector<Option> options = getOptionsOfSuper();
 
-        options.add(new Option("\tOutput short summary statistics", "summary", 0, "-summary"));
+        options.add(new Option("\tOutput short summary statistics", "summary", 0,
+            "-summary"));
         options.add(new Option("\tOutput the analogical set", "as", 0, "-as"));
         options.add(new Option("\tOutput gang effects", "gang", 0, "-gang"));
+        options.add(new Option("\tFormat to print reports in. The options are 'table' and 'csv'. 'table' " +
+            "output is a human-readable, text-based table. 'csv', or comma-separated values, is intended to be " +
+            "machine-readable (for loading in Excel, Pandas, etc.), and contains strictly more data, such as the " +
+            "configuration parameters. Default is 'table'.", "format", 1, "-F <format>"));
 
         return options.elements();
     }
@@ -322,9 +389,18 @@ public class AnalogicalModelingOutput extends AbstractOutput {
 
 		List<String> options = new LinkedList<>(Arrays.asList(super.getOptions()));
 
-        if (getSummary()) options.add("-summary");
-        if (getAnalogicalSet()) options.add("-as");
-        if (getGangs()) options.add("-gang");
+        if (getSummary()) {
+            options.add("-summary");
+        }
+        if (getAnalogicalSet()) {
+            options.add("-as");
+        }
+        if (getGangs()) {
+            options.add("-gang");
+        }
+        options.add("-format");
+        options.add(formatter.getOptionString());
+
         return options.toArray(new String[0]);
     }
 

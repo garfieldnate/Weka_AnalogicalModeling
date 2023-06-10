@@ -277,7 +277,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     public static final Tag[] TAGS_MISSING = Enum2TagUtils.getTags(MissingDataCompare.class);
 
     /**
-     * @return String representation of strategy used when comparing missing values with other data
+     * @return Selected strategy used when comparing missing values with other data
      */
     public SelectedTag getMissingDataCompare() {
         return new SelectedTag(mdc.ordinal(), TAGS_MISSING);
@@ -285,7 +285,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 
     /**
      * @param newMode representing choice for strategy to compare missing data
-     * @throws IllegalArgumentException if input is something other than variable, match or mismatch.
+     * @throws IllegalArgumentException if input is not a known missing data comparison strategy
      */
     public void setMissingDataCompare(SelectedTag newMode) {
         if (newMode.getTags() == TAGS_MISSING) {
