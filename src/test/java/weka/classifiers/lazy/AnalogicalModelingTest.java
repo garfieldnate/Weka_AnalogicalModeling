@@ -150,8 +150,6 @@ public class AnalogicalModelingTest extends AbstractClassifierTest {
         am.setMissingDataCompare(new SelectedTag(MissingDataCompare.MISMATCH.ordinal(), TAGS_MISSING));
         am.setLinearCount(true);
         am.setIgnoreUnknowns(true);
-
-        System.err.println(String.join(" ", am.getOptions()));
         Assert.assertArrayEquals("Custom options", am.getOptions(), new String[]{"-L", "-I", "-M", "mismatch"});
     }
 

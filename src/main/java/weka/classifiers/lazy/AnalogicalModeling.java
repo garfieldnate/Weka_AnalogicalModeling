@@ -18,6 +18,7 @@ package weka.classifiers.lazy;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
+import weka.classifiers.lazy.AM.Enum2TagUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.data.SubcontextList;
 import weka.classifiers.lazy.AM.label.Labeler;
@@ -273,7 +274,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
     /**
      * Define possible missing value handling methods
      */
-    public static final Tag[] TAGS_MISSING = MissingDataCompare.getTags();
+    public static final Tag[] TAGS_MISSING = Enum2TagUtils.getTags(MissingDataCompare.class);
 
     /**
      * @return String representation of strategy used when comparing missing values with other data
@@ -288,7 +289,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      */
     public void setMissingDataCompare(SelectedTag newMode) {
         if (newMode.getTags() == TAGS_MISSING) {
-            mdc = MissingDataCompare.getElement(newMode);
+            mdc = Enum2TagUtils.getElement(MissingDataCompare.class, newMode);
         }
     }
 
@@ -460,11 +461,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
             }
             String optionString = Utils.getOption('M', options);
             if (optionString.length() != 0) {
-                for (MissingDataCompare mdc : MissingDataCompare.values()) {
-                    if (mdc.getOptionString().equals(optionString)) {
-                        this.mdc = mdc;
-                    }
-                }
+                this.mdc = Enum2TagUtils.getElement(MissingDataCompare.class, optionString);
             }
         } catch (Exception e) {
             e.printStackTrace();

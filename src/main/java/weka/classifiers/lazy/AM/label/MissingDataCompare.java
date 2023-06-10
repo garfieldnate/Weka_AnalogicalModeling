@@ -15,12 +15,11 @@
  ****************************************************************************/
 package weka.classifiers.lazy.AM.label;
 
+import weka.classifiers.lazy.AM.Enum2TagUtils.TagInfo;
 import weka.core.Attribute;
 import weka.core.Instance;
-import weka.core.SelectedTag;
-import weka.core.Tag;
 
-public enum MissingDataCompare {
+public enum MissingDataCompare implements TagInfo {
     /**
      * Always returns 0, considering the missing data to match anything
      */
@@ -75,6 +74,7 @@ public enum MissingDataCompare {
     /**
      * @return string used on command line to indicate the use of this strategy
      */
+    @Override
     public String getOptionString() {
         return optionString;
     }
@@ -82,31 +82,9 @@ public enum MissingDataCompare {
     /**
      * @return string which describes comparison strategy for a given
      */
+    @Override
     public String getDescription() {
         return description;
-    }
-
-    /**
-     * @return Array of tags to allow Weka user to choose one of the comparison strategies as an option.
-     */
-    public static Tag[] getTags() {
-        MissingDataCompare[] values = values();
-        Tag[] tags = new Tag[values.length];
-        for (int i = 0; i < tags.length; i++)
-            tags[i] = new Tag(values[i].ordinal(), values[i].getDescription());
-        return tags;
-    }
-
-    /**
-     * @param tag specifying which enum element to return. The id of this tag must match the desired element's ordinal()
-     *            value.
-     * @return The selected element of this enum
-     */
-    public static MissingDataCompare getElement(SelectedTag tag) {
-        int id = tag.getSelectedTag().getID();
-        for (MissingDataCompare mdc : MissingDataCompare.values())
-            if (mdc.ordinal() == id) return mdc;
-        throw new IllegalArgumentException("There is no element with the specified value");
     }
 
     /**
