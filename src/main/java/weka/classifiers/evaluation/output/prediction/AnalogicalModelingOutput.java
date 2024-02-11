@@ -198,10 +198,11 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getOutputDistribution()) {
-            DistributionFormatter formatter = new DistributionFormatter(getNumDecimals(), format);
-            append(formatter.formatDistribution(results, distribution, m_Header));
+            DistributionFormatter formatter = new DistributionFormatter(getNumDecimals(), AMUtils.LINE_SEPARATOR);
+            append(formatter.formatDistribution(results, distribution, m_Header.relationName(), format));
             append(AMUtils.LINE_SEPARATOR);
         }
+
 
         if (getAnalogicalSet()) {
             AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(getNumDecimals(), format);

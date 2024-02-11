@@ -36,7 +36,7 @@ public class BitSetLabeler extends Labeler {
             if (isIgnored(i)) continue;
             if (i == getTestInstance().classIndex()) continue;
             att = getTestInstance().attribute(i);
-            // use mdc if were are comparing a missing attribute
+            // use mdc if we are comparing a missing attribute
             if (getTestInstance().isMissing(att) || data.isMissing(att)) {
                 if (!getMissingDataCompare().matches(getTestInstance(), data, att))
                     // use length-1-index instead of index so that in binary the

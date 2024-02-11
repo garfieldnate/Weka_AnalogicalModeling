@@ -16,10 +16,11 @@ repositories {
 }
 
 dependencies {
-	implementation group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', version: '3.9.5'
-	implementation group: 'com.jakewharton.picnic', name: 'picnic', version: '0.5.0'
 	implementation group: 'com.google.guava', name: 'guava', version: '19.0'
-	compileOnly 'org.projectlombok:lombok:1.18.20'
+    implementation group: 'com.jakewharton.picnic', name: 'picnic', version: '0.5.0'
+	implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.10.0'
+    implementation group: 'nz.ac.waikato.cms.weka', name: 'weka-dev', version: '3.9.5'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'

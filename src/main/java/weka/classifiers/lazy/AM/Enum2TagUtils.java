@@ -5,7 +5,7 @@ import weka.core.Tag;
 
 /**
  * In Weka, configuration with a specific set of possible values is implemented using {@link Tag}. These
- * utilities make it possible to use an enum as the set of tags for a given congif parameter.
+ * utilities make it possible to use an enum as the set of tags for a given config parameter.
  */
 public class Enum2TagUtils {
     /**

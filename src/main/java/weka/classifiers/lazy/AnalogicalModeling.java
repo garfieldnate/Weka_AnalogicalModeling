@@ -192,7 +192,7 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
 		// 3. record the analogical set and other statistics from the pointers in the
         // resulting homogeneous supracontexts
         // we save the results for use with AnalogicalModelingOutput
-        results = new AMResults(lattice, testItem, m_linearCount, labeler);
+        results = new AMResults(lattice, subList, testItem, m_linearCount, labeler);
         return results;
     }
 

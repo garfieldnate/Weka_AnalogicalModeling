@@ -72,20 +72,22 @@ public class AMResults {
 
     private static final String newline = System.getProperty("line.separator");
 	private final Labeler labeler;
+    private final SubcontextList subList;
 
-	/**
+    /**
      * @param lattice  filled lattice, which contains the data for calculating the analogical set
      * @param testItem Exemplar being classified
      * @param linear   True if counting of pointers should be done linearly; false if quadratically.
 	 * @param labeler  The labeler that was used to assign contextual labels; this is made available
 	 *                 for printing purposes.
      */
-    public AMResults(Lattice lattice, Instance testItem, boolean linear, Labeler labeler) {
-		Set<Supracontext> set = lattice.getSupracontexts();
+    public AMResults(Lattice lattice, SubcontextList subList, Instance testItem, boolean linear, Labeler labeler) {
+        Set<Supracontext> set = lattice.getSupracontexts();
 
         this.classifiedExemplar = testItem;
         this.supraList = set;
 		this.labeler = labeler;
+        this.subList = subList;
 
 		// find numbers of pointers to individual exemplars
         this.exPointerMap = getPointers(set, linear);
@@ -231,13 +233,6 @@ public class AMResults {
     }
 
     /**
-     * @return A mapping between a possible class index and its likelihood (decimal probability)
-     */
-    public Map<String, BigDecimal> getClassLikelihoodMap() {
-        return classLikelihoodMap;
-    }
-
-    /**
      * @return The total number of pointers in this analogical set
      */
     public BigInteger getTotalPointers() {
@@ -252,7 +247,7 @@ public class AMResults {
     }
 
     /**
-     * @return A mapping between the class value index and its selection probability
+     * @return A mapping between the class name and its selection probability
      */
     public Map<String, BigDecimal> getClassLikelihood() {
         return classLikelihoodMap;
@@ -315,4 +310,51 @@ public class AMResults {
 	public Labeler getLabeler() {
 		return labeler;
 	}
+
+    public String getExpectedClassName() {
+        Instance classifiedEx = getClassifiedEx();
+        double expectedIndex = classifiedEx.classValue();
+        return classifiedEx.classAttribute().value((int) expectedIndex);
+    }
+
+
+    public SubcontextList getSubList() {
+        return subList;
+    }
+
+    public enum Judgement {
+        /**
+         * Only the correct class was predicted
+         */
+        CORRECT,
+        /**
+         * The correct class and others were tied in the prediction
+         */
+        TIE,
+        /**
+         * The correct class was not predicted
+         */
+        INCORRECT,
+        /**
+         * The correct class was not specified in the dataset
+         */
+        UNKNOWN;
+    }
+
+    /**
+     * @return a judgement of the prediction
+     */
+    public Judgement getJudgement() {
+        String expected = getExpectedClassName();
+        if (expected == null) {
+            return Judgement.UNKNOWN;
+        }
+        if (getPredictedClasses().contains(expected)) {
+            if (getPredictedClasses().size() == 1) {
+                return Judgement.CORRECT;
+            }
+            return Judgement.TIE;
+        }
+        return Judgement.INCORRECT;
+    }
 }

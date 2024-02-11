@@ -42,6 +42,8 @@ public class SubcontextList implements Iterable<Subcontext> {
     private final Labeler labeler;
     private final boolean ignoreFullMatches;
 
+    private int consideredExemplarCount;
+
     /**
      * @return the number of attributes used to predict an outcome
      */
@@ -76,6 +78,7 @@ public class SubcontextList implements Iterable<Subcontext> {
 			labelToSubcontext.put(label, new Subcontext(label, labeler.getContextString(label)));
 		}
         labelToSubcontext.get(label).add(exemplar);
+        consideredExemplarCount++;
     }
 
     /**
@@ -152,6 +155,13 @@ public class SubcontextList implements Iterable<Subcontext> {
 
     public int size() {
         return labelToSubcontext.size();
+    }
+
+    /**
+     * @return The number of exemplars considered accepted into the list, e.g. added and not ignored
+     */
+    public int getConsideredExemplarCount() {
+        return consideredExemplarCount;
     }
 
     /**
