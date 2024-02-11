@@ -21,6 +21,7 @@ import com.jakewharton.picnic.TextAlignment;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.List;
 
 import static java.math.RoundingMode.HALF_EVEN;
 
@@ -77,5 +78,15 @@ public class AMUtils {
     public static String formatPercentage(BigDecimal val, int numDecimals) {
         float percentage = val.scaleByPowerOfTen(2).floatValue();
         return String.format("%%%." + numDecimals + "f", percentage);
+    }
+
+    public static class CsvDoc {
+        public final List<String> headers;
+        public final List<List<String>> entries;
+
+        public CsvDoc(List<String> headers, List<List<String>> entries) {
+            this.headers = headers;
+            this.entries = entries;
+        }
     }
 }

@@ -7,7 +7,6 @@ import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.label.Labeler;
 import weka.core.Attribute;
 import weka.core.Instance;
-import weka.core.Instances;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,21 +16,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static weka.classifiers.evaluation.output.prediction.Format.getCsvCommentHeader;
-
 public class DistributionFormatter {
     private final int numDecimals;
+    private final Format format;
     private final String lineSeparator;
 
     /**
      * @param numDecimals the number of digits to output after the decimal point
+     * @param format
      */
-    public DistributionFormatter(int numDecimals, String lineSeparator) {
+    public DistributionFormatter(int numDecimals, Format format, String lineSeparator) {
         this.numDecimals = numDecimals;
+        this.format = format;
         this.lineSeparator = lineSeparator;
     }
 
-    public String formatDistribution(AMResults results, double[] distribution, String relationName, Format format) {
+    public String formatDistribution(AMResults results, double[] distribution) {
         String doubleFormat = String.format("%%.%df", numDecimals);
         switch (format) {
             case HUMAN: {
@@ -47,13 +47,9 @@ public class DistributionFormatter {
                 return sb.toString();
             }
             case CSV: {
-                CsvDoc doc = getCSVDoc(results);
-
+                AMUtils.CsvDoc doc = getCsvDoc(results);
                 CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setRecordSeparator(lineSeparator).setHeader(doc.headers.toArray(new String[]{})).build();
                 StringWriter sw = new StringWriter();
-                // for now this is too much to write for just a single row of output
-//                sw.write(getCsvCommentHeader(relationName, "Class Probability Distribution"));
-//                sw.write(lineSeparator);
                 try (final CSVPrinter printer = new CSVPrinter(sw, csvFormat)) {
                     for (List<String> entry : doc.entries) {
                         printer.printRecord(entry);
@@ -69,17 +65,7 @@ public class DistributionFormatter {
         }
     }
 
-    private static class CsvDoc {
-        final List<String> headers;
-        final List<List<String>> entries;
-
-        private CsvDoc(List<String> headers, List<List<String>> entries) {
-            this.headers = headers;
-            this.entries = entries;
-        }
-    }
-
-    private CsvDoc getCSVDoc(AMResults results) {
+    private AMUtils.CsvDoc getCsvDoc(AMResults results) {
         Labeler labeler = results.getLabeler();
         List<String> headers = new ArrayList<>();
         List<String> values = new ArrayList<>();
@@ -144,6 +130,6 @@ public class DistributionFormatter {
         List<List<String>> entries = new ArrayList<>();
         entries.add(values);
 
-        return new CsvDoc(headers, entries);
+        return new AMUtils.CsvDoc(headers, entries);
     }
 }

@@ -1,5 +1,6 @@
 package weka.classifiers.evaluation.output.prediction;
 
+import org.junit.Before;
 import org.junit.Test;
 import weka.classifiers.evaluation.output.prediction.AnalogicalSetFormatter;
 import weka.classifiers.lazy.AM.TestUtils;
@@ -10,18 +11,24 @@ import weka.core.Instances;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class AnalogicalSetFormatterTest{
+public class AnalogicalSetFormatterTest {
 
-    @Test
-    public void testChapter3AnalogicalSet() throws Exception {
+    private AMResults results;
+
+    @Before
+    public void init() throws Exception {
+        AnalogicalModeling am = new AnalogicalModeling();
         Instances train = TestUtils.getDataSet(TestUtils.CHAPTER_3_DATA);
         Instance test = train.remove(0);
 
-        AnalogicalModeling am = new AnalogicalModeling();
         am.buildClassifier(train);
         am.distributionForInstance(test);
-        AMResults results = am.getResults();
-        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3, Format.HUMAN);
+        results = am.getResults();
+    }
+
+    @Test
+    public void testHumanFormatter() {
+        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3, Format.HUMAN, "\n");
         String actualOutput = formatter.formatAnalogicalSet(results);
 
         String expectedOutput =
@@ -32,6 +39,21 @@ public class AnalogicalSetFormatterTest{
                 "│    %23.077 │        3 │ 2 1 2 │     r │\n" +
                 "│    %15.385 │        2 │ 0 3 2 │     r │\n" +
                 "└────────────┴──────────┴───────┴───────┘";
+
+        assertEquals(expectedOutput, actualOutput);
+    }
+
+    @Test
+    public void testCsvFormatter() {
+        AnalogicalSetFormatter formatter = new AnalogicalSetFormatter(3, Format.CSV, "\n");
+        String actualOutput = formatter.formatAnalogicalSet(results);
+
+        String expectedOutput =
+            "item,class,pointers,percentage\n" +
+                "3 1 0,e,4,%30.769\n" +
+                "3 1 1,r,4,%30.769\n" +
+                "2 1 2,r,3,%23.077\n" +
+                "0 3 2,r,2,%15.385\n";
 
         assertEquals(expectedOutput, actualOutput);
     }
