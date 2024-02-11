@@ -128,8 +128,17 @@ public class DistributionFormatter {
         values.add("" + results.getSubList().getConsideredExemplarCount());
 
         headers.add("num_feats");
-        // subract one for the class
-        values.add("" + (classifiedExemplar.numAttributes() - 1));
+        values.add("" + results.getLabeler().getCardinality());
+
+        // column for each setting
+        headers.add("ignore_unknowns");
+        values.add("" + results.getLabeler().getIgnoreUnknowns());
+        headers.add("missing_data_compare");
+        values.add(results.getLabeler().getMissingDataCompare().getOptionString());
+        headers.add("ignore_given");
+        values.add("" + results.getSubList().getIgnoreFullMatches());
+        headers.add("count_strategy");
+        values.add(results.getPointerCountingStrategy().toString().toLowerCase());
 
         // just one row in this CSV (one exemplar classified)
         List<List<String>> entries = new ArrayList<>();

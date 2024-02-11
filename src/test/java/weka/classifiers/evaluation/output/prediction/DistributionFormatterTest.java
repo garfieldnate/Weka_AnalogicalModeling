@@ -48,8 +48,8 @@ public class DistributionFormatterTest {
         double[] distribution = am.distributionForInstance(test);
         AMResults results = am.getResults();
 
-        String expected = "Judgement,Expected,first,second,third,Class 1,Class 1,r_ptrs,e_ptrs,r_pct,e_pct,train_size,num_feats\n" +
-            "correct,r,3,1,2,r,e,9,4,69.23077,30.76923,5,3\n";
+        String expected = "Judgement,Expected,first,second,third,Class 1,Class 1,r_ptrs,e_ptrs,r_pct,e_pct,train_size,num_feats,ignore_unknowns,missing_data_compare,ignore_given,count_strategy\n" +
+            "correct,r,3,1,2,r,e,9,4,69.23077,30.76923,5,3,false,variable,true,quadratic\n";
         String actual = formatter.formatDistribution(results, distribution, "foo", Format.CSV);
         assertEquals(expected, actual);
     }

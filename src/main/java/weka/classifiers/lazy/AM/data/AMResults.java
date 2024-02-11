@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class AMResults {
 
-	/**
+    /**
      * Mapping of an exemplar to its analogical effect
      */
     private final Map<Instance, BigDecimal> exEffectMap = new HashMap<>();
@@ -59,6 +59,11 @@ public class AMResults {
     private final Map<String, BigDecimal> classLikelihoodMap = new HashMap<>();
 
     private final Set<Supracontext> supraList;
+    private final PointerCountingStrategry pointerCountingStrategy;
+
+    public enum PointerCountingStrategry {
+        LINEAR, QUADRATIC;
+    }
 
     private BigInteger totalPointers = BigInteger.ZERO;
 
@@ -71,25 +76,30 @@ public class AMResults {
     private final Instance classifiedExemplar;
 
     private static final String newline = System.getProperty("line.separator");
-	private final Labeler labeler;
+    private final Labeler labeler;
     private final SubcontextList subList;
 
     /**
      * @param lattice  filled lattice, which contains the data for calculating the analogical set
      * @param testItem Exemplar being classified
      * @param linear   True if counting of pointers should be done linearly; false if quadratically.
-	 * @param labeler  The labeler that was used to assign contextual labels; this is made available
-	 *                 for printing purposes.
+     * @param labeler  The labeler that was used to assign contextual labels; this is made available
+     *                 for printing purposes.
      */
     public AMResults(Lattice lattice, SubcontextList subList, Instance testItem, boolean linear, Labeler labeler) {
         Set<Supracontext> set = lattice.getSupracontexts();
 
         this.classifiedExemplar = testItem;
         this.supraList = set;
-		this.labeler = labeler;
+        this.labeler = labeler;
         this.subList = subList;
+        if (linear) {
+            this.pointerCountingStrategy = PointerCountingStrategry.LINEAR;
+        } else {
+            this.pointerCountingStrategy = PointerCountingStrategry.QUADRATIC;
+        }
 
-		// find numbers of pointers to individual exemplars
+        // find numbers of pointers to individual exemplars
         this.exPointerMap = getPointers(set, linear);
 
         // find the total number of pointers
@@ -167,9 +177,9 @@ public class AMResults {
                 for (Instance e : sub.getExemplars()) {
                     // pointers to exemplar = pointersToSupra * pointers in list
                     // add together if already in the map
-					BigInteger pointerProduct = (linear ? BigInteger.ONE : pointersInList).multiply(
-							pointersToSupra);
-					pointers.merge(e, pointerProduct, BigInteger::add);
+                    BigInteger pointerProduct = (linear ? BigInteger.ONE : pointersInList).multiply(
+                        pointersToSupra);
+                    pointers.merge(e, pointerProduct, BigInteger::add);
                 }
             }
         }
@@ -195,12 +205,12 @@ public class AMResults {
         sb.append(AMUtils.LINE_SEPARATOR);
         for (Entry<Instance, BigInteger> e : getExemplarPointers().entrySet()) {
             sb.append(e.getKey())
-              .append(" : ")
-              .append(e.getValue())
-              .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
-              .append(")")
-              .append(AMUtils.LINE_SEPARATOR);
+                .append(" : ")
+                .append(e.getValue())
+                .append(" (")
+                .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
+                .append(")")
+                .append(AMUtils.LINE_SEPARATOR);
         }
 
         Set<Entry<String, BigInteger>> sortedEntries2 = new TreeSet<>(Entry.comparingByValue());
@@ -208,12 +218,12 @@ public class AMResults {
         sb.append("Outcome likelihoods:").append(newline);
         for (Entry<String, BigInteger> e : sortedEntries2)
             sb.append(e.getKey())
-              .append(" : ")
-              .append(e.getValue())
-              .append(" (")
-              .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
-              .append(")")
-              .append(AMUtils.LINE_SEPARATOR);
+                .append(" : ")
+                .append(e.getValue())
+                .append(" (")
+                .append(new BigDecimal(e.getValue()).divide(new BigDecimal(totalPointers), MathContext.DECIMAL64))
+                .append(")")
+                .append(AMUtils.LINE_SEPARATOR);
 
         return sb.toString();
     }
@@ -282,34 +292,34 @@ public class AMResults {
         return Collections.unmodifiableSet(supraList);
     }
 
-	/**
-	 * @return All subcontexts contained in all of the supracntexts of the analogical set.
-	 */
-	public Set<Subcontext> getSubcontexts() {
-		return getSupraList().stream().
-				flatMap(supra -> supra.getData().stream()).
-				collect(Collectors.toSet());
-	}
+    /**
+     * @return All subcontexts contained in all of the supracntexts of the analogical set.
+     */
+    public Set<Subcontext> getSubcontexts() {
+        return getSupraList().stream().
+            flatMap(supra -> supra.getData().stream()).
+            collect(Collectors.toSet());
+    }
 
-	/**
-	 * @return The gang effects, sorted by size of the effect and then alphabetically by the
-	 * subcontext display label
-	 */
-	public List<GangEffect> getGangEffects() {
-		return getSubcontexts().stream().
-				map(sub -> new GangEffect(sub, getExemplarPointers())).
-				sorted(
-						Comparator.comparing(GangEffect::getTotalPointers).reversed().
-								thenComparing(e -> e.getSubcontext().getDisplayLabel())).
-				collect(Collectors.toList());
-	}
+    /**
+     * @return The gang effects, sorted by size of the effect and then alphabetically by the
+     * subcontext display label
+     */
+    public List<GangEffect> getGangEffects() {
+        return getSubcontexts().stream().
+            map(sub -> new GangEffect(sub, getExemplarPointers())).
+            sorted(
+                Comparator.comparing(GangEffect::getTotalPointers).reversed().
+                    thenComparing(e -> e.getSubcontext().getDisplayLabel())).
+            collect(Collectors.toList());
+    }
 
-	/**
-	 * @return The Labeler object that was used to assign all of the contextual labels.
-	 */
-	public Labeler getLabeler() {
-		return labeler;
-	}
+    /**
+     * @return The Labeler object that was used to assign all of the contextual labels.
+     */
+    public Labeler getLabeler() {
+        return labeler;
+    }
 
     public String getExpectedClassName() {
         Instance classifiedEx = getClassifiedEx();
@@ -356,5 +366,9 @@ public class AMResults {
             return Judgement.TIE;
         }
         return Judgement.INCORRECT;
+    }
+
+    public PointerCountingStrategry getPointerCountingStrategy() {
+        return pointerCountingStrategy;
     }
 }

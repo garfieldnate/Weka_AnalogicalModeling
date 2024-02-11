@@ -52,6 +52,13 @@ public class SubcontextList implements Iterable<Subcontext> {
     }
 
     /**
+     * @return True if instances with exact same attribute values as the test instance are removed from the list.
+     */
+    public boolean getIgnoreFullMatches() {
+        return ignoreFullMatches;
+    }
+
+    /**
      * This is the easiest to use constructor. It creates and stores a list of
      * subcontexts given classified exemplars and an exemplar to be classified.
      *
