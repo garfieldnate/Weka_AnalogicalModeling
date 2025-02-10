@@ -3,10 +3,7 @@ package weka.classifiers.lazy.AM.label;
 import com.google.common.annotations.VisibleForTesting;
 import weka.core.Instance;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * Analogical Modeling uses labels composed of boolean vectors in order to group
@@ -122,36 +119,55 @@ public abstract class Labeler {
 	 * and the {@code label} is {@code 00101}, then the return string will be "A C * Z *".
 	 */
 	public String getContextString(Label label) {
-		String contextBitString = label.toString();
-		StringJoiner joiner = new StringJoiner(" ");
-		int labelIndex = 0;
-		for (int i = 0; i < testInstance.numAttributes(); i++) {
-			// skip the class attribute and ignored attributes
-			if (i == testInstance.classIndex() || isIgnored(i)) continue;
-			if (contextBitString.charAt(labelIndex) == '0') {
-				joiner.add(testInstance.stringValue(i));
-			} else {
-				joiner.add("*");
-			}
-			labelIndex++;
-		}
-		return joiner.toString();
+        List<String> contextList = getContextList(label, "*");
+        return String.join(" ", contextList);
 	}
 
-	/**
-	 * Returns a string containing the attributes of the input instance (minus the class
-	 * attribute and ignored attributes).
-	 */
-	public String getInstanceAttsString(Instance instance) {
-		StringJoiner joiner = new StringJoiner(" ");
-		for(int i = 0; i < instance.numAttributes(); i++) {
-			if (i == instance.classIndex() || isIgnored(i)) {
-				continue;
-			}
-			joiner.add(instance.stringValue(i));
-		}
-		return joiner.toString();
-	}
+    /**
+     * Returns a list representing the context. If the input test instance attributes are "A C D Z R",
+     * the {@code label} is {@code 00101}, and the {@code mismatchString} is "*", then the return list
+     * will be "A", "C", "*", "Z", "*".
+     */
+    public List<String> getContextList(Label label, String mismatchString) {
+        String contextBitString = label.toString();
+        List<String> result = new ArrayList<>();
+        int labelIndex = 0;
+        for (int i = 0; i < testInstance.numAttributes(); i++) {
+            // skip the class attribute and ignored attributes
+            if (i == testInstance.classIndex() || isIgnored(i)) continue;
+            if (contextBitString.charAt(labelIndex) == '0') {
+                result.add(testInstance.stringValue(i));
+            } else {
+                result.add(mismatchString);
+            }
+            labelIndex++;
+        }
+        return result;
+    }
+
+    /**
+     * Returns a string containing the attributes of the input instance (minus the class
+     * attribute and ignored attributes).
+     */
+    public String getInstanceAttsString(Instance instance) {
+        List<String> atts = getInstanceAttsList(instance);
+        return String.join(" ", atts);
+    }
+
+    /**
+     * Returns a list containing the attributes of the input instance (minus the class
+     * attribute and ignored attributes).
+     */
+    public List<String> getInstanceAttsList(Instance instance) {
+        List<String> atts = new ArrayList<>();
+        for(int i = 0; i < instance.numAttributes(); i++) {
+            if (i == instance.classIndex() || isIgnored(i)) {
+                continue;
+            }
+            atts.add(instance.stringValue(i));
+        }
+        return atts;
+    }
 
     /**
      * Creates and returns the label which belongs at the top of the boolean

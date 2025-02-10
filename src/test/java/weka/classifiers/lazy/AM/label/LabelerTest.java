@@ -126,50 +126,67 @@ public class LabelerTest {
         assertLabelEquals("VARIABLE: mismatches non-unknowns", new IntLabel(0b00111, 5), labeler.label(dataset.get(8)));
     }
 
-	@Test
-	public void testGetContextString() {
-		Instances dataset = sixCardinalityData();
-		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
-		Label label = new IntLabel(0b01011, 5);
-		String actual = labeler.getContextString(label);
-		assertEquals("a * v * *", actual);
-	}
+    @Test
+    public void testGetContextString() {
+        Instances dataset = sixCardinalityData();
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+        Label label = new IntLabel(0b01011, 5);
+        String actual = labeler.getContextString(label);
+        assertEquals("a * v * *", actual);
+    }
+
+    @Test
+    public void testGetContextList() {
+        Instances dataset = sixCardinalityData();
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+        Label label = new IntLabel(0b01011, 5);
+        List<String> actual = labeler.getContextList(label, "*");
+        assertEquals(List.of("a","*", "v", "*", "*"), actual);
+    }
+
+    @Test
+    public void testGetInstanceAttsList() {
+        Instances dataset = sixCardinalityData();
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+        assertEquals(List.of("a", "x", "v", "u", "s"), actual);
+    }
+
+    @Test
+    public void testGetInstanceAttsString() {
+        Instances dataset = sixCardinalityData();
+        Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
+        String actual = labeler.getInstanceAttsString(dataset.get(0));
+        assertEquals("a x v u s", actual);
+    }
 
 	@Test
-	public void testGetInstanceAttsString() {
-		Instances dataset = sixCardinalityData();
-		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
-		String actual = labeler.getInstanceAttsString(dataset.get(0));
-		assertEquals("a x v u s", actual);
-	}
-
-	@Test
-	public void testGetContextStringWithIgnoredAttribute() {
+	public void testGetContextListWithIgnoredAttribute() {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = spy(labelerFactory.createLabeler(dataset.get(0), false, MATCH));
 		Label label = new IntLabel(0b0011, 4);
 		when(labeler.isIgnored(0)).thenReturn(true);
-		String actual = labeler.getContextString(label);
-		assertEquals("x v * *", actual);
+		List<String> actual = labeler.getContextList(label, "*");
+		assertEquals(List.of("x", "v", "*", "*"), actual);
 	}
 
 	@Test
-	public void testGetInstanceAttsStringWithIgnoredAttribute() {
+	public void testGetInstanceAttsListWithIgnoredAttribute() {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = spy(labelerFactory.createLabeler(dataset.get(0), false, MATCH));
 		when(labeler.isIgnored(0)).thenReturn(true);
-		String actual = labeler.getInstanceAttsString(dataset.get(0));
-		assertEquals("x v u s", actual);
+        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+		assertEquals(List.of("x", "v", "u", "s"), actual);
 	}
 
 	@Test
-	public void testGetContextStringWithAlternativeClassIndex() {
+	public void testGetContextListWithAlternativeClassIndex() {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
 		dataset.setClassIndex(2);
 		Label label = new IntLabel(0b01011, 5);
-		String actual = labeler.getContextString(label);
-		assertEquals("a * u * *", actual);
+        List<String> actual = labeler.getContextList(label, "*");
+		assertEquals(List.of("a", "*", "u", "*", "*"), actual);
 	}
 
 	@Test
@@ -177,8 +194,8 @@ public class LabelerTest {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
 		dataset.setClassIndex(2);
-		String actual = labeler.getInstanceAttsString(dataset.get(0));
-		assertEquals("a x u s r", actual);
+        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+		assertEquals(List.of("a", "x", "u", "s", "r"), actual);
 	}
 
 	@Test
