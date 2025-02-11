@@ -79,9 +79,9 @@ computer scientists (and most machine learning frameworks in general). Examples 
 'outcome' (class label), and 'variable' (feature). This software uses the CS terminology internally, but user-facing
 reports use the AM terminology.
 
-The running time for analogical modeling is exponential in nature and practice, and thus it is not suitable for very
-large datasets; exact calculation becomes impractical after about 50 features. Therefore, this tool will automatically
-use an approximation algorithm when there are 50 or more features.
+The running time for analogical modeling is exponential in the number of features (variables); exact calculation becomes
+impractical after about 50 features. Therefore, this tool will automatically use an approximation algorithm when there
+are 50 or more features.
 
 ## Features
 

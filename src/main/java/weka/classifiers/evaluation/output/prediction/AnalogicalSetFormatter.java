@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import static java.lang.System.lineSeparator;
-
 public class AnalogicalSetFormatter {
 
     private final int numDecimals;
@@ -50,12 +48,12 @@ public class AnalogicalSetFormatter {
 
 
     public String formatAnalogicalSet(AMResults results) {
-        TableSection.Builder bodyBuilder = new TableSection.Builder(); // 🏋️
-        streamTableEntries(results).forEach(e ->
-            bodyBuilder.addRow(e.getPercentage(), e.getPointers().toString(), e.getInstanceAtts(), e.getInstanceClass()));
 
         switch (format) {
             case HUMAN: {
+                TableSection.Builder bodyBuilder = new TableSection.Builder(); // 🏋️
+                streamTableEntries(results, true).forEach(e ->
+                    bodyBuilder.addRow(e.getPercentage(), e.getPointers().toString(), e.getInstanceAtts(), e.getInstanceClass()));
                 return new Table.Builder().
                     setTableStyle(
                         new TableStyle.Builder().
@@ -91,12 +89,12 @@ public class AnalogicalSetFormatter {
     }
 
     @NotNull
-    private Stream<TableEntry> streamTableEntries(AMResults results) {
+    private Stream<TableEntry> streamTableEntries(AMResults results, boolean addPercentPrefix) {
         final Labeler labeler = results.getLabeler();
         final BigDecimal totalPointers = new BigDecimal(results.getTotalPointers());
 
         BiFunction<Instance, BigInteger, TableEntry> getTableEntry = (inst, pointers) -> {
-            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals);
+            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals, addPercentPrefix);
             String instanceAtts = labeler.getInstanceAttsString(inst);
             String instanceClass = inst.stringValue(inst.classIndex());
             return new TableEntry(pointers, percentage, instanceAtts, instanceClass);
@@ -115,7 +113,7 @@ public class AnalogicalSetFormatter {
         List<String> headers = Arrays.asList("item", "class", "pointers", "percentage");
         List<List<String>> entries = new ArrayList<>();
 
-        streamTableEntries(results).forEach(e -> entries.add(
+        streamTableEntries(results, false).forEach(e -> entries.add(
             Arrays.asList(e.getInstanceAtts(), e.getInstanceClass(), e.getPointers().toString(), e.getPercentage())));
 
         return new AMUtils.CsvDoc(headers, entries);

@@ -88,7 +88,7 @@ public class DistributionFormatter {
                 continue;
             }
             Attribute classAtt = classifiedExemplar.attribute(i);
-            headers.add(classAtt.name());
+            headers.add("f_" + classAtt.name());
             values.add(classifiedExemplar.stringValue(classAtt));
         }
 
@@ -98,6 +98,7 @@ public class DistributionFormatter {
         while (classNameIterator.hasNext()) {
             headers.add("Class " + classIndex);
             values.add((String) classNameIterator.next());
+            classIndex += 1;
         }
 
         results.getClassPointers().forEach((className, pointers) -> {

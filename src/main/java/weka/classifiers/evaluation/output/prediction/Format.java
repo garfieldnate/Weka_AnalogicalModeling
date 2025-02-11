@@ -9,7 +9,7 @@ import java.time.Clock;
  * Formatting choices for {@link AnalogicalModelingOutput}
  */
 enum Format implements TagInfo {
-    HUMAN("human", "Human-readable format"),
+    HUMAN("human", "Human-readable format (*not* machine-readable!)"),
     CSV("csv", "Machine-readable CSV designed for analysis in Excel, Pandas, etc.");
 
     // string used on command line to indicate the use of this strategy

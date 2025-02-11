@@ -50,10 +50,10 @@ public class AnalogicalSetFormatterTest {
 
         String expectedOutput =
             "item,class,pointers,percentage\n" +
-                "3 1 0,e,4,%30.769\n" +
-                "3 1 1,r,4,%30.769\n" +
-                "2 1 2,r,3,%23.077\n" +
-                "0 3 2,r,2,%15.385\n";
+                "3 1 0,e,4,30.769\n" +
+                "3 1 1,r,4,30.769\n" +
+                "2 1 2,r,3,23.077\n" +
+                "0 3 2,r,2,15.385\n";
 
         assertEquals(expectedOutput, actualOutput);
     }

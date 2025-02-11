@@ -213,7 +213,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
         }
 
         if (getGangs()) {
-            GangEffectsFormatter formatter = new GangEffectsFormatter(getNumDecimals(), format);
+            GangEffectsFormatter formatter = new GangEffectsFormatter(getNumDecimals(), format, AMUtils.LINE_SEPARATOR);
             append("Gang effects:");
             append(AMUtils.LINE_SEPARATOR);
             append(formatter.formatGangs(results));
@@ -323,6 +323,13 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      * <pre>
      * -gang
      *    Output gang effects
+     * </pre>
+     * <pre>
+     * -F &lt;format&gt;
+     *    Format to print reports in. The options are 'human' and 'csv'. 'human' output is a human-readable, text-based
+     *    table of some kind. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel,
+     *    Pandas, etc.), and contains strictly more data, such as the configuration parameters. Default is 'human'. If
+     *    summary printing is turned on, this is always printed in the human-readable format.
      * </pre>
      *
      * * <!-- options-end -->
