@@ -14,7 +14,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../jquery/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../../../jquery/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="../../../../../jquery/jquery-ui.min.js"></script>
 </head>
 <body>
@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -188,6 +188,13 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
  -gang
     Output gang effects
  </pre>
+ <pre>
+ -F &lt;format&gt;
+    Format to print reports in. The options are 'human' and 'csv'. 'human' output is a human-readable, text-based
+    table of some kind. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel,
+    Pandas, etc.), and contains strictly more data, such as the configuration parameters. Default is 'human'. If
+    summary printing is turned on, this is always printed in the human-readable format.
+ </pre>
  <p>
  <!-- options-end -->
  <!-- globalinfo-start -->This output module enables
@@ -212,6 +219,21 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<table class="memberSummary">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Field</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static weka.core.Tag[]</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#TAGS_FORMATTER">TAGS_FORMATTER</a></span></code></th>
+<td class="colLast">
+<div class="block">Define possible formatting methods</div>
+</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a id="fields.inherited.from.class.weka.classifiers.evaluation.output.prediction.AbstractOutput">
 <!--   -->
@@ -309,35 +331,40 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>weka.core.SelectedTag</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFormat()">getFormat</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getGangs()">getGangs</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getOptions()">getOptions</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the current option settings for the OptionHandler.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSummary()">getSummary</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#globalInfo()">globalInfo</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.Enumeration&lt;weka.core.Option&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#listOptions()">listOptions</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns an enumeration of all the available options..</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#printClassification(weka.classifiers.Classifier,weka.core.Instance,int)">printClassification</a></span>&#8203;(weka.classifiers.Classifier&nbsp;classifier,
                    weka.core.Instance&nbsp;inst,
@@ -347,29 +374,34 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
  the implementation in <code>AbstractOutput</code> calls <a href="#doPrintClassification(double%5B%5D,weka.core.Instance,int)"><code>doPrintClassification(double[], Instance, int)</code></a> instead</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAnalogicalSet(boolean)">setAnalogicalSet</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setFormat(weka.core.SelectedTag)">setFormat</a></span>&#8203;(weka.core.SelectedTag&nbsp;newMode)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setGangs(boolean)">setGangs</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOptions(java.lang.String%5B%5D)">setOptions</a></span>&#8203;(java.lang.String[]&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Sets the OptionHandler's options using the given list.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setSummary(boolean)">setSummary</a></span>&#8203;(boolean&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#summaryTipText()">summaryTipText</a></span>()</code></th>
 <td class="colLast">
@@ -400,6 +432,26 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<section>
+<ul class="blockList">
+<li class="blockList"><a id="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a id="TAGS_FORMATTER">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TAGS_FORMATTER</h4>
+<pre>public static final&nbsp;weka.core.Tag[] TAGS_FORMATTER</pre>
+<div class="block">Define possible formatting methods</div>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <section>
 <ul class="blockList">
@@ -426,6 +478,34 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="getFormat()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFormat</h4>
+<pre class="methodSignature">public&nbsp;weka.core.SelectedTag&nbsp;getFormat()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Selected formatter</dd>
+</dl>
+</li>
+</ul>
+<a id="setFormat(weka.core.SelectedTag)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFormat</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;setFormat&#8203;(weka.core.SelectedTag&nbsp;newMode)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>newMode</code> - tag indicating which formatter to use</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if input is not a known formatter.</dd>
+</dl>
+</li>
+</ul>
 <a id="globalInfo()">
 <!--   -->
 </a>
@@ -562,7 +642,7 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 <div class="block">Sets the OptionHandler's options using the given list. All options will
  be set (or reset) during this call (i.e. incremental setting of options
  is not possible).
-
+ <p>
  <!-- options-start --> Valid options are:
  <p>
  <pre>
@@ -605,7 +685,14 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
  -gang
     Output gang effects
  </pre>
-
+ <pre>
+ -F &lt;format&gt;
+    Format to print reports in. The options are 'human' and 'csv'. 'human' output is a human-readable, text-based
+    table of some kind. 'csv', or comma-separated values, is intended to be machine-readable (for loading in Excel,
+    Pandas, etc.), and contains strictly more data, such as the configuration parameters. Default is 'human'. If
+    summary printing is turned on, this is always printed in the human-readable format.
+ </pre>
+ <p>
  * <!-- options-end --></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -816,7 +903,7 @@ extends weka.classifiers.evaluation.output.prediction.AbstractOutput</pre>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

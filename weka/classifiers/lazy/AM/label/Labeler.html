@@ -14,7 +14,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../jquery/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../../../jquery/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="../../../../../jquery/jquery-ui.min.js"></script>
 </head>
 <body>
@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":6,"i7":6,"i8":10,"i9":10,"i10":10,"i11":6,"i12":10,"i13":6};
+var data = {"i0":6,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":6,"i10":6,"i11":10,"i12":10,"i13":10,"i14":6,"i15":10,"i16":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -236,26 +236,48 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getContextList(weka.classifiers.lazy.AM.label.Label,java.lang.String)">getContextList</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label,
+              java.lang.String&nbsp;mismatchString)</code></th>
+<td class="colLast">
+<div class="block">Returns a list representing the context.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getContextString(weka.classifiers.lazy.AM.label.Label)">getContextString</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label)</code></th>
 <td class="colLast">
 <div class="block">Returns a string representing the context.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIgnoreUnknowns()">getIgnoreUnknowns</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstanceAttNamesList(weka.core.Instance)">getInstanceAttNamesList</a></span>&#8203;(weka.core.Instance&nbsp;instance)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstanceAttsString(weka.core.Instance)">getInstanceAttsString</a></span>&#8203;(weka.core.Instance&nbsp;instance)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstanceAttsString(weka.core.Instance,java.lang.String)">getInstanceAttsString</a></span>&#8203;(weka.core.Instance&nbsp;instance,
+                     java.lang.String&nbsp;attDelimiter)</code></th>
 <td class="colLast">
 <div class="block">Returns a string containing the attributes of the input instance (minus the class
  attribute and ignored attributes).</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstanceAttValuesList(weka.core.Instance)">getInstanceAttValuesList</a></span>&#8203;(weka.core.Instance&nbsp;instance)</code></th>
+<td class="colLast">
+<div class="block">Returns a list containing the attributes of the input instance (minus the class
+ attribute and ignored attributes).</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLatticeBottom()">getLatticeBottom</a></span>()</code></th>
 <td class="colLast">
@@ -263,7 +285,7 @@ extends java.lang.Object</pre>
  lattice formed by the subcontexts labeled by this labeler, i.e.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLatticeTop()">getLatticeTop</a></span>()</code></th>
 <td class="colLast">
@@ -271,24 +293,24 @@ extends java.lang.Object</pre>
  lattice formed by the subcontexts labeled by this labeler, i.e.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="MissingDataCompare.html" title="enum in weka.classifiers.lazy.AM.label">MissingDataCompare</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMissingDataCompare()">getMissingDataCompare</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>weka.core.Instance</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTestInstance()">getTestInstance</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isIgnored(int)">isIgnored</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">
 <div class="block">Find if the attribute at the given index is ignored during labeling.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#label(weka.core.Instance)">label</a></span>&#8203;(weka.core.Instance&nbsp;data)</code></th>
 <td class="colLast">
@@ -296,12 +318,12 @@ extends java.lang.Object</pre>
  test instance.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#numPartitions()">numPartitions</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>abstract <a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#partition(weka.classifiers.lazy.AM.label.Label,int)">partition</a></span>&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label,
          int&nbsp;partitionIndex)</code></th>
@@ -481,15 +503,49 @@ extends java.lang.Object</pre>
  and the <code>label</code> is <code>00101</code>, then the return string will be "A C * Z *".</div>
 </li>
 </ul>
-<a id="getInstanceAttsString(weka.core.Instance)">
+<a id="getContextList(weka.classifiers.lazy.AM.label.Label,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getContextList</h4>
+<pre class="methodSignature">public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getContextList&#8203;(<a href="Label.html" title="class in weka.classifiers.lazy.AM.label">Label</a>&nbsp;label,
+                                                       java.lang.String&nbsp;mismatchString)</pre>
+<div class="block">Returns a list representing the context. If the input test instance attributes are "A C D Z R",
+ the <code>label</code> is <code>00101</code>, and the <code>mismatchString</code> is "*", then the return list
+ will be "A", "C", "*", "Z", "*".</div>
+</li>
+</ul>
+<a id="getInstanceAttsString(weka.core.Instance,java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInstanceAttsString</h4>
-<pre class="methodSignature">public&nbsp;java.lang.String&nbsp;getInstanceAttsString&#8203;(weka.core.Instance&nbsp;instance)</pre>
+<pre class="methodSignature">public&nbsp;java.lang.String&nbsp;getInstanceAttsString&#8203;(weka.core.Instance&nbsp;instance,
+                                              java.lang.String&nbsp;attDelimiter)</pre>
 <div class="block">Returns a string containing the attributes of the input instance (minus the class
  attribute and ignored attributes).</div>
+</li>
+</ul>
+<a id="getInstanceAttValuesList(weka.core.Instance)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstanceAttValuesList</h4>
+<pre class="methodSignature">public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getInstanceAttValuesList&#8203;(weka.core.Instance&nbsp;instance)</pre>
+<div class="block">Returns a list containing the attributes of the input instance (minus the class
+ attribute and ignored attributes).</div>
+</li>
+</ul>
+<a id="getInstanceAttNamesList(weka.core.Instance)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstanceAttNamesList</h4>
+<pre class="methodSignature">public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getInstanceAttNamesList&#8203;(weka.core.Instance&nbsp;instance)</pre>
 </li>
 </ul>
 <a id="getLatticeTop()">

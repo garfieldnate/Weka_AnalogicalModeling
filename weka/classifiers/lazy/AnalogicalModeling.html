@@ -14,7 +14,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../jquery/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../jquery/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="../../../jquery/jquery-ui.min.js"></script>
 </head>
 <body>
@@ -369,7 +369,7 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <td class="colFirst"><code><a href="AM/data/AMResults.html" title="class in weka.classifiers.lazy.AM.data">AMResults</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResults()">getResults</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Note that this is not thread-safe; see the documentation for <a href="#classify(weka.core.Instance)"><code>classify</code></a>.</div>
+<div class="block">Note that this is not thread-safe; see the documentation for <code>classify</code>.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -672,7 +672,7 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <pre class="methodSignature">public&nbsp;weka.core.SelectedTag&nbsp;getMissingDataCompare()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>String representation of strategy used when comparing missing values with other data</dd>
+<dd>Selected strategy used when comparing missing values with other data</dd>
 </dl>
 </li>
 </ul>
@@ -687,7 +687,7 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>newMode</code> - representing choice for strategy to compare missing data</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - if input is something other than variable, match or mismatch.</dd>
+<dd><code>java.lang.IllegalArgumentException</code> - if input is not a known missing data comparison strategy</dd>
 </dl>
 </li>
 </ul>
@@ -928,7 +928,7 @@ implements weka.core.TechnicalInformationHandler, weka.classifiers.UpdateableCla
 <li class="blockList">
 <h4>getResults</h4>
 <pre class="methodSignature">public&nbsp;<a href="AM/data/AMResults.html" title="class in weka.classifiers.lazy.AM.data">AMResults</a>&nbsp;getResults()</pre>
-<div class="block">Note that this is not thread-safe; see the documentation for <a href="#classify(weka.core.Instance)"><code>classify</code></a>.</div>
+<div class="block">Note that this is not thread-safe; see the documentation for <code>classify</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The classification results from the last call to distributionForInstance</dd>

@@ -14,7 +14,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../jquery/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../../../jquery/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="../../../../../jquery/jquery-ui.min.js"></script>
 </head>
 <body>
@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -203,21 +203,31 @@ implements java.lang.Iterable&lt;<a href="Subcontext.html" title="class in weka.
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConsideredExemplarCount()">getConsideredExemplarCount</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIgnoreFullMatches()">getIgnoreFullMatches</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../label/Labeler.html" title="class in weka.classifiers.lazy.AM.label">Labeler</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLabeler()">getLabeler</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;<a href="Subcontext.html" title="class in weka.classifiers.lazy.AM.data">Subcontext</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#iterator()">iterator</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#size()">size</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">
@@ -298,6 +308,19 @@ implements java.lang.Iterable&lt;<a href="Subcontext.html" title="class in weka.
 </dl>
 </li>
 </ul>
+<a id="getIgnoreFullMatches()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIgnoreFullMatches</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;getIgnoreFullMatches()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>True if instances with exact same attribute values as the test instance are removed from the list.</dd>
+</dl>
+</li>
+</ul>
 <a id="toString()">
 <!--   -->
 </a>
@@ -351,6 +374,19 @@ implements java.lang.Iterable&lt;<a href="Subcontext.html" title="class in weka.
 <li class="blockList">
 <h4>size</h4>
 <pre class="methodSignature">public&nbsp;int&nbsp;size()</pre>
+</li>
+</ul>
+<a id="getConsideredExemplarCount()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConsideredExemplarCount</h4>
+<pre class="methodSignature">public&nbsp;int&nbsp;getConsideredExemplarCount()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>The number of exemplars considered accepted into the list, e.g. added and not ignored</dd>
+</dl>
 </li>
 </ul>
 <a id="getLabeler()">
