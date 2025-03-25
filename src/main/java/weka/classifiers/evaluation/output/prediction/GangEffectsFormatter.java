@@ -80,7 +80,7 @@ public class GangEffectsFormatter {
                     bodyBuilder.addRow(getClassHeader(classToPointers.getKey(), classToPointers.getValue(), totalPointers, instances.size()));
 
                     // sort and print instances
-                    instances.stream().map(labeler::getInstanceAttsString).sorted().forEach(s -> bodyBuilder.addRow("", "", "", "", s));
+                    instances.stream().map(instance -> labeler.getInstanceAttsString(instance, " ")).sorted().forEach(s -> bodyBuilder.addRow("", "", "", "", s));
                 });
         }
 
@@ -175,14 +175,27 @@ public class GangEffectsFormatter {
                     builder.setDefault(classNumInstancesColumn, "0");
 
                     List<String> contextLabelList = labeler.getContextList(effect.getSubcontext().getLabel(), "*");
+                    List<String> attNames;
+                    if (instances.iterator().hasNext()) {
+                        Instance instance = instances.iterator().next();
+                        attNames = labeler.getInstanceAttNamesList(instance);
+                    } else {
+                        // fallback: not sure if this ever happens, but if there are no instances to take att labels
+                        // from, use numbers instead
+                        attNames = new ArrayList<>();
+                        for (int i = 1; i <= contextLabelList.size(); i++) {
+                            attNames.add(String.valueOf(i + 1));
+                        }
+                    }
+
                     for (int i = 0; i < contextLabelList.size(); i++) {
-                        commonRowData.put("GF" + (i + 1), contextLabelList.get(i));
+                        commonRowData.put("GF:" + attNames.get(i), contextLabelList.get(i));
                     }
                     instances.forEach(instance -> {
                         Map<String, String> finalRowData = new HashMap<>(commonRowData);
-                        List<String> atts = labeler.getInstanceAttsList(instance);
-                        for (int i = 0; i < atts.size(); i++) {
-                            finalRowData.put("F" + (i + 1), atts.get(i));
+                        List<String> attValues = labeler.getInstanceAttValuesList(instance);
+                        for (int i = 0; i < attValues.size(); i++) {
+                            finalRowData.put("F:" + attNames.get(i), attValues.get(i));
                         }
                         builder.addEntry(finalRowData);
                     });
@@ -190,6 +203,6 @@ public class GangEffectsFormatter {
                 });
         }
 
-        return builder.build();
+        return builder.build(false);
     }
 }

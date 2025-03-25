@@ -148,7 +148,7 @@ public class LabelerTest {
     public void testGetInstanceAttsList() {
         Instances dataset = sixCardinalityData();
         Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
-        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+        List<String> actual = labeler.getInstanceAttValuesList(dataset.get(0));
         assertEquals(List.of("a", "x", "v", "u", "s"), actual);
     }
 
@@ -156,7 +156,7 @@ public class LabelerTest {
     public void testGetInstanceAttsString() {
         Instances dataset = sixCardinalityData();
         Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
-        String actual = labeler.getInstanceAttsString(dataset.get(0));
+        String actual = labeler.getInstanceAttsString(dataset.get(0), " ");
         assertEquals("a x v u s", actual);
     }
 
@@ -175,7 +175,7 @@ public class LabelerTest {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = spy(labelerFactory.createLabeler(dataset.get(0), false, MATCH));
 		when(labeler.isIgnored(0)).thenReturn(true);
-        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+        List<String> actual = labeler.getInstanceAttValuesList(dataset.get(0));
 		assertEquals(List.of("x", "v", "u", "s"), actual);
 	}
 
@@ -194,7 +194,7 @@ public class LabelerTest {
 		Instances dataset = sixCardinalityData();
 		Labeler labeler = labelerFactory.createLabeler(dataset.get(0), false, MATCH);
 		dataset.setClassIndex(2);
-        List<String> actual = labeler.getInstanceAttsList(dataset.get(0));
+        List<String> actual = labeler.getInstanceAttValuesList(dataset.get(0));
 		assertEquals(List.of("a", "x", "u", "s", "r"), actual);
 	}
 

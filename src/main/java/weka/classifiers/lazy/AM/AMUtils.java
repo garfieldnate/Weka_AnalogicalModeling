@@ -99,7 +99,7 @@ public class AMUtils {
 
     /**
      * Simplify CSV printing by allowing specifying rows as Maps and converting automatically to lists of column values
-     * in the {@link #build()} method.
+     * in the {@link #build(boolean)} method.
      */
     public static class CsvBuilder {
         private final Set<String> header = new LinkedHashSet<>();
@@ -113,7 +113,7 @@ public class AMUtils {
             header.addAll(entry.keySet());
         }
 
-        public CsvDoc build() {
+        public CsvDoc build(boolean sortRows) {
             List<String> sortedHeader = header.stream().sorted().collect(Collectors.toList());
             List<List<String>> rows = new ArrayList<>();
             for (Map<String, String> entry : entries) {
@@ -121,6 +121,9 @@ public class AMUtils {
                 rows.add(row);
                 for (String h : sortedHeader) {
                     row.add(entry.getOrDefault(h, defaultValues.getOrDefault(h, "")));
+                }
+                if(sortRows) {
+                    rows.sort(new ListComparator<>());
                 }
             }
             return new CsvDoc(sortedHeader, rows);
@@ -130,4 +133,24 @@ public class AMUtils {
             defaultValues.put(columnName, value);
         }
     }
+
+    /**
+     * Sorts collections of lists by first comparing the first element, then the second, and so on.
+     * <a href="https://stackoverflow.com/a/35761935/474819">Credit</a>.
+     * @param <T>
+     */
+    private static class ListComparator<T extends Comparable<T>> implements Comparator<List<T>> {
+        @Override
+        public int compare(List<T> o1, List<T> o2) {
+            for (int i = 0; i < Math.min(o1.size(), o2.size()); i++) {
+                int c = o1.get(i).compareTo(o2.get(i));
+                if (c != 0) {
+                    return c;
+                }
+            }
+            return Integer.compare(o1.size(), o2.size());
+        }
+
+    }
+
 }

@@ -39,7 +39,7 @@ public class DistributionFormatterTest {
     @Test
     public void testCSVFormatter() {
         DistributionFormatter formatter = new DistributionFormatter(3, Format.CSV, "\n");
-        String expected = "Judgement,Expected,f_first,f_second,f_third,Class 1,Class 2,r_ptrs,e_ptrs,r_pct,e_pct,train_size,num_feats,ignore_unknowns,missing_data_compare,ignore_given,count_strategy\n" +
+        String expected = "Judgement,Expected,F:first,F:second,F:third,Class 1,Class 2,r_ptrs,e_ptrs,r_pct,e_pct,train_size,num_feats,ignore_unknowns,missing_data_compare,ignore_given,count_strategy\n" +
             "correct,r,3,1,2,r,e,9,4,69.23077,30.76923,5,3,false,variable,true,quadratic\n";
         String actual = formatter.formatDistribution(results, distribution);
         assertEquals(expected, actual);

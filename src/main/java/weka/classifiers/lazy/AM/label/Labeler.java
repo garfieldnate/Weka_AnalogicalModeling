@@ -149,16 +149,16 @@ public abstract class Labeler {
      * Returns a string containing the attributes of the input instance (minus the class
      * attribute and ignored attributes).
      */
-    public String getInstanceAttsString(Instance instance) {
-        List<String> atts = getInstanceAttsList(instance);
-        return String.join(" ", atts);
+    public String getInstanceAttsString(Instance instance, String attDelimiter) {
+        List<String> atts = getInstanceAttValuesList(instance);
+        return String.join(attDelimiter, atts);
     }
 
     /**
      * Returns a list containing the attributes of the input instance (minus the class
      * attribute and ignored attributes).
      */
-    public List<String> getInstanceAttsList(Instance instance) {
+    public List<String> getInstanceAttValuesList(Instance instance) {
         List<String> atts = new ArrayList<>();
         for(int i = 0; i < instance.numAttributes(); i++) {
             if (i == instance.classIndex() || isIgnored(i)) {
@@ -168,6 +168,18 @@ public abstract class Labeler {
         }
         return atts;
     }
+
+    public List<String> getInstanceAttNamesList(Instance instance) {
+        List<String> atts = new ArrayList<>();
+        for(int i = 0; i < instance.numAttributes(); i++) {
+            if (i == instance.classIndex() || isIgnored(i)) {
+                continue;
+            }
+            atts.add(instance.attribute(i).name());
+        }
+        return atts;
+    }
+
 
     /**
      * Creates and returns the label which belongs at the top of the boolean

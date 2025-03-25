@@ -88,7 +88,7 @@ public class DistributionFormatter {
                 continue;
             }
             Attribute classAtt = classifiedExemplar.attribute(i);
-            headers.add("f_" + classAtt.name());
+            headers.add("F:" + classAtt.name());
             values.add(classifiedExemplar.stringValue(classAtt));
         }
 

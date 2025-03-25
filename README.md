@@ -45,10 +45,10 @@ State-of-the-art [analogical modeling](https://en.wikipedia.org/wiki/Analogical_
 ![Weka classifier evaluation options screen](https://user-images.githubusercontent.com/778453/50684510-1b9b5380-1016-11e9-85e5-30a4b3bfdb2d.png)
 
 8. Click on the `AnalogicalModelingOutput` text that appeared in the field next to the "Choose" button. From here, you
-   can configure what information you want printed, including analogical sets and gang effects. You can also choose to
-   suppress the output in the window and write it to a file instead. Screenshot below:
+   can configure what information you want printed, including analogical sets and gang effects, as well as the desired
+   output format. You can also choose to suppress the output in the window and write it to a file instead. Screenshot below:
 
-![Analogical Modeling Output configuration](https://user-images.githubusercontent.com/778453/115678756-25196880-a352-11eb-8052-84d307c7270c.png)
+![Analogical Modeling Output configuration](https://github.com/user-attachments/assets/8d184dfb-b61e-4d04-b0f3-80aae76d521c)
 
 9. Back on the "Classify" tab again, click "Start". If you used the chapter 3 data and enabled output for analogical
    sets and gang effects, the results should appear as in the below screenshot:

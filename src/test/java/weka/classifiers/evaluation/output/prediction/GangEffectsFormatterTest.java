@@ -56,13 +56,14 @@ public class GangEffectsFormatterTest {
 
         assertEquals(expectedOutput, actualOutput);
     }
+
     @Test
     public void testCsvFormat() {
         GangEffectsFormatter formatter = new GangEffectsFormatter(3, Format.CSV, "\n");
         String actualOutput = formatter.formatGangs(results);
 
         String expectedOutput =
-            "F1,F2,F3,GF1,GF2,GF3,class,e_pct,e_ptrs,e_size,gang_pct,gang_ptrs,r_pct,r_ptrs,r_size,rank,size,total_ptrs\n" +
+            "F:first,F:second,F:third,GF:first,GF:second,GF:third,class,e_pct,e_ptrs,e_size,gang_pct,gang_ptrs,r_pct,r_ptrs,r_size,rank,size,total_ptrs\n" +
                 "3,1,0,3,1,*,e,30.769,4,1,61.538,8,0.0,0,0,1,2,13\n" +
                 "3,1,1,3,1,*,r,30.769,4,1,61.538,8,30.769,4,1,1,2,13\n" +
                 "2,1,2,*,1,2,r,0.0,0,0,23.077,3,23.077,3,1,2,1,13\n" +

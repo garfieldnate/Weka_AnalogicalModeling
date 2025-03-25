@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -52,7 +49,7 @@ public class AnalogicalSetFormatter {
         switch (format) {
             case HUMAN: {
                 TableSection.Builder bodyBuilder = new TableSection.Builder(); // 🏋️
-                streamTableEntries(results, true).forEach(e ->
+                streamTableEntries(results).forEach(e ->
                     bodyBuilder.addRow(e.getPercentage(), e.getPointers().toString(), e.getInstanceAtts(), e.getInstanceClass()));
                 return new Table.Builder().
                     setTableStyle(
@@ -89,13 +86,13 @@ public class AnalogicalSetFormatter {
     }
 
     @NotNull
-    private Stream<TableEntry> streamTableEntries(AMResults results, boolean addPercentPrefix) {
+    private Stream<TableEntry> streamTableEntries(AMResults results) {
         final Labeler labeler = results.getLabeler();
         final BigDecimal totalPointers = new BigDecimal(results.getTotalPointers());
 
         BiFunction<Instance, BigInteger, TableEntry> getTableEntry = (inst, pointers) -> {
-            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals, addPercentPrefix);
-            String instanceAtts = labeler.getInstanceAttsString(inst);
+            String percentage = AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals, true);
+            String instanceAtts = labeler.getInstanceAttsString(inst, " ");
             String instanceClass = inst.stringValue(inst.classIndex());
             return new TableEntry(pointers, percentage, instanceAtts, instanceClass);
         };
@@ -110,12 +107,25 @@ public class AnalogicalSetFormatter {
     }
 
     private AMUtils.CsvDoc getCsvDoc(AMResults results) {
-        List<String> headers = Arrays.asList("item", "class", "pointers", "percentage");
-        List<List<String>> entries = new ArrayList<>();
+        final Labeler labeler = results.getLabeler();
+        final BigDecimal totalPointers = new BigDecimal(results.getTotalPointers());
 
-        streamTableEntries(results, false).forEach(e -> entries.add(
-            Arrays.asList(e.getInstanceAtts(), e.getInstanceClass(), e.getPointers().toString(), e.getPercentage())));
+        AMUtils.CsvBuilder builder = new AMUtils.CsvBuilder();
 
-        return new AMUtils.CsvDoc(headers, entries);
+        results.getExemplarPointers().forEach((inst, pointers) -> {
+            Map<String, String> rowData = new HashMap<>();
+            rowData.put("percentage", AMUtils.formatPointerPercentage(pointers, totalPointers, numDecimals, false));
+            rowData.put("pointers", pointers.toString());
+            rowData.put("class", inst.stringValue(inst.classIndex()));
+
+            List<String> attNames = labeler.getInstanceAttNamesList(inst);
+            List<String> attValues = labeler.getInstanceAttValuesList(inst);
+            for (int i = 0; i < attNames.size(); i++) {
+                rowData.put("F:" + attNames.get(i), attValues.get(i));
+            }
+            builder.addEntry(rowData);
+        });
+
+        return builder.build(true);
     }
 }

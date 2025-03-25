@@ -125,7 +125,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     @Override
     public String globalInfo() {
         return "This output module enables detailed reporting on the results of the "
-               + "Analogical Modeling classifier, such as the analogical set and gang effects.";
+            + "Analogical Modeling classifier, such as the analogical set and gang effects.";
     }
 
     @Override
@@ -169,7 +169,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     protected void doPrintClassification(Classifier classifier, Instance inst, int index) throws Exception {
         if (!(classifier instanceof AnalogicalModeling)) throw new IllegalArgumentException(
             "You are using " + classifier.getClass()
-            + ". This output can only be used with the Analogical Modeling classifier");
+                + ". This output can only be used with the Analogical Modeling classifier");
 
         AnalogicalModeling am = (AnalogicalModeling) classifier;
         Instance withMissing = (Instance) inst.copy();
@@ -185,11 +185,24 @@ public class AnalogicalModelingOutput extends AbstractOutput {
             append("Classifying instance ");
             append(Integer.toString(index));
             append(" (");
-            append(results.getLabeler().getInstanceAttsString(inst));
-            append(", class: ");
+            if (format.equals(Format.HUMAN)) {
+                append(results.getLabeler().getInstanceAttsString(inst, " "));
+                append(", ");
+            }
+            append("class: ");
             append(inst.stringValue(inst.classIndex()));
             append(")");
             append(AMUtils.LINE_SEPARATOR);
+
+            if(format.equals(Format.CSV)) {
+                List<String> attNames = results.getLabeler().getInstanceAttNamesList(inst);
+                append(String.join(",", attNames));
+                append(AMUtils.LINE_SEPARATOR);
+                List<String> attValues = results.getLabeler().getInstanceAttValuesList(inst);
+                append(String.join(",", attValues));
+                append(AMUtils.LINE_SEPARATOR);
+                append(AMUtils.LINE_SEPARATOR);
+            }
 
             append("Total pointers: " + results.getTotalPointers() + AMUtils.LINE_SEPARATOR);
             append("Instances in analogical set: " + results.getExemplarEffectMap().size());
@@ -281,9 +294,9 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      * Sets the OptionHandler's options using the given list. All options will
      * be set (or reset) during this call (i.e. incremental setting of options
      * is not possible).
-     *
+     * <p>
      * <!-- options-start --> Valid options are:
-	 * <p>
+     * <p>
      * <pre>
      * -p &lt;range&gt;
      *    The range of attributes to print in addition to the classification.
@@ -331,7 +344,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *    Pandas, etc.), and contains strictly more data, such as the configuration parameters. Default is 'human'. If
      *    summary printing is turned on, this is always printed in the human-readable format.
      * </pre>
-     *
+     * <p>
      * * <!-- options-end -->
      *
      * @param options the list of options as an array of strings
@@ -354,7 +367,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     @Override
     public String[] getOptions() {
 
-		List<String> options = new LinkedList<>(Arrays.asList(super.getOptions()));
+        List<String> options = new LinkedList<>(Arrays.asList(super.getOptions()));
 
         if (getSummary()) {
             options.add("-summary");
@@ -414,7 +427,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *
      * @return tip text for this property suitable for displaying in the GUI
      */
-	@SuppressWarnings("unused") // used by Weka
+    @SuppressWarnings("unused") // used by Weka
     public String summaryTipText() {
         return "Whether to print a short summary.";
     }
@@ -438,7 +451,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
      *
      * @return tip text for this property suitable for displaying in the GUI
      */
-	@SuppressWarnings("unused") // used by Weka
+    @SuppressWarnings("unused") // used by Weka
     public String analogicalSetTipText() {
         return "Whether to print analogical sets";
     }
