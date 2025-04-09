@@ -98,6 +98,17 @@ class LineParser:
             self.in_gangs_csv = False
             self.in_classifying_item_csv = False
             return
+        if line.startswith("┌"):
+            raise ValueError(
+                f"I found a non-CSV table starting on line {self.line_num}. "
+                + 'That means that you used the "Human-readable" format. '
+                + "This script only works on the CSV output format. "
+                + "You'll have to regenerate your output file using the CSV format:\n"
+                + '1. In the Weka Explorer on the Classify tab, click "More options..."'
+                + "2. You should have selected AnalogicalModelingOutput in the "
+                + '"Output Predictions" option. Click on "AnalogicalModelingOutput".\n'
+                + '3. In the "format" option, select the "Machine-readable CSV" option.'
+            )
         if self.in_distribution_csv:
             self.current_result["distribution_csv"] += line + "\n"
             return
