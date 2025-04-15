@@ -18,6 +18,7 @@ package weka.classifiers.lazy;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.UpdateableClassifier;
+import weka.classifiers.lazy.AM.AMVersion;
 import weka.classifiers.lazy.AM.Enum2TagUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AM.data.SubcontextList;
@@ -317,11 +318,11 @@ public class AnalogicalModeling extends weka.classifiers.AbstractClassifier impl
      *
      * @return General information and references about the Analogical Modeling classifier
      */
-	@SuppressWarnings("unused") // used by Weka UI
+    @SuppressWarnings("unused") // used by Weka UI
     public String globalInfo() {
         return ("Implements the Analogical Modeling algorithm, invented by Royal Skousen. "
-                + "Analogical modeling is an instance-based algorithm designed to model " + "human behavior."
-                + "For more information, see the following references:\n\n") + getTechnicalInformation().toString();
+            + "Analogical modeling is an instance-based algorithm designed to model human behavior. Version " + AMVersion.VERSION
+            + ". For more information, see the following references:\n\n") + getTechnicalInformation().toString();
     }
 
     // /**

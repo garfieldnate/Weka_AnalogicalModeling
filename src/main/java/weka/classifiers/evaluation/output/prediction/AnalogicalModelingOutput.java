@@ -18,6 +18,7 @@ package weka.classifiers.evaluation.output.prediction;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.AM.AMUtils;
+import weka.classifiers.lazy.AM.AMVersion;
 import weka.classifiers.lazy.AM.Enum2TagUtils;
 import weka.classifiers.lazy.AM.data.AMResults;
 import weka.classifiers.lazy.AnalogicalModeling;
@@ -125,7 +126,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     @Override
     public String globalInfo() {
         return "This output module enables detailed reporting on the results of the "
-            + "Analogical Modeling classifier, such as the analogical set and gang effects.";
+            + "Analogical Modeling classifier, such as the analogical set and gang effects. Version " + AMVersion.VERSION;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
     protected void doPrintHeader() {
         append("=================================");
         append(AMUtils.LINE_SEPARATOR);
-        append("Begin Analogical Modeling Results");
+        append("Begin Analogical Modeling Results (Version: " + AMVersion.VERSION + ")");
         append(AMUtils.LINE_SEPARATOR);
         append("=================================");
         append(AMUtils.LINE_SEPARATOR);
@@ -194,7 +195,7 @@ public class AnalogicalModelingOutput extends AbstractOutput {
             append(")");
             append(AMUtils.LINE_SEPARATOR);
 
-            if(format.equals(Format.CSV)) {
+            if (format.equals(Format.CSV)) {
                 List<String> attNames = results.getLabeler().getInstanceAttNamesList(inst);
                 append(String.join(",", attNames));
                 append(AMUtils.LINE_SEPARATOR);

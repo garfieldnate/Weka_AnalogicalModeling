@@ -22,7 +22,20 @@ java {
     withSourcesJar()
 }
 
+val copyPropsToResources by tasks.registering(Copy::class) {
+    from("Description.props")
+    into("src/main/resources/weka/classifiers/lazy/AM")
+    doLast {
+        logger.lifecycle("Copied Description.props to src/main/resources/")
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn(copyPropsToResources)
+}
+
 tasks.withType<JavaCompile> {
+    dependsOn(copyPropsToResources)
     options.encoding = "UTF-8"
 }
 

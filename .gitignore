@@ -24,3 +24,6 @@ bin/
 
 ### IntelliJ ###
 .idea/
+
+### Generated
+src/main/resources/weka/classifiers/lazy/AM/Description.props
