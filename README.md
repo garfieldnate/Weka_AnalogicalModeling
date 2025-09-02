@@ -104,19 +104,180 @@ The project JavaDoc is uploaded to GitHub pages automatically via a GitHub Actio
 An additional GitHub Action builds and tests the project for every branch and pull request, so contributors should get
 feedback quickly if a change breaks anything.
 
-### Building
+### Prerequisites for First-Time Java Developers
 
-This project is managed with [Gradle](https://gradle.org/), and the project includes the gradle wrapper. The following
-build commands are available:
+#### Understanding Java Project Structure
 
-    # build and test the project
-    ./gradlew build
-    # just run unit tests
-    ./gradlew test
-    # generate HTML documentation
-    ./gradlew javadoc
-    # build the project archive for release as a Weka plugin
-    ./gradlew weka_package
+For developers new to Java, here's what the key directories mean:
+
+- `src/main/java/` - Your Java source code files (.java)
+- `src/test/java/` - Unit test files
+- `src/main/resources/` - Non-code resources (config files, etc.)
+- `build/` - Generated files (compiled code, reports) - don't edit these
+- `gradle/` - Gradle wrapper files
+- `build.gradle.kts` - Project configuration and dependencies (like package.json in Node.js)
+
+#### Common Java Development Terms
+
+- **JDK (Java Development Kit)**: Tools for developing Java applications (includes compiler)
+- **JVM (Java Virtual Machine)**: Runs compiled Java code
+- **Classpath**: Where Java looks for compiled code and libraries
+- **JAR file**: Java Archive - packaged Java application (like a .zip with compiled code)
+- **Gradle**: Build tool that manages dependencies and compilation (like npm/yarn for JavaScript)
+
+### Developing with IntelliJ IDEA (Recommended)
+
+#### Step 1: Install Java 11
+
+**Using SDKMan! (Recommended)**
+1. Install SDKMan!:
+   ```bash
+   curl -s "https://get.sdkman.io" | bash
+   source "$HOME/.sdkman/bin/sdkman-init.sh"
+   ```
+
+2. Install Java 11:
+   ```bash
+   sdk install java 11.0.25-tem
+   sdk use java 11.0.25-tem
+   ```
+
+**Direct Download Alternative**
+- Download Eclipse Temurin 11 from [Adoptium](https://adoptium.net/temurin/releases/?version=11)
+- Follow the installer for your OS
+
+#### Step 2: Install and Configure IntelliJ IDEA
+
+1. Download IntelliJ IDEA Community Edition (free) from [JetBrains](https://www.jetbrains.com/idea/download/)
+
+2. Open the project:
+   - Launch IntelliJ IDEA
+   - Click "Open" on the welcome screen
+   - Navigate to this project folder and select `build.gradle.kts`
+
+3. Configure the JDK:
+   - Go to File → Project Structure (Cmd+; on Mac, Ctrl+Alt+Shift+S on Windows/Linux)
+   - Under "Project", set SDK to Java 11
+   - If not listed, click "Add SDK" → "JDK" and browse to your Java 11 installation
+
+4. Wait for Gradle sync:
+   - IntelliJ will automatically download dependencies (first time takes a few minutes)
+   - Look for the progress bar at the bottom of the window
+
+#### Step 3: Working in IntelliJ
+
+**Running the build:**
+- Open the Gradle panel (View → Tool Windows → Gradle)
+- Navigate to Tasks → build → build
+- Double-click to run
+
+**Running tests:**
+- To run all tests: In Gradle panel, Tasks → verification → test
+- To run a single test: Open the test file, click the green arrow next to the test method
+- Test results appear in the Run panel at the bottom
+
+**Debugging:**
+1. Set breakpoints by clicking in the left margin of any Java file
+2. Right-click a test and select "Debug"
+3. Use the Debug panel to step through code and inspect variables
+
+**Common IntelliJ shortcuts:**
+- Cmd+Shift+F (Mac) / Ctrl+Shift+F (Win/Linux): Search across all files
+- Cmd+Click (Mac) / Ctrl+Click (Win/Linux): Go to definition
+- Shift+F6: Rename variable/method everywhere
+- Alt+Enter: Show quick fixes for errors
+
+### Option 2: Developing from the Command Line
+
+#### Step 1: Install Java 11
+
+**Using SDKMan!**
+```bash
+# Install SDKMan
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# Install and use Java 11
+sdk install java 11.0.25-tem
+sdk use java 11.0.25-tem
+
+# Verify installation
+java -version  # Should show openjdk 11.0.25 or similar
+```
+
+**Manual Installation**
+1. Download Eclipse Temurin 11 from [Adoptium](https://adoptium.net/temurin/releases/?version=11)
+2. Set environment variables:
+   ```bash
+   # Add to ~/.bashrc or ~/.zshrc
+   export JAVA_HOME=/path/to/jdk-11
+   export PATH=$JAVA_HOME/bin:$PATH
+   ```
+3. Reload your shell configuration:
+   ```bash
+   source ~/.bashrc  # or source ~/.zshrc
+   ```
+
+#### Step 2: Building and Testing
+
+This project uses Gradle with an included wrapper, so you don't need to install Gradle separately.
+
+**Available commands:**
+
+```bash
+# Build and test the project
+./gradlew build
+
+# Run only unit tests
+./gradlew test
+
+# Generate JavaDoc documentation
+./gradlew javadoc
+
+# Build the Weka plugin package
+./gradlew weka_package
+
+# Clean build artifacts
+./gradlew clean
+
+# Run with verbose output for debugging
+./gradlew build --info
+```
+
+**Note for Windows:** Use `gradlew.bat` instead of `./gradlew`
+
+#### Step 3: Viewing Results
+
+After building:
+- Compiled classes: `build/classes/java/main/`
+- JAR files: `build/libs/`
+- Test reports: `build/reports/tests/test/index.html` (open in browser; unnecessary, though, because results are shown in `./gradlew test` output)
+- JavaDoc: `build/docs/javadoc/index.html` (open in browser)
+
+#### Troubleshooting Command Line Builds
+
+If the build fails:
+
+1. Check Java version:
+   ```bash
+   java -version  # Should be version 11
+   ./gradlew --version  # Should show JVM version 11
+   ```
+
+2. Clear Gradle cache and retry:
+   ```bash
+   ./gradlew clean build --no-build-cache
+   ```
+
+3. Run with more details:
+   ```bash
+   ./gradlew build --stacktrace --info
+   ```
+
+4. Common issues:
+   - Wrong Java version: Use `sdk use java 11.0.25-tem` or check JAVA_HOME
+   - Permission denied: Run `chmod +x gradlew`
+   - Out of memory: Set `export GRADLE_OPTS="-Xmx2g"`
 
 
 ### Releasing
